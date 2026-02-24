@@ -1,4 +1,3 @@
-/* ── BookList ── */
 .booklist {
   max-width: 1200px;
   margin: 0 auto;
@@ -14,25 +13,26 @@
   margin: 0 0 40px 0;
 }
 
-/* Grid de tarjetas */
+/* Grid */
 .booklist__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 28px;
 }
 
-/* Tarjeta individual */
 .booklist__card {
   display: flex;
   flex-direction: column;
   gap: 12px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease-out; 
+  /* Necesario para que los hijos mantengan el entorno 3D si queremos añadirles profundidad extra en el futuro */
+  transform-style: preserve-3d;
 }
 
-.booklist__card:hover {
+/* .booklist__card:hover {
   transform: translateY(-4px);
-}
+} */
 
 /* Portada */
 .booklist__cover {
@@ -46,10 +46,10 @@
 }
 
 .booklist__card:hover .booklist__cover {
-  box-shadow: 0 8px 24px rgba(201, 137, 58, 0.25);
+  box-shadow: -4px 12px 24px rgba(201, 137, 58, 0.35);
 }
 
-/* Fallback cuando no hay portada */
+/* Fallback para cuando no haya portada */
 .booklist__cover-placeholder {
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -63,7 +63,6 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
-/* Info del libro */
 .booklist__info {
   display: flex;
   flex-direction: column;
@@ -110,7 +109,6 @@
   color: #C0503A;
 }
 
-/* Skeleton loader */
 .booklist__skeleton-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
