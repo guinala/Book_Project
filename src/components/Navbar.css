@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&display=swap');
+
+/* ── Navbar ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #1C120A;
+  border-bottom: 1px solid #3D2B1A;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.navbar__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbar__logo-icon {
+  width: 32px;
+  height: 32px;
+  background-color: #C9893A;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.navbar__logo-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: #F5ECD7;
+  letter-spacing: 0.01em;
+}
+
+/* Nav links */
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navbar__link {
+  color: #A89070;
+  text-decoration: none;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.navbar__link:hover {
+  color: #F5ECD7;
+}
+
+/* Actions */
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar__btn-login {
+  background: transparent;
+  border: 1px solid #3D2B1A;
+  color: #A89070;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'EB Garamond', Georgia, serif;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+
+.navbar__btn-login:hover {
+  border-color: #A89070;
+  color: #F5ECD7;
+}
+
+.navbar__btn-register {
+  background: #C9893A;
+  border: 1px solid #C9893A;
+  color: #1C120A;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'EB Garamond', Georgia, serif;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+
+.navbar__btn-register:hover {
+  background: #B5762A;
+  border-color: #B5762A;
+}
+
+/* User menu */
+.navbar__user-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.navbar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #C9893A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1C120A;
+  font-weight: 700;
+  font-size: 15px;
+  object-fit: cover;
+}
+
+.navbar__user-name {
+  color: #F5ECD7;
+  font-size: 14px;
+}

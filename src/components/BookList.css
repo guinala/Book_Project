@@ -1,0 +1,150 @@
+/* ── BookList ── */
+.booklist {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.booklist__title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #F5ECD7;
+  letter-spacing: 0.02em;
+  margin: 0 0 40px 0;
+}
+
+/* Grid de tarjetas */
+.booklist__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 28px;
+}
+
+/* Tarjeta individual */
+.booklist__card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.booklist__card:hover {
+  transform: translateY(-4px);
+}
+
+/* Portada */
+.booklist__cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  background-color: #2A1A0E;
+  transition: box-shadow 0.2s ease;
+}
+
+.booklist__card:hover .booklist__cover {
+  box-shadow: 0 8px 24px rgba(201, 137, 58, 0.25);
+}
+
+/* Fallback cuando no hay portada */
+.booklist__cover-placeholder {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 4px;
+  background-color: #2A1A0E;
+  border: 1px solid #3D2B1A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* Info del libro */
+.booklist__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.booklist__book-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #F5ECD7;
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.booklist__author {
+  font-size: 13px;
+  color: #A89070;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booklist__year {
+  font-size: 12px;
+  color: #5A3E28;
+  margin: 0;
+}
+
+/* Estados de carga y error */
+.booklist__status {
+  text-align: center;
+  padding: 60px 24px;
+  font-size: 18px;
+  color: #A89070;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.booklist__status--error {
+  color: #C0503A;
+}
+
+/* Skeleton loader */
+.booklist__skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 28px;
+}
+
+.booklist__skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booklist__skeleton-cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #2A1A0E 25%, #3D2B1A 50%, #2A1A0E 75%);
+  background-size: 200% 100%;
+  animation: booklist-shimmer 1.4s infinite;
+}
+
+.booklist__skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #2A1A0E 25%, #3D2B1A 50%, #2A1A0E 75%);
+  background-size: 200% 100%;
+  animation: booklist-shimmer 1.4s infinite;
+}
+
+.booklist__skeleton-line--short {
+  width: 60%;
+}
+
+@keyframes booklist-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
