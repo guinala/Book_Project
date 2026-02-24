@@ -61,11 +61,10 @@ export default function Footer() {
 
       <div className="footer__top">
 
-        {/* Brand column */}
         <div className="footer__brand">
           <a href="/" className="footer__brand-logo">
             <span className="footer__brand-icon">📖</span>
-            <span className="footer__brand-name">Biblós</span>
+            <span className="footer__brand-name">Libland</span>
           </a>
           <p className="footer__brand-tagline">
             Tu compañero de lectura. Descubre, organiza y comparte los libros
@@ -87,7 +86,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Nav columns */}
         {FOOTER_COLUMNS.map((col) => (
           <div key={col.title} className="footer__column">
             <p className="footer__column-title">{col.title}</p>
@@ -103,10 +101,9 @@ export default function Footer() {
 
       <hr className="footer__divider" />
 
-      {/* Bottom bar */}
       <div className="footer__bottom">
         <span className="footer__copyright">
-          © {new Date().getFullYear()} Biblós · Todos los derechos reservados
+          © {new Date().getFullYear()} Libland · Todos los derechos reservados
         </span>
         <button type="button" className="footer__language-btn">
           🌐 Español

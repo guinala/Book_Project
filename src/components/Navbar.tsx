@@ -32,13 +32,11 @@ export default function Navbar({ isAuthenticated = false, user }: NavbarProps) {
     <header className="navbar">
       <div className="navbar__inner">
 
-        {/* Logo */}
         <a className="navbar__logo" href="/">
           <span className="navbar__logo-icon">📖</span>
-          <span className="navbar__logo-text">Biblós</span>
+          <span className="navbar__logo-text">LibLand</span>
         </a>
 
-        {/* Nav links */}
         <nav className="navbar__nav">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} className="navbar__link">
@@ -47,7 +45,6 @@ export default function Navbar({ isAuthenticated = false, user }: NavbarProps) {
           ))}
         </nav>
 
-        {/* Actions */}
         <div className="navbar__actions">
           {isAuthenticated && user ? (
             <div className="navbar__user-menu">

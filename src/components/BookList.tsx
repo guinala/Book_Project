@@ -18,7 +18,7 @@ function SkeletonGrid() {
 }
 
 export default function BookList() {
-  const { books, loading, error } = useFantasyBooks(20);
+  const { books, loading, error } = useFantasyBooks(100);
 
   const getCoverUrl = (coverId: number) =>
     `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
