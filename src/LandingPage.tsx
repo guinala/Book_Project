@@ -1,7 +1,7 @@
 import Navbar from "./components/Navbar";
 import SearchBar from "./components/SearchBar";
 import Footer from "./components/Footer";
-import BookList from "./components/BookList"
+import BookList from "./components/BookList_Google"
 import './LandingPage.css'
 
 function LandingPage() {

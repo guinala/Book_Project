@@ -1,3 +1,6 @@
+#API
+.env.local
+
 # Logs
 logs
 *.log

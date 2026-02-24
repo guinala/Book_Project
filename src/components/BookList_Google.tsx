@@ -1,4 +1,4 @@
-import { useFantasyBooks } from "../hooks/useFantasyBooks";
+import { useFantasyBooks_Google } from "../hooks/useFantasyBooks_Google";
 import "./BookList.css";
 
 const SKELETON_COUNT = 10;
@@ -18,10 +18,7 @@ function SkeletonGrid() {
 }
 
 export default function BookList() {
-  const { books, loading, error } = useFantasyBooks(100);
-
-  const getCoverUrl = (coverId: number) =>
-    `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
+  const { books, loading, error } = useFantasyBooks_Google(20);
 
   if (loading) {
     return (
@@ -47,21 +44,22 @@ export default function BookList() {
       <div className="booklist__grid">
         {books.map((book) => (
           <div key={book.key} className="booklist__card">
-            {book.cover_id ? (
+            {book.cover_url ? (
               <img
                 className="booklist__cover"
-                src={getCoverUrl(book.cover_id)}
+                src={book.cover_url}
                 alt={book.title}
                 loading="lazy"
               />
             ) : (
               <div className="booklist__cover-placeholder">📖</div>
             )}
+
             <div className="booklist__info">
               <h3 className="booklist__book-title">{book.title}</h3>
 
               <p className="booklist__author">
-                {book.authors.length > 0
+                {book.authors.length
                   ? book.authors.join(", ")
                   : "Autor desconocido"}
               </p>
