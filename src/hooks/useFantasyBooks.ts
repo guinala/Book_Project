@@ -4,34 +4,37 @@ import axios, { AxiosError } from "axios";
 export interface Book {
   key: string;
   title: string;
-  authors: string[];           
+  authors: string[];
   first_publish_year: number;
   cover_id: number | null;
   edition_count: number;
 }
 
+interface OpenLibraryEditionDoc {
+  key?: string;
+  title?: string;
+  language?: string[];
+  cover_i?: number;
+}
+
+interface OpenLibraryEditions {
+  numFound: number;
+  docs: OpenLibraryEditionDoc[];
+}
+
 interface OpenLibraryDoc {
-  key: string;                 
+  key: string;
   title: string;
   author_name?: string[];
   first_publish_year?: number;
   cover_i?: number;
   edition_count?: number;
+  editions?: OpenLibraryEditions;
 }
 
 interface OpenLibrarySearchResponse {
   docs: OpenLibraryDoc[];
   numFound: number;
-}
-
-interface OpenLibraryEdition {
-  title?: string;
-  covers?: number[];
-  languages?: { key: string }[];  
-}
-
-interface OpenLibraryEditionsResponse {
-  entries: OpenLibraryEdition[];
 }
 
 interface UseFantasyBooksResult {
@@ -46,35 +49,6 @@ const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
-
-// Extrae el ID de obra del key completo: "/works/OL45804W" → "OL45804W"
-function extractWorkId(key: string): string {
-  return key.replace("/works/", "");
-}
-
-// Se busca la primera edición en español 
-async function fetchSpanishEdition(
-  workId: string,
-  signal: AbortSignal
-): Promise<{ title: string | null; cover_id: number | null }> {
-  try {
-    const { data } = await apiClient.get<OpenLibraryEditionsResponse>(
-      `/works/${workId}/editions.json`,
-      { signal }
-    );
-
-    const spanishEdition = data.entries.find((edition) =>
-      edition.languages?.some((lang) => lang.key === "/languages/spa")
-    );
-
-    return {
-      title: spanishEdition?.title ?? null,
-      cover_id: spanishEdition?.covers?.[0] ?? null,
-    };
-  } catch {
-    return { title: null, cover_id: null };
-  }
-}
 
 export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
   const [books, setBooks] = useState<Book[]>([]);
@@ -91,28 +65,41 @@ export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
 
         const { data } = await apiClient.get<OpenLibrarySearchResponse>("/search.json", {
           params: {
-            subject: "fantasy",
-            language: "spa",
-            fields: "key,title,author_name,first_publish_year,cover_i,edition_count",
+            q: "subject:fantasy language:spa",
+            lang: "es",
+            fields: [
+              "key",
+              "title",
+              "author_name",
+              "first_publish_year",
+              "cover_i",
+              "edition_count",
+              "editions",
+              "editions.title",
+              "editions.language",
+              "editions.cover_i",
+            ].join(","),
             limit,
           },
           signal: controller.signal,
         });
 
-        const editionResults = await Promise.all(
-          data.docs.map((doc) =>
-            fetchSpanishEdition(extractWorkId(doc.key), controller.signal)
-          )
-        );
+        const mapped: Book[] = data.docs.map((doc) => {
+          const bestEdition = doc.editions?.docs?.[0];
 
-        const mapped: Book[] = data.docs.map((doc, i) => ({
-          key: doc.key,
-          title: editionResults[i].title ?? doc.title,
-          authors: doc.author_name ?? ["Autor desconocido"],
-          first_publish_year: doc.first_publish_year ?? 0,
-          cover_id: editionResults[i].cover_id ?? doc.cover_i ?? null,
-          edition_count: doc.edition_count ?? 0,
-        }));
+          const title = bestEdition?.title ?? doc.title;
+
+          const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
+
+          return {
+            key: doc.key,
+            title,
+            authors: doc.author_name ?? ["Autor desconocido"],
+            first_publish_year: doc.first_publish_year ?? 0,
+            cover_id,
+            edition_count: doc.edition_count ?? 0,
+          };
+        });
 
         setBooks(mapped);
       } catch (err) {

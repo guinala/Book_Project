@@ -52,7 +52,6 @@ export default function SearchBar({
   return (
     <div className={wrapperClass}>
 
-      {/* Filters */}
       <div className="searchbar__filters">
         {FILTERS.map((f) => (
           <button
@@ -71,7 +70,6 @@ export default function SearchBar({
         ))}
       </div>
 
-      {/* Input */}
       <div className={inputRowClass}>
         <input
           ref={inputRef}
@@ -110,7 +108,6 @@ export default function SearchBar({
         </button>
       </div>
 
-      {/* Hint (solo en hero) */}
       {!isCompact && (
         <p className="searchbar__hint">
           Prueba: "Gabriel García Márquez", "Cien años de soledad", "978-84-376-0494-7"
