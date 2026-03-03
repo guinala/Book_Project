@@ -1,0 +1,238 @@
+@import '../../base';
+
+.auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-bg-auth;
+  font-family: $font-serif;
+  padding: 24px;
+
+  &__box {
+    background-color: $color-bg-dark;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  // Logo
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    margin-bottom: 4px;
+  }
+
+  &__logo-icon {
+    width: 32px;
+    height: 32px;
+    background-color: $color-accent;
+    border-radius: $border-radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  &__logo-text {
+    font-size: 26px;
+    font-weight: 600;
+    color: $color-text-primary;
+    letter-spacing: 0.01em;
+  }
+
+  // Title
+  &__title {
+    font-size: 22px;
+    font-weight: 600;
+    color: $color-text-primary;
+    text-align: center;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+
+  // Form
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__input {
+    background-color: $color-bg-input;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
+    padding: 12px 14px;
+    color: $color-text-primary;
+    font-size: 15px;
+    font-family: $font-serif;
+    outline: none;
+    @include transition(border-color);
+    width: 100%;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+
+    &:focus {
+      border-color: $color-accent;
+    }
+  }
+
+  // Buttons
+  &__btn-primary {
+    @include primary-button;
+    border-radius: $border-radius-sm;
+    padding: 12px;
+    font-size: 16px;
+    width: 100%;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    @include ghost-button;
+    border-radius: $border-radius-sm;
+    padding: 11px;
+    font-size: 15px;
+    width: 100%;
+
+    &:hover {
+      border-color: $color-text-secondary;
+      color: $color-text-primary;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__btn-danger {
+    background-color: transparent;
+    border: 1px solid $color-error;
+    border-radius: $border-radius-sm;
+    padding: 10px;
+    color: $color-error;
+    font-size: 15px;
+    font-family: $font-serif;
+    cursor: pointer;
+    @include transition(all);
+    width: 100%;
+
+    &:hover {
+      background-color: $color-error;
+      color: $color-text-primary;
+    }
+  }
+
+  // Divider
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $color-text-muted;
+    font-size: 13px;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background-color: $color-bg-card;
+    }
+  }
+
+  // Toggle link
+  &__toggle {
+    text-align: center;
+    color: $color-text-subtle;
+    font-size: 14px;
+  }
+
+  &__toggle-link {
+    color: $color-accent;
+    cursor: pointer;
+    text-decoration: underline;
+    @include transition(color);
+
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+
+  // Error
+  &__error {
+    color: $color-error;
+    font-size: 14px;
+    text-align: center;
+    min-height: 20px;
+  }
+
+  // User screen
+  &__user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  &__user-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: $color-accent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: $color-bg-dark;
+  }
+
+  &__user-email {
+    color: $color-text-primary;
+    font-size: 16px;
+    margin: 0;
+  }
+
+  &__user-provider {
+    color: $color-text-secondary;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  // Loading
+  &__loading {
+    text-align: center;
+    color: $color-text-secondary;
+    font-size: 16px;
+  }
+
+  // Hidden
+  &__hidden {
+    display: none;
+  }
+}

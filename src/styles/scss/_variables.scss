@@ -1,0 +1,41 @@
+// ─── Colores de fondo (oscuro a claro) ───
+$color-bg-auth:        #f7c49b;  // Auth page background
+$color-bg-darkest:     #3f2e21;  // Footer background
+$color-bg-input:       #e0a16d;  // Auth input background
+$color-bg-dark:        #705743;  // Primary background, navbar, auth box
+$color-bg-medium:      #daa376;  // Footer divider
+$color-bg-card:        #f7c49b;  // Card backgrounds, borders, dividers
+$color-border:         #fc9f54;  // Primary border color
+
+// ─── Colores de texto (oscuro a claro) ───
+$color-text-muted:     #5A3E28;  // Placeholder text, year text
+$color-text-subtle:    #6B4E35;  // Footer secondary links, tagline
+$color-text-secondary: #A89070;  // Secondary text, nav links
+$color-text-primary:   #F5ECD7;  // Primary text (cream)
+
+// ─── Acentos ───
+$color-accent:         #C9893A;  // Primary gold accent
+$color-accent-hover:   #B5762A;  // Hover state for gold buttons
+$color-error:          #C0503A;  // Error text, danger buttons
+
+// ─── Sombras y transparencias ───
+$color-input-bg:       rgba(19, 9, 3, 0.5);
+$shadow-card:          rgba(0, 0, 0, 0.5);
+$shadow-accent:        rgba(201, 137, 58, 0.35);
+$shadow-light:         rgba(0, 0, 0, 0.3);
+$focus-ring:           rgba(201, 137, 58, 0.15);
+
+// ─── Tipografia ───
+$font-serif:           'EB Garamond', Georgia, serif;
+
+// ─── Layout ───
+$max-width:            1200px;
+$padding-horizontal:   24px;
+$navbar-height:        64px;
+$border-radius-sm:     4px;
+$border-radius-md:     6px;
+$border-radius-lg:     8px;
+$border-radius-pill:   20px;
+
+// ─── Z-Index ───
+$z-navbar:             100;

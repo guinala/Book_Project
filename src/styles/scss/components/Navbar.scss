@@ -1,0 +1,70 @@
+@import '../base';
+.navbar {
+  top: 0;
+  z-index: $z-navbar;
+  font-family: $font-serif;
+  background-color: white;
+
+  &__inner {
+    width: 100%;
+    height: $navbar-height;
+    padding: 0 $padding-horizontal;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  &__brand-img {
+    width: 32px;
+    height: 32px;
+    background-color: #ccc;
+    border-radius: $border-radius-sm;
+  }
+
+  &__brand-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: $color-text-primary;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  &__link {
+    color: $color-text-secondary;
+    text-decoration: none;
+    font-size: 15px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__btn-register-reading {
+    background: transparent;
+    border: 1px solid $color-accent;
+    color: $color-accent;
+    font-family: $font-serif;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+  }
+
+  &__action-text {
+    color: $color-text-secondary;
+    font-size: 14px;
+  }
+}

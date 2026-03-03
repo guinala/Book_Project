@@ -84,7 +84,7 @@ export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
           signal: controller.signal,
         });
 
-        const mapped: Book[] = data.docs.map((doc) => {
+        const mappedBooks: Book[] = data.docs.map((doc) => {
           const bestEdition = doc.editions?.docs?.[0];
 
           const title = bestEdition?.title ?? doc.title;
@@ -101,7 +101,7 @@ export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
           };
         });
 
-        setBooks(mapped);
+        setBooks(mappedBooks);
       } catch (err) {
         if (axios.isCancel(err)) return;
 

@@ -1,0 +1,170 @@
+.searchbar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  font-family: "EB Garamond", Georgia, serif;
+}
+.searchbar--compact {
+  max-width: 480px;
+  gap: 8px;
+}
+.searchbar--compact .searchbar__input {
+  padding: 10px 14px;
+  font-size: 15px;
+}
+.searchbar--compact .searchbar__search-btn {
+  padding: 10px 18px;
+  font-size: 18px;
+  min-width: 44px;
+}
+.searchbar__filters {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 6px;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+}
+.searchbar__filter-btn {
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid #fc9f54;
+  background-color: transparent;
+  color: #A89070;
+  font-size: 13px;
+  font-family: "EB Garamond", Georgia, serif;
+  cursor: pointer;
+  -webkit-transition: all 0.18s ease;
+  transition: all 0.18s ease;
+  letter-spacing: 0.02em;
+}
+.searchbar__filter-btn:hover {
+  border-color: #C9893A;
+  color: #C9893A;
+}
+.searchbar__filter-btn--active {
+  background-color: #C9893A;
+  border-color: #C9893A;
+  color: #705743;
+  font-weight: 600;
+}
+.searchbar__input-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  border-radius: 6px;
+  border: 1.5px solid #fc9f54;
+  background-color: rgba(19, 9, 3, 0.5);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  -webkit-transition: border-color 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, -webkit-box-shadow 0.2s ease;
+  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.searchbar__input-row--focused {
+  border-color: #C9893A;
+  -webkit-box-shadow: 0 0 0 3px rgba(201, 137, 58, 0.15);
+          box-shadow: 0 0 0 3px rgba(201, 137, 58, 0.15);
+}
+.searchbar__input {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 14px 18px;
+  color: #F5ECD7;
+  font-size: 17px;
+  font-family: "EB Garamond", Georgia, serif;
+  letter-spacing: 0.01em;
+}
+.searchbar__input::-webkit-input-placeholder {
+  color: #5A3E28;
+}
+.searchbar__input::-moz-placeholder {
+  color: #5A3E28;
+}
+.searchbar__input:-ms-input-placeholder {
+  color: #5A3E28;
+}
+.searchbar__input::-ms-input-placeholder {
+  color: #5A3E28;
+}
+.searchbar__input::placeholder {
+  color: #5A3E28;
+}
+.searchbar__clear-btn {
+  background: transparent;
+  border: none;
+  color: #5A3E28;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 16px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.2s;
+          transition-duration: 0.2s;
+  -webkit-transition-timing-function: ease;
+          transition-timing-function: ease;
+}
+.searchbar__clear-btn:hover {
+  color: #A89070;
+}
+.searchbar__search-btn {
+  background: #C9893A;
+  border: none;
+  color: #705743;
+  padding: 14px 24px;
+  cursor: pointer;
+  font-size: 22px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  -webkit-transition-duration: 0.2s;
+          transition-duration: 0.2s;
+  -webkit-transition-timing-function: ease;
+          transition-timing-function: ease;
+  min-width: 56px;
+}
+.searchbar__search-btn:hover {
+  background: #B5762A;
+}
+.searchbar__hint {
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+  color: #5A3E28;
+  font-size: 12px;
+  font-family: "EB Garamond", Georgia, serif;
+  letter-spacing: 0.02em;
+  margin: 0;
+}

@@ -1,4 +1,4 @@
-import "./Footer.css";
+import "../styles/css/components/Footer.css";
 
 interface FooterLink {
   label: string;
