@@ -1,0 +1,92 @@
+/* styleguide/colors and typography organized */
+
+:root {
+  /* custom properties for the colour palette */
+  --color-white: rgb(255, 255, 255);
+  --color-orange: orange;
+  --color-brown: brown;
+  --color-green: green;
+}
+
+.style-guide {
+  padding: 1rem;
+  font-family: sans-serif;
+  color: #222;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 0.5rem 1rem;
+      text-align: center;
+    }
+
+    thead {
+      background: #f9f9f9;
+    }
+
+    .square {
+      display: inline-block;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.25rem;
+    }
+
+    .white {
+      background: var(--color-white);
+    }
+    .orange {
+      background: var(--color-orange);
+    }
+    .brown {
+      background: var(--color-brown);
+    }
+    .green {
+      background: var(--color-green);
+    }
+  }
+
+  .colours {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+
+    .color {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+
+      .square {
+        margin: 0;
+      }
+    }
+  }
+
+  /* generic element styles for preview */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0.5rem 0;
+  }
+
+  p,
+  div,
+  button,
+  a,
+  input,
+  select,
+  nav,
+  aside,
+  form {
+    margin: 0.5rem 0;
+  }
+}
