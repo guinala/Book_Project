@@ -75,7 +75,7 @@ export function useFantasyBooks_Google(limit: number = 20): UseFantasyBooksResul
         const { data } = await apiClient.get<GoogleBooksResponse>("/volumes", {
           params: {
             q: "subject:fantasy",
-            langRestrict: "es",             // en español
+            langRestrict: "es",             
             maxResults: Math.min(limit, 40), // Google Books permite máximo 40
             orderBy: "relevance",
             printType: "books",
@@ -89,7 +89,7 @@ export function useFantasyBooks_Google(limit: number = 20): UseFantasyBooksResul
           return;
         }
 
-        const mapped: Book[] = data.items.map((item) => ({
+        const mappedBooks: Book[] = data.items.map((item) => ({
           key: item.id,
           title: item.volumeInfo.title,
           authors: item.volumeInfo.authors ?? ["Autor desconocido"],
@@ -98,7 +98,7 @@ export function useFantasyBooks_Google(limit: number = 20): UseFantasyBooksResul
           edition_count: 0, //Este dato no se expone
         }));
 
-        setBooks(mapped);
+        setBooks(mappedBooks);
       } catch (err) {
         if (axios.isCancel(err)) return;
 

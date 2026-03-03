@@ -1,0 +1,78 @@
+.navbar {
+  top: 0;
+  z-index: 100;
+  font-family: "EB Garamond", Georgia, serif;
+  background-color: white;
+}
+.navbar__inner {
+  width: 100%;
+  height: 64px;
+  padding: 0 24px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.navbar__brand {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.navbar__brand-img {
+  width: 32px;
+  height: 32px;
+  background-color: #ccc;
+  border-radius: 4px;
+}
+.navbar__brand-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: #F5ECD7;
+}
+.navbar__nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 32px;
+}
+.navbar__link {
+  color: #A89070;
+  text-decoration: none;
+  font-size: 15px;
+}
+.navbar__actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 16px;
+}
+.navbar__btn-register-reading {
+  background: transparent;
+  border: 1px solid #C9893A;
+  color: #C9893A;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.navbar__action-text {
+  color: #A89070;
+  font-size: 14px;
+}

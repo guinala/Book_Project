@@ -1,5 +1,5 @@
 import { useFantasyBooks_Google } from "../hooks/useFantasyBooks_Google";
-import "./BookList.css";
+import "../styles/css/components/BookList.css";
 
 const SKELETON_COUNT = 10;
 

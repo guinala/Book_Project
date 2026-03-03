@@ -1,7 +1,7 @@
-import { useState, useRef, MouseEvent } from "react";
-import { useFantasyBooks } from "../hooks/useFantasyBooks";
-import type { Book } from "../hooks/useFantasyBooks";
-import "./BookList.css";
+import { useState, useRef } from "react";
+import type { MouseEvent } from "react";
+import type { Book } from "../types/Book";
+import "../styles/css/components/BookList.css";
 
 const SKELETON_COUNT = 10;
 
@@ -28,22 +28,19 @@ function BookCard({ book, getCoverUrl }: { book: Book; getCoverUrl: (id: number)
     
     const rect = cardRef.current.getBoundingClientRect();
     
-    //Posicion raton
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    // Calcular la rotación 
-    const rotateX = ((y - centerY) / centerY) * -15; // Max 15 grados 
+    const rotateX = ((y - centerY) / centerY) * -15;
     const rotateY = ((x - centerX) / centerX) * 15;
 
     setTransformStyle(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`);
   };
 
   const handleMouseLeave = () => {
-    // Restaurar a pos original
     setTransformStyle(`perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`);
   };
 
@@ -78,16 +75,21 @@ function BookCard({ book, getCoverUrl }: { book: Book; getCoverUrl: (id: number)
   );
 }
 
-export default function BookList() {
-  const { books, loading, error } = useFantasyBooks(100);
+interface BookListProps {
+  books: Book[];
+  loading: boolean;
+  error: string | null;
+  title: string;
+}
 
+export default function BookList({ books, loading, error, title }: BookListProps) {
   const getCoverUrl = (coverId: number) =>
     `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
 
   if (loading) {
     return (
       <section className="booklist">
-        <h2 className="booklist__title">Fantasía</h2>
+        <h2 className="booklist__title">{title}</h2>
         <SkeletonGrid />
       </section>
     );
@@ -96,7 +98,7 @@ export default function BookList() {
   if (error) {
     return (
       <section className="booklist">
-        <h2 className="booklist__title">Fantasía</h2>
+        <h2 className="booklist__title">{title}</h2>
         <p className="booklist__status booklist__status--error">⚠️ {error}</p>
       </section>
     );
@@ -104,7 +106,7 @@ export default function BookList() {
 
   return (
     <section className="booklist">
-      <h2 className="booklist__title">Fantasía en Español</h2>
+      <h2 className="booklist__title">{title}</h2>
       <div className="booklist__grid">
         {books.map((book) => (
           <BookCard key={book.key} book={book} getCoverUrl={getCoverUrl} />

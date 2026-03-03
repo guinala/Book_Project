@@ -1,12 +1,10 @@
 import { useState, useRef } from "react";
-import "./SearchBar.css";
-
-type SearchFilter = "todo" | "titulo" | "autor" | "isbn";
+import type { SearchFilter } from "../types/Search";
+import "../styles/css/components/SearchBar.css";
 
 interface SearchBarProps {
   onSearch?: (query: string, filter: SearchFilter) => void;
   placeholder?: string;
-  variant?: "hero" | "compact";
 }
 
 const FILTERS: { value: SearchFilter; label: string }[] = [
@@ -19,14 +17,11 @@ const FILTERS: { value: SearchFilter; label: string }[] = [
 export default function SearchBar({
   onSearch,
   placeholder = "Busca un libro, autor o ISBN…",
-  variant = "hero",
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<SearchFilter>("todo");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const isCompact = variant === "compact";
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -38,10 +33,6 @@ export default function SearchBar({
     if (e.key === "Enter") handleSearch();
   };
 
-  const wrapperClass = ["searchbar", isCompact ? "searchbar--compact" : ""]
-    .filter(Boolean)
-    .join(" ");
-
   const inputRowClass = [
     "searchbar__input-row",
     isFocused ? "searchbar__input-row--focused" : "",
@@ -50,7 +41,7 @@ export default function SearchBar({
     .join(" ");
 
   return (
-    <div className={wrapperClass}>
+    <div className="searchbar">
 
       <div className="searchbar__filters">
         {FILTERS.map((f) => (
@@ -107,12 +98,6 @@ export default function SearchBar({
           🔍
         </button>
       </div>
-
-      {!isCompact && (
-        <p className="searchbar__hint">
-          Prueba: "Gabriel García Márquez", "Cien años de soledad", "978-84-376-0494-7"
-        </p>
-      )}
 
     </div>
   );
