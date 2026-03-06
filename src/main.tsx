@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import "./styles/css/index.css"
+import "./styles/index.scss"
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { ROUTES } from './routes/routes.tsx'
 

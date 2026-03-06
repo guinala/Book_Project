@@ -1,0 +1,220 @@
+import { useState, useEffect } from "react";
+import axios, { AxiosError } from "axios";
+import type { Book } from "../types/Book";
+
+// ─── OpenLibrary types ───
+
+interface OpenLibraryEditionDoc {
+  key?: string;
+  title?: string;
+  language?: string[];
+  cover_i?: number;
+}
+
+interface OpenLibraryEditions {
+  numFound: number;
+  docs: OpenLibraryEditionDoc[];
+}
+
+interface OpenLibraryDoc {
+  key: string;
+  title: string;
+  author_name?: string[];
+  first_publish_year?: number;
+  cover_i?: number;
+  edition_count?: number;
+  subject?: string[];
+  ratings_average?: number;
+  ratings_count?: number;
+  editions?: OpenLibraryEditions;
+}
+
+interface OpenLibrarySearchResponse {
+  docs: OpenLibraryDoc[];
+  numFound: number;
+}
+
+// ─── Google Books types ───
+
+interface GoogleBooksImageLinks {
+  thumbnail?: string;
+  smallThumbnail?: string;
+}
+
+interface GoogleBooksVolumeInfo {
+  imageLinks?: GoogleBooksImageLinks;
+}
+
+interface GoogleBooksItem {
+  volumeInfo: GoogleBooksVolumeInfo;
+}
+
+interface GoogleBooksResponse {
+  items?: GoogleBooksItem[];
+  totalItems: number;
+}
+
+// ─── Hook result ───
+
+interface UseFantasyBooksHybridResult {
+  books: Book[];
+  loading: boolean;
+  error: string | null;
+}
+
+// ─── Clients ───
+
+const openLibraryClient = axios.create({
+  baseURL: "https://openlibrary.org",
+  headers: { "Content-Type": "application/json" },
+});
+
+const googleBooksClient = axios.create({
+  baseURL: "https://www.googleapis.com/books/v1",
+  headers: { "Content-Type": "application/json" },
+});
+
+const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
+
+// ─── Helpers ───
+
+function normalizeCoverUrl(imageLinks?: GoogleBooksImageLinks): string | null {
+  const url = imageLinks?.thumbnail;
+  if (!url) return null;
+  return url
+    .replace("http://", "https://")
+}
+
+async function fetchGoogleCover(
+  title: string,
+  author: string,
+  signal: AbortSignal
+): Promise<string | null> {
+  try {
+    const query = `intitle:${title}${author ? `+inauthor:${author}` : ""}`;
+
+    const { data } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
+      params: {
+        q: query,
+        maxResults: 1,
+        fields: "items(volumeInfo/imageLinks)",
+        key: GOOGLE_BOOKS_API_KEY,
+      },
+      signal,
+    });
+
+    return normalizeCoverUrl(data.items?.[0]?.volumeInfo?.imageLinks) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Hook ───
+
+export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksHybridResult {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchBooks = async () => {
+      try {
+        setLoading(true);
+        setError(null); 
+        console.log("Patatuelas con atun");
+        // 1. Obtener libros de OpenLibrary
+        const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
+          params: {
+            q: "subject:fantasy language:spa",
+            lang: "es",
+            fields: [
+              "key",
+              "title",
+              "author_name",
+              "first_publish_year",
+              "cover_i",
+              "edition_count",
+              "subject",
+              "ratings_average",
+              "ratings_count",
+              "editions",
+              "editions.title",
+              "editions.language",
+              "editions.cover_i",
+            ].join(","),
+            limit,
+          },
+          signal: controller.signal,
+        });
+
+        const mappedBooks: Book[] = data.docs.map((doc) => {
+          const bestEdition = doc.editions?.docs?.[0];
+          const title = bestEdition?.title ?? doc.title;
+          const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
+
+          return {
+            key: doc.key,
+            title,
+            authors: doc.author_name ?? ["Autor desconocido"],
+            first_publish_year: doc.first_publish_year ?? 0,
+            cover_id,
+            edition_count: doc.edition_count ?? 0,
+            genre: doc.subject?.[0],
+            rating: doc.ratings_average,
+            ratingCount: doc.ratings_count,
+          };
+        });
+
+        // 2. Mostrar libros inmediatamente (sin portadas de Google todavía)
+        setBooks(mappedBooks);
+        setLoading(false);
+
+        // 3. Buscar portadas en Google Books en paralelo
+        const coverPromises = mappedBooks.map((book) =>
+          fetchGoogleCover(
+            book.title,
+            book.authors[0] ?? "",
+            controller.signal
+          )
+        );
+
+        const coverResults = await Promise.allSettled(coverPromises);
+
+        // 4. Actualizar libros con las portadas obtenidas
+        setBooks((prev) =>
+          prev.map((book, i) => {
+            const result = coverResults[i];
+            const coverUrl =
+              result.status === "fulfilled" ? result.value : null;
+
+            if (!coverUrl) {
+              console.warn(`[Cover not found] "${book.title}" — ${book.authors[0]}`);
+            }
+
+            return coverUrl ? { ...book, cover_url: coverUrl } : book;
+          })
+        );
+      } catch (err) {
+        if (axios.isCancel(err)) return;
+
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          setError(`Error ${axiosError.response.status}: ${axiosError.response.statusText}`);
+        } else if (axiosError.request) {
+          setError("No se pudo conectar con el servidor. Comprueba tu conexión.");
+        } else {
+          setError("Error inesperado al realizar la petición.");
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
+
+    return () => controller.abort();
+  }, [limit]);
+
+  return { books, loading, error };
+}
