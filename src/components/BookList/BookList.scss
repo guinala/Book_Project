@@ -1,0 +1,68 @@
+@import '../../styles/base';
+
+.booklist {
+  margin-left: 10px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  font-family: $font-main;
+
+  &__title {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0 0 40px 0;
+    text-align: center;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 600px;
+  }
+
+  &__status {
+    text-align: center;
+    padding: 60px 24px;
+    font-size: 18px;
+  }
+
+  &__skeleton-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 600px;
+  }
+
+  &__skeleton-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  &__skeleton-cover {
+    flex-shrink: 0;
+    width: 120px;
+    aspect-ratio: 2 / 3;
+    border-radius: $border-radius-sm;
+    @include shimmer-bg;
+  }
+
+  &__skeleton-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 4px;
+  }
+
+  &__skeleton-line {
+    height: 14px;
+    border-radius: $border-radius-sm;
+    @include shimmer-bg;
+
+    &--short {
+      width: 50%;
+    }
+  }
+}

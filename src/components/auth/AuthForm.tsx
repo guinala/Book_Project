@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "../../services/firebase_init";
-import "../../styles/css/components/auth/AuthForm.css";
+import "./AuthForm.scss";
 
 type Screen = "loading" | "login" | "register" | "user";
 

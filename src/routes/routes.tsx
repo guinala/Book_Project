@@ -1,14 +1,14 @@
-import App from '../App'
-import LandingPage from '../LandingPage'
-import AuthPage from '../AuthPage'
-import StyleGuide from '../pages/styleguide/Styleguide';
+import App from '../app/App'
+import LandingPage from '../pages/LandingPage/LandingPage'
+import AuthPage from '../pages/AuthPage/AuthPage'
+import StyleGuide from '../pages/StyleGuide/Styleguide';
 
 export const ROUTES = [
   {
     path: "/",
     element: <App />,
     children: [
-      { index: true, element: <StyleGuide /> },
+      { index: true, element: <LandingPage /> },
       { path: "auth", element: <AuthPage /> },
     ],
   },

@@ -1,0 +1,96 @@
+@import '../../styles/base';
+
+.searchbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  font-family: $font-main;
+
+  &--compact {
+    max-width: 480px;
+    gap: 8px;
+
+    .searchbar__input {
+      padding: 10px 14px;
+      font-size: 15px;
+    }
+
+    .searchbar__search-btn {
+      padding: 10px 18px;
+      font-size: 18px;
+      min-width: 44px;
+    }
+  }
+
+  &__filters {
+    display: flex;
+    gap: 6px;
+    align-self: flex-start;
+  }
+
+  &__filter-btn {
+    padding: 4px 14px;
+    border-radius: $border-radius-pill;
+    background-color: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    letter-spacing: 0.02em;
+
+    &--active {
+      font-weight: 600;
+    }
+  }
+
+  &__input-row {
+    display: flex;
+    width: 100%;
+    border-radius: $border-radius-md;
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+  }
+
+  &__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 14px 18px;
+    font-size: 17px;
+    font-family: $font-main;
+    letter-spacing: 0.01em;
+  }
+
+  &__clear-btn {
+    background: transparent;
+    border: none;
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__search-btn {
+    border: none;
+    padding: 14px 24px;
+    cursor: pointer;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+  }
+
+  &__hint {
+    align-self: flex-start;
+    font-size: 12px;
+    font-family: $font-main;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+}
