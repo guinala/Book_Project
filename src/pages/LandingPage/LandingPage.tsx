@@ -1,75 +1,62 @@
-import { useState } from "react";
-import SearchBar from "../../components/Searchbar/Searchbar";
-import BookList from "../../components/BookList/BookList";
-import { useFantasyBooks } from "../../hooks/useFantasyBooks";
-import { useBookSearch } from "../../hooks/useBookSearch";
-import type { SearchFilter } from "../../types/Search";
+import { useNavigate } from "react-router";
+import { useAuth } from "../../services/Auth";
+import { useEffect } from "react";
 import "./LandingPage.scss";
-import { useFantasyBooks_GoogleOpen } from "../../hooks/useFantasyBooks_GoogleOpen";
 
 function LandingPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchFilter, setSearchFilter] = useState<SearchFilter>("todo");
+  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAuth();
 
-  const fantasy = useFantasyBooks(20);
-  const hybrid = useFantasyBooks_GoogleOpen(20);
-  const search = useBookSearch(searchQuery, searchFilter, 20);
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate("/my-library", { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
-  const isSearching = searchQuery.trim().length > 0;
-
-  const handleSearch = (query: string, filter: SearchFilter) => {
-    setSearchQuery(query);
-    setSearchFilter(filter);
+  const handleLogin = () => {
+    navigate("/auth");
   };
 
-  const handleClearSearch = () => {
-    setSearchQuery("");
+  const handleGuest = () => {
+    navigate("/explore");
   };
 
-  // const activeBooks = isSearching ? search.books : fantasy.books;
-  // const activeLoading = isSearching ? search.loading : fantasy.loading;
-  // const activeError = isSearching ? search.error : fantasy.error;
-  // const activeTitle = isSearching
-  //   ? `Resultados para "${searchQuery}"`
-  //   : "Fantasía";
-
-  const activeBooks = isSearching ? search.books : hybrid.books;
-  const activeLoading = isSearching ? search.loading : hybrid.loading;
-  const activeError = isSearching ? search.error : hybrid.error;
-  const activeTitle = isSearching
-    ? `Resultados para "${searchQuery}"`
-    : "Fantasía";
-
+  if (loading) {
+    return (
+      <div className="landing">
+        <p className="landing__loading">Comprobando sesión...</p>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <main>
-        <SearchBar onSearch={handleSearch}/>
+    <div className="landing">
+      <div className="landing__content">
+        <span className="landing__icon">📖</span>
+        <h1 className="landing__title">Bienvenido a Trama</h1>
+        <p className="landing__subtitle">
+          Tu compañero de lectura. Descubre, organiza y comparte los libros que
+          dan forma a tu mundo.
+        </p>
 
-        {isSearching && (
-          <div className="landing-page__search-status">
-            <p>
-              {search.loading
-                ? "Buscando..."
-                : `${search.totalResults} resultados encontrados`}
-            </p>
-            <button
-              onClick={handleClearSearch}
-              className="landing-page__clear-btn"
-            >
-              Volver
-            </button>
-          </div>
-        )}
-
-        <BookList
-          books={activeBooks}
-          loading={activeLoading}
-          error={activeError}
-          title={activeTitle}
-        />
-      </main>
-    </>
+        <div className="landing__actions">
+          <button
+            type="button"
+            className="landing__btn-login"
+            onClick={handleLogin}
+          >
+            Iniciar Sesión
+          </button>
+          <button
+            type="button"
+            className="landing__btn-guest"
+            onClick={handleGuest}
+          >
+            Entrar como Invitado
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
