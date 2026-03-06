@@ -1,5 +1,3 @@
-@import 'variables';
-
 @mixin transition($properties...) {
   transition-property: $properties;
   transition-duration: 0.2s;

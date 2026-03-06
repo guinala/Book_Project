@@ -1,0 +1,22 @@
+@import '../../styles/base';
+
+.explore-page__search-status {
+  @include container;
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: $font-main;
+  font-size: 15px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.explore-page__clear-btn {
+  @include ghost-button;
+  padding: 6px 16px;
+  border-radius: $border-radius-sm;
+  font-size: 13px;
+}

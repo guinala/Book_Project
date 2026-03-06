@@ -1,29 +1,67 @@
 @import '../../styles/base';
 
-// #root {
-//   max-width: 1280px;
-//   margin: 0 auto;
-//   padding: 2rem;
-//   text-align: center;
-// }
-
-.landing-page__search-status {
-  @include container;
-  padding-top: 16px;
+.landing {
+  min-height: calc(100vh - #{$navbar-height});
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   font-family: $font-main;
-  font-size: 15px;
+  padding: 24px;
 
-  p {
+  &__loading {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 440px;
+    text-align: center;
+  }
+
+  &__icon {
+    font-size: 48px;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+
+  &__subtitle {
+    font-size: 16px;
+    line-height: 1.6;
     margin: 0;
   }
-}
 
-.landing-page__clear-btn {
-  @include ghost-button;
-  padding: 6px 16px;
-  border-radius: $border-radius-sm;
-  font-size: 13px;
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 12px;
+  }
+
+  &__btn-login {
+    @include primary-button;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: $border-radius-sm;
+    border: none;
+    width: 100%;
+  }
+
+  &__btn-guest {
+    @include ghost-button;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: $border-radius-sm;
+    width: 100%;
+  }
 }
