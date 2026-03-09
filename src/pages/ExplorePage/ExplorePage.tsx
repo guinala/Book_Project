@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SearchBar from "../../components/Searchbar/Searchbar";
 import BookList from "../../components/BookList/BookList";
-import { useFantasyBooks } from "../../hooks/useFantasyBooks";
+//import { useFantasyBooks } from "../../hooks/useFantasyBooks";
 import { useBookSearch } from "../../hooks/useBookSearch";
 import type { SearchFilter } from "../../types/Search";
 import "./ExplorePage.scss";
@@ -11,7 +11,7 @@ function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFilter, setSearchFilter] = useState<SearchFilter>("todo");
 
-  const fantasy = useFantasyBooks(20);
+  //const fantasy = useFantasyBooks(20);
   const hybrid = useFantasyBooks_GoogleOpen(20);
   const search = useBookSearch(searchQuery, searchFilter, 20);
 

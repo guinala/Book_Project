@@ -6,7 +6,11 @@
   align-items: center;
   justify-content: center;
   font-family: $font-main;
-  padding: 24px;
+  padding: 16px;
+
+  @include from($bp-md) {
+    padding: 24px;
+  }
 
   &__loading {
     font-size: 16px;
@@ -17,26 +21,42 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     max-width: 440px;
     text-align: center;
+
+    @include from($bp-md) {
+      gap: 16px;
+    }
   }
 
   &__icon {
-    font-size: 48px;
+    font-size: 40px;
+
+    @include from($bp-md) {
+      font-size: 48px;
+    }
   }
 
   &__title {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 700;
     margin: 0;
     letter-spacing: 0.01em;
+
+    @include from($bp-md) {
+      font-size: 32px;
+    }
   }
 
   &__subtitle {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.6;
     margin: 0;
+
+    @include from($bp-md) {
+      font-size: 16px;
+    }
   }
 
   &__actions {

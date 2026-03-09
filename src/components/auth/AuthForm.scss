@@ -6,16 +6,25 @@
   align-items: center;
   justify-content: center;
   font-family: $font-main;
-  padding: 24px;
+  padding: 16px;
+
+  @include from($bp-md) {
+    padding: 24px;
+  }
 
   &__box {
     border-radius: $border-radius-lg;
-    padding: 40px 36px;
+    padding: 28px 20px;
     width: 100%;
     max-width: 400px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
+
+    @include from($bp-md) {
+      padding: 40px 36px;
+      gap: 24px;
+    }
   }
 
   &__logo {
@@ -38,17 +47,25 @@
   }
 
   &__logo-text {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 600;
     letter-spacing: 0.01em;
+
+    @include from($bp-md) {
+      font-size: 26px;
+    }
   }
 
   &__title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
     text-align: center;
     margin: 0;
     letter-spacing: 0.01em;
+
+    @include from($bp-md) {
+      font-size: 22px;
+    }
   }
 
   &__form {

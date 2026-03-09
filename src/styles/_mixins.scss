@@ -1,3 +1,5 @@
+@import 'variables';
+
 @mixin transition($properties...) {
   transition-property: $properties;
   transition-duration: 0.2s;
@@ -41,4 +43,11 @@
   font-weight: 600;
   cursor: pointer;
   letter-spacing: 0.02em;
+}
+
+// Responsive
+@mixin from($bp) {
+  @media (min-width: $bp) {
+    @content;
+  }
 }

@@ -1,51 +1,84 @@
 @import '../../styles/base';
 
 .booklist {
-  margin-left: 10px;
-  padding-top: 60px;
-  padding-bottom: 60px;
+  margin-left: 0;
+  padding: 32px 16px 40px;
   font-family: $font-main;
 
+  @include from($bp-md) {
+    margin-left: 10px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+
   &__title {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 600;
     letter-spacing: 0.02em;
-    margin: 0 0 40px 0;
+    margin: 0 0 24px 0;
     text-align: center;
+
+    @include from($bp-md) {
+      font-size: 32px;
+      margin-bottom: 40px;
+    }
   }
 
   &__list {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 600px;
+    gap: 20px;
+    max-width: 100%;
+
+    @include from($bp-md) {
+      gap: 24px;
+      max-width: 600px;
+    }
   }
 
   &__status {
     text-align: center;
-    padding: 60px 24px;
-    font-size: 18px;
+    padding: 40px 16px;
+    font-size: 16px;
+
+    @include from($bp-md) {
+      padding: 60px 24px;
+      font-size: 18px;
+    }
   }
 
   &__skeleton-list {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 600px;
+    gap: 20px;
+    max-width: 100%;
+
+    @include from($bp-md) {
+      gap: 24px;
+      max-width: 600px;
+    }
   }
 
   &__skeleton-row {
     display: flex;
-    gap: 20px;
+    gap: 14px;
     align-items: flex-start;
+
+    @include from($bp-md) {
+      gap: 20px;
+    }
   }
 
   &__skeleton-cover {
     flex-shrink: 0;
-    width: 120px;
+    width: 90px;
     aspect-ratio: 2 / 3;
     border-radius: $border-radius-sm;
     @include shimmer-bg;
+
+    @include from($bp-md) {
+      width: 120px;
+    }
   }
 
   &__skeleton-info {

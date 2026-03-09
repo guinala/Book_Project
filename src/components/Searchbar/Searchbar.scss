@@ -4,11 +4,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  max-width: 680px;
+  max-width: 100%;
+  padding: 0 16px;
   margin: 0 auto;
   font-family: $font-main;
+
+  @include from($bp-md) {
+    max-width: 680px;
+    padding: 0;
+    gap: 12px;
+  }
 
   &--compact {
     max-width: 480px;
@@ -30,16 +37,21 @@
     display: flex;
     gap: 6px;
     align-self: flex-start;
+    flex-wrap: wrap;
   }
 
   &__filter-btn {
-    padding: 4px 14px;
+    padding: 4px 12px;
     border-radius: $border-radius-pill;
     background-color: transparent;
     font-size: 13px;
     cursor: pointer;
     transition: all 0.18s ease;
     letter-spacing: 0.02em;
+
+    @include from($bp-md) {
+      padding: 4px 14px;
+    }
 
     &--active {
       font-weight: 600;
@@ -56,13 +68,19 @@
 
   &__input {
     flex: 1;
+    min-width: 0;
     background: transparent;
     border: none;
     outline: none;
-    padding: 14px 18px;
-    font-size: 17px;
+    padding: 12px 14px;
+    font-size: 16px;
     font-family: $font-main;
     letter-spacing: 0.01em;
+
+    @include from($bp-md) {
+      padding: 14px 18px;
+      font-size: 17px;
+    }
   }
 
   &__clear-btn {
@@ -77,13 +95,19 @@
 
   &__search-btn {
     border: none;
-    padding: 14px 24px;
+    padding: 12px 20px;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 56px;
+    min-width: 48px;
+
+    @include from($bp-md) {
+      padding: 14px 24px;
+      font-size: 22px;
+      min-width: 56px;
+    }
   }
 
   &__hint {

@@ -9,16 +9,36 @@
   &__top {
     max-width: $max-width;
     margin: 0 auto;
-    padding: 60px $padding-horizontal 40px;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-    gap: 40px;
+    padding: 40px $padding-horizontal 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+
+    @include from($bp-md) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+
+    @include from($bp-lg) {
+      padding: 60px $padding-horizontal 40px;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
   }
 
   &__brand {
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    @include from($bp-md) {
+      grid-column: 1 / -1;
+    }
+
+    @include from($bp-lg) {
+      grid-column: auto;
+    }
   }
 
   &__brand-logo {
@@ -50,8 +70,11 @@
     font-size: 15px;
     line-height: 1.6;
     color: $color-text-subtle;
-    max-width: 240px;
     margin: 0;
+
+    @include from($bp-lg) {
+      max-width: 240px;
+    }
   }
 
   &__social-row {
@@ -117,16 +140,25 @@
   &__bottom {
     max-width: $max-width;
     margin: 0 auto;
-    padding: 20px $padding-horizontal;
+    padding: 16px $padding-horizontal;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
+
+    @include from($bp-md) {
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 20px $padding-horizontal;
+      gap: 0;
+    }
   }
 
   &__copyright {
     font-size: 13px;
     color: $color-border;
     letter-spacing: 0.02em;
+    text-align: center;
   }
 
   &__language-btn {
