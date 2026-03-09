@@ -13,7 +13,7 @@ export default function AuthRoute({
   children,
   requireAuth = true,
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isGuest, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return <p style={{ textAlign: "center", padding: "60px" }}>Cargando...</p>;
