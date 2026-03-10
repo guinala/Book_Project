@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
+import i18n from "../plugins/i18n/i18n";
 import type { Book } from "../types/Book";
 
 // ─── OpenLibrary types ───
@@ -108,9 +109,27 @@ async function fetchGoogleCover(
   }
 }
 
+function getErrorMessage(err: unknown): string {
+  if (axios.isCancel(err)) return "";
+
+  const axiosError = err as AxiosError;
+  if (axiosError.response) {
+    return i18n.t("errors.httpError", {
+      status: axiosError.response.status,
+      statusText: axiosError.response.statusText,
+    });
+  } else if (axiosError.request) {
+    return i18n.t("errors.connectionFailed");
+  }
+  return i18n.t("errors.unexpectedError");
+}
+
 // ─── Hook ───
 
-export function useBookTitle(title: string): UseBookByTitleResult {
+export function useBookTitle(
+  title: string,
+  lang: string = "es"
+): UseBookByTitleResult {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -151,7 +170,7 @@ export function useBookTitle(title: string): UseBookByTitleResult {
                 "editions.cover_i",
               ].join(","),
               limit: 1,
-              lang: "es",
+              lang,
             },
             signal: controller.signal,
           }
@@ -159,7 +178,7 @@ export function useBookTitle(title: string): UseBookByTitleResult {
 
         if (!data.docs || data.docs.length === 0) {
           setBook(null);
-          setError("No se encontró el libro en OpenLibrary.");
+          setError(i18n.t("errors.bookNotFound"));
           setLoading(false);
           return;
         }
@@ -168,11 +187,12 @@ export function useBookTitle(title: string): UseBookByTitleResult {
         const bestEdition = doc.editions?.docs?.[0];
         const bookTitle = bestEdition?.title ?? doc.title;
         const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
+        const unknownAuthor = i18n.t("book.unknownAuthor");
 
         const mappedBook: Book = {
           key: doc.key,
           title: bookTitle,
-          authors: doc.author_name ?? ["Autor desconocido"],
+          authors: doc.author_name ?? [unknownAuthor],
           first_publish_year: doc.first_publish_year ?? 0,
           cover_id,
           edition_count: doc.edition_count ?? 0,
@@ -181,7 +201,7 @@ export function useBookTitle(title: string): UseBookByTitleResult {
           ratingCount: doc.ratings_count,
         };
 
-        // 2. Mostrar el libro inmediatamente (sin portada de Google todavía)
+        // 2. Mostrar el libro inmediatamente
         setBook(mappedBook);
         setLoading(false);
 
@@ -198,19 +218,7 @@ export function useBookTitle(title: string): UseBookByTitleResult {
         }
       } catch (err) {
         if (axios.isCancel(err)) return;
-
-        const axiosError = err as AxiosError;
-        if (axiosError.response) {
-          setError(
-            `Error ${axiosError.response.status}: ${axiosError.response.statusText}`
-          );
-        } else if (axiosError.request) {
-          setError(
-            "No se pudo conectar con el servidor. Comprueba tu conexión."
-          );
-        } else {
-          setError("Error inesperado al realizar la petición.");
-        }
+        setError(getErrorMessage(err));
         setLoading(false);
       }
     };
@@ -218,7 +226,7 @@ export function useBookTitle(title: string): UseBookByTitleResult {
     fetchBook();
 
     return () => controller.abort();
-  }, [title]);
+  }, [title, lang]);
 
   return { book, loading, error };
 }

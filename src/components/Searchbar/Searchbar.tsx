@@ -1,27 +1,28 @@
 import { useState, useRef } from "react";
 import type { SearchFilter } from "../../types/Search";
 import "./Searchbar.scss";
+import { useTranslation } from "react-i18next";
 
-interface SearchBarProps {
+type SearchBarProps = {
   onSearch?: (query: string, filter: SearchFilter) => void;
   placeholder?: string;
 }
 
 const FILTERS: { value: SearchFilter; label: string }[] = [
-  { value: "todo", label: "Todo" },
-  { value: "titulo", label: "Título" },
-  { value: "autor", label: "Autor" },
-  { value: "isbn", label: "ISBN" },
+  { value: "todo", label: "search.all" },
+  { value: "titulo", label: "search.title" },
+  { value: "autor", label: "search.author" },
+  { value: "isbn", label: "search.isbn" },
 ];
 
 export default function SearchBar({
   onSearch,
-  placeholder = "Busca un libro, autor o ISBN…",
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<SearchFilter>("todo");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -56,7 +57,7 @@ export default function SearchBar({
               .join(" ")}
             onClick={() => setActiveFilter(f.value)}
           >
-            {f.label}
+            {t(f.label)}
           </button>
         ))}
       </div>
@@ -70,9 +71,9 @@ export default function SearchBar({
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder={placeholder}
+          placeholder={t("explore.searchPlaceholder")}
           className="searchbar__input"
-          aria-label="Buscar libros"
+          aria-label={t("search.searchLabel")}
         />
 
         {query && (
@@ -83,7 +84,7 @@ export default function SearchBar({
               setQuery("");
               inputRef.current?.focus();
             }}
-            aria-label="Limpiar búsqueda"
+            aria-label={t("search.clearLabel")}
           >
             ✕
           </button>
@@ -93,7 +94,7 @@ export default function SearchBar({
           type="button"
           className="searchbar__search-btn"
           onClick={handleSearch}
-          aria-label="Buscar"
+          aria-label={t("search.searchBtnLabel")}
         >
           🔍
         </button>

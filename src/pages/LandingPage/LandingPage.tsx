@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../services/Auth";
 import { useEffect } from "react";
 import "./LandingPage.scss";
@@ -6,6 +7,7 @@ import "./LandingPage.scss";
 function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -24,7 +26,7 @@ function LandingPage() {
   if (loading) {
     return (
       <div className="landing">
-        <p className="landing__loading">Comprobando sesión...</p>
+        <p className="landing__loading">{t("landing.checkingSession")}</p>
       </div>
     );
   }
@@ -33,11 +35,8 @@ function LandingPage() {
     <div className="landing">
       <div className="landing__content">
         <span className="landing__icon">📖</span>
-        <h1 className="landing__title">Bienvenido a Trama</h1>
-        <p className="landing__subtitle">
-          Tu compañero de lectura. Descubre, organiza y comparte los libros que
-          dan forma a tu mundo.
-        </p>
+        <h1 className="landing__title">{t("landing.title")}</h1>
+        <p className="landing__subtitle">{t("landing.subtitle")}</p>
 
         <div className="landing__actions">
           <button
@@ -45,14 +44,14 @@ function LandingPage() {
             className="landing__btn-login"
             onClick={handleLogin}
           >
-            Iniciar Sesión
+            {t("landing.loginBtn")}
           </button>
           <button
             type="button"
             className="landing__btn-guest"
             onClick={handleGuest}
           >
-            Entrar como Invitado
+            {t("landing.guestBtn")}
           </button>
         </div>
       </div>

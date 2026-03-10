@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
+import i18n from "../plugins/i18n/i18n";
 import type { Book } from "../types/Book";
 
 // ─── OpenLibrary types ───
@@ -78,11 +79,14 @@ const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string
 
 // ─── Helpers ───
 
+function getLangIso639_2(lang: string): string {
+  return lang === "en" ? "eng" : "spa";
+}
+
 function normalizeCoverUrl(imageLinks?: GoogleBooksImageLinks): string | null {
   const url = imageLinks?.thumbnail;
   if (!url) return null;
-  return url
-    .replace("http://", "https://")
+  return url.replace("http://", "https://");
 }
 
 async function fetchGoogleCover(
@@ -109,9 +113,27 @@ async function fetchGoogleCover(
   }
 }
 
+function getErrorMessage(err: unknown): string {
+  if (axios.isCancel(err)) return "";
+
+  const axiosError = err as AxiosError;
+  if (axiosError.response) {
+    return i18n.t("errors.httpError", {
+      status: axiosError.response.status,
+      statusText: axiosError.response.statusText,
+    });
+  } else if (axiosError.request) {
+    return i18n.t("errors.connectionFailed");
+  }
+  return i18n.t("errors.unexpectedError");
+}
+
 // ─── Hook ───
 
-export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksHybridResult {
+export function useFantasyBooks_GoogleOpen(
+  limit: number = 20,
+  lang: string = "es"
+): UseFantasyBooksHybridResult {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -122,13 +144,15 @@ export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksH
     const fetchBooks = async () => {
       try {
         setLoading(true);
-        setError(null); 
-        console.log("Patatuelas con atun");
+        setError(null);
+
+        const langCode = getLangIso639_2(lang);
+
         // 1. Obtener libros de OpenLibrary
         const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
           params: {
-            q: "subject:fantasy language:spa",
-            lang: "es",
+            q: `subject:fantasy language:${langCode}`,
+            lang,
             fields: [
               "key",
               "title",
@@ -149,6 +173,8 @@ export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksH
           signal: controller.signal,
         });
 
+        const unknownAuthor = i18n.t("book.unknownAuthor");
+
         const mappedBooks: Book[] = data.docs.map((doc) => {
           const bestEdition = doc.editions?.docs?.[0];
           const title = bestEdition?.title ?? doc.title;
@@ -157,7 +183,7 @@ export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksH
           return {
             key: doc.key,
             title,
-            authors: doc.author_name ?? ["Autor desconocido"],
+            authors: doc.author_name ?? [unknownAuthor],
             first_publish_year: doc.first_publish_year ?? 0,
             cover_id,
             edition_count: doc.edition_count ?? 0,
@@ -167,7 +193,7 @@ export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksH
           };
         });
 
-        // 2. Mostrar libros inmediatamente (sin portadas de Google todavía)
+        // 2. Mostrar libros inmediatamente
         setBooks(mappedBooks);
         setLoading(false);
 
@@ -189,24 +215,12 @@ export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksH
             const coverUrl =
               result.status === "fulfilled" ? result.value : null;
 
-            if (!coverUrl) {
-              console.warn(`[Cover not found] "${book.title}" — ${book.authors[0]}`);
-            }
-
             return coverUrl ? { ...book, cover_url: coverUrl } : book;
           })
         );
       } catch (err) {
         if (axios.isCancel(err)) return;
-
-        const axiosError = err as AxiosError;
-        if (axiosError.response) {
-          setError(`Error ${axiosError.response.status}: ${axiosError.response.statusText}`);
-        } else if (axiosError.request) {
-          setError("No se pudo conectar con el servidor. Comprueba tu conexión.");
-        } else {
-          setError("Error inesperado al realizar la petición.");
-        }
+        setError(getErrorMessage(err));
         setLoading(false);
       }
     };
@@ -214,7 +228,7 @@ export function useFantasyBooks_GoogleOpen(limit: number = 20): UseFantasyBooksH
     fetchBooks();
 
     return () => controller.abort();
-  }, [limit]);
+  }, [limit, lang]);
 
   return { books, loading, error };
 }
