@@ -1,0 +1,120 @@
+{
+  "navbar": {
+    "brandName": "Trama",
+    "register": "Log reading",
+    "login": "Sign In",
+    "logout": "Sign Out"
+  },
+  "nav": {
+    "myLibrary": "My Library",
+    "explore": "Explore",
+    "community": "Community"
+  },
+  "landing": {
+    "checkingSession": "Checking session...",
+    "title": "Welcome to Trama",
+    "subtitle": "Your reading companion. Discover, organize and share the books that shape your world.",
+    "loginBtn": "Sign In",
+    "guestBtn": "Continue as Guest"
+  },
+  "auth": {
+    "brandName": "Trama",
+    "dividerOr": "Or",
+    "loginTitle": "Sign In",
+    "registerTitle": "Create Account",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "passwordHint": "Password (min. 6 characters)",
+    "loginBtn": "Sign In",
+    "loggingIn": "Signing in...",
+    "registerBtn": "Sign Up",
+    "registering": "Signing up...",
+    "googleBtn": "Continue with Google",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Sign up",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Sign in",
+    "welcome": "Welcome",
+    "provider": "Provider: {{provider}}",
+    "providerGoogle": "Google",
+    "providerEmail": "Email / Password",
+    "checkingCredentials": "Checking credentials...",
+    "loading": "Loading..."
+  },
+  "authErrors": {
+    "auth/email-already-in-use": "This email is already registered",
+    "auth/invalid-email": "Invalid email",
+    "auth/operation-not-allowed": "Operation not allowed",
+    "auth/weak-password": "Password must be at least 6 characters",
+    "auth/user-disabled": "User disabled",
+    "auth/user-not-found": "User not found",
+    "auth/wrong-password": "Wrong password",
+    "auth/invalid-credential": "Invalid credentials",
+    "auth/popup-closed-by-user": "Popup closed by user",
+    "auth/cancelled-popup-request": "Request cancelled",
+    "default": "Error: {{code}}"
+  },
+  "explore": {
+    "searchPlaceholder": "Search for a book, author or ISBN…",
+    "searching": "Searching...",
+    "resultsFound": "{{count}} results found",
+    "backBtn": "Back",
+    "resultsTitle": "Results for \"{{query}}\"",
+    "fantasyTitle": "Fantasy"
+  },
+  "search": {
+    "all": "All",
+    "title": "Title",
+    "author": "Author",
+    "isbn": "ISBN",
+    "searchLabel": "Search books",
+    "clearLabel": "Clear search",
+    "searchBtnLabel": "Search"
+  },
+  "myLibrary": {
+    "heading": "Currently reading...",
+    "streakDays": "🔥 {{count}} day streak",
+    "readingProgress": "Reading progress",
+    "pages": "{{current}}/{{total}} pages"
+  },
+  "book": {
+    "unknownAuthor": "Unknown author",
+    "coverAlt": "Cover of {{title}}"
+  },
+  "errors": {
+    "connectionFailed": "Could not connect to the server. Check your connection.",
+    "unexpectedError": "Unexpected error while making the request.",
+    "bookNotFound": "Book not found on OpenLibrary.",
+    "httpError": "Error {{status}}: {{statusText}}"
+  },
+  "footer": {
+    "brandName": "Trama",
+    "tagline": "Your reading companion. Discover, organize and share the books that shape your world.",
+    "copyright": "© {{year}} Trama · All rights reserved",
+    "language": "English",
+    "columns": {
+      "discover": "Discover",
+      "community": "Community",
+      "company": "Company",
+      "legal": "Legal"
+    },
+    "links": {
+      "exploreBooks": "Explore books",
+      "genres": "Genres",
+      "popularLists": "Popular lists",
+      "trending": "Trending",
+      "recentReviews": "Recent reviews",
+      "bookClubs": "Book clubs",
+      "readingChallenges": "Reading challenges",
+      "forum": "Forum",
+      "about": "About us",
+      "blog": "Blog",
+      "contact": "Contact",
+      "press": "Press",
+      "privacy": "Privacy",
+      "terms": "Terms of use",
+      "cookies": "Cookies",
+      "accessibility": "Accessibility"
+    }
+  }
+}

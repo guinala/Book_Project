@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
+import i18n from "../plugins/i18n/i18n";
 
 export interface Book {
   key: string;
   title: string;
   authors: string[];
   first_publish_year: number;
-  cover_url: string | null;   
+  cover_url: string | null;
   edition_count: number;
 }
 
@@ -18,7 +19,7 @@ interface GoogleBooksImageLinks {
 interface GoogleBooksVolumeInfo {
   title: string;
   authors?: string[];
-  publishedDate?: string;    
+  publishedDate?: string;
   imageLinks?: GoogleBooksImageLinks;
 }
 
@@ -59,7 +60,25 @@ function normalizeCoverUrl(imageLinks?: GoogleBooksImageLinks): string | null {
     .replace("zoom=1", "zoom=2");
 }
 
-export function useFantasyBooks_Google(limit: number = 20): UseFantasyBooksResult {
+function getErrorMessage(err: unknown): string {
+  if (axios.isCancel(err)) return "";
+
+  const axiosError = err as AxiosError;
+  if (axiosError.response) {
+    return i18n.t("errors.httpError", {
+      status: axiosError.response.status,
+      statusText: axiosError.response.statusText,
+    });
+  } else if (axiosError.request) {
+    return i18n.t("errors.connectionFailed");
+  }
+  return i18n.t("errors.unexpectedError");
+}
+
+export function useFantasyBooks_Google(
+  limit: number = 20,
+  lang: string = "es"
+): UseFantasyBooksResult {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,8 +94,8 @@ export function useFantasyBooks_Google(limit: number = 20): UseFantasyBooksResul
         const { data } = await apiClient.get<GoogleBooksResponse>("/volumes", {
           params: {
             q: "subject:fantasy",
-            langRestrict: "es",             
-            maxResults: Math.min(limit, 40), // Google Books permite máximo 40
+            langRestrict: lang,
+            maxResults: Math.min(limit, 40),
             orderBy: "relevance",
             printType: "books",
             key: API_KEY,
@@ -89,27 +108,21 @@ export function useFantasyBooks_Google(limit: number = 20): UseFantasyBooksResul
           return;
         }
 
+        const unknownAuthor = i18n.t("book.unknownAuthor");
+
         const mappedBooks: Book[] = data.items.map((item) => ({
           key: item.id,
           title: item.volumeInfo.title,
-          authors: item.volumeInfo.authors ?? ["Autor desconocido"],
+          authors: item.volumeInfo.authors ?? [unknownAuthor],
           first_publish_year: extractYear(item.volumeInfo.publishedDate),
           cover_url: normalizeCoverUrl(item.volumeInfo.imageLinks),
-          edition_count: 0, //Este dato no se expone
+          edition_count: 0,
         }));
 
         setBooks(mappedBooks);
       } catch (err) {
         if (axios.isCancel(err)) return;
-
-        const axiosError = err as AxiosError;
-        if (axiosError.response) {
-          setError(`Error ${axiosError.response.status}: ${axiosError.response.statusText}`);
-        } else if (axiosError.request) {
-          setError("No se pudo conectar con el servidor. Comprueba tu conexión.");
-        } else {
-          setError("Error inesperado al realizar la petición.");
-        }
+        setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -118,7 +131,7 @@ export function useFantasyBooks_Google(limit: number = 20): UseFantasyBooksResul
     fetchBooks();
 
     return () => controller.abort();
-  }, [limit]);
+  }, [limit, lang]);
 
   return { books, loading, error };
 }

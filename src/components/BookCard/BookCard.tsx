@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import type { MouseEvent } from "react";
 import type { Book } from "../../types/Book";
 import "./BookCard.scss";
+import { useTranslation } from "react-i18next";
 
 type BookCardProps = {
   book: Book;
@@ -31,6 +32,7 @@ function StarRating({ rating }: { rating: number }) {
 export default function BookCard({ book }: BookCardProps) {
   const coverRef = useRef<HTMLDivElement>(null);
   const [transformStyle, setTransformStyle] = useState("");
+  const { t } = useTranslation();
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!coverRef.current) return;
@@ -65,7 +67,7 @@ export default function BookCard({ book }: BookCardProps) {
           <img
             className="bookcard__cover"
             src={book.cover_url ?? getCoverUrl(book.cover_id!)}
-            alt={`Portada de ${book.title}`}
+            alt={t("book.coverAlt", { title: book.title })}
             loading="lazy"
           />
         ) : (

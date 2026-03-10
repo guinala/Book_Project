@@ -2,9 +2,11 @@ import { Link, NavLink } from "react-router";
 import { NAV_LINKS } from "../../routes/routes";
 import { useAuth } from "../../services/Auth";
 import "./Navbar.scss";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <header className="navbar">
@@ -17,7 +19,7 @@ export default function Navbar() {
         <nav className="navbar__nav">
           {NAV_LINKS.map((link) => (
             <NavLink key={link.path} to={link.path} className="navbar__link">
-              {link.label}
+              {t(link.label)}
             </NavLink>
           ))}
         </nav>
@@ -26,7 +28,7 @@ export default function Navbar() {
           {isAuthenticated ? (
             <>
               <button className="navbar__btn-register-reading" type="button">
-                Registrar lectura
+                {t("navbar.register")}
               </button>
               <span className="navbar__action-text">{user?.email}</span>
               <button
@@ -35,7 +37,7 @@ export default function Navbar() {
                 onClick={logout}
                 style={{ background: "none", border: "none", cursor: "pointer" }}
               >
-                Cerrar Sesión
+                {t("navbar.logout")}
               </button>
             </>
           ) : (
@@ -43,7 +45,7 @@ export default function Navbar() {
               to="/auth"
               className="navbar__action-text navbar__action-link"
             >
-              Iniciar Sesión
+              {t("navbar.login")}
             </NavLink>
           )}
         </div>

@@ -26,7 +26,7 @@ export const ROUTES = [
 ];
 
 export const NAV_LINKS = [
-  { path: "/my-library", label: "Mi Biblioteca" },
-  { path: "/explore", label: "Explorar" },
-  { path: "/community", label: "Comunidad" },
+  { path: "/my-library", label: "nav.myLibrary" },
+  { path: "/explore", label: "nav.explore" },
+  { path: "/community", label: "nav.community" },
 ];

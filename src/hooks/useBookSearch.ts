@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
+import i18n from "../plugins/i18n/i18n";
 import type { Book } from "../types/Book";
 import type { SearchFilter } from "../types/Search";
 
@@ -46,10 +47,26 @@ function getSearchParams(
   }
 }
 
+function getErrorMessage(err: unknown): string {
+  if (axios.isCancel(err)) return "";
+
+  const axiosError = err as AxiosError;
+  if (axiosError.response) {
+    return i18n.t("errors.httpError", {
+      status: axiosError.response.status,
+      statusText: axiosError.response.statusText,
+    });
+  } else if (axiosError.request) {
+    return i18n.t("errors.connectionFailed");
+  }
+  return i18n.t("errors.unexpectedError");
+}
+
 export function useBookSearch(
   query: string,
   filter: SearchFilter,
-  limit: number = 20
+  limit: number = 20,
+  lang: string = "es"
 ): UseBookSearchResult {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
@@ -82,7 +99,7 @@ export function useBookSearch(
               fields:
                 "key,title,author_name,first_publish_year,cover_i,edition_count",
               limit,
-              lang: "es",
+              lang,
             },
             signal: controller.signal,
           }
@@ -90,10 +107,12 @@ export function useBookSearch(
 
         setTotalResults(data.numFound);
 
+        const unknownAuthor = i18n.t("book.unknownAuthor");
+
         const mapped: Book[] = data.docs.map((doc) => ({
           key: doc.key,
           title: doc.title,
-          authors: doc.author_name ?? ["Autor desconocido"],
+          authors: doc.author_name ?? [unknownAuthor],
           first_publish_year: doc.first_publish_year ?? 0,
           cover_id: doc.cover_i ?? null,
           edition_count: doc.edition_count ?? 0,
@@ -102,19 +121,7 @@ export function useBookSearch(
         setBooks(mapped);
       } catch (err) {
         if (axios.isCancel(err)) return;
-
-        const axiosError = err as AxiosError;
-        if (axiosError.response) {
-          setError(
-            `Error ${axiosError.response.status}: ${axiosError.response.statusText}`
-          );
-        } else if (axiosError.request) {
-          setError(
-            "No se pudo conectar con el servidor. Comprueba tu conexión."
-          );
-        } else {
-          setError("Error inesperado al realizar la petición.");
-        }
+        setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -122,7 +129,7 @@ export function useBookSearch(
 
     fetchBooks();
     return () => controller.abort();
-  }, [query, filter, limit]);
+  }, [query, filter, limit, lang]);
 
   return { books, loading, error, totalResults };
 }

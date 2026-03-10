@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
+import i18n from "../plugins/i18n/i18n";
 import type { Book } from "../types/Book";
 
 type OpenLibraryEditionDoc = {
@@ -45,7 +46,29 @@ const apiClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
+function getLangIso639_2(lang: string): string {
+  return lang === "en" ? "eng" : "spa";
+}
+
+function getErrorMessage(err: unknown): string {
+  if (axios.isCancel(err)) return "";
+
+  const axiosError = err as AxiosError;
+  if (axiosError.response) {
+    return i18n.t("errors.httpError", {
+      status: axiosError.response.status,
+      statusText: axiosError.response.statusText,
+    });
+  } else if (axiosError.request) {
+    return i18n.t("errors.connectionFailed");
+  }
+  return i18n.t("errors.unexpectedError");
+}
+
+export function useFantasyBooks(
+  limit: number = 20,
+  lang: string = "es"
+): UseFantasyBooksResult {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,10 +81,12 @@ export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
         setLoading(true);
         setError(null);
 
+        const langCode = getLangIso639_2(lang);
+
         const { data } = await apiClient.get<OpenLibrarySearchResponse>("/search.json", {
           params: {
-            q: "subject:fantasy language:spa",
-            lang: "es",
+            q: `subject:fantasy language:${langCode}`,
+            lang,
             fields: [
               "key",
               "title",
@@ -82,18 +107,18 @@ export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
           signal: controller.signal,
         });
 
+        const unknownAuthor = i18n.t("book.unknownAuthor");
+
         const mappedBooks: Book[] = data.docs.map((doc) => {
           const edition = doc.editions?.docs?.[0];
-          console.log("Mejor edicion encontrada:" + edition);
 
           const title = edition?.title ?? doc.title;
-
           const cover_id = edition?.cover_i ?? doc.cover_i ?? null;
 
           return {
             key: doc.key,
             title,
-            authors: doc.author_name ?? ["Autor desconocido"],
+            authors: doc.author_name ?? [unknownAuthor],
             first_publish_year: doc.first_publish_year ?? 0,
             cover_id,
             edition_count: doc.edition_count ?? 0,
@@ -106,15 +131,7 @@ export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
         setBooks(mappedBooks);
       } catch (err) {
         if (axios.isCancel(err)) return;
-
-        const axiosError = err as AxiosError;
-        if (axiosError.response) {
-          setError(`Error ${axiosError.response.status}: ${axiosError.response.statusText}`);
-        } else if (axiosError.request) {
-          setError("No se pudo conectar con el servidor. Comprueba tu conexión.");
-        } else {
-          setError("Error inesperado al realizar la petición.");
-        }
+        setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -123,7 +140,7 @@ export function useFantasyBooks(limit: number = 20): UseFantasyBooksResult {
     fetchBooks();
 
     return () => controller.abort();
-  }, [limit]);
+  }, [limit, lang]);
 
   return { books, loading, error };
 }

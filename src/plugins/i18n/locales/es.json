@@ -1,0 +1,71 @@
+{
+  "navbar": {
+    "brandName": "Trama",
+    "register": "Registrar lectura",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión"
+  },
+  "nav": {
+    "myLibrary": "Mi Biblioteca",
+    "explore": "Explorar",
+    "community": "Comunidad"
+  },
+  "landing": {
+    "title": "Bienvenido a Trama",
+    "subtitle": "Tu compañero de lectura. Descubre, organiza y comparte los libros que dan forma a tu mundo.",
+    "loginBtn": "Iniciar Sesión",
+    "guestBtn": "Entrar como Invitado"
+  },
+  "auth": {
+    "brandName": "Trama",
+    "dividerOr": "O",
+    "loginTitle": "Iniciar Sesión",
+    "registerTitle": "Crear Cuenta",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Contraseña",
+    "passwordHint": "Contraseña (mín. 6 caracteres)",
+    "loginBtn": "Iniciar Sesión",
+    "loggingIn": "Entrando...",
+    "registerBtn": "Registrarse",
+    "registering": "Registrando...",
+    "googleBtn": "Continuar con Google",
+    "noAccount": "¿No tienes cuenta?",
+    "registerLink": "Regístrate",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "loginLink": "Inicia sesión",
+    "welcome": "Bienvenido",
+    "provider": "Proveedor",
+    "checkingCredentials": "Comprobando credenciales..."
+  },
+  "explore": {
+    "searchPlaceholder": "Busca un libro, autor o ISBN…",
+    "searching": "Buscando...",
+    "resultsFound": "{{count}} resultados encontrados",
+    "backBtn": "Volver",
+    "resultsTitle": "Resultados para \"{{query}}\"",
+    "fantasyTitle": "Fantasía"
+  },
+  "search": {
+    "all": "Todo",
+    "title": "Título",
+    "author": "Autor",
+    "isbn": "ISBN",
+    "searchLabel": "Buscar Libros",
+    "clearLabel": "Borrar Búsqueda",
+    "searchBtnLabel": "Buscar"
+  },
+  "myLibrary": {
+    "heading": "Estoy leyendo...",
+    "streakDays": "🔥 {{count}} días de racha",
+    "readingProgress": "Progreso de lectura",
+    "pages": "{{current}}/{{total}} páginas"
+  },
+  "book": {
+    "unknownAuthor": "Autor desconocido"
+  },
+  "errors": {
+    "connectionFailed": "No se pudo conectar con el servidor. Comprueba tu conexión.",
+    "unexpectedError": "Error inesperado al realizar la petición.",
+    "bookNotFound": "No se encontró el libro en OpenLibrary."
+  }
+}

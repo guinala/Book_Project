@@ -1,3 +1,4 @@
+import "./plugins/i18n/i18n.ts";  
 import { createRoot } from 'react-dom/client'
 import "./styles/index.scss"
 import { createBrowserRouter, RouterProvider } from 'react-router'
