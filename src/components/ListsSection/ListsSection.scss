@@ -1,0 +1,75 @@
+@import '../../styles/base';
+
+.list-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: $border-radius-lg;
+  padding: 20px;
+  min-height: 200px;
+  @include transition(box-shadow);
+
+  @include from($bp-md) {
+    padding: 24px;
+    min-height: 220px;
+  }
+
+  &__mosaic {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    width: 96px;
+    height: 96px;
+    align-self: center;
+    border-radius: $border-radius-sm;
+    overflow: hidden;
+
+    @include from($bp-md) {
+      width: 110px;
+      height: 110px;
+      gap: 4px;
+    }
+  }
+
+  &__mosaic-cell {
+    overflow: hidden;
+  }
+
+  &__mosaic-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__meta {
+    margin-top: 16px;
+
+    @include from($bp-md) {
+      margin-top: 20px;
+    }
+  }
+
+  &__name {
+    margin: 0;
+    font-family: $font-main;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+
+    @include from($bp-md) {
+      font-size: 16px;
+    }
+  }
+
+  &__count {
+    margin: 2px 0 0;
+    font-family: $font-main;
+    font-size: 13px;
+
+    @include from($bp-md) {
+      font-size: 14px;
+    }
+  }
+}

@@ -33,4 +33,20 @@
     font-size: 16px;
     padding: 40px 0;
   }
+
+  &__shelf-section {
+    margin-top: 40px;
+
+    @include from($bp-md) {
+      margin-top: 56px;
+    }
+  }
+  
+  &__lists-section {
+    margin-top: 40px;
+
+    @include from($bp-md) {
+      margin-top: 56px;
+    }
+  }
 }

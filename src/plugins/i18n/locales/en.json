@@ -75,7 +75,15 @@
     "heading": "Currently reading...",
     "streakDays": "🔥 {{count}} day streak",
     "readingProgress": "Reading progress",
-    "pages": "{{current}}/{{total}} pages"
+    "pages": "{{current}}/{{total}} pages",
+    "shelfTitle": "Bookshelf",
+    "listsTitle": "Lists",
+    "listsCount": "{{count}} books",
+    "lists": {
+      "recommended": "Very recommended",
+      "drama": "Drama",
+      "women": "Written by Women"
+    }
   },
   "book": {
     "unknownAuthor": "Unknown author",

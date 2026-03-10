@@ -1,0 +1,33 @@
+@import '../../styles/base';
+
+.lists-section {
+  width: 100%;
+
+  &__title {
+    font-family: $font-main;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    letter-spacing: 0.01em;
+
+    @include from($bp-md) {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    @include from($bp-md) {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @include from($bp-lg) {
+      gap: 20px;
+    }
+  }
+}
