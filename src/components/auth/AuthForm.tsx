@@ -124,12 +124,10 @@ export default function Auth() {
           <span className="auth__logo-text">{t("auth.brandName")}</span>
         </a>
 
-        {/* ─── Loading ─── */}
         <div className={screen !== "loading" ? "auth__hidden" : ""}>
           <p className="auth__loading">{t("auth.checkingCredentials")}</p>
         </div>
 
-        {/* ─── Login ─── */}
         <div className={screen !== "login" ? "auth__hidden" : ""}>
           <h2 className="auth__title">{t("auth.loginTitle")}</h2>
 
@@ -191,7 +189,6 @@ export default function Auth() {
           </p>
         </div>
 
-        {/* ─── Register ─── */}
         <div className={screen !== "register" ? "auth__hidden" : ""}>
           <h2 className="auth__title">{t("auth.registerTitle")}</h2>
 
@@ -253,7 +250,6 @@ export default function Auth() {
           </p>
         </div>
 
-        {/* ─── User ─── */}
         <div className={screen !== "user" ? "auth__hidden" : ""}>
           <div className="auth__user-info">
             <div className="auth__user-avatar">

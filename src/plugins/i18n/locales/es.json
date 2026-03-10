@@ -58,7 +58,15 @@
     "heading": "Estoy leyendo...",
     "streakDays": "🔥 {{count}} días de racha",
     "readingProgress": "Progreso de lectura",
-    "pages": "{{current}}/{{total}} páginas"
+    "pages": "{{current}}/{{total}} páginas",
+    "shelfTitle": "Estantería",
+    "listsTitle": "Listas",
+    "listsCount": "{{count}} libros",
+    "lists": {
+      "recommended": "Muy Recomendados",
+      "drama": "Drama",
+      "women": "Escritos por mujeres"
+    }
   },
   "book": {
     "unknownAuthor": "Autor desconocido"
