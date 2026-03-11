@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import i18n from "../plugins/i18n/i18n";
+import type { GoogleBooksImageLinks, GoogleBooksResponse } from "../types/GoogleBooks";
+import { googleBooksClient } from "../services/apiClients";
+import { getErrorMessage } from "../utils/apiErrors";
 
-export interface Book {
+export type Book = {
   key: string;
   title: string;
   authors: string[];
@@ -11,41 +14,13 @@ export interface Book {
   edition_count: number;
 }
 
-interface GoogleBooksImageLinks {
-  thumbnail?: string;
-  smallThumbnail?: string;
-}
-
-interface GoogleBooksVolumeInfo {
-  title: string;
-  authors?: string[];
-  publishedDate?: string;
-  imageLinks?: GoogleBooksImageLinks;
-}
-
-interface GoogleBooksItem {
-  id: string;
-  volumeInfo: GoogleBooksVolumeInfo;
-}
-
-interface GoogleBooksResponse {
-  items?: GoogleBooksItem[];
-  totalItems: number;
-}
-
-interface UseFantasyBooksResult {
+type UseFantasyBooksResult = {
   books: Book[];
   loading: boolean;
   error: string | null;
 }
 
-const BASE_URL = "https://www.googleapis.com/books/v1";
 const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
-
-const apiClient = axios.create({
-  baseURL: BASE_URL,
-  headers: { "Content-Type": "application/json" },
-});
 
 function extractYear(dateStr?: string): number {
   if (!dateStr) return 0;
@@ -58,21 +33,6 @@ function normalizeCoverUrl(imageLinks?: GoogleBooksImageLinks): string | null {
   return url
     .replace("http://", "https://")
     .replace("zoom=1", "zoom=2");
-}
-
-function getErrorMessage(err: unknown): string {
-  if (axios.isCancel(err)) return "";
-
-  const axiosError = err as AxiosError;
-  if (axiosError.response) {
-    return i18n.t("errors.httpError", {
-      status: axiosError.response.status,
-      statusText: axiosError.response.statusText,
-    });
-  } else if (axiosError.request) {
-    return i18n.t("errors.connectionFailed");
-  }
-  return i18n.t("errors.unexpectedError");
 }
 
 export function useFantasyBooks_Google(
@@ -91,7 +51,7 @@ export function useFantasyBooks_Google(
         setLoading(true);
         setError(null);
 
-        const { data } = await apiClient.get<GoogleBooksResponse>("/volumes", {
+        const { data } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
           params: {
             q: "subject:fantasy",
             langRestrict: lang,

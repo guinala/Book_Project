@@ -5,20 +5,20 @@ import es from "./locales/es.json";
 import en from "./locales/en.json";
 
 i18n
-  .use(LanguageDetector)       // detecta idioma del navegador
-  .use(initReactI18next)       // conecta con React
+  .use(LanguageDetector)    
+  .use(initReactI18next)       
   .init({
     resources: {
       es: { translation: es },
       en: { translation: en },
     },
-    fallbackLng: "es",         // si el navegador tiene "fr", "de", etc. → español
+    fallbackLng: "es",       
     supportedLngs: ["es", "en"],
     interpolation: {
-      escapeValue: false,      // React ya escapa por defecto
+      escapeValue: false,     
     },
     detection: {
-      order: ["navigator"],    // solo mira el idioma del navegador
+      order: ["navigator"],   
     },
   });
 

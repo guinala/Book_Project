@@ -2,14 +2,11 @@ import { Navigate } from "react-router";
 import { useAuth } from "../services/Auth";
 import { useTranslation } from "react-i18next";
 
-interface ProtectedRouteProps {
+type ProtectedRouteProps = {
   children: React.ReactNode;
   requireAuth?: boolean;
 }
 
-/**
- * Solo para usuarios autenticados
- */
 export default function AuthRoute({
   children,
   requireAuth = true,
