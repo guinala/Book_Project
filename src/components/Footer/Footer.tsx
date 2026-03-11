@@ -1,11 +1,11 @@
 import "./Footer.scss";
 
-interface FooterLink {
+type FooterLink = {
   label: string;
   href: string;
 }
 
-interface FooterColumn {
+type FooterColumn = {
   title: string;
   links: FooterLink[];
 }

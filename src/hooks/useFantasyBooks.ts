@@ -1,68 +1,16 @@
 import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import i18n from "../plugins/i18n/i18n";
 import type { Book } from "../types/Book";
-
-type OpenLibraryEditionDoc = {
-  key?: string;
-  title?: string;
-  language?: string[];
-  cover_i?: number;
-}
-
-type OpenLibraryEditions = {
-  numFound: number;
-  docs: OpenLibraryEditionDoc[];
-}
-
-interface OpenLibraryDoc {
-  key: string;
-  title: string;
-  author_name?: string[];
-  first_publish_year?: number;
-  cover_i?: number;
-  edition_count?: number;
-  subject?: string[];
-  ratings_average?: number;
-  ratings_count?: number;
-  editions?: OpenLibraryEditions;
-}
-
-type OpenLibrarySearchResponse = {
-  docs: OpenLibraryDoc[];
-  numFound: number;
-}
+import type { OpenLibrarySearchResponse } from "../types/OpenLibrary";
+import { openLibraryClient } from "../services/apiClients";
+import { getErrorMessage } from "../utils/apiErrors";
+import { getLangIso639_2 } from "../utils/langConversion";
 
 type UseFantasyBooksResult = {
   books: Book[];
   loading: boolean;
   error: string | null;
-}
-
-const BASE_URL = "https://openlibrary.org";
-
-const apiClient = axios.create({
-  baseURL: BASE_URL,
-  headers: { "Content-Type": "application/json" },
-});
-
-function getLangIso639_2(lang: string): string {
-  return lang === "en" ? "eng" : "spa";
-}
-
-function getErrorMessage(err: unknown): string {
-  if (axios.isCancel(err)) return "";
-
-  const axiosError = err as AxiosError;
-  if (axiosError.response) {
-    return i18n.t("errors.httpError", {
-      status: axiosError.response.status,
-      statusText: axiosError.response.statusText,
-    });
-  } else if (axiosError.request) {
-    return i18n.t("errors.connectionFailed");
-  }
-  return i18n.t("errors.unexpectedError");
 }
 
 export function useFantasyBooks(
@@ -83,7 +31,7 @@ export function useFantasyBooks(
 
         const langCode = getLangIso639_2(lang);
 
-        const { data } = await apiClient.get<OpenLibrarySearchResponse>("/search.json", {
+        const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
           params: {
             q: `subject:fantasy language:${langCode}`,
             lang,

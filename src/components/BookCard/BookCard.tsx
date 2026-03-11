@@ -1,15 +1,12 @@
 import { useState, useRef } from "react";
 import type { MouseEvent } from "react";
 import type { Book } from "../../types/Book";
+import { getCoverUrl } from "../../utils/coverImage";
 import "./BookCard.scss";
 import { useTranslation } from "react-i18next";
 
 type BookCardProps = {
   book: Book;
-}
-
-function getCoverUrl(coverId: number): string {
-  return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
 }
 
 function StarRating({ rating }: { rating: number }) {

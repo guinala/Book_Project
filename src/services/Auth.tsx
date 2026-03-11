@@ -3,7 +3,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "./firebase_init";
 
-interface AuthContextType {
+type AuthContextType = {
   user: User | null;
   isGuest: boolean;
   loading: boolean;

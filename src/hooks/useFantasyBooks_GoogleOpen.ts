@@ -1,87 +1,20 @@
 import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import i18n from "../plugins/i18n/i18n";
 import type { Book } from "../types/Book";
+import type { OpenLibrarySearchResponse } from "../types/OpenLibrary";
+import type { GoogleBooksImageLinks, GoogleBooksResponse } from "../types/GoogleBooks";
+import { openLibraryClient, googleBooksClient } from "../services/apiClients";
+import { getErrorMessage } from "../utils/apiErrors";
+import { getLangIso639_2 } from "../utils/langConversion";
 
-// ─── OpenLibrary types ───
-
-interface OpenLibraryEditionDoc {
-  key?: string;
-  title?: string;
-  language?: string[];
-  cover_i?: number;
-}
-
-interface OpenLibraryEditions {
-  numFound: number;
-  docs: OpenLibraryEditionDoc[];
-}
-
-interface OpenLibraryDoc {
-  key: string;
-  title: string;
-  author_name?: string[];
-  first_publish_year?: number;
-  cover_i?: number;
-  edition_count?: number;
-  subject?: string[];
-  ratings_average?: number;
-  ratings_count?: number;
-  editions?: OpenLibraryEditions;
-}
-
-interface OpenLibrarySearchResponse {
-  docs: OpenLibraryDoc[];
-  numFound: number;
-}
-
-// ─── Google Books types ───
-
-interface GoogleBooksImageLinks {
-  thumbnail?: string;
-  smallThumbnail?: string;
-}
-
-interface GoogleBooksVolumeInfo {
-  imageLinks?: GoogleBooksImageLinks;
-}
-
-interface GoogleBooksItem {
-  volumeInfo: GoogleBooksVolumeInfo;
-}
-
-interface GoogleBooksResponse {
-  items?: GoogleBooksItem[];
-  totalItems: number;
-}
-
-// ─── Hook result ───
-
-interface UseFantasyBooksHybridResult {
+type UseFantasyBooksHybridResult = {
   books: Book[];
   loading: boolean;
   error: string | null;
 }
 
-// ─── Clients ───
-
-const openLibraryClient = axios.create({
-  baseURL: "https://openlibrary.org",
-  headers: { "Content-Type": "application/json" },
-});
-
-const googleBooksClient = axios.create({
-  baseURL: "https://www.googleapis.com/books/v1",
-  headers: { "Content-Type": "application/json" },
-});
-
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
-
-// ─── Helpers ───
-
-function getLangIso639_2(lang: string): string {
-  return lang === "en" ? "eng" : "spa";
-}
 
 function normalizeCoverUrl(imageLinks?: GoogleBooksImageLinks): string | null {
   const url = imageLinks?.thumbnail;
@@ -111,21 +44,6 @@ async function fetchGoogleCover(
   } catch {
     return null;
   }
-}
-
-function getErrorMessage(err: unknown): string {
-  if (axios.isCancel(err)) return "";
-
-  const axiosError = err as AxiosError;
-  if (axiosError.response) {
-    return i18n.t("errors.httpError", {
-      status: axiosError.response.status,
-      statusText: axiosError.response.statusText,
-    });
-  } else if (axiosError.request) {
-    return i18n.t("errors.connectionFailed");
-  }
-  return i18n.t("errors.unexpectedError");
 }
 
 // ─── Hook ───

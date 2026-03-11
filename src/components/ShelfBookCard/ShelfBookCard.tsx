@@ -1,12 +1,9 @@
 import type { Book } from "../../types/Book";
+import { getCoverUrl } from "../../utils/coverImage";
 import "./ShelfBookCard.scss";
 
-interface ShelfBookCardProps {
+type ShelfBookCardProps = {
   book: Book;
-}
-
-function getCoverUrl(coverId: number): string {
-  return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
 }
 
 export default function ShelfBookCard({ book }: ShelfBookCardProps) {
