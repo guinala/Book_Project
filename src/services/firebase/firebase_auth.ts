@@ -3,7 +3,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
 } from "firebase/auth";
 import type { UserCredential } from "firebase/auth";
 import { auth } from "./firebase_init";
@@ -24,8 +24,8 @@ export async function registerWithEmail(
   return createUserWithEmailAndPassword(auth, email, password);
 }
 
-export async function loginWithGoogle(): Promise<UserCredential> {
-  return signInWithPopup(auth, googleProvider);
+export async function loginWithGoogle(): Promise<void> {
+  return signInWithRedirect(auth, googleProvider);
 }
 
 export async function logoutUser(): Promise<void> {
