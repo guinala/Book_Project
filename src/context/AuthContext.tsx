@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "../services/firebase/firebase_init";
@@ -27,6 +27,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(false);
   });
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+  //     setUser(firebaseUser);
+  //     if (firebaseUser) {
+  //       setIsGuest(false);
+  //     }
+  //     setLoading(false);
+  //   });
+ 
+  //   return () => unsubscribe();
+  // }, []);
 
   const enterAsGuest = () => {
     setIsGuest(true);
