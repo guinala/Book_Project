@@ -9,7 +9,23 @@ $border-radius-lg:     8px;
 $border-radius-pill:   20px;
 $z-navbar:             100;
 
-// Breakpoints
+$color-text-primary:   #2c2420;
+$color-text-secondary: #6b6360;
+$color-text-tertiary:  #9e9895;
+$color-text-subtle:    #a09a94;
+ 
+$color-accent:         #e86b30;
+$color-accent-dark:    #d25a22;
+ 
+$color-bg-card:        rgba(255, 255, 255, 0.7);
+$color-bg-darkest:     #1a1714;
+$color-bg-medium:      #3a3530;
+$color-border:         rgba(44, 36, 32, 0.2);
+ 
+$shadow-card: 0 2px 12px rgba(44, 36, 32, 0.06);
+$shadow-nav:  0 4px 20px rgba(0, 0, 0, 0.08);
+
+
 $bp-md:  768px;   // tablet
 $bp-lg:  1024px;  // desktop
 $bp-xl:  1280px;  // desktop xl

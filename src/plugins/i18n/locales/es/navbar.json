@@ -1,0 +1,13 @@
+{
+  "navbar": {
+    "brandName": "Trama",
+    "register": "Registrar lectura",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión"
+  },
+  "nav": {
+    "myLibrary": "Mi Biblioteca",
+    "explore": "Explorar",
+    "community": "Comunidad"
+  }
+}

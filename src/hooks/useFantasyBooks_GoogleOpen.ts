@@ -1,52 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import i18n from "../plugins/i18n/i18n";
 import type { Book } from "../types/Book";
-import type { OpenLibrarySearchResponse } from "../types/OpenLibrary";
-import type { GoogleBooksImageLinks, GoogleBooksResponse } from "../types/GoogleBooks";
-import { openLibraryClient, googleBooksClient } from "../services/apiClients";
+import { fetchFantasyBooks } from "../services/api/openLibraryApi";
+import { fetchGoogleCovers } from "../services/api/googleBooksApi";
 import { getErrorMessage } from "../utils/apiErrors";
-import { getLangIso639_2 } from "../utils/langConversion";
 
 type UseFantasyBooksHybridResult = {
   books: Book[];
   loading: boolean;
   error: string | null;
 }
-
-const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
-
-function normalizeCoverUrl(imageLinks?: GoogleBooksImageLinks): string | null {
-  const url = imageLinks?.thumbnail;
-  if (!url) return null;
-  return url.replace("http://", "https://");
-}
-
-async function fetchGoogleCover(
-  title: string,
-  author: string,
-  signal: AbortSignal
-): Promise<string | null> {
-  try {
-    const query = `intitle:${title}${author ? `+inauthor:${author}` : ""}`;
-
-    const { data } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
-      params: {
-        q: query,
-        maxResults: 1,
-        fields: "items(volumeInfo/imageLinks)",
-        key: GOOGLE_BOOKS_API_KEY,
-      },
-      signal,
-    });
-
-    return normalizeCoverUrl(data.items?.[0]?.volumeInfo?.imageLinks) ?? null;
-  } catch {
-    return null;
-  }
-}
-
-// ─── Hook ───
 
 export function useFantasyBooks_GoogleOpen(
   limit: number = 20,
@@ -59,82 +22,23 @@ export function useFantasyBooks_GoogleOpen(
   useEffect(() => {
     const controller = new AbortController();
 
-    const fetchBooks = async () => {
+    const loadBooks = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const langCode = getLangIso639_2(lang);
-
-        // 1. Obtener libros de OpenLibrary
-        const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
-          params: {
-            q: `subject:fantasy language:${langCode}`,
-            lang,
-            fields: [
-              "key",
-              "title",
-              "author_name",
-              "first_publish_year",
-              "cover_i",
-              "edition_count",
-              "subject",
-              "ratings_average",
-              "ratings_count",
-              "editions",
-              "editions.title",
-              "editions.language",
-              "editions.cover_i",
-            ].join(","),
-            limit,
-          },
-          signal: controller.signal,
-        });
-
-        const unknownAuthor = i18n.t("book.unknownAuthor");
-
-        const mappedBooks: Book[] = data.docs.map((doc) => {
-          const bestEdition = doc.editions?.docs?.[0];
-          const title = bestEdition?.title ?? doc.title;
-          const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
-
-          return {
-            key: doc.key,
-            title,
-            authors: doc.author_name ?? [unknownAuthor],
-            first_publish_year: doc.first_publish_year ?? 0,
-            cover_id,
-            edition_count: doc.edition_count ?? 0,
-            genre: doc.subject?.[0],
-            rating: doc.ratings_average,
-            ratingCount: doc.ratings_count,
-          };
-        });
-
-        // 2. Mostrar libros inmediatamente
+        // Libros de OpenLibrary
+        const mappedBooks = await fetchFantasyBooks(limit, lang, controller.signal);
         setBooks(mappedBooks);
         setLoading(false);
 
-        // 3. Buscar portadas en Google Books en paralelo
-        const coverPromises = mappedBooks.map((book) =>
-          fetchGoogleCover(
-            book.title,
-            book.authors[0] ?? "",
-            controller.signal
-          )
-        );
+        // Portadas de Google Books
+        const covers = await fetchGoogleCovers(mappedBooks, controller.signal);
 
-        const coverResults = await Promise.allSettled(coverPromises);
-
-        // 4. Actualizar libros con las portadas obtenidas
         setBooks((prev) =>
-          prev.map((book, i) => {
-            const result = coverResults[i];
-            const coverUrl =
-              result.status === "fulfilled" ? result.value : null;
-
-            return coverUrl ? { ...book, cover_url: coverUrl } : book;
-          })
+          prev.map((book, i) =>
+            covers[i] ? { ...book, cover_url: covers[i] } : book
+          )
         );
       } catch (err) {
         if (axios.isCancel(err)) return;
@@ -143,7 +47,7 @@ export function useFantasyBooks_GoogleOpen(
       }
     };
 
-    fetchBooks();
+    loadBooks();
 
     return () => controller.abort();
   }, [limit, lang]);

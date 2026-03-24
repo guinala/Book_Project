@@ -1,4 +1,4 @@
-import Grid from "../../layouts/Grid";
+import GridSkeletonLoading from "../../layouts/GridSkeletonLoading";
 import type { Book } from "../../types/Book";
 import BookCard from "../BookCard/BookCard";
 import "./BookList.scss";
@@ -15,7 +15,7 @@ export default function BookList({ books, loading, error, title }: BookListProps
     return (
       <section className="booklist">
         <h2 className="booklist__title">{title}</h2>
-        <Grid />
+        <GridSkeletonLoading />
       </section>
     );
   }

@@ -1,0 +1,9 @@
+{
+  "landing": {
+    "checkingSession": "Checking session...",
+    "title": "Welcome to Trama",
+    "subtitle": "Your reading companion. Discover, organize and share the books that shape your world.",
+    "loginBtn": "Sign In",
+    "guestBtn": "Continue as Guest"
+  }
+}

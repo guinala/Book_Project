@@ -1,4 +1,21 @@
-:root
-{
-    --color-red: red;
+:root {
+  --color-red: red;
+
+  // Text palette
+  --text-primary: #2c2420;
+  --text-secondary: #6b5e56;
+  --text-tertiary: #a09890;
+
+  // Brand
+  --orange: #e86b30;
+  --orange-dark: #d05a22;
+  --orange-light: rgba(232, 107, 48, 0.13);
+
+  // Surfaces
+  --surface-card: rgba(255, 255, 255, 0.7);
+  --surface-card-border: rgba(44, 36, 32, 0.2);
+
+  // Shadows
+  --shadow-card: 0 2px 12px rgba(44, 36, 32, 0.06);
+  --shadow-card-hover: 0 6px 20px rgba(44, 36, 32, 0.12);
 }
