@@ -1,0 +1,6 @@
+{
+  "book": {
+    "unknownAuthor": "Autor desconocido",
+    "coverAlt": "Portada de {{title}}"
+  }
+}

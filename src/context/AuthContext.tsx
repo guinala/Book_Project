@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { auth } from "./firebase_init";
+import { auth } from "../services/firebase/firebase_init";
 
 type AuthContextType = {
   user: User | null;
@@ -19,17 +19,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        setIsGuest(false);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  onAuthStateChanged(auth, (firebaseUser) => 
+  {
+    setUser(firebaseUser);
+    if (firebaseUser) {
+      setIsGuest(false);
+    }
+    setLoading(false);
+  });
 
   const enterAsGuest = () => {
     setIsGuest(true);

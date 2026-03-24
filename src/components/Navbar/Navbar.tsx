@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router";
 import { NAV_LINKS } from "../../routes/routes";
-import { useAuth } from "../../services/Auth";
+import { useAuth } from "../../context/AuthContext";
 import "./Navbar.scss";
 import { useTranslation } from "react-i18next";
 

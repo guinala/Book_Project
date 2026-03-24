@@ -1,0 +1,32 @@
+{
+  "footer": {
+    "brandName": "Trama",
+    "tagline": "Tu compañero de lectura. Descubre, organiza y comparte los libros que dan forma a tu mundo.",
+    "copyright": "© {{year}} Trama · Todos los derechos reservados",
+    "language": "Español",
+    "columns": {
+      "discover": "Descubrir",
+      "community": "Comunidad",
+      "company": "Empresa",
+      "legal": "Legal"
+    },
+    "links": {
+      "exploreBooks": "Explorar libros",
+      "genres": "Géneros",
+      "popularLists": "Listas populares",
+      "trending": "Tendencias",
+      "recentReviews": "Reseñas recientes",
+      "bookClubs": "Clubes de lectura",
+      "readingChallenges": "Retos de lectura",
+      "forum": "Foro",
+      "about": "Quiénes somos",
+      "blog": "Blog",
+      "contact": "Contacto",
+      "press": "Prensa",
+      "privacy": "Privacidad",
+      "terms": "Términos de uso",
+      "cookies": "Cookies",
+      "accessibility": "Accesibilidad"
+    }
+  }
+}

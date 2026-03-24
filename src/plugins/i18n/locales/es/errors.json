@@ -1,0 +1,8 @@
+{
+  "errors": {
+    "connectionFailed": "No se pudo conectar con el servidor. Comprueba tu conexión.",
+    "unexpectedError": "Error inesperado al realizar la petición.",
+    "bookNotFound": "No se encontró el libro en OpenLibrary.",
+    "httpError": "Error {{status}}: {{statusText}}"
+  }
+}

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../services/Auth";
+import { useAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
 import "./LandingPage.scss";
 
@@ -34,7 +34,6 @@ function LandingPage() {
   return (
     <div className="landing">
       <div className="landing__content">
-        <span className="landing__icon">📖</span>
         <h1 className="landing__title">{t("landing.title")}</h1>
         <p className="landing__subtitle">{t("landing.subtitle")}</p>
 

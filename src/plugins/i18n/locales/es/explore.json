@@ -1,0 +1,19 @@
+{
+  "explore": {
+    "searchPlaceholder": "Busca un libro, autor o ISBN…",
+    "searching": "Buscando...",
+    "resultsFound": "{{count}} resultados encontrados",
+    "backBtn": "Volver",
+    "resultsTitle": "Resultados para \"{{query}}\"",
+    "fantasyTitle": "Fantasía"
+  },
+  "search": {
+    "all": "Todo",
+    "title": "Título",
+    "author": "Autor",
+    "isbn": "ISBN",
+    "searchLabel": "Buscar Libros",
+    "clearLabel": "Borrar Búsqueda",
+    "searchBtnLabel": "Buscar"
+  }
+}

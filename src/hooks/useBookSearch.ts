@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import type { Book } from "../types/Book";
 import type { SearchFilter } from "../types/Search";
-import type { OpenLibrarySearchResponse } from "../types/OpenLibrary";
-import { openLibraryClient } from "../services/apiClients";
+import { searchBooks } from "../services/api/openLibraryApi";
 import { getErrorMessage } from "../utils/apiErrors";
-import { mapOpenLibraryDoc } from "../utils/bookMapper";
 
 type UseBookSearchResult = {
   books: Book[];
@@ -53,32 +51,16 @@ export function useBookSearch(
 
     const controller = new AbortController();
 
-    const fetchBooks = async () => {
+    const loadBooks = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const searchParams = getSearchParams(query.trim(), filter);
+        const params = getSearchParams(query.trim(), filter);
+        const result = await searchBooks(params, limit, lang, controller.signal);
 
-        const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>(
-          "/search.json",
-          {
-            params: {
-              ...searchParams,
-              fields:
-                "key,title,author_name,first_publish_year,cover_i,edition_count",
-              limit,
-              lang,
-            },
-            signal: controller.signal,
-          }
-        );
-
-        setTotalResults(data.numFound);
-
-        const mapped: Book[] = data.docs.map(mapOpenLibraryDoc);
-
-        setBooks(mapped);
+        setBooks(result.books);
+        setTotalResults(result.totalResults);
       } catch (err) {
         if (axios.isCancel(err)) return;
         setError(getErrorMessage(err));
@@ -87,7 +69,8 @@ export function useBookSearch(
       }
     };
 
-    fetchBooks();
+    loadBooks();
+
     return () => controller.abort();
   }, [query, filter, limit, lang]);
 
