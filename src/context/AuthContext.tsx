@@ -19,25 +19,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  onAuthStateChanged(auth, (firebaseUser) => 
-  {
-    setUser(firebaseUser);
-    if (firebaseUser) {
-      setIsGuest(false);
-    }
-    setLoading(false);
-  });
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-  //     setUser(firebaseUser);
-  //     if (firebaseUser) {
-  //       setIsGuest(false);
-  //     }
-  //     setLoading(false);
-  //   });
+  // onAuthStateChanged(auth, (firebaseUser) => 
+  // {
+  //   setUser(firebaseUser);
+  //   if (firebaseUser) {
+  //     setIsGuest(false);
+  //   }
+  //   setLoading(false);
+  // });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        setIsGuest(false);
+      }
+      setLoading(false);
+      console.log("Inicio hecho");
+    });
  
-  //   return () => unsubscribe();
-  // }, []);
+    return () => unsubscribe();
+  }, []);
 
   const enterAsGuest = () => {
     setIsGuest(true);
