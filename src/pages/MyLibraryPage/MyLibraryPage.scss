@@ -2,12 +2,12 @@
 
 .my-library {
   @include container;
-  padding-top: 24px;
+  padding-top: 0;
   padding-bottom: 40px;
   font-family: $font-main;
 
   @include from($bp-md) {
-    padding-top: 40px;
+    padding-top: 0;
     padding-bottom: 60px;
   }
 

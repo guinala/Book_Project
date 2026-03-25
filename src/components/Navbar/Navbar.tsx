@@ -4,15 +4,18 @@ import { useAuth } from "../../context/AuthContext";
 import "./Navbar.scss";
 import { useTranslation } from "react-i18next";
 
-const LOGO_ICON     = "https://www.figma.com/api/mcp/asset/0af8ed5e-dd51-4237-8b2d-4afe574bf930";
-const ICON_PLUS     = "https://www.figma.com/api/mcp/asset/132e32e7-f96b-43bf-a41b-1117d9457fc7";
-const ICON_NOTIS    = "https://www.figma.com/api/mcp/asset/f89d191c-bbf4-4466-93cc-58ad55f1ac37";
-const ICON_AVATAR   = "https://www.figma.com/api/mcp/asset/9643682f-1853-4a83-9161-56af2398b84b";
+import LOGO_ICON from"../../assets/Logo.png";
+import ICON_PLUS from "../../assets/plusIcon.png";
+import ICON_NOTIF from "../../assets/notifIcon.png";
+import ICON_AVATAR from "../../assets/ProfileIcon.png";
+import LIBRARY_ICON from "../../assets/libraryIcon.png";
+import EXPLORE_ICON from "../../assets/exploreIcon.png";
+import COMMUNITY_ICON from "../../assets/communityIcon.png";
 
 const NAV_ICONS: Record<string, string> = {
-  "/my-library": "https://www.figma.com/api/mcp/asset/a866ecd2-9b1c-464d-ace7-7ae9dc309972",
-  "/explore":    "https://www.figma.com/api/mcp/asset/b85c83bb-dcc2-44ea-910f-f5c7879f602f",
-  "/community":  "https://www.figma.com/api/mcp/asset/73caa4c1-1c24-4c91-b006-7ad24cbe8d48",
+  "/my-library": LIBRARY_ICON,
+  "/explore":    EXPLORE_ICON,
+  "/community":  COMMUNITY_ICON,
 };
 
 export default function Navbar() {
@@ -46,7 +49,7 @@ export default function Navbar() {
                 {t("navbar.register")}
               </button>
               <button className="navbar__btn-icon" type="button" aria-label="Notificaciones">
-                <img src={ICON_NOTIS} alt="" />
+                <img src={ICON_NOTIF} alt="" />
               </button>
               <button
                 className="navbar__btn-icon navbar__btn-icon--avatar"
