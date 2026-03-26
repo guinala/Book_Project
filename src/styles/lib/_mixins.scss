@@ -1,4 +1,4 @@
-@import 'variables';
+@import '../variables/scss_variables';
 
 @mixin transition($properties...) {
   transition-property: $properties;

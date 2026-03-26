@@ -1,4 +1,4 @@
-import App from "../app/App";
+import App from "../App";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import AuthPage from "../pages/AuthPage/AuthPage";
 import ExplorePage from "../pages/ExplorePage/ExplorePage";
