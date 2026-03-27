@@ -32,20 +32,35 @@
 
 @mixin ghost-button {
   background: transparent;
-  font-family: $font-main;
   cursor: pointer;
   letter-spacing: 0.02em;
   @include transition(all);
 }
 
 @mixin primary-button {
-  font-family: $font-main;
   font-weight: 600;
   cursor: pointer;
   letter-spacing: 0.02em;
 }
 
-// Responsive
+@mixin full-btn-primary {
+  @include primary-button;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: var(--border-radius-sm);
+  border: none;
+  width: 100%;
+}
+
+@mixin page-centered {
+  @include flex-center;
+  padding: 16px;
+
+  @include from($bp-md) {
+    padding: 24px;
+  }
+}
+
 @mixin from($bp) {
   @media (min-width: $bp) {
     @content;

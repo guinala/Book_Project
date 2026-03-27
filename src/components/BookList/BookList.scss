@@ -1,9 +1,8 @@
-@import "../../styles/style.scss";
+@import '../../styles/style';
 
 .booklist {
   margin-left: 0;
   padding: 32px 16px 40px;
-  font-family: $font-main;
 
   @include from($bp-md) {
     margin-left: 10px;
@@ -73,7 +72,7 @@
     flex-shrink: 0;
     width: 90px;
     aspect-ratio: 2 / 3;
-    border-radius: $border-radius-sm;
+    border-radius: var(--border-radius-sm);
     @include shimmer-bg;
 
     @include from($bp-md) {
@@ -91,7 +90,7 @@
 
   &__skeleton-line {
     height: 14px;
-    border-radius: $border-radius-sm;
+    border-radius: var(--border-radius-sm);
     @include shimmer-bg;
 
     &--short {
