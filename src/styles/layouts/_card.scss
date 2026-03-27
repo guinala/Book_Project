@@ -1,0 +1,13 @@
+@mixin book-cover-img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--border-radius-sm);
+}
+
+@mixin book-cover-placeholder {
+  @include flex-center;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+}

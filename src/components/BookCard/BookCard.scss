@@ -21,28 +21,19 @@
   }
 
   &__cover {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
-    display: block;
-    border-radius: $border-radius-sm;
+    @include book-cover-img;
   }
 
   &__cover-placeholder {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include book-cover-placeholder;
+    border-radius: var(--border-radius-sm);
     font-size: 28px;
-    border-radius: $border-radius-sm;
 
     @include from($bp-md) {
       font-size: 32px;
     }
   }
 
-  // Info
   &__info {
     display: flex;
     flex-direction: column;
@@ -56,7 +47,6 @@
 
   &__genre {
     font-size: 11px;
-    font-family: $font-main;
 
     @include from($bp-md) {
       font-size: 12px;
@@ -67,7 +57,6 @@
     font-size: 15px;
     font-weight: 600;
     margin: 0;
-    font-family: $font-main;
     @include line-clamp(2);
 
     @include from($bp-md) {
@@ -112,7 +101,6 @@
 
   &__rating-value {
     font-size: 13px;
-    font-family: $font-main;
 
     @include from($bp-md) {
       font-size: 14px;

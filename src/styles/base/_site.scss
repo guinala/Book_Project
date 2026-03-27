@@ -18,3 +18,10 @@ body {
   font-family: $font-main;
   line-height: 1.5;
 }
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}

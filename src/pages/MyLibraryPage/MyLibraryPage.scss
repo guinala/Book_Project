@@ -4,7 +4,6 @@
   @include container;
   padding-top: 0;
   padding-bottom: 40px;
-  font-family: $font-main;
 
   @include from($bp-md) {
     padding-top: 0;
@@ -34,14 +33,7 @@
     padding: 40px 0;
   }
 
-  &__shelf-section {
-    margin-top: 40px;
-
-    @include from($bp-md) {
-      margin-top: 56px;
-    }
-  }
-  
+  &__shelf-section,
   &__lists-section {
     margin-top: 40px;
 

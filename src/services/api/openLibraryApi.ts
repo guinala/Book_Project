@@ -1,8 +1,8 @@
-import i18n from "../../plugins/i18n/i18n";
-import type { Book } from "../../types/Book";
-import type { OpenLibrarySearchResponse } from "../../types/OpenLibrary";
-import { openLibraryClient } from "../../services/api/apiConnections";
-import { getLangIso3Letters } from "../../utils/langConversion";
+import i18n from "@/plugins/i18n/i18n";
+import type { Book } from "@/types/Book";
+import type { OpenLibrarySearchResponse } from "@/types/OpenLibrary";
+import { openLibraryClient } from "@/services/api/apiConnections";
+import { getLangIso3Letters } from "@/utils/langConversion";
 
 const FANTASY_FIELDS = [
   "key",

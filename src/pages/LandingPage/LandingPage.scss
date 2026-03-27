@@ -1,16 +1,8 @@
 @import '../../styles/style';
 
 .landing {
-  min-height: calc(100vh - #{$navbar-height});
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: $font-main;
-  padding: 16px;
-
-  @include from($bp-md) {
-    padding: 24px;
-  }
+  @include page-centered;
+  min-height: calc(100vh - var(--navbar-height));
 
   &__loading {
     font-size: 16px;
@@ -51,8 +43,6 @@
 
   &__subtitle {
     font-size: 15px;
-    line-height: 1.6;
-    margin: 0;
 
     @include from($bp-md) {
       font-size: 16px;
@@ -69,19 +59,14 @@
   }
 
   &__btn-login {
-    @include primary-button;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: $border-radius-sm;
-    border: none;
-    width: 100%;
+    @include full-btn-primary;
   }
 
   &__btn-guest {
     @include ghost-button;
     padding: 12px;
     font-size: 16px;
-    border-radius: $border-radius-sm;
+    border-radius: var(--border-radius-sm);
     width: 100%;
   }
 }

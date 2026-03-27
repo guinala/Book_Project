@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import type { Book } from "../types/Book";
-import { fetchFantasyBooks } from "../services/api/openLibraryApi";
-import { fetchGoogleCovers } from "../services/api/googleBooksApi";
-import { getErrorMessage } from "../utils/apiErrors";
+import type { Book } from "@/types/Book";
+import { fetchFantasyBooks } from "@/services/api/openLibraryApi";
+import { fetchGoogleCovers } from "@/services/api/googleBooksApi";
+import { getErrorMessage } from "@/utils/apiErrors";
 
 type UseFantasyBooksHybridResult = {
   books: Book[];
