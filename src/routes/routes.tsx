@@ -1,9 +1,9 @@
-import App from "../App";
-import LandingPage from "../pages/LandingPage/LandingPage";
-import AuthPage from "../pages/AuthPage/AuthPage";
-import ExplorePage from "../pages/ExplorePage/ExplorePage";
-import MyLibraryPage from "../pages/MyLibraryPage/MyLibraryPage";
-import AuthRoute from "./AuthRoute";
+import App from "@/App";
+import LandingPage from "@/pages/LandingPage/LandingPage";
+import AuthPage from "@/pages/AuthPage/AuthPage";
+import ExplorePage from "@/pages/ExplorePage/ExplorePage";
+import MyLibraryPage from "@/pages/MyLibraryPage/MyLibraryPage";
+import AuthRoute from "@/routes/AuthRoute";
 
 export const ROUTES = [
   {

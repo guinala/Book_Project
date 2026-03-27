@@ -1,5 +1,5 @@
-import type { Book } from "../../types/Book";
-import { getCoverUrl } from "../../utils/coverImage";
+import type { Book } from "@/types/Book";
+import { getCoverUrl } from "@/utils/coverImage";
 import "./ShelfBookCard.scss";
 
 type ShelfBookCardProps = {

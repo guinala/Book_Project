@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { auth } from "../services/firebase/firebase_init";
+import { auth } from "@/services/firebase/firebase_init";
 
 type AuthContextType = {
   user: User | null;
@@ -34,7 +34,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsGuest(false);
       }
       setLoading(false);
-      console.log("Inicio hecho");
     });
  
     return () => unsubscribe();

@@ -1,16 +1,16 @@
 import { Link, NavLink } from "react-router";
-import { NAV_LINKS } from "../../routes/routes";
-import { useAuth } from "../../context/AuthContext";
+import { NAV_LINKS } from "@/routes/routes";
+import { useAuth } from "@/context/AuthContext";
 import "./Navbar.scss";
 import { useTranslation } from "react-i18next";
 
-import LOGO_ICON from"../../assets/Logo.png";
-import ICON_PLUS from "../../assets/plusIcon.png";
-import ICON_NOTIF from "../../assets/notifIcon.png";
-import ICON_AVATAR from "../../assets/ProfileIcon.png";
-import LIBRARY_ICON from "../../assets/libraryIcon.png";
-import EXPLORE_ICON from "../../assets/exploreIcon.png";
-import COMMUNITY_ICON from "../../assets/communityIcon.png";
+import LOGO_ICON from"@/assets/Logo.png";
+import ICON_PLUS from "@/assets/plusIcon.png";
+import ICON_NOTIF from "@/assets/notifIcon.png";
+import ICON_AVATAR from "@/assets/ProfileIcon.png";
+import LIBRARY_ICON from "@/assets/libraryIcon.png";
+import EXPLORE_ICON from "@/assets/exploreIcon.png";
+import COMMUNITY_ICON from "@/assets/communityIcon.png";
 
 const NAV_ICONS: Record<string, string> = {
   "/my-library": LIBRARY_ICON,

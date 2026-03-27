@@ -1,19 +1,11 @@
 @import '../../styles/style';
 
 .auth {
+  @include page-centered;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: $font-main;
-  padding: 16px;
-
-  @include from($bp-md) {
-    padding: 24px;
-  }
 
   &__box {
-    border-radius: $border-radius-lg;
+    border-radius: var(--border-radius-lg);
     padding: 28px 20px;
     width: 100%;
     max-width: 400px;
@@ -28,21 +20,17 @@
   }
 
   &__logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     gap: 10px;
     text-decoration: none;
     margin-bottom: 4px;
   }
 
   &__logo-icon {
+    @include flex-center;
     width: 32px;
     height: 32px;
-    border-radius: $border-radius-sm;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--border-radius-sm);
     font-size: 18px;
   }
 
@@ -75,22 +63,12 @@
   }
 
   &__input {
-    border-radius: $border-radius-sm;
-    padding: 12px 14px;
-    font-size: 15px;
-    font-family: $font-main;
+    @include text-input;
     outline: none;
-    @include transition(border-color);
-    width: 100%;
-    box-sizing: border-box;
   }
 
   &__btn-primary {
-    @include primary-button;
-    border-radius: $border-radius-sm;
-    padding: 12px;
-    font-size: 16px;
-    width: 100%;
+    @include full-btn-primary;
 
     &:disabled {
       opacity: 0.6;
@@ -99,12 +77,10 @@
   }
 
   &__btn-google {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     gap: 10px;
     @include ghost-button;
-    border-radius: $border-radius-sm;
+    border-radius: var(--border-radius-sm);
     padding: 11px;
     font-size: 15px;
     width: 100%;
@@ -122,10 +98,9 @@
 
   &__btn-danger {
     background-color: transparent;
-    border-radius: $border-radius-sm;
+    border-radius: var(--border-radius-sm);
     padding: 10px;
     font-size: 15px;
-    font-family: $font-main;
     cursor: pointer;
     @include transition(all);
     width: 100%;
@@ -171,12 +146,10 @@
   }
 
   &__user-avatar {
+    @include flex-center;
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 28px;
     font-weight: 700;
   }

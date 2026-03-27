@@ -1,21 +1,36 @@
 :root {
-  --color-red: red;
+  // Spacing
+  --padding-vertical:    15px;
+  --navbar-height:       64px;
 
-  // Text palette
-  --text-primary: #2c2420;
-  --text-secondary: #6b5e56;
-  --text-tertiary: #a09890;
+  // Border radius
+  --border-radius-sm:    4px;
+  --border-radius-md:    6px;
+  --border-radius-lg:    8px;
+  --border-radius-pill:  20px;
 
-  // Brand
-  --orange: #e86b30;
-  --orange-dark: #d05a22;
-  --orange-light: rgba(232, 107, 48, 0.13);
+  // Z-index
+  --z-navbar:            100;
 
-  // Surfaces
-  --surface-card: rgba(255, 255, 255, 0.7);
-  --surface-card-border: rgba(44, 36, 32, 0.2);
+  // Text colors
+  --color-text-primary:   #2c2420;
+  --color-text-secondary: #6b6360;
+  --color-text-tertiary:  #9e9895;
+  --color-text-subtle:    #a09a94;
+
+  // Brand colors
+  --color-accent:         #e86b30;
+  --color-accent-dark:    #d25a22;
+  --color-accent-light:   rgba(232, 107, 48, 0.13);
+
+  // Background colors
+  --color-bg-card:        rgba(255, 255, 255, 0.7);
+  --color-bg-darkest:     #1a1714;
+  --color-bg-medium:      #3a3530;
+  --color-border:         rgba(44, 36, 32, 0.2);
 
   // Shadows
-  --shadow-card: 0 2px 12px rgba(44, 36, 32, 0.06);
-  --shadow-card-hover: 0 6px 20px rgba(44, 36, 32, 0.12);
+  --shadow-card:          0 2px 12px rgba(44, 36, 32, 0.06);
+  --shadow-card-hover:    0 6px 20px rgba(44, 36, 32, 0.12);
+  --shadow-nav:           0 4px 20px rgba(0, 0, 0, 0.08);
 }

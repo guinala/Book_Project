@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import coverImage from "../../assets/el-nombre-del-viento.jpg";
+import coverImage from "@/assets/el-nombre-del-viento.jpg";
 import "./CurrentReadingCard.scss";
 
 const CURRENT_PAGE = 344;

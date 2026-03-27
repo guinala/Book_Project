@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { loginWithGoogle } from "../../services/firebase/firebase_auth";
-import { getFirebaseErrorMessage } from "../../services/firebase/firebase_errors";
+import { loginWithGoogle } from "@/services/firebase/firebase_auth";
+import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
 
 type SignInGoogleButtonProps = {
   disabled?: boolean;

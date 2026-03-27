@@ -6,7 +6,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: $font-main;
   font-size: 14px;
 
   @include from($bp-md) {
@@ -22,7 +21,7 @@
 .explore-page__clear-btn {
   @include ghost-button;
   padding: 6px 14px;
-  border-radius: $border-radius-sm;
+  border-radius: var(--border-radius-sm);
   font-size: 13px;
 
   @include from($bp-md) {

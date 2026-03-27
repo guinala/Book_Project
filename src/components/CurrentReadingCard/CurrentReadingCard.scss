@@ -7,7 +7,6 @@
   width: 100%;
   max-width: 800px;
   padding: 20px;
-  font-family: $font-main;
 
   &__cover {
     flex-shrink: 0;
@@ -15,19 +14,11 @@
   }
 
   &__cover-img {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
-    display: block;
-    border-radius: $border-radius-sm;
+    @include book-cover-img;
   }
 
   &__cover-placeholder {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include book-cover-placeholder;
     font-size: 32px;
   }
 
@@ -49,7 +40,7 @@
     font-size: 13px;
     align-self: flex-start;
     padding: 2px 10px;
-    border-radius: $border-radius-pill;
+    border-radius: var(--border-radius-pill);
   }
 
   &__title {
@@ -105,5 +96,4 @@
     font-size: 13px;
     flex-shrink: 0;
   }
-
 }

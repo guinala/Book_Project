@@ -1,7 +1,7 @@
-import i18n from "../../plugins/i18n/i18n";
-import type { Book } from "../../types/Book";
-import type { GoogleBooksImageLinks, GoogleBooksResponse } from "../../types/GoogleBooks";
-import { googleBooksClient } from "./apiConnections";
+import i18n from "@/plugins/i18n/i18n";
+import type { Book } from "@/types/Book";
+import type { GoogleBooksImageLinks, GoogleBooksResponse } from "@/types/GoogleBooks";
+import { googleBooksClient } from "@/services/api/apiConnections";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
 

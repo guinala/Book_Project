@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthDivider from "../AuthDivider/AuthDivider";
-import SignInGoogleButton from "../../Buttons/SignInGoogleButton";
+import AuthDivider from "@/components/auth/AuthDivider/AuthDivider";
+import SignInGoogleButton from "@/components/Buttons/SignInGoogleButton";
 
 type GoogleFormInputProps = {
   disabled: boolean;

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import type { SearchFilter } from "../../types/Search";
+import type { SearchFilter } from "@/types/Search";
 import "./Searchbar.scss";
 import { useTranslation } from "react-i18next";
 

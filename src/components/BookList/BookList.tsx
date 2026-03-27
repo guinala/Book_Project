@@ -1,6 +1,6 @@
-import GridSkeletonLoading from "../../layouts/GridSkeletonLoading";
-import type { Book } from "../../types/Book";
-import BookCard from "../BookCard/BookCard";
+import GridSkeletonLoading from "@/layouts/GridSkeletonLoading";
+import type { Book } from "@/types/Book";
+import BookCard from "@/components/BookCard/BookCard";
 import "./BookList.scss";
 
 type BookListProps = {

@@ -1,6 +1,6 @@
-import i18n from "../plugins/i18n/i18n";
-import type { Book } from "../types/Book";
-import type { OpenLibraryDoc } from "../types/OpenLibrary";
+import i18n from "@/plugins/i18n/i18n";
+import type { Book } from "@/types/Book";
+import type { OpenLibraryDoc } from "@/types/OpenLibrary";
 
 export function mapOpenLibraryDoc(doc: OpenLibraryDoc): Book {
   const unknownAuthor = i18n.t("book.unknownAuthor");
