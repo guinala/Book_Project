@@ -1,6 +1,6 @@
 import "./plugins/i18n/i18n.ts";  
 import { createRoot } from 'react-dom/client'
-import "./App.scss"
+import "./styles/style.scss"
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { ROUTES } from './routes/routes.tsx'
 

@@ -1,0 +1,14 @@
+@mixin card-grid($cols-desktop: 4) {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  @include from($bp-md) {
+    grid-template-columns: repeat($cols-desktop, 1fr);
+    gap: 16px;
+  }
+
+  @include from($bp-lg) {
+    gap: 20px;
+  }
+}
