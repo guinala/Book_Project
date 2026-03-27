@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import type { MouseEvent } from "react";
-import type { Book } from "../../types/Book";
-import { getCoverUrl } from "../../utils/coverImage";
+import type { Book } from "@/types/Book";
+import { getCoverUrl } from "@/utils/coverImage";
 import "./BookCard.scss";
 import { useTranslation } from "react-i18next";
 
