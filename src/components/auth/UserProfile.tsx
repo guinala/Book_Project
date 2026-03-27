@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { User } from "firebase/auth";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function UserProfile() {
   const { t } = useTranslation();

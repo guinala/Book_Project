@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import i18n from "../plugins/i18n/i18n";
+import i18n from "@/plugins/i18n/i18n";
 
 export function getErrorMessage(err: unknown): string {
   if (axios.isCancel(err)) return "";

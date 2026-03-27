@@ -1,31 +1,31 @@
 import { useTranslation } from "react-i18next";
-import CurrentReadingCard from "../../components/CurrentReadingCard/CurrentReadingCard";
-import type { Book } from "../../types/Book";
-import type { ReadingList } from "../../components/ListCard/ListCard";
-import ShelfSection from "../../components/ShelfSection/ShelfSection";
-import ListsSection from "../../components/ListsSection/ListsSection";
+import CurrentReadingCard from "@/components/CurrentReadingCard/CurrentReadingCard";
+import type { Book } from "@/types/Book";
+import type { ReadingList } from "@/components/ListCard/ListCard";
+import ShelfSection from "@/components/ShelfSection/ShelfSection";
+import ListsSection from "@/components/ListsSection/ListsSection";
 import "./MyLibraryPage.scss";
 
-import shelfCover1 from "../../assets/covers/shelf-1.jpg";
-import shelfCover2 from "../../assets/covers/shelf-2.jpg";
-import shelfCover3 from "../../assets/covers/shelf-3.jpg";
-import shelfCover4 from "../../assets/covers/shelf-4.jpg";
-import shelfCover5 from "../../assets/covers/shelf-5.jpeg";
+import shelfCover1 from "@/assets/covers/shelf-1.jpg";
+import shelfCover2 from "@/assets/covers/shelf-2.jpg";
+import shelfCover3 from "@/assets/covers/shelf-3.jpg";
+import shelfCover4 from "@/assets/covers/shelf-4.jpg";
+import shelfCover5 from "@/assets/covers/shelf-5.jpeg";
 
-import listRec1 from "../../assets/covers/shelf-1.jpg";
-import listRec2 from "../../assets/covers/shelf-3.jpg";
-import listRec3 from "../../assets/covers/shelf-2.jpg";
-import listRec4 from "../../assets/covers/shelf-5.jpeg";
+import listRec1 from "@/assets/covers/shelf-1.jpg";
+import listRec2 from "@/assets/covers/shelf-3.jpg";
+import listRec3 from "@/assets/covers/shelf-2.jpg";
+import listRec4 from "@/assets/covers/shelf-5.jpeg";
 
-import listDra1 from "../../assets/covers/shelf-4.jpg";
-import listDra2 from "../../assets/covers/shelf-5.jpeg";
-import listDra3 from "../../assets/covers/shelf-1.jpg";
-import listDra4 from "../../assets/covers/shelf-3.jpg";
+import listDra1 from "@/assets/covers/shelf-4.jpg";
+import listDra2 from "@/assets/covers/shelf-5.jpeg";
+import listDra3 from "@/assets/covers/shelf-1.jpg";
+import listDra4 from "@/assets/covers/shelf-3.jpg";
 
-import listWom1 from "../../assets/covers/shelf-3.jpg";
-import listWom2 from "../../assets/covers/shelf-1.jpg";
-import listWom3 from "../../assets/covers/shelf-4.jpg";
-import listWom4 from "../../assets/covers/shelf-5.jpeg";
+import listWom1 from "@/assets/covers/shelf-3.jpg";
+import listWom2 from "@/assets/covers/shelf-1.jpg";
+import listWom3 from "@/assets/covers/shelf-4.jpg";
+import listWom4 from "@/assets/covers/shelf-5.jpeg";
 
 const SHELF_BOOKS: Book[] = [
   {

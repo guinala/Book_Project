@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import ListCard from "../ListCard/ListCard";
-import type { ReadingList } from "../ListCard/ListCard";
+import ListCard from "@/components/ListCard/ListCard";
+import type { ReadingList } from "@/components/ListCard/ListCard";
 import "./ListsSection.scss";
 
 type ListsSectionProps = {

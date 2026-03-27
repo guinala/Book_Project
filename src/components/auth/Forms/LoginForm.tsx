@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { loginWithEmail } from "../../../services/firebase/firebase_auth";
-import type { LoginFormValues } from "../../../types/AuthTypes";
-import { getFirebaseErrorMessage } from "../../../services/firebase/firebase_errors";
-import FormInput from "../Form_Components/FormInput";
-import GoogleFormInput from "../Form_Components/GoogleFormInput";
-import AuthToggleLink from "../Form_Components/AuthToggleLink";
+import { loginWithEmail } from "@/services/firebase/firebase_auth";
+import type { LoginFormValues } from "@/types/AuthTypes";
+import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
+import FormInput from "@/components/auth/Form_Components/FormInput";
+import GoogleFormInput from "@/components/auth/Form_Components/GoogleFormInput";
+import AuthToggleLink from "@/components/auth/Form_Components/AuthToggleLink";
 
 type LoginFormProps = {
   onSwitchToRegister: () => void;

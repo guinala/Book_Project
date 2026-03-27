@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { getLangIso3Letters } from "../../utils/langConversion";
+import { getLangIso3Letters } from "@/utils/langConversion";
 
 export function useCurrentLanguage() {
   const { i18n } = useTranslation();

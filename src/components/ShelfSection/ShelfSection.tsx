@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import ShelfBookCard from "../ShelfBookCard/ShelfBookCard";
-import type { Book } from "../../types/Book";
+import ShelfBookCard from "@/components/ShelfBookCard/ShelfBookCard";
+import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
 
 type ShelfSectionProps = {
