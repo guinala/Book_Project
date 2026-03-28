@@ -15,7 +15,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: $font-main;
+  font-family: var(--font-main);
   line-height: 1.5;
 }
 

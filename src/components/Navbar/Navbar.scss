@@ -7,7 +7,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 80px);
-  max-width: $max-width;
+  max-width: var(--max-width);
   padding: 0;
 
   &__inner {
