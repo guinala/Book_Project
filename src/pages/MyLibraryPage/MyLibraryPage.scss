@@ -4,41 +4,33 @@
   @include container;
   padding-top: 0;
   padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 
   @include from($bp-md) {
     padding-top: 0;
     padding-bottom: 60px;
-  }
-
-  &__heading {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 20px 0;
-    text-align: center;
-
-    @include from($bp-md) {
-      font-size: 28px;
-      margin-bottom: 24px;
-    }
+    gap: 56px;
   }
 
   &__reading-section {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
   }
 
-  &__status {
-    text-align: center;
-    font-size: 16px;
-    padding: 40px 0;
-  }
-
-  &__shelf-section,
-  &__lists-section {
-    margin-top: 40px;
+  &__section-title {
+    width: 100%;
+    max-width: 860px;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.01em;
 
     @include from($bp-md) {
-      margin-top: 56px;
+      font-size: 22px;
     }
   }
 }

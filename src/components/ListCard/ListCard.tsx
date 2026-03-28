@@ -6,11 +6,11 @@ export type ReadingList = {
   nameKey: string;
   count: number;
   coverUrls: string[];
-}
+};
 
 type ListCardProps = {
   list: ReadingList;
-}
+};
 
 export default function ListCard({ list }: ListCardProps) {
   const { t } = useTranslation();
