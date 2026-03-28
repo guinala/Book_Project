@@ -1,10 +1,14 @@
 {
   "myLibrary": {
     "heading": "Currently reading...",
-    "streakDays": "🔥 {{count}} day streak",
-    "readingProgress": "Reading progress",
-    "pages": "{{current}}/{{total}} pages",
+    "streakDays": "{{count}} day streak",
+    "readingProgress": "Progress",
+    "pages": "{{current}}/{{total}} pgs.",
     "shelfTitle": "Bookshelf",
+    "seeAll": "See all",
+    "viewHistory": "View history",
+    "updateProgress": "Update progress",
+    "createList": "Create new list",
     "listsTitle": "Lists",
     "listsCount": "{{count}} books",
     "lists": {

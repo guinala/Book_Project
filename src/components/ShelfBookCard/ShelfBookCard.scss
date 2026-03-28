@@ -3,7 +3,7 @@
 .shelf-book {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   width: 100%;
 
@@ -12,6 +12,7 @@
     aspect-ratio: 2 / 3;
     border-radius: var(--border-radius-sm);
     overflow: hidden;
+    box-shadow: var(--shadow-cover);
   }
 
   &__cover {
@@ -38,7 +39,7 @@
     margin: 0;
     font-size: 13px;
     font-weight: 500;
-    text-align: center;
+    text-align: left;
     @include line-clamp(2);
 
     @include from($bp-md) {
@@ -49,7 +50,7 @@
   &__author {
     margin: 0;
     font-size: 11px;
-    text-align: center;
+    text-align: left;
     @include text-truncate;
     max-width: 100%;
 
