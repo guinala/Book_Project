@@ -1,10 +1,14 @@
 {
   "myLibrary": {
     "heading": "Estoy leyendo...",
-    "streakDays": "🔥 {{count}} días de racha",
-    "readingProgress": "Progreso de lectura",
-    "pages": "{{current}}/{{total}} páginas",
+    "streakDays": "{{count}} días seguidos",
+    "readingProgress": "Progreso",
+    "pages": "{{current}}/{{total}} págs.",
     "shelfTitle": "Estantería",
+    "seeAll": "Ver todo",
+    "viewHistory": "Ver historial",
+    "updateProgress": "Actualizar progreso",
+    "createList": "Crear nueva lista",
     "listsTitle": "Listas",
     "listsCount": "{{count}} libros",
     "lists": {
