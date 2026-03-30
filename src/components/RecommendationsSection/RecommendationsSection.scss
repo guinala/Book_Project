@@ -1,0 +1,23 @@
+@import '../../styles/style';
+
+.recs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  &__title-highlight {
+    color: var(--color-accent);
+  }
+
+  &__grid {
+    @include card-grid(3);
+  }
+}

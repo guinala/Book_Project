@@ -1,0 +1,50 @@
+import { useEffect } from "react";
+import "./SynopsisModal.scss";
+
+type SynopsisModalProps = {
+  text: string;
+  onClose: () => void;
+};
+
+export default function SynopsisModal({ text, onClose }: SynopsisModalProps) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="synopsis-modal"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sinopsis completa"
+    >
+      <div className="synopsis-modal__box" onClick={(e) => e.stopPropagation()}>
+        <div className="synopsis-modal__header">
+          <h3 className="synopsis-modal__title">Sinopsis</h3>
+          <button className="synopsis-modal__close" onClick={onClose} aria-label="Cerrar">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div className="synopsis-modal__body">
+          {text.split("\n\n").map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
