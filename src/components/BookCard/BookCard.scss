@@ -85,20 +85,6 @@
     }
   }
 
-  &__stars {
-    display: flex;
-    gap: 2px;
-  }
-
-  &__star {
-    font-size: 18px;
-    line-height: 1;
-
-    @include from($bp-md) {
-      font-size: 20px;
-    }
-  }
-
   &__rating-value {
     font-size: 13px;
 

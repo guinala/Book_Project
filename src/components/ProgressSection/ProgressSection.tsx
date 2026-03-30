@@ -1,4 +1,4 @@
-import "./ProgressesSection.scss";
+import "./ProgressSection.scss";
 
 const weekActivity = [
   { day: "LU", pages: 22 },
@@ -17,8 +17,8 @@ const genres = [
   { name: "Otros",     pct: 12, color: "var(--color-text-tertiary)" },
 ];
 
-export default function ProgressesSection() {
-  const maxPages = Math.max(...weekActivity.map((d) => d.pages));
+export default function ProgressSection() {
+  const maxPages = Math.max(...weekActivity.map((day) => day.pages));
 
   return (
     <section className="progresses">
@@ -70,16 +70,16 @@ export default function ProgressesSection() {
         <div className="progresses__card">
           <p className="progresses__card-title">Géneros favoritos</p>
           <div className="progresses__genres">
-            {genres.map(({ name, pct, color }) => (
+            {genres.map(({ name, percentage, color }) => (
               <div key={name} className="progresses__genre">
                 <div className="progresses__genre-row">
                   <span className="progresses__genre-name">{name}</span>
-                  <span className="progresses__genre-pct">{pct}%</span>
+                  <span className="progresses__genre-pct">{percentage}%</span>
                 </div>
                 <div className="progresses__genre-track">
                   <div
                     className="progresses__genre-fill"
-                    style={{ width: `${pct}%`, background: color }}
+                    style={{ width: `${percentage}%`, background: color }}
                   />
                 </div>
               </div>

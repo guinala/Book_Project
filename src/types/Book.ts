@@ -7,6 +7,6 @@ export type Book = {
   cover_url?: string;
   edition_count: number;
   genre?: string;
-  rating?: number;       // 0 – 5
+  rating?: number;       
   ratingCount?: number;
 }

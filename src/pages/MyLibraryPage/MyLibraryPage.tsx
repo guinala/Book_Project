@@ -4,7 +4,7 @@ import type { Book } from "@/types/Book";
 import type { ReadingList } from "@/components/ListCard/ListCard";
 import ShelfSection from "@/components/ShelfSection/ShelfSection";
 import ListsSection from "@/components/ListsSection/ListsSection";
-import ProgressesSection from "@/components/ProgressesSection/ProgressesSection";
+import ProgressSection from "@/components/ProgressSection/ProgressSection";
 import "./MyLibraryPage.scss";
 
 import shelfCover1 from "@/assets/covers/shelf-1.jpg";
@@ -116,7 +116,7 @@ function MyLibraryPage() {
       </div>
 
       <div className="my-library__progresses-section">
-        <ProgressesSection />
+        <ProgressSection />
       </div>
     </section>
   );
