@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/layouts/AuthLayout";
 import LoginForm from "@/components/auth/Forms/LoginForm";
 import RegisterForm from "@/components/auth/Forms/RegisterForm";

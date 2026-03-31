@@ -3,7 +3,9 @@
     "brandName": "Trama",
     "register": "Registrar lectura",
     "login": "Iniciar Sesión",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "notifications": "Notificaciones",
+    "profile": "Perfil"
   },
   "nav": {
     "myLibrary": "Mi Biblioteca",

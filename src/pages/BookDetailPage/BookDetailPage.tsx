@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useBookDetail } from "@/hooks/useBookDetail";
 import BookInfoCard from "@/components/BookInfoCard/BookInfoCard";
 import ReviewsSection from "@/components/ReviewsSection/ReviewsSection";
@@ -9,12 +10,13 @@ import "./BookDetailPage.scss";
 export default function BookDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { book, loading, error } = useBookDetail(id);
 
   if (loading) {
     return (
       <main className="book-detail-page">
-        <p className="book-detail-page__status">Cargando...</p>
+        <p className="book-detail-page__status">{t("bookDetail.loading")}</p>
       </main>
     );
   }
@@ -23,10 +25,10 @@ export default function BookDetailPage() {
     return (
       <main className="book-detail-page">
         <p className="book-detail-page__status book-detail-page__status--error">
-          {error ?? "No se ha encontrado el libro"}
+          {error ?? t("bookDetail.notFound")}
         </p>
         <button className="book-detail-page__back-btn" onClick={() => navigate(-1)}>
-          Volver
+          {t("bookDetail.back")}
         </button>
       </main>
     );

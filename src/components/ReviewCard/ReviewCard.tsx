@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Review } from "@/types/BookDetail";
 import StarRating from "@/components/StarRating/StarRating";
 import "./ReviewCard.scss";
@@ -7,6 +8,7 @@ type ReviewCardProps = {
 };
 
 export default function ReviewCard({ review }: ReviewCardProps) {
+  const { t } = useTranslation();
   return (
     <article className="review-card">
       <div className="review-card__header">
@@ -28,7 +30,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
       </div>
 
       <div className="review-card__footer">
-        <button className="review-card__action" aria-label={`Me gusta (${review.likes})`}>
+        <button className="review-card__action" aria-label={t("bookDetail.likeAriaLabel", { count: review.likes })}>
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -43,7 +45,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         </button>
         <button
           className="review-card__action"
-          aria-label={`Comentarios (${review.comments})`}
+          aria-label={t("bookDetail.commentAriaLabel", { count: review.comments })}
         >
           <svg
             viewBox="0 0 24 24"

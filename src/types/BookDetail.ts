@@ -1,6 +1,6 @@
 import type { Book } from "./Book";
 
-export type ShelfStatus = "Quiero leer" | "Leyendo" | "Acabado" | "No acabado";
+export type ShelfStatus = "wantToRead" | "reading" | "finished" | "didNotFinish";
 
 export type Review = {
   id: string;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import type { AuthorInfo } from "@/types/BookDetail";
 import "./AuthorSection.scss";
 
@@ -8,6 +9,7 @@ type AuthorSectionProps = {
 };
 
 export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [photoError, setPhotoError] = useState(false);
 
@@ -19,7 +21,7 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
 
   return (
     <section className="author-section">
-      <h2 className="author-section__title">Más sobre el autor</h2>
+      <h2 className="author-section__title">{t("bookDetail.authorTitle")}</h2>
 
       <div className="author-section__card">
         <div className="author-section__photo-wrap">
@@ -58,7 +60,7 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
             <img
               className="author-section__book-cover"
               src={book.cover_url}
-              alt={`Portada de ${book.title}`}
+              alt={t("book.coverAlt", { title: book.title })}
             />
             <p className="author-section__book-title">{book.title}</p>
             <p className="author-section__book-year">{book.year}</p>
