@@ -3,7 +3,9 @@
     "brandName": "Trama",
     "register": "Log reading",
     "login": "Sign In",
-    "logout": "Sign Out"
+    "logout": "Sign Out",
+    "notifications": "Notifications",
+    "profile": "Profile"
   },
   "nav": {
     "myLibrary": "My Library",

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import "./SynopsisModal.scss";
 
 type SynopsisModalProps = {
@@ -7,6 +8,7 @@ type SynopsisModalProps = {
 };
 
 export default function SynopsisModal({ text, onClose }: SynopsisModalProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -21,12 +23,12 @@ export default function SynopsisModal({ text, onClose }: SynopsisModalProps) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Sinopsis completa"
+      aria-label={t("bookDetail.synopsisAriaLabel")}
     >
       <div className="synopsis-modal__box" onClick={(e) => e.stopPropagation()}>
         <div className="synopsis-modal__header">
-          <h3 className="synopsis-modal__title">Sinopsis</h3>
-          <button className="synopsis-modal__close" onClick={onClose} aria-label="Cerrar">
+          <h3 className="synopsis-modal__title">{t("bookDetail.synopsis")}</h3>
+          <button className="synopsis-modal__close" onClick={onClose} aria-label={t("bookDetail.close")}>
             <svg
               viewBox="0 0 24 24"
               fill="none"

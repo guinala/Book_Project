@@ -15,6 +15,38 @@
       "recommended": "Very recommended",
       "drama": "Drama",
       "women": "Written by Women"
+    },
+    "shelf": {
+      "wantToRead": "Want to read",
+      "reading": "Reading",
+      "finished": "Finished",
+      "didNotFinish": "Did not finish"
+    },
+    "progress": {
+      "title": "Progress",
+      "annualGoal": "Annual goal",
+      "books": "books",
+      "completed": "Completed!",
+      "weeklyActivity": "Weekly activity",
+      "pagesWeek": "pgs. this week",
+      "pagesToday": "pgs. today",
+      "lastWeek": "vs last week",
+      "favoriteGenres": "Favourite genres"
+    },
+    "days": {
+      "mon": "MO",
+      "tue": "TU",
+      "wed": "WE",
+      "thu": "TH",
+      "fri": "FR",
+      "sat": "SA",
+      "sun": "SU"
+    },
+    "genres": {
+      "fantasy": "Fantasy",
+      "drama": "Drama",
+      "historical": "Historical",
+      "others": "Others"
     }
   }
 }

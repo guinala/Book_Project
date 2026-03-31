@@ -115,7 +115,7 @@
     min-height: 4px;
     transition: height 400ms ease-out;
 
-    &--today { background: var(--color-accent); }
+    &--currentDay { background: var(--color-accent); }
   }
 
   &__bar-label {
@@ -124,7 +124,7 @@
     color: var(--color-text-tertiary);
     text-transform: uppercase;
 
-    &--today {
+    &--currentDay {
       color: var(--color-accent);
       font-weight: 700;
     }
@@ -184,7 +184,7 @@
     color: var(--color-text-primary);
   }
 
-  &__genre-pct {
+  &__genre-percentage {
     font-size: 13px;
     color: var(--color-text-tertiary);
   }

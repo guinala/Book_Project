@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Review } from "@/types/BookDetail";
 import ReviewCard from "@/components/ReviewCard/ReviewCard";
 import "./ReviewsSection.scss";
@@ -7,12 +8,13 @@ type ReviewsSectionProps = {
 };
 
 export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
+  const { t } = useTranslation();
   return (
     <section className="reviews-section">
       <div className="reviews-section__header">
-        <h2 className="reviews-section__title">Reseñas de la comunidad</h2>
+        <h2 className="reviews-section__title">{t("bookDetail.reviewsTitle")}</h2>
         <a href="#" className="reviews-section__see-more">
-          Ver más
+          {t("bookDetail.reviewsSeeMore")}
           <svg
             viewBox="0 0 24 24"
             fill="none"

@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import type { BookDetail, ShelfStatus } from "@/types/BookDetail";
 import StarRating from "@/components/StarRating/StarRating";
 import SynopsisModal from "@/components/SynopsisModal/SynopsisModal";
 import "./BookInfoCard.scss";
 
-const SHELF_OPTIONS: ShelfStatus[] = ["Quiero leer", "Leyendo", "Acabado", "No acabado"];
+const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
 function formatCount(n: number): string {
   if (n >= 1000) {
@@ -19,6 +20,7 @@ type BookInfoCardProps = {
 };
 
 export default function BookInfoCard({ book }: BookInfoCardProps) {
+  const { t } = useTranslation();
   const [shelfOpen, setShelfOpen] = useState(false);
   const [savedShelf, setSavedShelf] = useState<ShelfStatus | null>(null);
   const [synopsisOpen, setSynopsisOpen] = useState(false);
@@ -58,14 +60,14 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
           <img
             className="book-info-card__cover"
             src={book.cover_url}
-            alt={`Portada de ${book.title}`}
+            alt={t("book.coverAlt", { title: book.title })}
           />
           <div className="book-info-card__cover-overlay">
-            <span className="book-info-card__cover-overlay-text">Ver libro</span>
+            <span className="book-info-card__cover-overlay-text">{t("bookDetail.viewBook")}</span>
           </div>
         </div>
 
-        <button className="book-info-card__share-btn" aria-label="Compartir">
+        <button className="book-info-card__share-btn" aria-label={t("bookDetail.share")}>
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -93,26 +95,26 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
               <div className="book-info-card__rating-group">
                 <StarRating rating={book.rating} size={15} />
                 <span className="book-info-card__rating-count">
-                  {formatCount(book.reviewCount)} valoraciones
+                  {t("bookDetail.ratingsCount", { total: formatCount(book.reviewCount) })}
                 </span>
               </div>
             </div>
 
             <div className="book-info-card__divider" />
             <div className="book-info-card__meta-item">
-              <span className="book-info-card__meta-label">Páginas</span>
+              <span className="book-info-card__meta-label">{t("bookDetail.pages")}</span>
               <span className="book-info-card__meta-value">{book.pages}</span>
             </div>
 
             <div className="book-info-card__divider" />
             <div className="book-info-card__meta-item">
-              <span className="book-info-card__meta-label">Publicación</span>
+              <span className="book-info-card__meta-label">{t("bookDetail.published")}</span>
               <span className="book-info-card__meta-value">{book.year}</span>
             </div>
 
             <div className="book-info-card__divider" />
             <div className="book-info-card__meta-item">
-              <span className="book-info-card__meta-label">ISBN</span>
+              <span className="book-info-card__meta-label">{t("bookDetail.isbn")}</span>
               <span className="book-info-card__meta-value">{book.isbn}</span>
             </div>
           </div>
@@ -128,7 +130,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
                 className="book-info-card__synopsis-expand"
                 onClick={() => setSynopsisOpen(true)}
               >
-                Leer más
+                {t("bookDetail.readMore")}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -168,7 +170,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 )}
-                {savedShelf || "Guardar libro"}
+                {savedShelf ? t(`myLibrary.shelf.${savedShelf}`) : t("bookDetail.saveBook")}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -207,7 +209,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
                         )}
-                        {opt}
+                        {t(`myLibrary.shelf.${opt}`)}
                       </button>
                     </li>
                   ))}

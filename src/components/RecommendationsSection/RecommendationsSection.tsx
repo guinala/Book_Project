@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Book } from "@/types/Book";
 import BookCard from "@/components/BookCard/BookCard";
 import "./RecommendationsSection.scss";
@@ -11,11 +12,11 @@ export default function RecommendationsSection({
   books,
   baseTitle,
 }: RecommendationsSectionProps) {
+  const { t } = useTranslation();
   return (
     <section className="recs-section">
       <h2 className="recs-section__title">
-        Recomendaciones basadas en{" "}
-        <span className="recs-section__title-highlight">{baseTitle}</span>
+        {t("bookDetail.recsTitle", { title: baseTitle })}
       </h2>
       <div className="recs-section__grid">
         {books.map((book) => (

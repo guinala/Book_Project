@@ -4,7 +4,8 @@ import ShelfBookCard from "@/components/ShelfBookCard/ShelfBookCard";
 import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
 
-const SHELF_FILTERS = ["Quiero leer", "Leyendo", "Acabado", "No acabado"];
+const SHELF_FILTER_KEYS = ["wantToRead", "reading", "finished", "didNotFinish"] as const;
+type ShelfFilterKey = (typeof SHELF_FILTER_KEYS)[number];
 
 function ChevronRightIcon() {
   return (
@@ -20,7 +21,7 @@ type ShelfSectionProps = {
 
 export default function ShelfSection({ books }: ShelfSectionProps) {
   const { t } = useTranslation();
-  const [activeFilter, setActiveFilter] = useState(SHELF_FILTERS[0]);
+  const [activeFilter, setActiveFilter] = useState<ShelfFilterKey>(SHELF_FILTER_KEYS[0]);
 
   return (
     <section className="shelf-section">
@@ -28,13 +29,13 @@ export default function ShelfSection({ books }: ShelfSectionProps) {
 
       <div className="shelf-section__sub-header">
         <div className="shelf-section__filter-tabs">
-          {SHELF_FILTERS.map((label) => (
+          {SHELF_FILTER_KEYS.map((key) => (
             <button
-              key={label}
-              className={`shelf-section__filter-tab ${activeFilter === label ? "shelf-section__filter-tab--active" : ""}`}
-              onClick={() => setActiveFilter(label)}
+              key={key}
+              className={`shelf-section__filter-tab ${activeFilter === key ? "shelf-section__filter-tab--active" : ""}`}
+              onClick={() => setActiveFilter(key)}
             >
-              {label}
+              {t(`myLibrary.shelf.${key}`)}
               <span className="shelf-section__filter-count">{books.length}</span>
             </button>
           ))}
