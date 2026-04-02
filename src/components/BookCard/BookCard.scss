@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 .bookcard {
   display: flex;

@@ -1,3 +1,7 @@
+@use '../variables/scss_variables' as *;
+@use '../lib/mixins';
+@use '../lib/helpers';
+
 @mixin book-cover-img {
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -7,7 +11,7 @@
 }
 
 @mixin book-cover-placeholder {
-  @include flex-center;
+  @include helpers.flex-center;
   width: 100%;
   aspect-ratio: 2 / 3;
 }

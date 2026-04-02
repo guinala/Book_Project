@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 .landing {
   @include page-centered;

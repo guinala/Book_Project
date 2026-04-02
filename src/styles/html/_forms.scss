@@ -1,8 +1,4 @@
-input,
-textarea,
-select {
-  box-sizing: border-box;
-}
+@use '../lib/mixins';
 
 @mixin text-input {
   border-radius: var(--border-radius-sm);
@@ -10,5 +6,5 @@ select {
   font-size: 15px;
   width: 100%;
   box-sizing: border-box;
-  @include transition(border-color);
+  @include mixins.transition(border-color);
 }
