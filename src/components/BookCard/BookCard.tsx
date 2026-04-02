@@ -1,7 +1,9 @@
 import { useState, useRef } from "react";
 import type { MouseEvent } from "react";
+import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
 import { getCoverUrl } from "@/utils/coverImage";
+import StarRating from "@/components/StarRating/StarRating";
 import "./BookCard.scss";
 import { useTranslation } from "react-i18next";
 
@@ -9,27 +11,11 @@ type BookCardProps = {
   book: Book;
 }
 
-function StarRating({ rating }: { rating: number }) {
-  const stars = [];
-  const clamped = Math.max(0, Math.min(5, rating));
-
-  for (let i = 1; i <= 5; i++) {
-    if (clamped >= i) {
-      stars.push(<span key={i} className="bookcard__star bookcard__star--full">★</span>);
-    } else if (clamped >= i - 0.5) {
-      stars.push(<span key={i} className="bookcard__star bookcard__star--half">★</span>);
-    } else {
-      stars.push(<span key={i} className="bookcard__star bookcard__star--empty">☆</span>);
-    }
-  }
-
-  return <div className="bookcard__stars">{stars}</div>;
-}
-
 export default function BookCard({ book }: BookCardProps) {
   const coverRef = useRef<HTMLDivElement>(null);
   const [transformStyle, setTransformStyle] = useState("");
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!coverRef.current) return;
@@ -52,7 +38,7 @@ export default function BookCard({ book }: BookCardProps) {
   const displayRating = book.rating ?? 0;
 
   return (
-    <article className="bookcard">
+    <article className="bookcard" onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`)} style={{ cursor: "pointer" }}>
       <div
         ref={coverRef}
         className="bookcard__cover-wrapper"

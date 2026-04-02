@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthDivider from "@/components/auth/AuthDivider/AuthDivider";
 import SignInGoogleButton from "@/components/Buttons/SignInGoogleButton";
+import { useTranslation } from "react-i18next";
 
 type GoogleFormInputProps = {
   disabled: boolean;
@@ -8,10 +8,11 @@ type GoogleFormInputProps = {
 
 export default function GoogleFormInput({ disabled }: GoogleFormInputProps) {
   const [googleError, setGoogleError] = useState("");
+  const { t } = useTranslation();
 
   return (
     <>
-      <AuthDivider />
+      <div className="auth__divider">{t("auth.dividerOr")}</div>;
       <SignInGoogleButton disabled={disabled} onError={setGoogleError} />
       {googleError && <p className="auth__error">{googleError}</p>}
     </>

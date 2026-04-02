@@ -1,0 +1,24 @@
+{
+  "bookDetail": {
+    "loading": "Loading...",
+    "notFound": "Book not found",
+    "back": "Back",
+    "viewBook": "View book",
+    "share": "Share",
+    "ratingsCount": "{{total}} ratings",
+    "pages": "Pages",
+    "published": "Published",
+    "isbn": "ISBN",
+    "readMore": "Read more",
+    "saveBook": "Save book",
+    "synopsis": "Synopsis",
+    "synopsisAriaLabel": "Full synopsis",
+    "close": "Close",
+    "reviewsTitle": "Community reviews",
+    "reviewsSeeMore": "See more",
+    "likeAriaLabel": "Likes ({{count}})",
+    "commentAriaLabel": "Comments ({{count}})",
+    "authorTitle": "More about the author",
+    "recsTitle": "Recommendations based on {{title}}"
+  }
+}
