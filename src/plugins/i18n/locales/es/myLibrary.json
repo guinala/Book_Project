@@ -15,6 +15,38 @@
       "recommended": "Muy Recomendados",
       "drama": "Drama",
       "women": "Escritos por mujeres"
+    },
+    "shelf": {
+      "wantToRead": "Quiero leer",
+      "reading": "Leyendo",
+      "finished": "Acabado",
+      "didNotFinish": "No acabado"
+    },
+    "progress": {
+      "title": "Progresos",
+      "annualGoal": "Meta anual",
+      "books": "libros",
+      "completed": "¡Completado!",
+      "weeklyActivity": "Actividad semanal",
+      "pagesWeek": "págs. semana",
+      "pagesToday": "págs. hoy",
+      "lastWeek": "semana pasada",
+      "favoriteGenres": "Géneros favoritos"
+    },
+    "days": {
+      "mon": "LU",
+      "tue": "MA",
+      "wed": "MI",
+      "thu": "JU",
+      "fri": "VI",
+      "sat": "SÁ",
+      "sun": "DO"
+    },
+    "genres": {
+      "fantasy": "Fantasía",
+      "drama": "Drama",
+      "historical": "Histórica",
+      "others": "Otros"
     }
   }
 }

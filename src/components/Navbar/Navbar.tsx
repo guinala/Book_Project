@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router";
 import { NAV_LINKS } from "@/routes/routes";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import "./Navbar.scss";
 import { useTranslation } from "react-i18next";
 
@@ -48,13 +48,13 @@ export default function Navbar() {
                 <img src={ICON_PLUS} alt="" />
                 {t("navbar.register")}
               </button>
-              <button className="navbar__btn-icon" type="button" aria-label="Notificaciones">
+              <button className="navbar__btn-icon" type="button" aria-label={t("navbar.notifications")}>
                 <img src={ICON_NOTIF} alt="" />
               </button>
               <button
                 className="navbar__btn-icon navbar__btn-icon--avatar"
                 type="button"
-                aria-label="Perfil"
+                aria-label={t("navbar.profile")}
                 onClick={logout}
               >
                 <img src={ICON_AVATAR} alt="" />
