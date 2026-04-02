@@ -1,4 +1,4 @@
-@import './styles/style.scss';
+@use './styles/style';
 
 #root {
   width: 100%;
@@ -7,5 +7,5 @@
 }
 
 main {
-  padding-top: 70px;
+  padding-top: var(--navbar-height);
 }

@@ -1,18 +1,15 @@
-//Primero se importa la fuente para evitar conflictos
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@use 'variables/scss_variables';
+@use 'variables/custom_properties';
 
-@import 'variables/scss_variables';
-@import 'variables/custom_properties';
+@use 'lib/mixins';
+@use 'lib/helpers';
 
-@import 'lib/mixins';
-@import 'lib/helpers';
+@use 'base/typography';
+@use 'base/animations';
+@use 'base/site';
 
-@import 'base/typography';
-@import 'base/animations';
-@import 'base/site';
+@use 'html/headers';
+@use 'html/forms';
 
-@import 'html/headers';
-@import 'html/forms';
-
-@import 'layouts/card';
-@import 'layouts/grid';
+@use 'layouts/card';
+@use 'layouts/grid';

@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 .progresses {
   width: 100%;
@@ -17,11 +17,11 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: 1fr 2fr 1.4fr;
+    grid-template-columns: 1fr;
     gap: 14px;
 
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
+    @include from($bp-md) {
+      grid-template-columns: 1fr 2fr 1.4fr;
     }
   }
 

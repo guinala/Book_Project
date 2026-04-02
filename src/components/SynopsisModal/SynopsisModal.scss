@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 @keyframes synopsis-fade-in {
   from { opacity: 0; }

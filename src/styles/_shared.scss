@@ -1,0 +1,8 @@
+// Punto de entrada de mixins/variables para componentes y páginas.
+// Usar con: @use '../../styles/shared' as *;
+@forward 'variables/scss_variables';
+@forward 'lib/mixins';
+@forward 'lib/helpers';
+@forward 'layouts/card';
+@forward 'layouts/grid';
+@forward 'html/forms';

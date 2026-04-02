@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 .author-section {
   display: flex;
@@ -20,25 +20,26 @@
     backdrop-filter: blur(8px);
     box-shadow: var(--shadow-card);
     position: relative;
-    padding: 20px 28px 28px 148px;
+    padding: 90px 20px 24px 20px;
     min-height: 130px;
-    margin-top: 32px;
+    margin-top: 48px;
 
-    @media (max-width: 640px) {
-      padding: 90px 20px 24px 20px;
-      margin-top: 48px;
+    @include from($bp-md) {
+      padding: 20px 28px 28px 148px;
+      margin-top: 32px;
     }
   }
 
   &__photo-wrap {
     position: absolute;
-    top: -32px;
-    left: -20px;
+    top: -44px;
+    left: 50%;
+    transform: translateX(-50%);
 
-    @media (max-width: 640px) {
-      top: -44px;
-      left: 50%;
-      transform: translateX(-50%);
+    @include from($bp-md) {
+      top: -32px;
+      left: -20px;
+      transform: none;
     }
   }
 
