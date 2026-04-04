@@ -1,6 +1,6 @@
 import i18n from "@/plugins/i18n/i18n";
 import type { Book } from "@/types/Book";
-import type { OpenLibrarySearchResponse } from "@/types/OpenLibrary";
+import type { OpenLibrarySearchResponse, OpenLibraryWork } from "@/types/OpenLibrary";
 import { openLibraryClient } from "@/services/api/apiConnections";
 import { getLangIso3Letters } from "@/utils/langConversion";
 
@@ -124,4 +124,21 @@ export async function fetchBookByTitle(
     rating: doc.ratings_average,
     ratingCount: doc.ratings_count,
   };
+}
+
+export async function getWork(
+  workKey: string,
+  signal?: AbortSignal
+): Promise<OpenLibraryWork> {
+  const { data } = await openLibraryClient.get<OpenLibraryWork>(
+    `${workKey}.json`,
+    { signal }
+  );
+  return data;
+}
+
+export function extractSynopsis(work: OpenLibraryWork): string {
+  if (!work.description) return '';
+  if (typeof work.description === 'string') return work.description;
+  return work.description.value ?? '';
 }
