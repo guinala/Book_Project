@@ -11,8 +11,9 @@ type AuthorSectionProps = {
 export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [photoError, setPhotoError] = useState(false);
-
+  //const [photoError, setPhotoError] = useState(false);
+  const [photoError, setPhotoError] = useState(!authorInfo.photoUrl)
+  
   const initials = authorInfo.name
     .split(" ")
     .map((w) => w[0])

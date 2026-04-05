@@ -38,7 +38,10 @@ export default function BookCard({ book }: BookCardProps) {
   const displayRating = book.rating ?? 0;
 
   return (
-    <article className="bookcard" onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`)} style={{ cursor: "pointer" }}>
+    <article className="bookcard" onClick={() => {
+  console.log('navigating with state:', { book });
+  navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } });
+}} style={{ cursor: "pointer" }}>
       <div
         ref={coverRef}
         className="bookcard__cover-wrapper"
