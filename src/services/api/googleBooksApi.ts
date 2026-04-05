@@ -86,3 +86,59 @@ export async function fetchFantasyBooksGoogle(
     edition_count: 0,
   }));
 }
+
+export async function fetchGoogleSynopsis(
+  title: string,
+  signal: AbortSignal,
+  isbn?: string,
+  author?: string,
+): Promise<string> {
+  try {
+    const titleAuthorQuery = author ? `intitle:${title}+inauthor:${author}` : `intitle:${title}`;
+
+    // Intento 1: ISBN de la edición española
+    if (isbn) {
+      const { data } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
+        params: {
+          q: `isbn:${isbn}`,
+          maxResults: 1,
+          fields: 'items(volumeInfo/description)',
+          key: API_KEY,
+        },
+        signal,
+      });
+      const synopsis = data.items?.[0]?.volumeInfo?.description ?? '';
+      if (synopsis.trim().length > 50) return synopsis;
+    }
+
+    // Intento 2: título+autor en español
+    const { data: data2 } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
+      params: {
+        q: titleAuthorQuery,
+        langRestrict: 'es',
+        maxResults: 1,
+        fields: 'items(volumeInfo/description)',
+        key: API_KEY,
+      },
+      signal,
+    });
+    const synopsis2 = data2.items?.[0]?.volumeInfo?.description ?? '';
+    if (synopsis2.trim().length > 50) return synopsis2;
+
+    // Intento 3: título+autor sin restricción de idioma
+    const { data: data3 } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
+      params: {
+        q: titleAuthorQuery,
+        maxResults: 1,
+        fields: 'items(volumeInfo/description)',
+        key: API_KEY,
+      },
+      signal,
+    });
+    return data3.items?.[0]?.volumeInfo?.description ?? '';
+
+  } catch {
+    return '';
+  }
+}
+

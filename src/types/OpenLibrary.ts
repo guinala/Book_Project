@@ -3,6 +3,7 @@ export type OpenLibraryEditionDoc = {
   title?: string;
   language?: string[];
   cover_i?: number;
+  isbn?: string,
 }
 
 export type OpenLibraryEditions = {
@@ -21,6 +22,8 @@ export type OpenLibraryDoc = {
   ratings_average?: number;
   ratings_count?: number;
   editions?: OpenLibraryEditions;
+  isbn?: string[];
+  number_of_pages_median?: number;
 }
 
 export type OpenLibrarySearchResponse = {

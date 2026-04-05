@@ -14,13 +14,16 @@ const FANTASY_FIELDS = [
   "subject",
   "ratings_average",
   "ratings_count",
+  "isbn",
+  "number_of_pages_median",
   "editions",
   "editions.title",
   "editions.language",
   "editions.cover_i",
+  "editions.isbn",
 ].join(",");
 
-const SEARCH_FIELDS = "key,title,author_name,first_publish_year,cover_i,edition_count";
+const SEARCH_FIELDS = "key,title,author_name,first_publish_year,cover_i,edition_count, isbn, number_of_pages_median";
 
 export async function fetchFantasyBooks(
   limit: number,
@@ -55,6 +58,8 @@ export async function fetchFantasyBooks(
       genre: doc.subject?.[0],
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
+      isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
+      pages: doc.number_of_pages_median,
     };
   });
 }
@@ -84,6 +89,8 @@ export async function searchBooks(
     first_publish_year: doc.first_publish_year ?? 0,
     cover_id: doc.cover_i ?? null,
     edition_count: doc.edition_count ?? 0,
+    isbn: doc.isbn?.[0],
+    pages: doc.number_of_pages_median,  
   }));
 
   return { books, totalResults: data.numFound };
