@@ -14,6 +14,7 @@ export type GoogleBooksVolumeInfo = {
 export type GoogleBooksItem = {
   id: string;
   volumeInfo: GoogleBooksVolumeInfo;
+  searchInfo?: { textSnippet?: string};
 }
 
 export type GoogleBooksResponse = {
