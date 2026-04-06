@@ -28,7 +28,7 @@ export async function fetchGoogleCover(
       params: {
         q: query,
         maxResults: 1,
-        fields: "items(volumeInfo/imageLinks)",
+        fields: 'items(volumeInfo/description,searchInfo/textSnippet)',
         key: API_KEY,
       },
       signal,
@@ -102,12 +102,12 @@ export async function fetchGoogleSynopsis(
         params: {
           q: `isbn:${isbn}`,
           maxResults: 1,
-          fields: 'items(volumeInfo/description)',
+          fields: 'items(volumeInfo/description,searchInfo/textSnippet)',
           key: API_KEY,
         },
         signal,
       });
-      const synopsis = data.items?.[0]?.volumeInfo?.description ?? '';
+      const synopsis = extractDescription(data);
       if (synopsis.trim().length > 50) return synopsis;
     }
 
@@ -117,12 +117,12 @@ export async function fetchGoogleSynopsis(
         q: titleAuthorQuery,
         langRestrict: 'es',
         maxResults: 1,
-        fields: 'items(volumeInfo/description)',
+        fields: 'items(volumeInfo/description,searchInfo/textSnippet)',
         key: API_KEY,
       },
       signal,
     });
-    const synopsis2 = data2.items?.[0]?.volumeInfo?.description ?? '';
+    const synopsis2 = extractDescription(data2);
     if (synopsis2.trim().length > 50) return synopsis2;
 
     // Intento 3: título+autor sin restricción de idioma
@@ -130,15 +130,21 @@ export async function fetchGoogleSynopsis(
       params: {
         q: titleAuthorQuery,
         maxResults: 1,
-        fields: 'items(volumeInfo/description)',
+        fields: 'items(volumeInfo/description,searchInfo/textSnippet)',
         key: API_KEY,
       },
       signal,
     });
-    return data3.items?.[0]?.volumeInfo?.description ?? '';
+    return extractDescription(data3);
 
   } catch {
     return '';
   }
 }
+
+function extractDescription(data: GoogleBooksResponse): string {
+  const item = data.items?.[0];
+  return item?.volumeInfo?.description ?? item?.searchInfo?.textSnippet ?? '';
+}
+
 

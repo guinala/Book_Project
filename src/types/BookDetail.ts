@@ -18,7 +18,12 @@ export type AuthorBook = {
   cover_url: string;
   title: string;
   year: string;
+  rating?: number;
+  ratingCount?: number;
+  isbn?: string;
+  pages?: number;
 };
+
 
 export type AuthorInfo = {
   name: string;

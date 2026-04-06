@@ -38,3 +38,20 @@ export type OpenLibraryWork = {
   subjects?: string[];
 }
 
+export type OLAuthorDoc = {
+  key: string;   // e.g. "OL23919A"
+  name: string;
+}
+
+export type OLAuthorWork = {
+  key: string;   // e.g. "/works/OL123W"
+  title: string;
+  covers?: number[];
+  first_publish_year?: number;
+}
+
+export type WikiSummary = {
+  extract: string;
+  thumbnail?: { source: string };
+}
+

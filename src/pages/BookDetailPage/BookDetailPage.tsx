@@ -6,12 +6,18 @@ import ReviewsSection from "@/components/ReviewsSection/ReviewsSection";
 import AuthorSection from "@/components/AuthorSection/AuthorSection";
 import RecommendationsSection from "@/components/RecommendationsSection/RecommendationsSection";
 import "./BookDetailPage.scss";
+import { useAuthorData } from "@/hooks/useAuthorData";
 
 export default function BookDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { book, loading, error } = useBookDetail(id);
+  const { authorInfo, loading: authorLoading } = useAuthorData(
+    book?.author ?? '',
+    book?.title ?? ''
+  );
+
 
   if (loading) {
     return (
@@ -42,7 +48,10 @@ export default function BookDetailPage() {
 
       <ReviewsSection reviews={book.reviews} />
 
-      <AuthorSection authorInfo={book.authorInfo} />
+      {authorLoading
+        ? <p className="book-detail-page__status">{t("bookDetail.loading")}</p>
+        : <AuthorSection authorInfo={authorInfo ?? book.authorInfo} />
+      }
 
       <RecommendationsSection books={book.recommendations} baseTitle={book.title} />
     </main>
