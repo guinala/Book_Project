@@ -47,7 +47,8 @@
   &__photo-fallback {
     width: 130px;
     height: 130px;
-    border-radius: var(--border-radius-pill);
+    //border-radius: var(--border-radius-pill);
+    border-radius: 50%;
     border: 3px solid var(--color-accent);
     box-shadow: 0 6px 20px rgba(232, 107, 48, 0.25);
   }

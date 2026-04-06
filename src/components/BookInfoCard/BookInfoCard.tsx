@@ -57,11 +57,20 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
 
       <div className="book-info-card">
         <div className="book-info-card__cover-wrap">
-          <img
+          {/* <img
             className="book-info-card__cover"
             src={book.cover_url}
             alt={t("book.coverAlt", { title: book.title })}
-          />
+          /> */}
+          {book.cover_url ? (
+            <img
+              className="book-info-card__cover"
+              src={book.cover_url}
+              alt={t("book.coverAlt", { title: book.title })}
+            />
+          ) : (
+            <div className="book-info-card__cover-placeholder" />
+          )}
           <div className="book-info-card__cover-overlay">
             <span className="book-info-card__cover-overlay-text">{t("bookDetail.viewBook")}</span>
           </div>

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import type { AuthorInfo } from "@/types/BookDetail";
+import type { AuthorBook, AuthorInfo } from "@/types/BookDetail";
 import "./AuthorSection.scss";
+import type { Book } from "@/types/Book";
 
 type AuthorSectionProps = {
   authorInfo: AuthorInfo;
@@ -11,7 +12,26 @@ type AuthorSectionProps = {
 export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [photoError, setPhotoError] = useState(false);
+  //const [photoError, setPhotoError] = useState(false);
+  const [photoError, setPhotoError] = useState(!authorInfo.photoUrl)
+  
+  const handleBookClick = (book: AuthorBook) => {
+    const bookState: Book = {
+      key: book.id,
+      title: book.title,
+      authors: [authorInfo.name],
+      first_publish_year: parseInt(book.year) || 0,
+      cover_id: null,
+      cover_url: book.cover_url,
+      edition_count: 0,
+      rating: book.rating,
+      ratingCount: book.ratingCount,
+      isbn: book.isbn,
+      pages: book.pages,
+    };
+
+    navigate(`/book/${encodeURIComponent(book.id)}`, { state: { book: bookState } });
+  };
 
   const initials = authorInfo.name
     .split(" ")
@@ -52,10 +72,10 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
           <div
             key={book.id}
             className="author-section__book"
-            onClick={() => navigate(`/book/${book.id}`)}
+            onClick={() => handleBookClick(book)}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && navigate(`/book/${book.id}`)}
+            onKeyDown={(e) => e.key === "Enter" && handleBookClick(book)}
           >
             <img
               className="author-section__book-cover"
@@ -70,3 +90,5 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
     </section>
   );
 }
+
+
