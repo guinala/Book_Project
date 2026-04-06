@@ -27,3 +27,11 @@ export type OpenLibrarySearchResponse = {
   docs: OpenLibraryDoc[];
   numFound: number;
 }
+
+export type OpenLibraryWork = {
+  title: string;
+  description?: string | { type: string; value: string };
+  covers?: number[];
+  subjects?: string[];
+}
+
