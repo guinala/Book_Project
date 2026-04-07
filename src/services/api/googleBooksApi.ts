@@ -2,6 +2,7 @@ import i18n from "@/plugins/i18n/i18n";
 import type { Book } from "@/types/Book";
 import type { GoogleBooksImageLinks, GoogleBooksResponse } from "@/types/GoogleBooks";
 import { googleBooksClient } from "@/services/api/apiConnections";
+import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
 
@@ -21,38 +22,43 @@ export async function fetchGoogleCover(
   author: string,
   signal: AbortSignal
 ): Promise<string | null> {
-  try {
-    const query = `intitle:${title}${author ? `+inauthor:${author}` : ""}`;
+  const query = `intitle:${title}${author ? `+inauthor:${author}` : ""}`;
 
-    const { data } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
-      params: {
-        q: query,
-        maxResults: 1,
-        fields: 'items(volumeInfo/description,searchInfo/textSnippet)',
-        key: API_KEY,
-      },
-      signal,
-    });
+  const { data } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
+    params: {
+      q: query,
+      maxResults: 1,
+      fields: 'items(volumeInfo/imageLinks)',
+      key: API_KEY,
+    },
+    signal,
+  });
 
-    return normalizeCoverUrl(data.items?.[0]?.volumeInfo?.imageLinks) ?? null;
-  } catch {
-    return null;
-  }
+  return normalizeCoverUrl(data.items?.[0]?.volumeInfo?.imageLinks) ?? null;
 }
+
 
 export async function fetchGoogleCovers(
   books: Book[],
   signal: AbortSignal
 ): Promise<(string | null)[]> {
-  const promises = books.map((book) =>
-    fetchGoogleCover(book.title, book.authors[0] ?? "", signal)
-  );
+  const covers: (string | null)[] = [];
 
-  const results = await Promise.allSettled(promises);
+  for (const book of books) {
+    try {
+      const cover = await fetchGoogleCover(book.title, book.authors[0] ?? "", signal);
+      covers.push(cover);
+    } catch (err) {
+      if (axios.isCancel(err)) throw err;
+      if (axios.isAxiosError(err) && err.response?.status === 503) throw err;
+      covers.push(null);
+    }
+    if (covers.length < books.length) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
 
-  return results.map((result) =>
-    result.status === "fulfilled" ? result.value : null
-  );
+  return covers;
 }
 
 export async function fetchFantasyBooksGoogle(
