@@ -107,18 +107,26 @@ async function fetchGoogleCoverWithRetry(
 export async function fetchGoogleCovers(
   books: Book[],
   signal: AbortSignal,
-  onCoverReady?: (index: number, url: string) => void  
+  onCoverReady?: (index: number, url: string) => void
 ): Promise<void> {
-  const covers: (string | null)[] = [];
+  const GROUP_SIZE = 3;
+  const DELAY = 200;
 
-  for (const book of books) {
-    const cover = await fetchGoogleCoverWithRetry(book.title, book.authors[0] ?? "", signal);
-    covers.push(cover);
-    if (cover && onCoverReady) {
-      onCoverReady(covers.length - 1, cover);  
-    }
-    if (covers.length < books.length) {
-      await new Promise(resolve => setTimeout(resolve, 300));
+  for (let i = 0; i < books.length; i += GROUP_SIZE) {
+    const batch = books.slice(i, i + GROUP_SIZE);
+
+    await Promise.all(
+      batch.map(async (book, batchIndex) => {
+        const index = i + batchIndex;
+        const cover = await fetchGoogleCoverWithRetry(book.title, book.authors[0] ?? "", signal);
+        if (cover && onCoverReady) {
+          onCoverReady(index, cover);
+        }
+      })
+    );
+
+    if (i + GROUP_SIZE < books.length) {
+      await new Promise(resolve => setTimeout(resolve, DELAY));
     }
   }
 }
