@@ -1,16 +1,52 @@
 {
   "myLibrary": {
     "heading": "Estoy leyendo...",
-    "streakDays": "🔥 {{count}} días de racha",
-    "readingProgress": "Progreso de lectura",
-    "pages": "{{current}}/{{total}} páginas",
+    "streakDays": "{{count}} días seguidos",
+    "readingProgress": "Progreso",
+    "pages": "{{current}}/{{total}} págs.",
     "shelfTitle": "Estantería",
+    "seeAll": "Ver todo",
+    "viewHistory": "Ver historial",
+    "updateProgress": "Actualizar progreso",
+    "createList": "Crear nueva lista",
     "listsTitle": "Listas",
     "listsCount": "{{count}} libros",
     "lists": {
       "recommended": "Muy Recomendados",
       "drama": "Drama",
       "women": "Escritos por mujeres"
+    },
+    "shelf": {
+      "wantToRead": "Quiero leer",
+      "reading": "Leyendo",
+      "finished": "Acabado",
+      "didNotFinish": "No acabado"
+    },
+    "progress": {
+      "title": "Progresos",
+      "annualGoal": "Meta anual",
+      "books": "libros",
+      "completed": "¡Completado!",
+      "weeklyActivity": "Actividad semanal",
+      "pagesWeek": "págs. semana",
+      "pagesToday": "págs. hoy",
+      "lastWeek": "semana pasada",
+      "favoriteGenres": "Géneros favoritos"
+    },
+    "days": {
+      "mon": "LU",
+      "tue": "MA",
+      "wed": "MI",
+      "thu": "JU",
+      "fri": "VI",
+      "sat": "SÁ",
+      "sun": "DO"
+    },
+    "genres": {
+      "fantasy": "Fantasía",
+      "drama": "Drama",
+      "historical": "Histórica",
+      "others": "Otros"
     }
   }
 }

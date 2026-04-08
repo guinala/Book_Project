@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import "./LandingPage.scss";
 

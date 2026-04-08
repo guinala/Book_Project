@@ -1,16 +1,52 @@
 {
   "myLibrary": {
     "heading": "Currently reading...",
-    "streakDays": "🔥 {{count}} day streak",
-    "readingProgress": "Reading progress",
-    "pages": "{{current}}/{{total}} pages",
+    "streakDays": "{{count}} day streak",
+    "readingProgress": "Progress",
+    "pages": "{{current}}/{{total}} pgs.",
     "shelfTitle": "Bookshelf",
+    "seeAll": "See all",
+    "viewHistory": "View history",
+    "updateProgress": "Update progress",
+    "createList": "Create new list",
     "listsTitle": "Lists",
     "listsCount": "{{count}} books",
     "lists": {
       "recommended": "Very recommended",
       "drama": "Drama",
       "women": "Written by Women"
+    },
+    "shelf": {
+      "wantToRead": "Want to read",
+      "reading": "Reading",
+      "finished": "Finished",
+      "didNotFinish": "Did not finish"
+    },
+    "progress": {
+      "title": "Progress",
+      "annualGoal": "Annual goal",
+      "books": "books",
+      "completed": "Completed!",
+      "weeklyActivity": "Weekly activity",
+      "pagesWeek": "pgs. this week",
+      "pagesToday": "pgs. today",
+      "lastWeek": "vs last week",
+      "favoriteGenres": "Favourite genres"
+    },
+    "days": {
+      "mon": "MO",
+      "tue": "TU",
+      "wed": "WE",
+      "thu": "TH",
+      "fri": "FR",
+      "sat": "SA",
+      "sun": "SU"
+    },
+    "genres": {
+      "fantasy": "Fantasy",
+      "drama": "Drama",
+      "historical": "Historical",
+      "others": "Others"
     }
   }
 }

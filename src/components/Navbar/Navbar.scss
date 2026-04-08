@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 .navbar {
   z-index: var(--z-navbar);
@@ -7,7 +7,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 80px);
-  max-width: $max-width;
+  max-width: var(--max-width);
   padding: 0;
 
   &__inner {
@@ -116,7 +116,7 @@
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    transition: background 150ms, transform 100ms;
+    @include transition(background, transform);
 
     &:hover {
       background: #f5f5f5;
@@ -141,7 +141,7 @@
     color: #fff;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 150ms;
+    @include transition(background);
 
     &:hover {
       background: rgba(255,255,255,0.28);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SearchBar from "@/components/Searchbar/Searchbar";
 import BookList from "@/components/BookList/BookList";
@@ -11,23 +11,35 @@ import "./ExplorePage.scss";
 
 function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchFilter, setSearchFilter] = useState<SearchFilter>("todo");
+  //const [searchFilter, setSearchFilter] = useState<SearchFilter>("todo");
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
 
   //const fantasy = useFantasyBooks(20, lang);
-  const hybrid = useFantasyBooks_GoogleOpen(20, lang);
-  const search = useBookSearch(searchQuery, searchFilter, 20, lang);
+  const hybrid = useFantasyBooks_GoogleOpen();
+  const {fetchBooks, cancelRequest} = hybrid;
+  const search = useBookSearch();
 
   const isSearching = searchQuery.trim().length > 0;
 
+  useEffect(() => {
+    fetchBooks(20, lang);
+    return () => cancelRequest();
+  }, [lang, fetchBooks, cancelRequest]);
+
   const handleSearch = (query: string, filter: SearchFilter) => {
     setSearchQuery(query);
-    setSearchFilter(filter);
+    //setSearchFilter(filter);
+    if(query.trim()){
+      search.fetchBooks(query, filter, 20, lang);
+    } else{
+      search.resetBookResults();
+    }
   };
 
   const handleClearSearch = () => {
     setSearchQuery("");
+    search.resetBookResults();
   };
 
   const activeBooks = isSearching ? search.books : hybrid.books;

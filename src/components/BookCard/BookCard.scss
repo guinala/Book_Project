@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 .bookcard {
   display: flex;
@@ -82,20 +82,6 @@
 
     @include from($bp-md) {
       margin-top: 8px;
-    }
-  }
-
-  &__stars {
-    display: flex;
-    gap: 2px;
-  }
-
-  &__star {
-    font-size: 18px;
-    line-height: 1;
-
-    @include from($bp-md) {
-      font-size: 20px;
     }
   }
 

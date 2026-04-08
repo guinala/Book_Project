@@ -3,6 +3,7 @@ import LandingPage from "@/pages/LandingPage/LandingPage";
 import AuthPage from "@/pages/AuthPage/AuthPage";
 import ExplorePage from "@/pages/ExplorePage/ExplorePage";
 import MyLibraryPage from "@/pages/MyLibraryPage/MyLibraryPage";
+import BookDetailPage from "@/pages/BookDetailPage/BookDetailPage";
 import AuthRoute from "@/routes/AuthRoute";
 
 export const ROUTES = [
@@ -13,6 +14,7 @@ export const ROUTES = [
       { index: true, element: <LandingPage /> },
       { path: "auth", element: <AuthPage /> },
       { path: "explore", element: <ExplorePage /> },
+      { path: "book/:id", element: <BookDetailPage /> },
       {
         path: "my-library",
         element: (

@@ -1,0 +1,37 @@
+@use '../../styles/shared' as *;
+
+.book-detail-page {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: calc(var(--navbar-height) + 24px) $padding-horizontal 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+
+  @include from($bp-md) {
+    padding-top: calc(var(--navbar-height) + 36px);
+  }
+
+  &__status {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-text-secondary);
+    font-size: 15px;
+    margin: 0;
+
+    &--error { color: #dc2626; }
+  }
+
+  &__back-btn {
+    @include ghost-button;
+    display: block;
+    margin: 0 auto;
+    color: var(--color-accent);
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    padding: 8px 16px;
+
+    &:hover { opacity: 0.8; }
+  }
+}

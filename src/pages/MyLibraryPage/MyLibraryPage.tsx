@@ -4,6 +4,7 @@ import type { Book } from "@/types/Book";
 import type { ReadingList } from "@/components/ListCard/ListCard";
 import ShelfSection from "@/components/ShelfSection/ShelfSection";
 import ListsSection from "@/components/ListsSection/ListsSection";
+import ProgressSection from "@/components/ProgressSection/ProgressSection";
 import "./MyLibraryPage.scss";
 
 import shelfCover1 from "@/assets/covers/shelf-1.jpg";
@@ -93,7 +94,7 @@ const READING_LISTS: ReadingList[] = [
     nameKey: "myLibrary.lists.women",
     count: 9,
     coverUrls: [listWom1, listWom2, listWom3, listWom4],
-  }
+  },
 ];
 
 function MyLibraryPage() {
@@ -101,9 +102,8 @@ function MyLibraryPage() {
 
   return (
     <section className="my-library">
-      <h2 className="my-library__heading">{t("myLibrary.heading")}</h2>
-
       <div className="my-library__reading-section">
+        <h3 className="my-library__section-title">{t("myLibrary.heading")}</h3>
         <CurrentReadingCard />
       </div>
 
@@ -113,6 +113,10 @@ function MyLibraryPage() {
 
       <div className="my-library__lists-section">
         <ListsSection lists={READING_LISTS} />
+      </div>
+
+      <div className="my-library__progresses-section">
+        <ProgressSection />
       </div>
     </section>
   );

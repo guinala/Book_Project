@@ -1,4 +1,4 @@
-@import '../../styles/style';
+@use '../../styles/shared' as *;
 
 .explore-page__search-status {
   @include container;
