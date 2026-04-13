@@ -3,6 +3,7 @@ import type { Book } from "@/types/Book";
 import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryWork, WikiSummary } from "@/types/OpenLibrary";
 import { openLibraryClient } from "@/services/api/apiConnections";
 import { getLangIso3Letters } from "@/utils/langConversion";
+import { handleFantasyGenre } from "@/utils/genreUtils";
 
 const FANTASY_FIELDS = [
   "key",
@@ -55,7 +56,7 @@ export async function fetchFantasyBooks(
       first_publish_year: doc.first_publish_year ?? 0,
       cover_id,
       edition_count: doc.edition_count ?? 0,
-      genre: doc.subject?.[0],
+      genre: handleFantasyGenre(doc.subject),
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
