@@ -7,6 +7,7 @@ import AuthorSection from "@/components/AuthorSection/AuthorSection";
 import RecommendationsSection from "@/components/RecommendationsSection/RecommendationsSection";
 import "./BookDetailPage.scss";
 import { useAuthorData } from "@/hooks/useAuthorData";
+import { useEffect } from "react";
 
 export default function BookDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
@@ -18,6 +19,9 @@ export default function BookDetailPage() {
     book?.title ?? ''
   );
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [id]);
 
   if (loading) {
     return (

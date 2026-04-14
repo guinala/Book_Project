@@ -17,11 +17,11 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 2fr 1.4fr;
     gap: 14px;
 
-    @include from($bp-md) {
-      grid-template-columns: 1fr 2fr 1.4fr;
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
     }
   }
 

@@ -7,5 +7,5 @@ export const openLibraryClient = axios.create({
 
 export const googleBooksClient = axios.create({
   baseURL: "https://www.googleapis.com/books/v1",
-  headers: { "Content-Type": "application/json" },
+  //headers: { "Content-Type": "application/json" },
 });

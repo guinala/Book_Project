@@ -1,6 +1,9 @@
 {
   "book": {
     "unknownAuthor": "Unknown author",
-    "coverAlt": "Cover of {{title}}"
+    "coverAlt": "Cover of {{title}}",
+    "genres": {
+      "fantasy": "Fantasy"
+    }
   }
 }

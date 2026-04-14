@@ -63,7 +63,9 @@ export default function BookCard({ book }: BookCardProps) {
 
       <div className="bookcard__info">
         {book.genre && (
-          <span className="bookcard__genre">{book.genre}</span>
+          <span className="bookcard__genre">
+            {t(`book.genres.${book.genre?.toLowerCase()}`, { defaultValue: book.genre })}
+          </span>
         )}
 
         <h3 className="bookcard__title">{book.title}</h3>

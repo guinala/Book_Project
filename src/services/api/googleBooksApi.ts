@@ -38,28 +38,99 @@ export async function fetchGoogleCover(
 }
 
 
-export async function fetchGoogleCovers(
-  books: Book[],
-  signal: AbortSignal
-): Promise<(string | null)[]> {
-  const covers: (string | null)[] = [];
+// export async function fetchGoogleCovers(
+//   books: Book[],
+//   signal: AbortSignal
+// ): Promise<(string | null)[]> {
+//   const covers: (string | null)[] = [];
 
-  for (const book of books) {
+//   for (const book of books) {
+//     try {
+//       const cover = await fetchGoogleCover(book.title, book.authors[0] ?? "", signal);
+//       covers.push(cover);
+//     } catch (err) {
+//       if (axios.isCancel(err)) throw err;
+//       if (axios.isAxiosError(err) && err.response?.status === 503) throw err;
+//       covers.push(null);
+//     }
+//     if (covers.length < books.length) {
+//       await new Promise(resolve => setTimeout(resolve, 100));
+//     }
+//   }
+
+//   return covers;
+// }
+
+// Nueva función privada con retry por libro
+async function fetchGoogleCoverWithRetry(
+  title: string,
+  author: string,
+  signal: AbortSignal,
+  maxRetries = 3
+): Promise<string | null> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const cover = await fetchGoogleCover(book.title, book.authors[0] ?? "", signal);
-      covers.push(cover);
+      return await fetchGoogleCover(title, author, signal);
     } catch (err) {
       if (axios.isCancel(err)) throw err;
-      if (axios.isAxiosError(err) && err.response?.status === 503) throw err;
-      covers.push(null);
-    }
-    if (covers.length < books.length) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      if (axios.isAxiosError(err) && err.response?.status === 503) {
+        if (attempt < maxRetries) {
+          const delay = Math.pow(2, attempt) * 500; 
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+        return null; // Se han agotado los intentos
+      }
+      return null;
     }
   }
-
-  return covers;
+  return null;
 }
+
+// export async function fetchGoogleCovers(
+//   books: Book[],
+//   signal: AbortSignal
+// ): Promise<(string | null)[]> {
+//   const covers: (string | null)[] = [];
+
+//   for (const book of books) {
+//     const cover = await fetchGoogleCoverWithRetry(book.title, book.authors[0] ?? "", signal);
+//     covers.push(cover);
+//     if (covers.length < books.length) {
+//       await new Promise(resolve => setTimeout(resolve, 100)); 
+//     }
+//   }
+
+//   return covers;
+// }
+
+export async function fetchGoogleCovers(
+  books: Book[],
+  signal: AbortSignal,
+  onCoverReady?: (index: number, url: string) => void
+): Promise<void> {
+  const GROUP_SIZE = 3;
+  const DELAY = 200;
+
+  for (let i = 0; i < books.length; i += GROUP_SIZE) {
+    const batch = books.slice(i, i + GROUP_SIZE);
+
+    await Promise.all(
+      batch.map(async (book, batchIndex) => {
+        const index = i + batchIndex;
+        const cover = await fetchGoogleCoverWithRetry(book.title, book.authors[0] ?? "", signal);
+        if (cover && onCoverReady) {
+          onCoverReady(index, cover);
+        }
+      })
+    );
+
+    if (i + GROUP_SIZE < books.length) {
+      await new Promise(resolve => setTimeout(resolve, DELAY));
+    }
+  }
+}
+
 
 export async function fetchFantasyBooksGoogle(
   limit: number,
