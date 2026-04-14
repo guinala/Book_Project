@@ -23,7 +23,7 @@ function ExplorePage() {
   const isSearching = searchQuery.trim().length > 0;
 
   useEffect(() => {
-    fetchBooks(20, lang);
+    fetchBooks(10, lang);
     return () => cancelRequest();
   }, [lang, fetchBooks, cancelRequest]);
 

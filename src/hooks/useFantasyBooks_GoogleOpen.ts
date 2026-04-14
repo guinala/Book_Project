@@ -84,22 +84,44 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
     abortController.current?.abort();
     abortController.current = new AbortController();
 
-    const fetchCovers = async (mappedBooks: Book[], retried = false): Promise<void> => {
-      try {
-        const covers = await fetchGoogleCovers(mappedBooks, abortController.current!.signal);
-        const enrichedBooks = mappedBooks.map((book, i) =>
-          covers[i] ? { ...book, cover_url: covers[i] } : book
+    // const fetchCovers = async (mappedBooks: Book[], retried = false): Promise<void> => {
+    //   try {
+        // const covers = await fetchGoogleCovers(mappedBooks, abortController.current!.signal);
+        // const googleCoveredBoooks = mappedBooks.map((book, i) =>
+        //   covers[i] ? { ...book, cover_url: covers[i] } : book
+        // );
+        // saveToStorage(googleCoveredBoooks);
+        // setBooks(googleCoveredBoooks);
+    //   } catch (err) {
+    //     if (axios.isCancel(err)) return;
+    //     if (!retried && axios.isAxiosError(err) && err.response?.status === 503) {
+    //       setTimeout(() => fetchCovers(mappedBooks, true), 3000);
+    //     } else {
+    //       // Guardar con portadas de OpenLibrary
+    //       saveToStorage(mappedBooks);
+    //     }
+    //   }
+    // };
+    
+
+    const fetchCovers = async (mappedBooks: Book[]): Promise<void> => {
+
+      const onCoverReady = (index: number, url: string) => {
+        setBooks(prev =>
+          prev.map((book, i) => i === index ? { ...book, cover_url: url } : book)
         );
-        saveToStorage(enrichedBooks);
-        setBooks(enrichedBooks);
+      };
+      
+      try {
+        await fetchGoogleCovers(
+          mappedBooks,
+          abortController.current!.signal,
+          onCoverReady
+        );
+        setBooks(prev => { saveToStorage(prev); return prev; });
       } catch (err) {
         if (axios.isCancel(err)) return;
-        if (!retried && axios.isAxiosError(err) && err.response?.status === 503) {
-          setTimeout(() => fetchCovers(mappedBooks, true), 3000);
-        } else {
-          // Guardar con portadas de OpenLibrary
-          saveToStorage(mappedBooks);
-        }
+        saveToStorage(mappedBooks);
       }
     };
 
