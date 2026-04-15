@@ -4,6 +4,7 @@ import type { Book } from "@/types/Book";
 import { fetchFantasyBooks } from "@/services/api/openLibraryApi";
 import { fetchGoogleCovers } from "@/services/api/googleBooksApi";
 import { getErrorMessage } from "@/utils/apiErrors";
+import { getExploreBooksFromDB, saveBooksToDB } from "@/services/firebase/firebase_books";
 
 const LOCAL_STORAGE_KEY = 'trama_cache';
 const LOCAL_STORAGE_TTL = 24 * 60 * 60 * 1000; // 24 horas (1 día)
@@ -73,14 +74,29 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
   // }, [limit, lang]);
 
   const fetchBooks = useCallback(async (limit: number = 20, lang: string = "es") => {
-    const stored = loadFromStorage();
     
+    // LocalStorage
+    const stored = loadFromStorage();
     if (stored) {
       setBooks(stored);
       setLoading(false);
       return;
     }
 
+    // Firestore 
+    try {
+      const dbBooks = await getExploreBooksFromDB(lang);
+      if (dbBooks) {
+        setBooks(dbBooks);
+        setLoading(false);
+        saveToStorage(dbBooks);  //Guardar en cache
+        return;
+      }
+    } catch {
+      console.log("Ha habido un error o no se han encontrado libros")
+    }
+
+    //API
     abortController.current?.abort();
     abortController.current = new AbortController();
 
@@ -118,12 +134,17 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
           abortController.current!.signal,
           onCoverReady
         );
-        setBooks(prev => { saveToStorage(prev); return prev; });
-      } catch (err) {
-        if (axios.isCancel(err)) return;
-        saveToStorage(mappedBooks);
-      }
-    };
+        setBooks(prev => {
+        saveToStorage(prev);
+        saveBooksToDB(prev, lang);
+        return prev;
+      });
+    } catch (err) {
+      if (axios.isCancel(err)) return;
+      saveToStorage(mappedBooks);
+      saveBooksToDB(mappedBooks, lang);  
+    }
+  };
 
     const fetchWithRetry = async (retried = false): Promise<void> => {
       try {
