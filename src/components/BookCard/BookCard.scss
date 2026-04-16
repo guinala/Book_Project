@@ -1,4 +1,5 @@
-@use '../../styles/shared' as *;
+@use '../../styles/lib' as *;
+@use '../../styles/layouts/card' as *;
 
 .bookcard {
   display: flex;

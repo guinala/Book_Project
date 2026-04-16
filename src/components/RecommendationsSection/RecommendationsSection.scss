@@ -1,4 +1,5 @@
-@use '../../styles/shared' as *;
+@use '../../styles/lib' as *;
+@use '../../styles/layouts/grid' as *;
 
 .recs-section {
   display: flex;
