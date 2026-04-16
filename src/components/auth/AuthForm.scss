@@ -1,4 +1,5 @@
-@use '../../styles/shared' as *;
+@use '../../styles/lib' as *;
+@use '../../styles/html/forms' as *;
 
 .auth {
   @include page-centered;
