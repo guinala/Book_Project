@@ -2,15 +2,15 @@
 
 .explore-page__search-status {
   @include container;
-  padding-top: 12px;
+  padding-top: var(--space-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: var(--text-sm);
 
   @include from($bp-md) {
-    padding-top: 16px;
-    font-size: 15px;
+    padding-top: var(--space-4);
+    font-size: var(--text-md);
   }
 
   p {
@@ -20,11 +20,11 @@
 
 .explore-page__clear-btn {
   @include ghost-button;
-  padding: 6px 14px;
-  border-radius: var(--border-radius-sm);
-  font-size: 13px;
+  padding: var(--space-1) 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
 
   @include from($bp-md) {
-    padding: 6px 16px;
+    padding: var(--space-1) var(--space-4);
   }
 }

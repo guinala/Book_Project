@@ -1,13 +1,13 @@
-@use '../../styles/shared' as *;
+@use "../../styles/shared" as *;
 
 .recs-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
 
   &__title {
-    font-size: 22px;
-    font-weight: 800;
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-extrabold);
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
     margin: 0;

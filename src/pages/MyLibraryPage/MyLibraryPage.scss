@@ -3,34 +3,34 @@
 .my-library {
   @include container;
   padding-top: 0;
-  padding-bottom: 40px;
+  padding-bottom: var(--space-10);
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: var(--space-10);
 
   @include from($bp-md) {
     padding-top: 0;
-    padding-bottom: 60px;
-    gap: 56px;
+    padding-bottom: var(--space-16);
+    gap: var(--space-14);
   }
 
   &__reading-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   &__section-title {
     width: 100%;
     max-width: 860px;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
     margin: 0;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
 
     @include from($bp-md) {
-      font-size: 22px;
+      font-size: var(--text-xl);
     }
   }
 }

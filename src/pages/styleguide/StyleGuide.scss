@@ -1,17 +1,9 @@
 /* styleguide/colors and typography organized */
 
-:root {
-  /* custom properties for the colour palette */
-  --color-white: rgb(255, 255, 255);
-  --color-orange: orange;
-  --color-brown: brown;
-  --color-green: green;
-}
-
 .style-guide {
   padding: 1rem;
-  font-family: sans-serif;
-  color: #222;
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
 
   table {
     width: 100%;
@@ -20,33 +12,33 @@
 
     th,
     td {
-      border: 1px solid #ccc;
+      border: 1px solid var(--color-border-subtle);
       padding: 0.5rem 1rem;
       text-align: center;
     }
 
     thead {
-      background: #f9f9f9;
+      background: var(--color-bg-section);
     }
 
     .square {
       display: inline-block;
       width: 2rem;
       height: 2rem;
-      border-radius: 0.25rem;
+      border-radius: var(--radius-sm);
     }
 
     .white {
-      background: var(--color-white);
+      background: var(--color-bg-card-solid);
     }
     .orange {
-      background: var(--color-orange);
+      background: var(--color-brand-primary);
     }
     .brown {
-      background: var(--color-brown);
+      background: var(--color-text-primary);
     }
     .green {
-      background: var(--color-green);
+      background: var(--color-success);
     }
   }
 

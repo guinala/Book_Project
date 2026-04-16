@@ -1,65 +1,65 @@
-@use '../../styles/shared' as *;
+@use "../../styles/shared" as *;
 
 .auth {
   @include page-centered;
   min-height: 100vh;
 
   &__box {
-    border-radius: var(--border-radius-lg);
-    padding: 28px 20px;
+    border-radius: var(--radius-lg);
+    padding: var(--space-7) var(--space-5);
     width: 100%;
     max-width: 400px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--space-5);
 
     @include from($bp-md) {
-      padding: 40px 36px;
-      gap: 24px;
+      padding: var(--space-10) var(--space-9);
+      gap: var(--space-6);
     }
   }
 
   &__logo {
     @include flex-center;
-    gap: 10px;
+    gap: var(--space-2);
     text-decoration: none;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
   }
 
   &__logo-icon {
     @include flex-center;
     width: 32px;
     height: 32px;
-    border-radius: var(--border-radius-sm);
-    font-size: 18px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-lg);
   }
 
   &__logo-text {
-    font-size: 24px;
-    font-weight: 600;
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-semibold);
     letter-spacing: 0.01em;
 
     @include from($bp-md) {
-      font-size: 26px;
+      font-size: var(--text-2xl);
     }
   }
 
   &__title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
     text-align: center;
     margin: 0;
     letter-spacing: 0.01em;
 
     @include from($bp-md) {
-      font-size: 22px;
+      font-size: var(--text-xl);
     }
   }
 
   &__form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   &__input {
@@ -78,11 +78,11 @@
 
   &__btn-google {
     @include flex-center;
-    gap: 10px;
+    gap: var(--space-2);
     @include ghost-button;
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--radius-sm);
     padding: 11px;
-    font-size: 15px;
+    font-size: var(--text-md);
     width: 100%;
 
     &:disabled {
@@ -98,23 +98,23 @@
 
   &__btn-danger {
     background-color: transparent;
-    border-radius: var(--border-radius-sm);
-    padding: 10px;
-    font-size: 15px;
+    border-radius: var(--radius-sm);
+    padding: var(--space-2);
+    font-size: var(--text-md);
     cursor: pointer;
-    @include transition(all);
+    transition: all var(--transition-fast);
     width: 100%;
   }
 
   &__divider {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 13px;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
 
     &::before,
     &::after {
-      content: '';
+      content: "";
       flex: 1;
       height: 1px;
     }
@@ -122,17 +122,17 @@
 
   &__toggle {
     text-align: center;
-    font-size: 14px;
+    font-size: var(--text-sm);
   }
 
   &__toggle-link {
     cursor: pointer;
     text-decoration: underline;
-    @include transition(color);
+    transition: color var(--transition-fast);
   }
 
   &__error {
-    font-size: 14px;
+    font-size: var(--text-sm);
     text-align: center;
     min-height: 20px;
   }
@@ -141,7 +141,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     text-align: center;
   }
 
@@ -149,24 +149,24 @@
     @include flex-center;
     width: 64px;
     height: 64px;
-    border-radius: 50%;
-    font-size: 28px;
-    font-weight: 700;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
   }
 
   &__user-email {
-    font-size: 16px;
+    font-size: var(--text-base);
     margin: 0;
   }
 
   &__user-provider {
-    font-size: 14px;
+    font-size: var(--text-sm);
     margin: 0;
   }
 
   &__loading {
     text-align: center;
-    font-size: 16px;
+    font-size: var(--text-base);
   }
 
   &__hidden {

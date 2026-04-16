@@ -1,33 +1,33 @@
-@use '../../styles/shared' as *;
+@use "../../styles/shared" as *;
 
 .searchbar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2);
   width: 100%;
   max-width: 100%;
-  padding: 0 16px;
+  padding: 0 var(--space-4);
   margin: 0 auto;
 
   @include from($bp-md) {
     max-width: 680px;
     padding: 0;
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   &--compact {
     max-width: 480px;
-    gap: 8px;
+    gap: var(--space-2);
 
     .searchbar__input {
       padding: 10px 14px;
-      font-size: 15px;
+      font-size: var(--text-md);
     }
 
     .searchbar__search-btn {
       padding: 10px 18px;
-      font-size: 18px;
+      font-size: var(--text-lg);
       min-width: 44px;
     }
   }
@@ -41,11 +41,11 @@
 
   &__filter-btn {
     padding: 4px 12px;
-    border-radius: var(--border-radius-pill);
+    border-radius: var(--radius-pill);
     background-color: transparent;
-    font-size: 13px;
+    font-size: var(--text-sm);
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: all var(--transition-fast);
     letter-spacing: 0.02em;
 
     @include from($bp-md) {
@@ -53,14 +53,14 @@
     }
 
     &--active {
-      font-weight: 600;
+      font-weight: var(--weight-semibold);
     }
   }
 
   &__input-row {
     display: flex;
     width: 100%;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     backdrop-filter: blur(8px);
     overflow: hidden;
   }
@@ -71,13 +71,13 @@
     background: transparent;
     border: none;
     outline: none;
-    padding: 12px 14px;
-    font-size: 16px;
+    padding: var(--space-3) 14px;
+    font-size: var(--text-base);
     letter-spacing: 0.01em;
 
     @include from($bp-md) {
       padding: 14px 18px;
-      font-size: 17px;
+      font-size: var(--text-base);
     }
   }
 
@@ -86,7 +86,7 @@
     border: none;
     padding: 0 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: var(--text-base);
     display: flex;
     align-items: center;
   }
@@ -94,21 +94,21 @@
   &__search-btn {
     @include flex-center;
     border: none;
-    padding: 12px 20px;
+    padding: var(--space-3) var(--space-5);
     cursor: pointer;
-    font-size: 20px;
+    font-size: var(--text-xl);
     min-width: 48px;
 
     @include from($bp-md) {
-      padding: 14px 24px;
-      font-size: 22px;
+      padding: 14px var(--space-6);
+      font-size: var(--text-2xl);
       min-width: 56px;
     }
   }
 
   &__hint {
     align-self: flex-start;
-    font-size: 12px;
+    font-size: var(--text-xs);
     letter-spacing: 0.02em;
     margin: 0;
   }
