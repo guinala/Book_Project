@@ -16,7 +16,11 @@ body {
   min-width: 320px;
   min-height: 100vh;
   font-family: var(--font-main);
-  line-height: 1.5;
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  line-height: 1.6;
 }
 
 button,

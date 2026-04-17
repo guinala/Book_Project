@@ -1,10 +1,10 @@
-@use '../variables/scss_variables' as *;
-@use '../lib/helpers'; 
+@use "../variables/scss_variables" as *;
+@use "../lib/helpers";
 
 @mixin transition($properties...) {
   transition-property: $properties;
-  transition-duration: 0.2s;
-  transition-timing-function: ease;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
 }
 
 @mixin text-truncate {
@@ -39,26 +39,26 @@
 }
 
 @mixin primary-button {
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   cursor: pointer;
   letter-spacing: 0.02em;
 }
 
 @mixin full-btn-primary {
   @include primary-button;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: var(--border-radius-sm);
+  padding: var(--space-3);
+  font-size: var(--text-base);
+  border-radius: var(--radius-sm);
   border: none;
   width: 100%;
 }
 
 @mixin page-centered {
   @include helpers.flex-center;
-  padding: 16px;
+  padding: var(--space-4);
 
   @include from($bp-md) {
-    padding: 24px;
+    padding: var(--space-6);
   }
 }
 

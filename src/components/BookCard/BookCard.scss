@@ -1,5 +1,4 @@
-@use '../../styles/lib' as *;
-@use '../../styles/layouts/card' as *;
+@use "../../styles/shared" as *;
 
 .bookcard {
   display: flex;
@@ -14,7 +13,7 @@
     flex-shrink: 0;
     width: 90px;
     transform-style: preserve-3d;
-    transition: transform 0.15s ease-out;
+    transition: transform var(--transition-fast);
 
     @include from($bp-md) {
       width: 120px;
@@ -27,7 +26,7 @@
 
   &__cover-placeholder {
     @include book-cover-placeholder;
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--radius-sm);
     font-size: 28px;
 
     @include from($bp-md) {
@@ -38,59 +37,59 @@
   &__info {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: var(--space-1);
     min-width: 0;
 
     @include from($bp-md) {
-      gap: 4px;
+      gap: var(--space-1);
     }
   }
 
   &__genre {
-    font-size: 11px;
+    font-size: var(--text-xs);
 
     @include from($bp-md) {
-      font-size: 12px;
+      font-size: var(--text-xs);
     }
   }
 
   &__title {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
     margin: 0;
     @include line-clamp(2);
 
     @include from($bp-md) {
-      font-size: 18px;
+      font-size: var(--text-lg);
     }
   }
 
   &__author {
-    font-size: 12px;
+    font-size: var(--text-xs);
     margin: 0;
     @include text-truncate;
 
     @include from($bp-md) {
-      font-size: 13px;
+      font-size: var(--text-sm);
     }
   }
 
   &__rating {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 6px;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
 
     @include from($bp-md) {
-      margin-top: 8px;
+      margin-top: var(--space-2);
     }
   }
 
   &__rating-value {
-    font-size: 13px;
+    font-size: var(--text-sm);
 
     @include from($bp-md) {
-      font-size: 14px;
+      font-size: var(--text-sm);
     }
   }
 }
