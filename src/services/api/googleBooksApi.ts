@@ -159,7 +159,7 @@ export async function fetchFantasyBooksGoogle(
     authors: item.volumeInfo.authors ?? [unknownAuthor],
     first_publish_year: extractYear(item.volumeInfo.publishedDate),
     cover_id: null,
-    cover_url: normalizeCoverUrl(item.volumeInfo.imageLinks),
+    cover_url: normalizeCoverUrl(item.volumeInfo.imageLinks) ?? undefined,
     edition_count: 0,
   }));
 }

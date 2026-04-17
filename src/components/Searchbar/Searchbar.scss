@@ -6,63 +6,63 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  max-width: 100%;
   padding: 0 var(--space-4);
-  margin: 0 auto;
 
   @include from($bp-md) {
-    max-width: 680px;
     padding: 0;
     gap: var(--space-3);
   }
 
-  &--compact {
-    max-width: 480px;
-    gap: var(--space-2);
-
-    .searchbar__input {
-      padding: 10px 14px;
-      font-size: var(--text-md);
-    }
-
-    .searchbar__search-btn {
-      padding: 10px 18px;
-      font-size: var(--text-lg);
-      min-width: 44px;
-    }
-  }
-
-  &__filters {
-    display: flex;
-    gap: 6px;
-    align-self: flex-start;
-    flex-wrap: wrap;
-  }
-
-  &__filter-btn {
-    padding: 4px 12px;
-    border-radius: var(--radius-pill);
-    background-color: transparent;
-    font-size: var(--text-sm);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    letter-spacing: 0.02em;
+  &__title {
+    font-family: var(--font-editorial);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-regular);
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--space-4);
+    text-align: center;
 
     @include from($bp-md) {
-      padding: 4px 14px;
-    }
-
-    &--active {
-      font-weight: var(--weight-semibold);
+      font-size: var(--text-3xl);
     }
   }
 
-  &__input-row {
+&__input-row {
     display: flex;
+    align-items: center;
     width: 100%;
-    border-radius: var(--radius-md);
-    backdrop-filter: blur(8px);
+    max-width: 480px;
+    border: 1.5px solid var(--color-border-medium);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-card-solid);
+    box-shadow: var(--shadow-card);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
     overflow: hidden;
+
+    &--focused {
+      border-color: var(--color-brand-primary);
+      box-shadow: 0 0 0 3px var(--color-brand-alpha-subtle);
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 var(--space-3);
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  &__divider {
+    width: 1px;
+    height: 20px;
+    background: var(--color-border-subtle);
+    flex-shrink: 0;
   }
 
   &__input {
@@ -71,45 +71,38 @@
     background: transparent;
     border: none;
     outline: none;
-    padding: var(--space-3) 14px;
+    padding: 0 var(--space-3);
+    height: 44px;
     font-size: var(--text-base);
+    font-family: var(--font-ui);
+    color: var(--color-text-primary);
     letter-spacing: 0.01em;
 
-    @include from($bp-md) {
-      padding: 14px 18px;
-      font-size: var(--text-base);
+    &::placeholder {
+      color: var(--color-text-subtle);
     }
   }
 
   &__clear-btn {
-    background: transparent;
-    border: none;
-    padding: 0 10px;
-    cursor: pointer;
-    font-size: var(--text-base);
     display: flex;
     align-items: center;
-  }
-
-  &__search-btn {
-    @include flex-center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-right: var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-border-subtle);
     border: none;
-    padding: var(--space-3) var(--space-5);
+    color: var(--color-text-tertiary);
     cursor: pointer;
-    font-size: var(--text-xl);
-    min-width: 48px;
+    flex-shrink: 0;
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast);
 
-    @include from($bp-md) {
-      padding: 14px var(--space-6);
-      font-size: var(--text-2xl);
-      min-width: 56px;
+    &:hover {
+      background: var(--color-border-medium);
+      color: var(--color-text-primary);
     }
-  }
-
-  &__hint {
-    align-self: flex-start;
-    font-size: var(--text-xs);
-    letter-spacing: 0.02em;
-    margin: 0;
   }
 }

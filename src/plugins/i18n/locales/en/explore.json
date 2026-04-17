@@ -1,6 +1,6 @@
 {
   "explore": {
-    "searchPlaceholder": "Search for a book, author or ISBN…",
+    "searchPlaceholder": "Search by title, author or ISBN",
     "searching": "Searching...",
     "resultsFound": "{{count}} results found",
     "backBtn": "Back",
