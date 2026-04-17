@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { registerWithEmail } from "@/services/firebase/firebase_auth";
+import { logoutUser, registerWithEmail, sendVerificationEmail } from "@/services/firebase/firebase_auth";
 import type { RegisterFormValues } from "@/types/AuthTypes";
 import { createUserProfile } from "@/services/firebase/firebase_users";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
 import FormInput from "@/components/auth/Form_Components/FormInput";
 import GoogleFormInput from "@/components/auth/Form_Components/GoogleFormInput";
+//import AppleFormInput from "@/components/Auth/Form_Components/AppleFormInput";
 import AuthToggleLink from "@/components/auth/Form_Components/AuthToggleLink";
 
 type RegisterFormProps = {
@@ -19,6 +20,8 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
     defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "" },
   });
   const [firebaseError, setFirebaseError] = useState("");
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [sentEmail, setSentEmail] = useState("");
 
   async function onSubmit(data: RegisterFormValues) {
     setFirebaseError("");
@@ -26,19 +29,32 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       const credential = await registerWithEmail(data.email, data.password);
       try {
         await createUserProfile(credential.user.uid, {
-          email: data.email,
-          name: data.name,
-          surname: data.surname,
-          birthDate: data.birthDate,
+          email: data.email, name: data.name, surname: data.surname, birthDate: data.birthDate,
         });
       } catch (profileError) {
         await credential.user.delete();
         throw profileError;
       }
+      await sendVerificationEmail(credential.user);
+      await logoutUser();
+      setSentEmail(data.email);
+      setVerificationSent(true);
     } catch (error: unknown) {
       const firebaseErr = error as { code?: string };
       setFirebaseError(getFirebaseErrorMessage(firebaseErr.code ?? "unknown"));
     }
+  }
+
+  if (verificationSent) {
+    return (
+      <>
+        <h2 className="auth__title">{t("auth.verificationSentTitle")}</h2>
+        <p className="auth__description">{t("auth.verificationSentBody", { email: sentEmail })}</p>
+        <button className="auth__btn-secondary" type="button" onClick={onSwitchToLogin}>
+          {t("auth.backToLogin")}
+        </button>
+      </>
+    );
   }
 
   return (
@@ -70,7 +86,8 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           error={errors.email}
           registration={register("email", {
             required: t("authErrors.fieldRequired"),
-            pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: t("authErrors.auth/invalid-email") },
+            maxLength: { value: 254, message: t("authErrors.email-too-long") },
+            pattern: { value: /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/, message: t("authErrors.auth/invalid-email") },
           })}
         />
         <FormInput
@@ -79,7 +96,11 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           error={errors.password}
           registration={register("password", {
             required: t("authErrors.fieldRequired"),
-            minLength: { value: 6, message: t("authErrors.auth/weak-password") },
+            minLength: { value: 8, message: t("authErrors.auth/weak-password") },
+            validate: {
+              hasUppercase: (v) => /[A-Z]/.test(v) || t("authErrors.password-no-uppercase"),
+              hasNumber: (v) => /[0-9]/.test(v) || t("authErrors.password-no-number"),
+            },
           })}
         />
 
@@ -91,6 +112,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       </form>
 
       <GoogleFormInput disabled={isSubmitting} />
+      {/* <AppleFormInput disabled={isSubmitting} /> */}
 
       <AuthToggleLink
         text={t("auth.hasAccount")}

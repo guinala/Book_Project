@@ -2,10 +2,10 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "./firebase_init";
 
 export type UserProfileData = {
-  email: string;
-  name: string;
-  surname: string;
-  birthDate: string;
+  email?: string;
+  name?: string;
+  surname?: string;
+  birthDate?: string;
 }
 
 export async function createUserProfile(
@@ -16,5 +16,5 @@ export async function createUserProfile(
   await setDoc(userRef, {
     ...data,
     createdAt: new Date().toISOString(),
-  });
+  }, { merge: true });
 }
