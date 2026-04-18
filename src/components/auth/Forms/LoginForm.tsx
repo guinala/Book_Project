@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { loginWithEmail, logoutUser, resetPassword, sendVerificationEmail } from "@/services/firebase/firebase_auth";
 import type { LoginFormValues } from "@/types/AuthTypes";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
-import FormInput from "@/components/Auth/Form_Components/FormInput";
-import GoogleFormInput from "@/components/Auth/Form_Components/GoogleFormInput";
+import FormInput from "@/components/auth/Form_Components/FormInput";
+import GoogleFormInput from "@/components/auth/Form_Components/GoogleFormInput";
 //import AppleFormInput from "@/components/Auth/Form_Components/AppleFormInput";
-import AuthToggleLink from "@/components/Auth/Form_Components/AuthToggleLink";
+import AuthToggleLink from "@/components/auth/Form_Components/AuthToggleLink";
 
 type LoginFormProps = {
   onSwitchToRegister: () => void;
@@ -30,7 +30,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     try {
       const credential = await loginWithEmail(data.email, data.password);
       if (!credential.user.emailVerified) {
-        await sendVerificationEmail(credential.user); // reenvía automáticamente
+        await sendVerificationEmail(credential.user); 
         await logoutUser();
         throw { code: "auth/email-not-verified" };
       }

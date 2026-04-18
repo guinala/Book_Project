@@ -12,7 +12,7 @@ export default function GoogleFormInput({ disabled }: GoogleFormInputProps) {
 
   return (
     <>
-      <div className="auth__divider">{t("auth.dividerOr")}</div>;
+      <div className="auth__divider">{t("auth.dividerOr")}</div>
       <SignInGoogleButton disabled={disabled} onError={setGoogleError} />
       {googleError && <p className="auth__error">{googleError}</p>}
     </>

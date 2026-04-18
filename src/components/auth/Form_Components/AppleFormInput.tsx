@@ -12,7 +12,7 @@ export default function AppleFormInput({ disabled }: AppleFormInputProps) {
 
   return (
     <>
-      <div className="auth__divider">{t("auth.dividerOr")}</div>;
+      <div className="auth__divider">{t("auth.dividerOr")}</div>
       <SignInAppleButton disabled={disabled} onError={setAppleError} />
       {appleError && <p className="auth__error">{appleError}</p>}
     </>
