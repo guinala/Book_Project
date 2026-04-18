@@ -15,6 +15,7 @@ export type OpenLibraryDoc = {
   key: string;
   title: string;
   author_name?: string[];
+  author_key?: string[]; 
   first_publish_year?: number;
   cover_i?: number;
   edition_count?: number;

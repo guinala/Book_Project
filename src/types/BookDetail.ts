@@ -38,6 +38,7 @@ export type BookDetail = {
   genre: string;
   title: string;
   author: string;
+  authorKey?: string;
   rating: number;
   reviewCount: number;
   pages: number;

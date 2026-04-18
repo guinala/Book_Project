@@ -2,6 +2,7 @@ export type Book = {
   key: string;
   title: string;
   authors: string[];
+  authorKeys?: string[];
   first_publish_year: number;
   cover_id: number | null;
   cover_url?: string;

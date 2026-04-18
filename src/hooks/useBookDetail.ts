@@ -9,7 +9,6 @@ import { getCoverUrl } from "@/utils/coverImage";
 import { fetchGoogleSynopsis } from "@/services/api/googleBooksApi";
 import { getSynopsisFromDB, saveSynopsisToDB } from "@/services/firebase/firebase_books";
 
-//Pendiente de hacer funcionar con Firebase
 export function useBookDetail(id: string): {
   book: BookDetail | null;
   loading: boolean;
@@ -86,7 +85,7 @@ export function useBookDetail(id: string): {
     const load = async () => {
       // Firestore
       const cached = await getSynopsisFromDB(decodedId);
-      const synopsis = cached !== null
+      const synopsis = cached !== null && cached.trim().length > 0
         ? cached
         : await (async () => {
             // Obtener de Google Books
@@ -96,7 +95,9 @@ export function useBookDetail(id: string): {
               bookFromState?.isbn,
               bookFromState?.authors?.[0],
             );
-            saveSynopsisToDB(decodedId, fetched);  
+            if (fetched.trim().length > 0) {
+              saveSynopsisToDB(decodedId, fetched);
+            }
             return fetched;
           })();
 
@@ -104,19 +105,20 @@ export function useBookDetail(id: string): {
 
       const fallback = getBookDetailById(decodedId);
       setBook({
-        key:         decodedId,
-        cover_url:   bookFromState?.cover_url ?? (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
-        genre:       bookFromState?.genre ?? '',
-        title:       bookFromState?.title ?? '',
-        author:      bookFromState?.authors?.[0] ?? '',
-        rating:      bookFromState?.rating ?? 0,
+        key: decodedId,
+        cover_url: bookFromState?.cover_url ?? (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
+        genre: bookFromState?.genre ?? '',
+        title: bookFromState?.title ?? '',
+        author: bookFromState?.authors?.[0] ?? '',
+        authorKey: bookFromState?.authorKeys?.[0],
+        rating: bookFromState?.rating ?? 0,
         reviewCount: bookFromState?.ratingCount ?? 0,
-        pages:       bookFromState?.pages ?? 0,
-        year:        bookFromState?.first_publish_year ?? 0,
-        isbn:        bookFromState?.isbn ?? '',
+        pages: bookFromState?.pages ?? 0,
+        year: bookFromState?.first_publish_year ?? 0,
+        isbn: bookFromState?.isbn ?? '',
         synopsis,
-        reviews:         fallback?.reviews ?? [],
-        authorInfo:      fallback?.authorInfo ?? { name: '', photoUrl: '', bio: '', books: [] },
+        reviews: fallback?.reviews ?? [],
+        authorInfo: fallback?.authorInfo ?? { name: '', photoUrl: '', bio: '', books: [] },
         recommendations: fallback?.recommendations ?? [],
       });
     };

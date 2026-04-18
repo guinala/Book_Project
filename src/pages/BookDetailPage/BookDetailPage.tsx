@@ -16,7 +16,8 @@ export default function BookDetailPage() {
   const { book, loading, error } = useBookDetail(id);
   const { authorInfo, loading: authorLoading } = useAuthorData(
     book?.author ?? '',
-    book?.title ?? ''
+    book?.title ?? '',
+    book?.authorKey 
   );
 
   useEffect(() => {
