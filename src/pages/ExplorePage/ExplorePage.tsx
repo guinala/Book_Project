@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SearchBar from "@/components/Searchbar/Searchbar";
-import ExploreBookCard from "@/components/ExploreBookCard/ExploreBookCard";
+import BookGridCard from "@/components/BookGridCard/BookGridCard";
 import GridSkeletonLoading from "@/layouts/GridSkeletonLoading";
 import { useBookSearch } from "@/hooks/useBookSearch";
 import { useFantasyBooks_GoogleOpen } from "@/hooks/useFantasyBooks_GoogleOpen";
@@ -75,7 +75,7 @@ function ExplorePage() {
         {!activeLoading && !activeError && (
           <div className="explore-page__grid">
             {activeBooks.map((book) => (
-              <ExploreBookCard key={book.key} book={book} />
+              <BookGridCard key={book.key} book={book} />
             ))}
           </div>
         )}

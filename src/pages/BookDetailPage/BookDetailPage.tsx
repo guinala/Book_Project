@@ -7,6 +7,7 @@ import AuthorSection from "@/components/AuthorSection/AuthorSection";
 import RecommendationsSection from "@/components/RecommendationsSection/RecommendationsSection";
 import "./BookDetailPage.scss";
 import { useAuthorData } from "@/hooks/useAuthorData";
+import { useBookRecommendations } from "@/hooks/useBookRecommendations";
 import { useEffect } from "react";
 
 export default function BookDetailPage() {
@@ -17,6 +18,10 @@ export default function BookDetailPage() {
   const { authorInfo, loading: authorLoading } = useAuthorData(
     book?.author ?? '',
     book?.title ?? ''
+  );
+  const { books: recommendedBooks, refresh: refreshRecs } = useBookRecommendations(
+    book?.genre ?? '',
+    id
   );
 
   useEffect(() => {
@@ -57,7 +62,9 @@ export default function BookDetailPage() {
         : <AuthorSection authorInfo={authorInfo ?? book.authorInfo} />
       }
 
-      <RecommendationsSection books={book.recommendations} baseTitle={book.title} />
+      {recommendedBooks.length > 0 && (
+        <RecommendationsSection books={recommendedBooks} baseTitle={book.title} onRefresh={refreshRecs} />
+      )}
     </main>
   );
 }

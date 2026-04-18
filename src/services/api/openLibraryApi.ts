@@ -203,6 +203,44 @@ export async function fetchAuthorBooks(
   });
 }
 
+export async function fetchBooksByGenre(
+  genre: string,
+  limit: number,
+  lang: string,
+  signal: AbortSignal
+): Promise<Book[]> {
+  const langCode = getLangIso3Letters(lang);
+  const unknownAuthor = i18n.t("book.unknownAuthor");
+
+  const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
+    params: {
+      q: `subject:${genre} language:${langCode}`,
+      lang,
+      fields: FANTASY_FIELDS,
+      limit,
+      sort: "rating desc",
+    },
+    signal,
+  });
+
+  return data.docs.map((doc) => {
+    const bestEdition = doc.editions?.docs?.[0];
+    return {
+      key: doc.key,
+      title: bestEdition?.title ?? doc.title,
+      authors: doc.author_name ?? [unknownAuthor],
+      first_publish_year: doc.first_publish_year ?? 0,
+      cover_id: bestEdition?.cover_i ?? doc.cover_i ?? null,
+      edition_count: doc.edition_count ?? 0,
+      genre,
+      rating: doc.ratings_average,
+      ratingCount: doc.ratings_count,
+      isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
+      pages: doc.number_of_pages_median,
+    };
+  });
+}
+
 export async function getWikipediaSummary(name: string): Promise<WikiSummary | null> {
   const title = encodeURIComponent(name.trim().replace(/ /g, '_'));
 
