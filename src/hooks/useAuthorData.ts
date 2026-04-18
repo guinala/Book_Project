@@ -5,6 +5,14 @@ import type { AuthorInfo } from "@/types/BookDetail";
 import { getAuthorFromDB, saveAuthorToDB } from "@/services/firebase/firebase_authors";
 import { getAuthorBooksFromDB } from "@/services/firebase/firebase_books";
 
+async function fetchBioFromWikipedia(authorName: string): Promise<{ bio: string; photoUrl: string }> {
+  const wikiData = await getWikipediaSummary(authorName);
+  return {
+    bio: wikiData?.extract ?? '',
+    photoUrl: wikiData?.thumbnail?.source ?? '',
+  };
+}
+
 export function useAuthorData(authorName: string, currentBookTitle = "", authorKey?: string): {
   authorInfo: AuthorInfo | null;
   loading: boolean;
@@ -54,64 +62,64 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
       let bio = '';
       let photoUrl = '';
 
-      if(authorKey) {
-        const cached = await getAuthorFromDB(authorKey);
-
-        if(cached) {
-          bio = cached.bio;
-          photoUrl = cached.photoUrl;
-        } else {
-          const wikiData = await getWikipediaSummary(authorName);
-          bio = wikiData?.extract ?? '';
-          photoUrl = wikiData?.thumbnail?.source ?? '';
-          saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl });
+      if (authorKey) {
+        try {
+          const cached = await getAuthorFromDB(authorKey);
+          if (cached) {
+            bio = cached.bio;
+            photoUrl = cached.photoUrl;
+          } else {
+            ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
+            saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl }).catch(() => {});
+          }
+        } catch {
+          ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
         }
       } else {
-        const wikiData = await getWikipediaSummary(authorName);
-        bio = wikiData?.extract ?? '';
-        photoUrl = wikiData?.thumbnail?.source ?? '';
+        ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
       }
 
-      // Libros del autor 
       let books: AuthorInfo['books'] = [];
 
       if (authorKey) {
-        //Firebase
-        const dbBooks = await getAuthorBooksFromDB(authorKey, currentBookTitle);
-        if (dbBooks.length >= 2) {
-          books = dbBooks.slice(0, 4).map(b => ({
-            id: b.key,
-            cover_url: b.cover_url ?? (b.cover_id ? getCoverUrl(b.cover_id) : ''),
-            title: b.title,
-            year: b.first_publish_year ? String(b.first_publish_year) : '',
-            rating: b.rating,
-            ratingCount: b.ratingCount,
-            isbn: b.isbn,
-            pages: b.pages,
-          }));
-        }
+        try {
+          const dbBooks = await getAuthorBooksFromDB(authorKey, currentBookTitle);
+          if (dbBooks.length >= 2) {
+            books = dbBooks.slice(0, 4).map(b => ({
+              id: b.key,
+              cover_url: b.cover_url ?? (b.cover_id ? getCoverUrl(b.cover_id) : ''),
+              title: b.title,
+              year: b.first_publish_year ? String(b.first_publish_year) : '',
+              rating: b.rating,
+              ratingCount: b.ratingCount,
+              isbn: b.isbn,
+              pages: b.pages,
+            }));
+          }
+        } catch { /* si falla Firestore, intenta API */ }
       }
 
       if (books.length < 2) {
-        //Fallback API
-        const apiBooks = await fetchAuthorBooks(authorName, 'es', 10);
-        books = apiBooks
-          .filter(b => b.cover_id !== null &&
-            b.title.toLowerCase() !== currentBookTitle.toLowerCase())
-          .slice(0, 4)
-          .map(b => ({
-            id: b.key,
-            cover_url: getCoverUrl(b.cover_id!),
-            title: b.title,
-            year: b.first_publish_year ? String(b.first_publish_year) : '',
-            rating: b.rating,
-            ratingCount: b.ratingCount,
-            isbn: b.isbn,
-            pages: b.pages,
-          }));
+        try {
+          const apiBooks = await fetchAuthorBooks(authorName, 'es', 10);
+          books = apiBooks
+            .filter(b => b.cover_id !== null &&
+              b.title.toLowerCase() !== currentBookTitle.toLowerCase())
+            .slice(0, 4)
+            .map(b => ({
+              id: b.key,
+              cover_url: getCoverUrl(b.cover_id!),
+              title: b.title,
+              year: b.first_publish_year ? String(b.first_publish_year) : '',
+              rating: b.rating,
+              ratingCount: b.ratingCount,
+              isbn: b.isbn,
+              pages: b.pages,
+            }));
+        } catch { /* si falla OL, books queda vacío */ }
       }
 
-      if(!cancelled) setAuthorInfo({ name: authorName, photoUrl, bio, books});
+      if (!cancelled) setAuthorInfo({ name: authorName, photoUrl, bio, books });
     };
 
     fetchAuthorData()
