@@ -5,8 +5,8 @@ import { db } from "./firebase_init";
 const BOOKS_COLLECTION = "books";
 
 function encodeKey(workKey: string): string {
-  // Ejemplo: "/works/OL123W" → "works_OL123W"
-  return workKey.replace(/^\//, "").replace(/\//g, "_");
+  // Ejemplo: "/works/OL123W" => "OL123W"
+  return workKey.split("/").at(-1) ?? workKey;
 }
 
 export async function getExploreBooksFromDB(
@@ -68,16 +68,16 @@ export async function saveBooksToDB(books: Book[], lang: string): Promise<void> 
 }
 
 export async function getSynopsisFromDB(workKey: string): Promise<string | null> {
-  const ref = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
-  const snapshot = await getDoc(ref);
-  if (!snapshot.exists()) return null;
-  return snapshot.data().synopsis ?? null;
+  const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
+  const document = await getDoc(refDoc);
+  if (!document.exists()) return null;
+  return document.data().synopsis ?? null;
 }
 
 export async function saveSynopsisToDB(
   workKey: string,
   synopsis: string
 ): Promise<void> {
-  const ref = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
-  await setDoc(ref, { synopsis }, { merge: true });
+  const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
+  await setDoc(refDoc, { synopsis }, { merge: true });
 }
