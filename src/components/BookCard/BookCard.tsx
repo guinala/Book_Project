@@ -39,7 +39,7 @@ export default function BookCard({ book }: BookCardProps) {
 
   return (
     <article className="bookcard" onClick={() => {
-  console.log('navigating with state:', { book });
+  //console.log('navigating with state:', { book });
   navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } });
 }} style={{ cursor: "pointer" }}>
       <div

@@ -4,17 +4,17 @@ import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryW
 import { openLibraryClient } from "@/services/api/apiConnections";
 import { getLangIso3Letters } from "@/utils/langConversion";
 import { handleFantasyGenre } from "@/utils/genreUtils";
+import { getCoverUrl } from "@/utils/coverImage";
 
 const FANTASY_FIELDS = [
   "key",
   "title",
   "author_name",
+  "author_key",
   "first_publish_year",
   "cover_i",
   "edition_count",
   "subject",
-  "ratings_average",
-  "ratings_count",
   "isbn",
   "number_of_pages_median",
   "editions",
@@ -24,7 +24,7 @@ const FANTASY_FIELDS = [
   "editions.isbn",
 ].join(",");
 
-const SEARCH_FIELDS = "key,title,author_name,first_publish_year,cover_i,edition_count, isbn, number_of_pages_median";
+const SEARCH_FIELDS = "key,title,author_name,author_key,first_publish_year,cover_i,edition_count, isbn, number_of_pages_median";
 
 export async function fetchFantasyBooks(
   limit: number,
@@ -45,7 +45,8 @@ export async function fetchFantasyBooks(
   });
 
   return data.docs.map((doc) => {
-    const bestEdition = doc.editions?.docs?.[0];
+    const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+      ?? doc.editions?.docs?.[0];
     const title = bestEdition?.title ?? doc.title;
     const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
 
@@ -53,12 +54,12 @@ export async function fetchFantasyBooks(
       key: doc.key,
       title,
       authors: doc.author_name ?? [unknownAuthor],
+      authorKeys: doc.author_key,
       first_publish_year: doc.first_publish_year ?? 0,
       cover_id,
+      cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
       genre: handleFantasyGenre(doc.subject),
-      rating: doc.ratings_average,
-      ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
       pages: doc.number_of_pages_median,
     };
@@ -83,16 +84,21 @@ export async function searchBooks(
     signal,
   });
 
-  const books: Book[] = data.docs.map((doc) => ({
-    key: doc.key,
-    title: doc.title,
-    authors: doc.author_name ?? [unknownAuthor],
-    first_publish_year: doc.first_publish_year ?? 0,
-    cover_id: doc.cover_i ?? null,
-    edition_count: doc.edition_count ?? 0,
-    isbn: doc.isbn?.[0],
-    pages: doc.number_of_pages_median,  
-  }));
+  const books: Book[] = data.docs.map((doc) => {
+    const cover_id = doc.cover_i ?? null;
+    return {
+      key: doc.key,
+      title: doc.title,
+      authors: doc.author_name ?? [unknownAuthor],
+      authorKeys: doc.author_key,
+      first_publish_year: doc.first_publish_year ?? 0,
+      cover_id,
+      cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
+      edition_count: doc.edition_count ?? 0,
+      isbn: doc.isbn?.[0],
+      pages: doc.number_of_pages_median,
+    };
+  });
 
   return { books, totalResults: data.numFound };
 }
@@ -117,7 +123,9 @@ export async function fetchBookByTitle(
   if (!data.docs || data.docs.length === 0) return null;
 
   const doc = data.docs[0];
-  const bestEdition = doc.editions?.docs?.[0];
+  const langCode = getLangIso3Letters(lang);
+  const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+    ?? doc.editions?.docs?.[0];
   const bookTitle = bestEdition?.title ?? doc.title;
   const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
 
@@ -125,12 +133,12 @@ export async function fetchBookByTitle(
     key: doc.key,
     title: bookTitle,
     authors: doc.author_name ?? [unknownAuthor],
+    authorKeys: doc.author_key,
     first_publish_year: doc.first_publish_year ?? 0,
     cover_id,
+    cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
     edition_count: doc.edition_count ?? 0,
     genre: doc.subject?.[0],
-    rating: doc.ratings_average,
-    ratingCount: doc.ratings_count,
   };
 }
 
@@ -180,23 +188,25 @@ export async function fetchAuthorBooks(
     params: {
       q: `author:${authorName} language:${langCode}`,
       lang,
-      fields: "key,title,author_name,cover_i,first_publish_year,edition_count,ratings_average,ratings_count,isbn,number_of_pages_median,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
+      fields: "key,title,author_name,author_key,cover_i,first_publish_year,edition_count,isbn,number_of_pages_median,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
       limit,
     },
     signal,
   });
 
   return data.docs.map(doc => {
-    const bestEdition = doc.editions?.docs?.[0];
+    const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+      ?? doc.editions?.docs?.[0];
+    const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
     return {
       key: doc.key,
       title: bestEdition?.title ?? doc.title,
       authors: doc.author_name ?? [unknownAuthor],
+      authorKeys: doc.author_key,
       first_publish_year: doc.first_publish_year ?? 0,
-      cover_id: bestEdition?.cover_i ?? doc.cover_i ?? null,
+      cover_id,
+      cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
-      rating: doc.ratings_average,
-      ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
       pages: doc.number_of_pages_median,
     };
