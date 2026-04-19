@@ -3,7 +3,7 @@ import { getWikipediaSummary, fetchAuthorBooks } from "@/services/api/openLibrar
 import { getCoverUrl } from "@/utils/coverImage";
 import type { AuthorInfo } from "@/types/BookDetail";
 import { getAuthorFromDB, saveAuthorToDB } from "@/services/firebase/firebase_authors";
-import { getAuthorBooksFromDB } from "@/services/firebase/firebase_books";
+import { getAuthorBooksFromDB, saveBooksToDB } from "@/services/firebase/firebase_books";
 
 async function fetchBioFromWikipedia(authorName: string): Promise<{ bio: string; photoUrl: string }> {
   const wikiData = await getWikipediaSummary(authorName);
@@ -64,13 +64,14 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
 
       if (authorKey) {
         try {
-          const cached = await getAuthorFromDB(authorKey);
-          if (cached) {
-            bio = cached.bio;
-            photoUrl = cached.photoUrl;
+          const dbAuthorData = await getAuthorFromDB(authorKey);
+          if (dbAuthorData) {
+            bio = dbAuthorData.bio;
+            photoUrl = dbAuthorData.photoUrl;
           } else {
             ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
-            saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl }).catch(() => {});
+            console.log("Insertando autor");
+            saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl });
           }
         } catch {
           ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
@@ -96,12 +97,13 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
               pages: b.pages,
             }));
           }
-        } catch { /* si falla Firestore, intenta API */ }
+        } catch { /* Si falla Firestore o no hay suficientes libros, se llama a API */ }
       }
 
       if (books.length < 2) {
         try {
           const apiBooks = await fetchAuthorBooks(authorName, 'es', 10);
+          saveBooksToDB(apiBooks, 'es'); 
           books = apiBooks
             .filter(b => b.cover_id !== null &&
               b.title.toLowerCase() !== currentBookTitle.toLowerCase())
@@ -116,7 +118,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
               isbn: b.isbn,
               pages: b.pages,
             }));
-        } catch { /* si falla OL, books queda vacío */ }
+        } catch { /* si falla OpenLibrary, books queda vacío */ }
       }
 
       if (!cancelled) setAuthorInfo({ name: authorName, photoUrl, bio, books });

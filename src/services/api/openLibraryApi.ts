@@ -178,7 +178,7 @@ export async function fetchAuthorBooks(
     params: {
       q: `author:${authorName} language:${langCode}`,
       lang,
-      fields: "key,title,author_name,cover_i,first_publish_year,edition_count,isbn,number_of_pages_median,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
+      fields: "key,title,author_name,author_key,cover_i,first_publish_year,edition_count,isbn,number_of_pages_median,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
       limit,
     },
     signal,
@@ -190,6 +190,7 @@ export async function fetchAuthorBooks(
       key: doc.key,
       title: bestEdition?.title ?? doc.title,
       authors: doc.author_name ?? [unknownAuthor],
+      authorKeys: doc.author_key,
       first_publish_year: doc.first_publish_year ?? 0,
       cover_id: bestEdition?.cover_i ?? doc.cover_i ?? null,
       edition_count: doc.edition_count ?? 0,
