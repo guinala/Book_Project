@@ -11,9 +11,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        setIsGuest(false);
+      const isEmailPasswordUser = firebaseUser?.providerData[0]?.providerId === "password";
+      if (firebaseUser && isEmailPasswordUser && !firebaseUser.emailVerified) {
+        setUser(null);
+      } else {
+        setUser(firebaseUser);
+        if (firebaseUser) setIsGuest(false);
       }
       setLoading(false);
     });

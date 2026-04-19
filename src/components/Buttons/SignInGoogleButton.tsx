@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { loginWithGoogle } from "@/services/firebase/firebase_auth";
+import { signInWithGoogle } from "@/services/firebase/firebase_auth";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
+import { createUserProfile } from "@/services/firebase/firebase_users";
 
 type SignInGoogleButtonProps = {
   disabled?: boolean;
@@ -15,7 +16,11 @@ export default function SignInGoogleButton({ disabled, onError }: SignInGoogleBu
   async function handleGoogle() {
     setIsLoading(true);
     try {
-      await loginWithGoogle();
+      const credential = await signInWithGoogle();
+      await createUserProfile(credential.user.uid, {
+        email: credential.user.email ?? "",
+        name: credential.user.displayName ?? "",
+      });
     } catch (error: unknown) {
       const firebaseError = error as { code?: string };
       onError?.(getFirebaseErrorMessage(firebaseError.code ?? "unknown"));

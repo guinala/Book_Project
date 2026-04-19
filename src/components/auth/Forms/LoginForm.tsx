@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { loginWithEmail } from "@/services/firebase/firebase_auth";
+import { loginWithEmail, logoutUser, resetPassword, sendVerificationEmail } from "@/services/firebase/firebase_auth";
 import type { LoginFormValues } from "@/types/AuthTypes";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
 import FormInput from "@/components/auth/Form_Components/FormInput";
 import GoogleFormInput from "@/components/auth/Form_Components/GoogleFormInput";
+//import AppleFormInput from "@/components/Auth/Form_Components/AppleFormInput";
 import AuthToggleLink from "@/components/auth/Form_Components/AuthToggleLink";
 
 type LoginFormProps = {
@@ -18,14 +19,39 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     defaultValues: { email: "", password: "" },
   });
   const [firebaseError, setFirebaseError] = useState("");
+  const [showReset, setShowReset] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetError, setResetError] = useState("");
 
   async function onSubmit(data: LoginFormValues) {
     setFirebaseError("");
     try {
-      await loginWithEmail(data.email, data.password);
+      const credential = await loginWithEmail(data.email, data.password);
+      if (!credential.user.emailVerified) {
+        await sendVerificationEmail(credential.user); 
+        await logoutUser();
+        throw { code: "auth/email-not-verified" };
+      }
     } catch (error: unknown) {
       const firebaseErr = error as { code?: string };
       setFirebaseError(getFirebaseErrorMessage(firebaseErr.code ?? "unknown"));
+    }
+  }
+
+  async function handleReset() {
+    if (!resetEmail) return;
+    setResetLoading(true);
+    setResetError("");
+    try {
+      await resetPassword(resetEmail);
+      setResetSent(true);
+    } catch (error: unknown) {
+      const e = error as { code?: string };
+      setResetError(getFirebaseErrorMessage(e.code ?? "unknown"));
+    } finally {
+      setResetLoading(false);
     }
   }
 
@@ -40,7 +66,8 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           error={errors.email}
           registration={register("email", {
             required: t("authErrors.fieldRequired"),
-            pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: t("authErrors.auth/invalid-email") },
+            maxLength: { value: 254, message: t("authErrors.email-too-long") },
+            pattern: { value: /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/, message: t("authErrors.auth/invalid-email") },
           })}
         />
         <FormInput
@@ -57,9 +84,37 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         </button>
 
         {firebaseError && <p className="auth__error">{firebaseError}</p>}
+        
+        <button type="button" className="auth__link" onClick={() => setShowReset(v => !v)}>
+          {t("auth.forgotPassword")}
+        </button>
       </form>
 
+      {showReset && (
+        <div className="auth__reset">
+          {!resetSent ? (
+            <>
+              <p className="auth__reset-hint">{t("auth.resetInstructions")}</p>
+              <input
+                type="email"
+                className="auth__input"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                placeholder={t("auth.emailPlaceholder")}
+              />
+              <button type="button" className="auth__btn-secondary" onClick={handleReset} disabled={resetLoading}>
+                {resetLoading ? t("auth.sending") : t("auth.sendResetEmail")}
+              </button>
+              {resetError && <p className="auth__error">{resetError}</p>}
+            </>
+          ) : (
+            <p className="auth__success">{t("auth.resetPasswordSent")}</p>
+          )}
+        </div>
+      )}
+
       <GoogleFormInput disabled={isSubmitting} />
+      {/* <AppleFormInput disabled={isSubmitting} /> */}
 
       <AuthToggleLink
         text={t("auth.noAccount")}
