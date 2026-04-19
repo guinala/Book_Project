@@ -1,100 +1,100 @@
 @use '../../styles/lib' as *;
 
-.booklist {
-  margin-left: 0;
-  padding: 32px 16px 40px;
-
-  @include from($bp-md) {
-    margin-left: 10px;
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-
-  &__title {
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    margin: 0 0 24px 0;
-    text-align: center;
+  .booklist {
+    margin-left: 0;
+    padding: var(--space-8) var(--space-4) var(--space-10);
 
     @include from($bp-md) {
-      font-size: 32px;
-      margin-bottom: 40px;
+      margin-left: 10px;
+      padding-top: var(--space-16);
+      padding-bottom: var(--space-16);
+    }
+
+    &__title {
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-semibold);
+      letter-spacing: 0.02em;
+      margin: 0 0 var(--space-6) 0;
+      text-align: center;
+
+      @include from($bp-md) {
+        font-size: var(--text-3xl);
+        margin-bottom: var(--space-10);
+      }
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      max-width: 100%;
+
+      @include from($bp-md) {
+        gap: var(--space-6);
+        max-width: 600px;
+      }
+    }
+
+    &__status {
+      text-align: center;
+      padding: var(--space-10) var(--space-4);
+      font-size: var(--text-base);
+
+      @include from($bp-md) {
+        padding: var(--space-16) var(--space-6);
+        font-size: var(--text-lg);
+      }
+    }
+
+    &__skeleton-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      max-width: 100%;
+
+      @include from($bp-md) {
+        gap: var(--space-6);
+        max-width: 600px;
+      }
+    }
+
+    &__skeleton-row {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+
+      @include from($bp-md) {
+        gap: 20px;
+      }
+    }
+
+    &__skeleton-cover {
+      flex-shrink: 0;
+      width: 90px;
+      aspect-ratio: 2 / 3;
+      border-radius: var(--radius-sm);
+      @include shimmer-bg;
+
+      @include from($bp-md) {
+        width: 120px;
+      }
+    }
+
+    &__skeleton-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding-top: var(--space-1);
+    }
+
+    &__skeleton-line {
+      height: 14px;
+      border-radius: var(--radius-sm);
+      @include shimmer-bg;
+
+      &--short {
+        width: 50%;
+      }
     }
   }
-
-  &__list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 100%;
-
-    @include from($bp-md) {
-      gap: 24px;
-      max-width: 600px;
-    }
-  }
-
-  &__status {
-    text-align: center;
-    padding: 40px 16px;
-    font-size: 16px;
-
-    @include from($bp-md) {
-      padding: 60px 24px;
-      font-size: 18px;
-    }
-  }
-
-  &__skeleton-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 100%;
-
-    @include from($bp-md) {
-      gap: 24px;
-      max-width: 600px;
-    }
-  }
-
-  &__skeleton-row {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-
-    @include from($bp-md) {
-      gap: 20px;
-    }
-  }
-
-  &__skeleton-cover {
-    flex-shrink: 0;
-    width: 90px;
-    aspect-ratio: 2 / 3;
-    border-radius: var(--border-radius-sm);
-    @include shimmer-bg;
-
-    @include from($bp-md) {
-      width: 120px;
-    }
-  }
-
-  &__skeleton-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 4px;
-  }
-
-  &__skeleton-line {
-    height: 14px;
-    border-radius: var(--border-radius-sm);
-    @include shimmer-bg;
-
-    &--short {
-      width: 50%;
-    }
-  }
-}

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SearchBar from "@/components/Searchbar/Searchbar";
-import BookList from "@/components/BookList/BookList";
-//import { useFantasyBooks } from "@/hooks/useFantasyBooks";
+import BookGridCard from "@/components/BookGridCard/BookGridCard";
+import GridSkeletonLoading from "@/layouts/GridSkeletonLoading";
 import { useBookSearch } from "@/hooks/useBookSearch";
 import { useFantasyBooks_GoogleOpen } from "@/hooks/useFantasyBooks_GoogleOpen";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
@@ -11,13 +11,11 @@ import "./ExplorePage.scss";
 
 function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  //const [searchFilter, setSearchFilter] = useState<SearchFilter>("todo");
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
 
-  //const fantasy = useFantasyBooks(20, lang);
   const hybrid = useFantasyBooks_GoogleOpen();
-  const {fetchBooks, cancelRequest} = hybrid;
+  const { fetchBooks, cancelRequest } = hybrid;
   const search = useBookSearch();
 
   const isSearching = searchQuery.trim().length > 0;
@@ -29,10 +27,9 @@ function ExplorePage() {
 
   const handleSearch = (query: string, filter: SearchFilter) => {
     setSearchQuery(query);
-    //setSearchFilter(filter);
-    if(query.trim()){
+    if (query.trim()) {
       search.fetchBooks(query, filter, 20, lang);
-    } else{
+    } else {
       search.resetBookResults();
     }
   };
@@ -60,21 +57,29 @@ function ExplorePage() {
               ? t("explore.searching")
               : t("explore.resultsFound", { count: search.totalResults })}
           </p>
-          <button
-            onClick={handleClearSearch}
-            className="explore-page__clear-btn"
-          >
+          <button onClick={handleClearSearch} className="explore-page__clear-btn">
             {t("explore.backBtn")}
           </button>
         </div>
       )}
 
-      <BookList
-        books={activeBooks}
-        loading={activeLoading}
-        error={activeError}
-        title={activeTitle}
-      />
+      <section className="explore-page__section">
+        <h2 className="explore-page__section-title">{activeTitle}</h2>
+
+        {activeLoading && <GridSkeletonLoading />}
+
+        {activeError && (
+          <p className="explore-page__error">⚠️ {activeError}</p>
+        )}
+
+        {!activeLoading && !activeError && (
+          <div className="explore-page__grid">
+            {activeBooks.map((book) => (
+              <BookGridCard key={book.key} book={book} />
+            ))}
+          </div>
+        )}
+      </section>
     </>
   );
 }
