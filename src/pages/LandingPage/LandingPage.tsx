@@ -11,7 +11,7 @@ function LandingPage() {
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      navigate("/my-library", { replace: true });
+      navigate("/explore", { replace: true });
     }
   }, [isAuthenticated, loading, navigate]);
 

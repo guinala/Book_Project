@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { loginWithEmail, logoutUser, resetPassword, sendVerificationEmail } from "@/services/firebase/firebase_auth";
 import type { LoginFormValues } from "@/types/AuthTypes";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
@@ -15,6 +16,7 @@ type LoginFormProps = {
 
 export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
     defaultValues: { email: "", password: "" },
   });
@@ -30,10 +32,11 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     try {
       const credential = await loginWithEmail(data.email, data.password);
       if (!credential.user.emailVerified) {
-        await sendVerificationEmail(credential.user); 
+        await sendVerificationEmail(credential.user);
         await logoutUser();
         throw { code: "auth/email-not-verified" };
       }
+      navigate("/explore", { replace: true });
     } catch (error: unknown) {
       const firebaseErr = error as { code?: string };
       setFirebaseError(getFirebaseErrorMessage(firebaseErr.code ?? "unknown"));
