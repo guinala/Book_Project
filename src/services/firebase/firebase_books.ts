@@ -2,7 +2,7 @@ import type { Book } from "@/types/Book";
 import { arrayUnion, collection, doc, getDoc, getDocs, limit, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "./firebase_init";
 
-const BOOKS_COLLECTION = "books";
+const BOOKS_COLLECTION = "Books";
 
 function encodeKey(workKey: string): string {
   // Ejemplo: "/works/OL123W" => "OL123W"

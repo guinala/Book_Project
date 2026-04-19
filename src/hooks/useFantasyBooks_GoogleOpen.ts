@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import type { Book } from "@/types/Book";
 import { fetchFantasyBooks } from "@/services/api/openLibraryApi";
-import { fetchGoogleCovers } from "@/services/api/googleBooksApi";
+// import { fetchGoogleCovers } from "@/services/api/googleBooksApi"; // [Google Books covers — comentado]
 import { getErrorMessage } from "@/utils/apiErrors";
 import { getExploreBooksFromDB, saveBooksToDB } from "@/services/firebase/firebase_books";
 
@@ -120,31 +120,30 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
     // };
     
 
-    const fetchCovers = async (mappedBooks: Book[]): Promise<void> => {
-
-      const onCoverReady = (index: number, url: string) => {
-        setBooks(prev =>
-          prev.map((book, i) => i === index ? { ...book, cover_url: url } : book)
-        );
-      };
-      
-      try {
-        await fetchGoogleCovers(
-          mappedBooks,
-          abortController.current!.signal,
-          onCoverReady
-        );
-        setBooks(prev => {
-        saveToStorage(prev);
-        saveBooksToDB(prev, lang);
-        return prev;
-      });
-    } catch (err) {
-      if (axios.isCancel(err)) return;
-      saveToStorage(mappedBooks);
-      saveBooksToDB(mappedBooks, lang);  
-    }
-  };
+    // [Google Books covers — comentado, usar OpenLibrary covers via cover_url del mapper]
+    // const fetchCovers = async (mappedBooks: Book[]): Promise<void> => {
+    //   const onCoverReady = (index: number, url: string) => {
+    //     setBooks(prev =>
+    //       prev.map((book, i) => i === index ? { ...book, cover_url: url } : book)
+    //     );
+    //   };
+    //   try {
+    //     await fetchGoogleCovers(
+    //       mappedBooks,
+    //       abortController.current!.signal,
+    //       onCoverReady
+    //     );
+    //     setBooks(prev => {
+    //       saveToStorage(prev);
+    //       saveBooksToDB(prev, lang);
+    //       return prev;
+    //     });
+    //   } catch (err) {
+    //     if (axios.isCancel(err)) return;
+    //     saveToStorage(mappedBooks);
+    //     saveBooksToDB(mappedBooks, lang);
+    //   }
+    // };
 
     const fetchWithRetry = async (retried = false): Promise<void> => {
       try {
@@ -155,7 +154,9 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
         setBooks(mappedBooks);
         setLoading(false);
 
-        fetchCovers(mappedBooks);
+        saveToStorage(mappedBooks);
+        saveBooksToDB(mappedBooks, lang);
+        // fetchCovers(mappedBooks); // [Google Books covers — comentado]
       } catch (err) {
         if (axios.isCancel(err)) return;
         if (!retried) {
