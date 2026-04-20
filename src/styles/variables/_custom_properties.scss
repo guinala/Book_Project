@@ -153,6 +153,38 @@
   --transition-slow: 300ms ease-out;
 }
 
+// ─── DARK THEME ────────────────────────────────────────
+[data-theme="dark"] {
+  --color-bg-page: #1a1714;
+  --color-bg-section: #221e1b;
+  --color-surface-secondary: #2a2521;
+  --color-bg-card: rgba(38, 34, 30, 0.85);
+  --color-bg-card-solid: #2e2924;
+  --color-bg-overlay: rgba(26, 23, 20, 0.85);
+  --color-bg-synopsis: rgba(38, 30, 24, 0.85);
+
+  --color-text-primary: #f0ebe5;
+  --color-text-secondary: #b5aa9e;
+  --color-text-tertiary: #7a7268;
+  --color-text-subtle: #6b6358;
+
+  --color-border-subtle: rgba(255, 240, 225, 0.08);
+  --color-border-medium: rgba(255, 240, 225, 0.15);
+  --color-border-strong: rgba(255, 240, 225, 0.25);
+  --color-border-warm: rgba(200, 160, 130, 0.3);
+  --color-border: rgba(255, 240, 225, 0.15);
+
+  --color-neutral-alpha-light: rgba(255, 240, 225, 0.04);
+  --color-neutral-alpha-subtle: rgba(255, 240, 225, 0.06);
+  --color-neutral-alpha-muted: rgba(255, 240, 225, 0.09);
+  --color-neutral-alpha-medium: rgba(255, 240, 225, 0.14);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-card-hover: 0 4px 20px rgba(232, 107, 48, 0.3), 0 1px 6px rgba(232, 107, 48, 0.15);
+  --shadow-nav: 0 4px 20px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
 @media (max-width: 1024px) {
   :root {
     --page-padding-x: 24px;
