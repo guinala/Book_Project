@@ -7,7 +7,7 @@ import type { LoginFormValues } from "@/types/AuthTypes";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
 import FormInput from "@/components/auth/Form_Components/FormInput";
 import GoogleFormInput from "@/components/auth/Form_Components/GoogleFormInput";
-//import AppleFormInput from "@/components/Auth/Form_Components/AppleFormInput";
+//import AppleFormInput from "@/components/auth/Form_Components/AppleFormInput";
 import AuthToggleLink from "@/components/auth/Form_Components/AuthToggleLink";
 
 type LoginFormProps = {
@@ -65,6 +65,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       <form className="auth__form" onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           type="email"
+          label={t("auth.emailPlaceholder")}
           placeholder={t("auth.emailPlaceholder")}
           error={errors.email}
           registration={register("email", {
@@ -75,6 +76,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         />
         <FormInput
           type="password"
+          label={t("auth.passwordPlaceholder")}
           placeholder={t("auth.passwordPlaceholder")}
           error={errors.password}
           registration={register("password", {

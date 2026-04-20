@@ -17,6 +17,8 @@ const FANTASY_FIELDS = [
   "subject",
   "isbn",
   "number_of_pages_median",
+  "ratings_average",
+  "ratings_count",
   "editions",
   "editions.title",
   "editions.language",
@@ -24,7 +26,7 @@ const FANTASY_FIELDS = [
   "editions.isbn",
 ].join(",");
 
-const SEARCH_FIELDS = "key,title,author_name,author_key,first_publish_year,cover_i,edition_count, isbn, number_of_pages_median";
+const SEARCH_FIELDS = "key,title,author_name,author_key,first_publish_year,cover_i,edition_count,isbn,number_of_pages_median,ratings_average,ratings_count";
 
 export async function fetchFantasyBooks(
   limit: number,
@@ -60,6 +62,8 @@ export async function fetchFantasyBooks(
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
       genre: handleFantasyGenre(doc.subject),
+      rating: doc.ratings_average,
+      ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
       pages: doc.number_of_pages_median,
     };
@@ -95,6 +99,8 @@ export async function searchBooks(
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
+      rating: doc.ratings_average,
+      ratingCount: doc.ratings_count,
       isbn: doc.isbn?.[0],
       pages: doc.number_of_pages_median,
     };
@@ -139,6 +145,8 @@ export async function fetchBookByTitle(
     cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
     edition_count: doc.edition_count ?? 0,
     genre: doc.subject?.[0],
+    rating: doc.ratings_average,
+    ratingCount: doc.ratings_count,
   };
 }
 
@@ -188,7 +196,7 @@ export async function fetchAuthorBooks(
     params: {
       q: `author:${authorName} language:${langCode}`,
       lang,
-      fields: "key,title,author_name,author_key,cover_i,first_publish_year,edition_count,isbn,number_of_pages_median,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
+      fields: "key,title,author_name,author_key,cover_i,first_publish_year,edition_count,isbn,number_of_pages_median,ratings_average,ratings_count,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
       limit,
     },
     signal,
@@ -207,6 +215,8 @@ export async function fetchAuthorBooks(
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
+      rating: doc.ratings_average,
+      ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
       pages: doc.number_of_pages_median,
     };
