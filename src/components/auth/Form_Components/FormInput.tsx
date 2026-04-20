@@ -29,7 +29,7 @@ function EyeOffIcon() {
   );
 }
 
-export default function FormInput({ type, placeholder, hint, error, registration }: FormInputProps) {
+export default function FormInput({ type, label, placeholder, hint, error, registration }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
@@ -37,12 +37,13 @@ export default function FormInput({ type, placeholder, hint, error, registration
 
   return (
     <div className="auth__field">
-      <label className="auth__label" htmlFor={inputId}>{placeholder}</label>
+      <label className="auth__label" htmlFor={inputId}>{label}</label>
       <div className={isPassword ? "auth__input-wrapper" : undefined}>
         <input
           id={inputId}
           className="auth__input"
           type={inputType}
+          placeholder={placeholder}
           aria-invalid={error ? "true" : undefined}
           {...registration}
         />
