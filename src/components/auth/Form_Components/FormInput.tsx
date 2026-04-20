@@ -8,6 +8,8 @@ type FormInputProps = {
   hint?: string;
   error?: FieldError;
   registration: UseFormRegisterReturn;
+  max?: string;
+  required?: boolean;
 };
 
 function EyeIcon() {
@@ -29,7 +31,7 @@ function EyeOffIcon() {
   );
 }
 
-export default function FormInput({ type, label, placeholder, hint, error, registration }: FormInputProps) {
+export default function FormInput({ type, label, placeholder, hint, error, registration, max, required }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
@@ -37,7 +39,9 @@ export default function FormInput({ type, label, placeholder, hint, error, regis
 
   return (
     <div className="auth__field">
-      <label className="auth__label" htmlFor={inputId}>{label}</label>
+      <label className="auth__label" htmlFor={inputId}>
+        {label}{required && <span className="auth__required">*</span>}
+      </label>
       <div className={isPassword ? "auth__input-wrapper" : undefined}>
         <input
           id={inputId}
@@ -45,6 +49,7 @@ export default function FormInput({ type, label, placeholder, hint, error, regis
           type={inputType}
           placeholder={placeholder}
           aria-invalid={error ? "true" : undefined}
+          max={max}
           {...registration}
         />
         {isPassword && (

@@ -6,6 +6,10 @@ import {
   signInWithPopup,
   sendEmailVerification,
   sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import type { User, UserCredential } from "firebase/auth";
 import { OAuthProvider } from "firebase/auth";
@@ -18,8 +22,10 @@ appleProvider.addScope("name");
 
 export async function loginWithEmail(
   email: string,
-  password: string
+  password: string,
+  remember = false
 ): Promise<UserCredential> {
+  await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
   return signInWithEmailAndPassword(auth, email, password);
 }
 
@@ -48,4 +54,11 @@ export async function sendVerificationEmail(user: User): Promise<void> {
 
 export async function resetPassword(email: string): Promise<void> {
   return sendPasswordResetEmail(auth, email);
+}
+
+// fetchSignInMethodsForEmail está deprecada pero funciona. Requiere que
+// "Email Enumeration Protection" esté desactivada en Firebase Console.
+export async function isEmailInUse(email: string): Promise<boolean> {
+  const methods = await fetchSignInMethodsForEmail(auth, email);
+  return methods.length > 0;
 }
