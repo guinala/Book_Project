@@ -40,9 +40,9 @@
   --color-brand-ember: #c44e12;
 
   // alias — los componentes existentes usan estos nombres                                                                                                                                                                       
-  --color-accent:        var(--color-brand-primary);                                                                                                                                                                               
-  --color-accent-dark:   var(--color-brand-dark);                                                                                                                                                                                  
-  --color-accent-light:  var(--color-brand-alpha-subtle);
+  --color-accent: var(--color-brand-primary);
+  --color-accent-dark: var(--color-brand-dark);
+  --color-accent-light: var(--color-brand-alpha-subtle);
 
   // Alpha brand
   --color-brand-alpha-subtle: rgba(232, 107, 48, 0.06);
