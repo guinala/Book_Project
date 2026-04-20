@@ -1,8 +1,9 @@
 @use '../../styles/shared' as *;                                                                                                                                                                                                 
                   
-  .landing {                                                                                                                                                                                                                       
+  .landing {
     @include page-centered;
-    min-height: calc(100vh - var(--navbar-height));                                                                                                                                                                                
+    min-height: calc(100vh - var(--navbar-height));
+    padding-bottom: 30vh;                                                                                                                                                                                
                                               
     &__loading {                          
       font-size: var(--text-base);

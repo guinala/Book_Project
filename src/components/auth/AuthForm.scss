@@ -3,6 +3,8 @@
 .auth {
   @include page-centered;
   min-height: 100vh;
+  background: var(--color-bg-page);
+  padding-bottom: 30vh;
 
   &__box {
     border-radius: var(--radius-lg);
@@ -12,6 +14,9 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+    background: var(--color-bg-card-solid);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--color-border-subtle);
 
     @include from($bp-md) {
       padding: var(--space-10) var(--space-9);
@@ -32,16 +37,15 @@
     height: 32px;
     border-radius: var(--radius-sm);
     font-size: var(--text-lg);
+    background: var(--color-brand-alpha-medium);
+    color: var(--color-brand-primary);
   }
 
   &__logo-text {
     font-size: var(--text-2xl);
     font-weight: var(--weight-semibold);
     letter-spacing: 0.01em;
-
-    @include from($bp-md) {
-      font-size: var(--text-2xl);
-    }
+    color: var(--color-text-primary);
   }
 
   &__title {
@@ -50,25 +54,112 @@
     text-align: center;
     margin: 0;
     letter-spacing: 0.01em;
-
-    @include from($bp-md) {
-      font-size: var(--text-xl);
-    }
+    color: var(--color-text-primary);
   }
 
   &__form {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+
+    .auth__btn-primary {
+      margin-top: var(--space-3);
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  &__label {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  &__input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .auth__input {
+      padding-right: 36px;
+    }
+  }
+
+  &__input-toggle {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-text-tertiary);
+    display: flex;
+    align-items: center;
+    transition: color var(--transition-fast);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      color: var(--color-text-primary);
+    }
   }
 
   &__input {
     @include text-input;
     outline: none;
+
+    &:focus {
+      border-color: var(--color-brand-primary);
+      box-shadow: 0 0 0 3px var(--color-brand-alpha-subtle);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: var(--color-error-border);
+    }
+
+    &[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
 
   &__btn-primary {
     @include full-btn-primary;
+    background: var(--color-brand-primary);
+    color: var(--color-text-on-brand);
+    transition: background var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      background: var(--color-brand-dark);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__btn-secondary {
+    @include full-btn-primary;
+    background: var(--color-surface-secondary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-medium);
+    transition: background var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      background: var(--color-bg-section);
+    }
 
     &:disabled {
       opacity: 0.6;
@@ -81,9 +172,17 @@
     gap: var(--space-2);
     @include ghost-button;
     border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-medium);
     padding: 11px;
     font-size: var(--text-md);
     width: 100%;
+    color: var(--color-text-primary);
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      background: var(--color-neutral-alpha-light);
+      border-color: var(--color-border-strong);
+    }
 
     &:disabled {
       opacity: 0.6;
@@ -93,6 +192,21 @@
     img {
       width: 18px;
       height: 18px;
+    }
+  }
+
+  &__link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-align: center;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-text-primary);
     }
   }
 
@@ -111,31 +225,69 @@
     align-items: center;
     gap: var(--space-3);
     font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
 
     &::before,
     &::after {
       content: "";
       flex: 1;
       height: 1px;
+      background: var(--color-border-medium);
     }
+  }
+
+  &__reset {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-subtle);
+    background: var(--color-bg-section);
+  }
+
+  &__reset-hint {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
   }
 
   &__toggle {
     text-align: center;
     font-size: var(--text-sm);
+    color: var(--color-text-secondary);
   }
 
   &__toggle-link {
     cursor: pointer;
+    color: var(--color-brand-primary);
+    font-weight: var(--weight-medium);
     text-decoration: underline;
     transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-brand-dark);
+    }
+  }
+
+  &__hint {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin: var(--space-1) 0 0;
+    text-align: right;
   }
 
   &__error {
     font-size: var(--text-sm);
     text-align: center;
     min-height: 20px;
-    color: red;
+    color: var(--color-error);
+  }
+
+  &__success {
+    font-size: var(--text-sm);
+    text-align: center;
+    color: var(--color-success);
   }
 
   &__user-info {
@@ -153,21 +305,26 @@
     border-radius: var(--radius-pill);
     font-size: var(--text-3xl);
     font-weight: var(--weight-bold);
+    background: var(--color-brand-alpha-medium);
+    color: var(--color-brand-primary);
   }
 
   &__user-email {
     font-size: var(--text-base);
     margin: 0;
+    color: var(--color-text-primary);
   }
 
   &__user-provider {
     font-size: var(--text-sm);
     margin: 0;
+    color: var(--color-text-secondary);
   }
 
   &__loading {
     text-align: center;
     font-size: var(--text-base);
+    color: var(--color-text-secondary);
   }
 
   &__hidden {
