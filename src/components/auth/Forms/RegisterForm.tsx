@@ -7,7 +7,7 @@ import { createUserProfile } from "@/services/firebase/firebase_users";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebase_errors";
 import FormInput from "@/components/auth/Form_Components/FormInput";
 import GoogleFormInput from "@/components/auth/Form_Components/GoogleFormInput";
-//import AppleFormInput from "@/components/Auth/Form_Components/AppleFormInput";
+//import AppleFormInput from "@/components/auth/Form_Components/AppleFormInput";
 import AuthToggleLink from "@/components/auth/Form_Components/AuthToggleLink";
 
 type RegisterFormProps = {
@@ -64,24 +64,28 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       <form className="auth__form" onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           type="text"
+          label={t("auth.namePlaceholder")}
           placeholder={t("auth.namePlaceholder")}
           error={errors.name}
           registration={register("name", { required: t("authErrors.fieldRequired") })}
         />
         <FormInput
           type="text"
+          label={t("auth.surnamePlaceholder")}
           placeholder={t("auth.surnamePlaceholder")}
           error={errors.surname}
           registration={register("surname", { required: t("authErrors.fieldRequired") })}
         />
         <FormInput
           type="date"
+          label={t("auth.birthDatePlaceholder")}
           placeholder={t("auth.birthDatePlaceholder")}
           error={errors.birthDate}
           registration={register("birthDate", { required: t("authErrors.fieldRequired") })}
         />
         <FormInput
           type="email"
+          label={t("auth.emailPlaceholder")}
           placeholder={t("auth.emailPlaceholder")}
           error={errors.email}
           registration={register("email", {
@@ -92,7 +96,8 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         />
         <FormInput
           type="password"
-          placeholder={t("auth.passwordPlaceholder")}
+          label={t("auth.passwordHint")}
+          placeholder={t("auth.passwordHint")}
           hint={t("auth.passwordHint")}
           error={errors.password}
           registration={register("password", {
