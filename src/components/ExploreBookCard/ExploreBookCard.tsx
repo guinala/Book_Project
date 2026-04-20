@@ -119,15 +119,19 @@ export default function ExploreBookCard({ book, rank }: ExploreBookCardProps) {
             {book.authors.length > 0 ? book.authors.join(", ") : "Autor desconocido"}
           </p>
         </div>
-        {(book.rating ?? 0) > 0 && (
-          <div className="explore-card__rating">
-            <span className="explore-card__star">★</span>
-            <span className="explore-card__rating-value">{book.rating!.toFixed(1)}</span>
-            {book.ratingCount && (
-              <span className="explore-card__rating-count">({book.ratingCount.toLocaleString()})</span>
-            )}
-          </div>
-        )}
+        <div className="explore-card__rating">
+          <span className="explore-card__star">★</span>
+          {(book.rating ?? 0) > 0 ? (
+            <>
+              <span className="explore-card__rating-value">{book.rating!.toFixed(1)}</span>
+              {book.ratingCount && (
+                <span className="explore-card__rating-count">({book.ratingCount.toLocaleString()})</span>
+              )}
+            </>
+          ) : (
+            <span className="explore-card__rating-count">Sin valorar</span>
+          )}
+        </div>
       </div>
     </article>
   );

@@ -4,6 +4,7 @@ import AuthPage from "@/pages/AuthPage/AuthPage";
 import ExplorePage from "@/pages/ExplorePage/ExplorePage";
 import MyLibraryPage from "@/pages/MyLibraryPage/MyLibraryPage";
 import BookDetailPage from "@/pages/BookDetailPage/BookDetailPage";
+import CommunityPage from "@/pages/CommunityPage/CommunityPage";
 import AuthRoute from "@/routes/AuthRoute";
 
 export const ROUTES = [
@@ -15,6 +16,7 @@ export const ROUTES = [
       { path: "auth", element: <AuthPage /> },
       { path: "explore", element: <ExplorePage /> },
       { path: "book/:id", element: <BookDetailPage /> },
+      { path: "community", element: <CommunityPage /> },
       {
         path: "my-library",
         element: (

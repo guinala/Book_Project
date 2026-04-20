@@ -89,7 +89,7 @@
     height: 30px;
     border-radius: var(--radius-pill);
     border: 1.5px solid var(--color-brand-primary);
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--color-bg-card-solid);
     color: var(--color-brand-primary);
     cursor: pointer;
     transition: background var(--transition-fast), transform var(--transition-fast);
@@ -106,7 +106,7 @@
     }
 
     &--open {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--color-bg-card-solid);
     }
 
     &--saved {
