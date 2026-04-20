@@ -119,15 +119,19 @@ export default function BookGridCard({ book, rank }: BookGridCardProps) {
             {book.authors.length > 0 ? book.authors.join(", ") : "Autor desconocido"}
           </p>
         </div>
-        {(book.rating ?? 0) > 0 && (
-          <div className="book-grid-card__rating">
-            <span className="book-grid-card__star">★</span>
-            <span className="book-grid-card__rating-value">{book.rating!.toFixed(1)}</span>
-            {book.ratingCount && (
-              <span className="book-grid-card__rating-count">({book.ratingCount.toLocaleString()})</span>
-            )}
-          </div>
-        )}
+        <div className="book-grid-card__rating">
+          <span className="book-grid-card__star">★</span>
+          {(book.rating ?? 0) > 0 ? (
+            <>
+              <span className="book-grid-card__rating-value">{book.rating!.toFixed(1)}</span>
+              {book.ratingCount && (
+                <span className="book-grid-card__rating-count">({book.ratingCount.toLocaleString()})</span>
+              )}
+            </>
+          ) : (
+            <span className="book-grid-card__rating-count">Sin valorar</span>
+          )}
+        </div>
       </div>
     </article>
   );
