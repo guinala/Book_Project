@@ -11,10 +11,10 @@ export default function GoogleFormInput({ disabled }: GoogleFormInputProps) {
   const { t } = useTranslation();
 
   return (
-    <>
-      <div className="auth__divider">{t("auth.dividerOr")}</div>
+    <div className="auth__google-group">
       <SignInGoogleButton disabled={disabled} onError={setGoogleError} />
       {googleError && <p className="auth__error">{googleError}</p>}
-    </>
+      <div className="auth__divider">{t("auth.dividerOr")}</div>
+    </div>
   );
 }

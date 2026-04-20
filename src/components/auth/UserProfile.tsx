@@ -28,7 +28,7 @@ export default function UserProfile() {
         {t("auth.provider", { provider: getProviderName(user) })}
       </p>
       <button
-        className="auth__btn-danger"
+        className="auth__btn-secondary"
         type="button"
         onClick={logout}
       >
