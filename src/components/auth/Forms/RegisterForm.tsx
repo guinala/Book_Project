@@ -92,7 +92,8 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         />
         <FormInput
           type="password"
-          placeholder={t("auth.passwordHint")}
+          placeholder={t("auth.passwordPlaceholder")}
+          hint={t("auth.passwordHint")}
           error={errors.password}
           registration={register("password", {
             required: t("authErrors.fieldRequired"),
