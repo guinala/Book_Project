@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SearchBar from "@/components/Searchbar/Searchbar";
 import BookGridCard from "@/components/BookGridCard/BookGridCard";
-import GridSkeletonLoading from "@/layouts/GridSkeletonLoading";
 import { useBookSearch } from "@/hooks/useBookSearch";
 import { useFantasyBooks_GoogleOpen } from "@/hooks/useFantasyBooks_GoogleOpen";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import type { SearchFilter } from "@/types/Search";
 import "./ExplorePage.scss";
+import GridLoading from "@/layouts/GridLoading";
 
 function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,10 +66,10 @@ function ExplorePage() {
       <section className="explore-page__section">
         <h2 className="explore-page__section-title">{activeTitle}</h2>
 
-        {activeLoading && <GridSkeletonLoading />}
+        {activeLoading && <GridLoading />}
 
         {activeError && (
-          <p className="explore-page__error">⚠️ {activeError}</p>
+          <p className="explore-page__error">{activeError}</p>
         )}
 
         {!activeLoading && !activeError && (

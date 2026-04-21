@@ -1,4 +1,4 @@
-import GridSkeletonLoading from "@/layouts/GridSkeletonLoading";
+import GridSkeletonLoading from "@/layouts/GridLoading";
 import type { Book } from "@/types/Book";
 import BookCard from "@/components/BookCard/BookCard";
 import "./BookList.scss";
