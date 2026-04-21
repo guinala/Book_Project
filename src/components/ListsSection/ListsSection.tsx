@@ -3,6 +3,14 @@ import ListCard from "@/components/ListCard/ListCard";
 import type { ReadingList } from "@/components/ListCard/ListCard";
 import "./ListsSection.scss";
 
+function ChevronRightSmall() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  );
+}
+
 function PlusIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -23,7 +31,9 @@ export default function ListsSection({ lists }: ListsSectionProps) {
     <section className="lists-section">
       <div className="lists-section__header">
         <h3 className="lists-section__title">{t("myLibrary.listsTitle")}</h3>
-        <a href="#" className="lists-section__see-all">{t("myLibrary.seeAll")}</a>
+        <a href="#" className="lists-section__see-all">
+          {t("myLibrary.seeAll")} <ChevronRightSmall />
+        </a>
       </div>
 
       <div className="lists-section__row">

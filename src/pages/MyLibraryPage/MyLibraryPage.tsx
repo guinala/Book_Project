@@ -47,7 +47,7 @@ function MyLibraryPage() {
     <section className="my-library">
       <div className="my-library__reading-section">
         <h3 className="my-library__section-title">{t("myLibrary.heading")}</h3>
-        <CurrentReadingCard />
+        <CurrentReadingCard book={books[1] ?? null} loading={loading} />
       </div>
 
       <div className="my-library__shelf-section">

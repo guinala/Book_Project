@@ -25,6 +25,14 @@ function ChevronRightIcon() {
   );
 }
 
+function ChevronRightSmall() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  );
+}
+
 function ChevronLeftIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -74,7 +82,9 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
             </button>
           ))}
         </div>
-        <a href="#" className="shelf-section__see-all">{t("myLibrary.seeAll")}</a>
+        <a href="#" className="shelf-section__see-all">
+          {t("myLibrary.seeAll")} <ChevronRightSmall />
+        </a>
       </div>
 
       <div className="shelf-section__card">

@@ -17,9 +17,23 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
 
+  &--skeleton {
+    height: 200px;
+    @include shimmer-bg;
+  }
+
+  &__cover-placeholder {
+    width: 160px;
+    flex-shrink: 0;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radius-sm);
+    background: var(--color-neutral-alpha-muted);
+    @include shimmer-bg;
+  }
+
   &__cover-img {
     @include book-cover-img;
-    width: 120px;
+    width: 160px;
     flex-shrink: 0;
     box-shadow: var(--shadow-cover);
     cursor: pointer;
