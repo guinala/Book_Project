@@ -12,4 +12,5 @@ export type Book = {
   ratingCount?: number;
   isbn?: string;
   pages?: number;
+  shelfCategory?: string;
 }

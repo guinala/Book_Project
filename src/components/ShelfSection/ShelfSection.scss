@@ -93,8 +93,8 @@
   &__card {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
-    padding: 20px 20px 20px 18px;
+    gap: 0;
+    padding: var(--space-4);
     background: var(--color-bg-card);
     border: 1px solid var(--color-border-medium);
     border-radius: var(--radius-xl);
@@ -103,27 +103,32 @@
 
   &__track {
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-8);
     flex: 1;
     overflow: hidden;
     align-items: flex-start;
-
-    @include from($bp-md) {
-      gap: var(--space-5);
-    }
   }
 
   &__item {
+    flex: 1;
+    min-width: 0;
+    max-width: 140px;
+
+    &--skeleton {
+      aspect-ratio: 2 / 3;
+      border-radius: var(--radius-sm);
+      background: var(--color-neutral-alpha-muted);
+      @include shimmer-bg;
+    }
+
+  }
+
+  &__chevron-area {
     flex-shrink: 0;
-    width: 110px;
-
-    @include from($bp-md) {
-      width: 130px;
-    }
-
-    @include from($bp-lg) {
-      width: 140px;
-    }
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &__chevron {

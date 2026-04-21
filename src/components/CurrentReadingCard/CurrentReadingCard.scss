@@ -1,5 +1,10 @@
 @use "../../styles/shared" as *;
 
+@keyframes progress-flow {
+  from { background-position: 0% 0; }
+  to   { background-position: -200% 0; }
+}
+
 .reading-card {
   display: flex;
   gap: var(--space-6);
@@ -109,22 +114,26 @@
 
   &__progress-bar {
     height: 18px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     overflow: hidden;
-    background: var(--color-neutral-alpha-muted);
+    background: rgba(255, 255, 255, 0.3);
     border: 1px solid var(--color-border-warm);
   }
 
   &__progress-fill {
     height: 100%;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(247, 212, 196, 0.6) 30%,
-      rgba(238, 169, 137, 0.7) 60%,
-      rgba(223, 92, 32, 0.85) 100%
+      rgba(210, 95, 28, 0.90) 0%,
+      rgba(223, 92, 32, 0.88) 20%,
+      rgba(238, 140, 80, 0.75) 45%,
+      rgba(247, 210, 175, 0.65) 70%,
+      rgba(210, 95, 28, 0.90) 100%
     );
+    background-size: 200% 100%;
+    background-repeat: repeat-x;
+    animation: progress-flow 8s linear infinite;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -135,7 +144,7 @@
   &__progress-percent {
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
-    color: var(--color-brand-dark);
+    color: var(--color-text-secondary);
     letter-spacing: 0.06em;
   }
 
