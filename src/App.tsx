@@ -5,6 +5,7 @@ import NavbarMini from "@/components/NavbarMini/NavbarMini";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import "./App.scss"
+import { ShelfProvider } from "./context/ShelfContext";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -20,11 +21,13 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Navbar hidden={scrolled} />
-        <NavbarMini visible={scrolled} />
-        <main>
-          <Outlet />
-        </main>
+        <ShelfProvider>
+          <Navbar hidden={scrolled} />
+          <NavbarMini visible={scrolled} />
+          <main>
+            <Outlet />
+          </main>
+        </ShelfProvider>
       </AuthProvider>
     </ThemeProvider>
   );

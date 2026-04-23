@@ -5,7 +5,8 @@
     "resultsFound": "{{count}} results found",
     "backBtn": "Back",
     "resultsTitle": "Results for \"{{query}}\"",
-    "fantasyTitle": "Fantasy"
+    "fantasyTitle": "Fantasy",
+    "saveTooltip": "Sign in to save"
   },
   "search": {
     "all": "All",
