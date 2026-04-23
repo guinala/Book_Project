@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { BookDetail, ShelfStatus } from "@/types/BookDetail";
 import type { Book } from "@/types/Book";
@@ -28,7 +28,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
   const { addBook, removeBook, getStatus } = useShelf();
   const saved = getStatus(book.key);
 
-  const bookForShelf = useMemo<Book>(() => ({
+  const bookForShelf: Book = {
     key: book.key,
     title: book.title,
     authors: [book.author],
@@ -39,7 +39,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
     genre: book.genre,
     pages: book.pages,
     isbn: book.isbn,
-  }), [book]);
+  };
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [synopsisOpen, setSynopsisOpen] = useState(false);
   const shelfRef = useRef<HTMLDivElement>(null);
@@ -57,18 +57,14 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, [shelfOpen]);
 
-  const handleShelfSelect = useCallback(
-    (option: ShelfStatus) => {
-      if(saved === option) {
-        removeBook(book.key);
-      }
-      else {
-        addBook(bookForShelf, option);
-        setShelfOpen(false);
-      }
-    },
-    [saved, book.key, bookForShelf, addBook, removeBook]
-  );
+  const handleShelfSelect = (option: ShelfStatus) => {
+    if (saved === option) {
+      removeBook(book.key);
+    } else {
+      addBook(bookForShelf, option);
+      setShelfOpen(false);
+    }
+  };
 
   const handleSaveBtnClick = () => {
     if (!isAuthenticated) {

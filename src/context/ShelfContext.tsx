@@ -16,12 +16,13 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
       const uid = firebaseUser?.uid;
 
       if(uid) {
+        setUid(uid);
         setLoading(true);
         const shelf = await getShelf(uid);
         const shelfMap = new Map(
             (shelf ?? []).map(e => [encodeKey(e.book.key), e])
         )
-        setUid(uid);
+        // setUid(uid);
         setEntries(shelfMap);
         setLoading(false);
       }
