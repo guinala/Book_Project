@@ -1,6 +1,7 @@
 {
   "myLibrary": {
     "heading": "Currently reading...",
+    "noCurrentReading": "You're not reading any book",
     "streakDays": "{{count}} day streak",
     "readingProgress": "Progress",
     "pages": "{{current}}/{{total}} pgs.",

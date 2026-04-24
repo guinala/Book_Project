@@ -12,7 +12,7 @@ export default function ShelfBookCard({ book }: ShelfBookCardProps) {
   const navigate = useNavigate();
 
   return (
-    <article className="shelf-book" onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`)} style={{ cursor: "pointer" }}>
+    <article className="shelf-book" onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } })} style={{ cursor: "pointer" }}>
       <div className="shelf-book__cover-wrapper">
         {coverSrc ? (
           <img

@@ -5,7 +5,7 @@ import type { ReadingList } from "@/components/ListCard/ListCard";
 import ShelfSection from "@/components/ShelfSection/ShelfSection";
 import ListsSection from "@/components/ListsSection/ListsSection";
 import ProgressSection from "@/components/ProgressSection/ProgressSection";
-import { useFantasyBooks_GoogleOpen } from "@/hooks/useFantasyBooks_GoogleOpen";
+import { useShelf } from "@/hooks/useShelf";
 import "./MyLibraryPage.scss";
 
 import listCover1 from "@/assets/covers/shelf-1.jpg";
@@ -36,12 +36,12 @@ const READING_LISTS: ReadingList[] = [
 ];
 
 function MyLibraryPage() {
-  const { t, i18n } = useTranslation();
-  const { books, loading, fetchBooks } = useFantasyBooks_GoogleOpen();
-
-  useEffect(() => {
-    fetchBooks(56, i18n.language);
-  }, [fetchBooks, i18n.language]);
+  const { t } = useTranslation();
+  const { shelfByStatus } = useShelf();
+  
+  //useEffect(() => {
+    //fetchBooks(56, i18n.language);
+  //}, [fetchBooks, i18n.language]);
 
   return (
     <section className="my-library">
@@ -51,7 +51,7 @@ function MyLibraryPage() {
       </div>
 
       <div className="my-library__shelf-section">
-        <ShelfSection books={books} loading={loading} />
+        <ShelfSection books={shelfByStatus} />
       </div>
 
       <div className="my-library__lists-section">

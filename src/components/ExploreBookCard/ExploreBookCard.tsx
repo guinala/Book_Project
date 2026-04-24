@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
+import type { ShelfStatus } from "@/types/BookDetail";
 import { getCoverUrl } from "@/utils/coverImage";
 import { useTranslation } from "react-i18next";
 import "./ExploreBookCard.scss";
+import { useShelf } from "@/hooks/useShelf";
+import { useAuth } from "@/hooks/useAuth";
 
-const SHELF_OPTIONS = ["Quiero leer", "Leyendo", "Acabado", "No acabado"];
+const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
 type ExploreBookCardProps = {
   book: Book;
@@ -14,10 +17,14 @@ type ExploreBookCardProps = {
 
 export default function ExploreBookCard({ book, rank }: ExploreBookCardProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [saved, setSaved] = useState<string | null>(null);
+  //const [saved, setSaved] = useState<ShelfStatus | null>(null);
+  const { addBook, removeBook, getStatus } = useShelf();
   const [coverFailed, setCoverFailed] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const saved = getStatus(book.key);  
   const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -37,12 +44,23 @@ export default function ExploreBookCard({ book, rank }: ExploreBookCardProps) {
 
   const handleSaveBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if(!isAuthenticated) {
+      setTooltipVisible(true);
+      setTimeout(() => setTooltipVisible(false), 2000);
+      return;
+    }
     setDropdownOpen((o) => !o);
   };
 
-  const handleSelect = (e: React.MouseEvent, option: string) => {
+  const handleSelect = (e: React.MouseEvent, option: ShelfStatus) => {
     e.stopPropagation();
-    setSaved(saved === option ? null : option);
+    //setSaved(saved === option ? null : option);
+    if(saved === option) {
+      removeBook(book.key);
+    }
+    else {
+      addBook(book, option);
+    }
     setDropdownOpen(false);
   };
 
@@ -55,6 +73,7 @@ export default function ExploreBookCard({ book, rank }: ExploreBookCardProps) {
       onClick={handleCardClick}
     >
       <div className="explore-card__cover-wrapper">
+        
         {hasCover ? (
           <img
             className="explore-card__cover"
@@ -75,6 +94,12 @@ export default function ExploreBookCard({ book, rank }: ExploreBookCardProps) {
       </div>
 
       <div className="explore-card__save-wrapper" ref={wrapperRef}>
+        {tooltipVisible && (
+          <span className="explore-card__tooltip">
+            {t("explore.saveTooltip")}
+          </span>
+        )}
+
         <button
           className={`explore-card__save-btn${dropdownOpen ? " explore-card__save-btn--open" : ""}${saved && !dropdownOpen ? " explore-card__save-btn--saved" : ""}`}
           onClick={handleSaveBtnClick}
@@ -104,7 +129,7 @@ export default function ExploreBookCard({ book, rank }: ExploreBookCardProps) {
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   )}
-                  {opt}
+                  {t(`myLibrary.shelf.${opt}`)}
                 </button>
               </li>
             ))}

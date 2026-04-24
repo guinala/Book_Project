@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
+import type { ShelfStatus } from "@/types/BookDetail";
 import { getCoverUrl } from "@/utils/coverImage";
 import { useTranslation } from "react-i18next";
 import "./BookGridCard.scss";
+import { useShelf } from "@/hooks/useShelf";
+import { useAuth } from "@/hooks/useAuth";
 
-const SHELF_OPTIONS = ["Quiero leer", "Leyendo", "Acabado", "No acabado"];
+const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
 type BookGridCardProps = {
   book: Book;
@@ -14,8 +17,11 @@ type BookGridCardProps = {
 
 export default function BookGridCard({ book, rank }: BookGridCardProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [saved, setSaved] = useState<string | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
   const [coverFailed, setCoverFailed] = useState(false);
+  const { addBook, removeBook, getStatus } = useShelf();
+  const { isAuthenticated } = useAuth();
+  const saved = getStatus(book.key);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -37,12 +43,21 @@ export default function BookGridCard({ book, rank }: BookGridCardProps) {
 
   const handleSaveBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!isAuthenticated) {
+      setTooltipVisible(true);
+      setTimeout(() => setTooltipVisible(false), 2000);
+      return;
+    }
     setDropdownOpen((o) => !o);
   };
 
-  const handleSelect = (e: React.MouseEvent, option: string) => {
+  const handleSelect = (e: React.MouseEvent, option: ShelfStatus) => {
     e.stopPropagation();
-    setSaved(saved === option ? null : option);
+    if (saved === option) {
+      removeBook(book.key);
+    } else {
+      addBook(book, option);
+    }
     setDropdownOpen(false);
   };
 
@@ -75,6 +90,12 @@ export default function BookGridCard({ book, rank }: BookGridCardProps) {
       </div>
 
       <div className="book-grid-card__save-wrapper" ref={wrapperRef}>
+        {tooltipVisible && (
+          <span className="book-grid-card__tooltip">
+            {t("explore.saveTooltip")}
+          </span>
+        )}
+
         <button
           className={`book-grid-card__save-btn${dropdownOpen ? " book-grid-card__save-btn--open" : ""}${saved && !dropdownOpen ? " book-grid-card__save-btn--saved" : ""}`}
           onClick={handleSaveBtnClick}
@@ -104,7 +125,7 @@ export default function BookGridCard({ book, rank }: BookGridCardProps) {
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   )}
-                  {opt}
+                  {t(`myLibrary.shelf.${opt}`)}
                 </button>
               </li>
             ))}

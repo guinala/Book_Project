@@ -5,7 +5,8 @@
     "resultsFound": "{{count}} resultados encontrados",
     "backBtn": "Volver",
     "resultsTitle": "Resultados para \"{{query}}\"",
-    "fantasyTitle": "Fantasía"
+    "fantasyTitle": "Fantasía",
+    "saveTooltip": "Inicia sesión para guardar"
   },
   "search": {
     "all": "Todo",

@@ -1,9 +1,12 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { BookDetail, ShelfStatus } from "@/types/BookDetail";
+import type { Book } from "@/types/Book";
 import StarRating from "@/components/StarRating/StarRating";
 import SynopsisModal from "@/components/SynopsisModal/SynopsisModal";
 import "./BookInfoCard.scss";
+import { useShelf } from "@/hooks/useShelf";
+import { useAuth } from "@/hooks/useAuth";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -22,9 +25,26 @@ type BookInfoCardProps = {
 export default function BookInfoCard({ book }: BookInfoCardProps) {
   const { t } = useTranslation();
   const [shelfOpen, setShelfOpen] = useState(false);
-  const [savedShelf, setSavedShelf] = useState<ShelfStatus | null>(null);
+  const { addBook, removeBook, getStatus } = useShelf();
+  const saved = getStatus(book.key);
+
+  const bookForShelf: Book = {
+    key: book.key,
+    title: book.title,
+    authors: [book.author],
+    first_publish_year: book.year,
+    cover_id: null,
+    cover_url: book.cover_url,
+    edition_count: 0,
+    genre: book.genre,
+    pages: book.pages,
+    isbn: book.isbn,
+  };
+  const [tooltipVisible, setTooltipVisible] = useState(false);
   const [synopsisOpen, setSynopsisOpen] = useState(false);
   const shelfRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated } = useAuth();
+
 
   useEffect(() => {
     if (!shelfOpen) return;
@@ -37,17 +57,24 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, [shelfOpen]);
 
-  const handleShelfSelect = useCallback(
-    (opt: ShelfStatus) => {
-      if (savedShelf === opt) {
-        setSavedShelf(null);
-      } else {
-        setSavedShelf(opt);
-        setShelfOpen(false);
-      }
-    },
-    [savedShelf]
-  );
+  const handleShelfSelect = (option: ShelfStatus) => {
+    if (saved === option) {
+      removeBook(book.key);
+    } else {
+      addBook(bookForShelf, option);
+      setShelfOpen(false);
+    }
+  };
+
+  const handleSaveBtnClick = () => {
+    if (!isAuthenticated) {
+      setTooltipVisible(true);
+      setTimeout(() => setTooltipVisible(false), 2000);
+      return;
+    }
+    setShelfOpen((o) => !o);
+  };
+
 
   return (
     <>
@@ -156,17 +183,23 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
 
           <div className="book-info-card__footer">
             <div ref={shelfRef} className="book-info-card__save-wrapper">
+              {tooltipVisible && (
+                <span className="book-info-card__tooltip">
+                  {t("explore.saveTooltip")}
+                </span>
+              )}
+
               <button
                 className={[
                   "book-info-card__save-btn",
-                  savedShelf && !shelfOpen ? "book-info-card__save-btn--saved" : "",
+                  saved && !shelfOpen ? "book-info-card__save-btn--saved" : "",
                   shelfOpen ? "book-info-card__save-btn--open" : "",
                 ]
                   .filter(Boolean)
                   .join(" ")}
-                onClick={() => setShelfOpen((o) => !o)}
+                onClick={handleSaveBtnClick}
               >
-                {savedShelf && !shelfOpen && (
+                {saved && !shelfOpen && (
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -179,7 +212,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 )}
-                {savedShelf ? t(`myLibrary.shelf.${savedShelf}`) : t("bookDetail.saveBook")}
+                {saved ? t(`myLibrary.shelf.${saved}`) : t("bookDetail.saveBook")}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -200,13 +233,13 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
                       <button
                         className={[
                           "book-info-card__dropdown-item",
-                          savedShelf === opt ? "book-info-card__dropdown-item--active" : "",
+                          saved === opt ? "book-info-card__dropdown-item--active" : "",
                         ]
                           .filter(Boolean)
                           .join(" ")}
                         onClick={() => handleShelfSelect(opt)}
                       >
-                        {savedShelf === opt && (
+                        {saved === opt && (
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"

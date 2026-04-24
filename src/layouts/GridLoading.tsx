@@ -1,6 +1,6 @@
 const ROW_COUNT = 6;
 
-function GridSkeletonLoading() {
+function GridLoading() {
   return (
     <div className="booklist__skeleton-list">
       {Array.from({ length: ROW_COUNT }).map((_, i) => (
@@ -17,4 +17,4 @@ function GridSkeletonLoading() {
   );
 }
 
-export default GridSkeletonLoading
+export default GridLoading

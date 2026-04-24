@@ -4,7 +4,7 @@ import { getBookDetailById } from "@/data/bookDetailData";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
-// import { extractSynopsis, getWork } from "@/services/api/openLibraryApi";  // comentado — reemplazado por Google Books
+// import { extractSynopsis, getWork } from "@/services/api/openLibraryApi";  
 import { getCoverUrl } from "@/utils/coverImage";
 import { fetchGoogleSynopsis } from "@/services/api/googleBooksApi";
 import { getSynopsisFromDB, saveSynopsisToDB } from "@/services/firebase/firebase_books";

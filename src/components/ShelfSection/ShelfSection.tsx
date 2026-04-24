@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import ShelfBookCard from "@/components/ShelfBookCard/ShelfBookCard";
 import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
+import type { ShelfStatus } from "@/types/BookDetail";
 
 const SHELF_FILTER_KEYS = ["wantToRead", "reading", "finished", "didNotFinish"] as const;
 type ShelfFilterKey = (typeof SHELF_FILTER_KEYS)[number];
@@ -54,8 +55,7 @@ function PlusIcon() {
 }
 
 type ShelfSectionProps = {
-  books: Book[];
-  loading?: boolean;
+  books: Record<ShelfStatus, Book[]>;
 };
 
 export default function ShelfSection({ books, loading = false }: ShelfSectionProps) {
@@ -110,6 +110,7 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
               onClick={() => handleFilterChange(key)}
             >
               {t(`myLibrary.shelf.${key}`)}
+              <span className="shelf-section__filter-count">{books[key].length}</span>
             </button>
           ))}
         </div>
@@ -119,7 +120,11 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
       </div>
 
       <div className="shelf-section__card">
-        {!loading && categoryBooks.length === 0 ? (
+        <div className="shelf-section__track">
+          {books[activeFilter].map((book) => (
+            <div key={book.key} className="shelf-section__item">
+              <ShelfBookCard book={book} />
+        {categoryBooks.length === 0 ? (
           <div className="shelf-section__empty">
             <div className="shelf-section__empty-icon">
               <PlusIcon />
