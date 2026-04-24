@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
 import { getCoverUrl } from "@/utils/coverImage";
+import type { Book } from "@/types/Book";
 import "./CurrentReadingCard.scss";
 
 const CURRENT_PAGE = 344;
@@ -24,7 +25,12 @@ function ChevronRightIcon() {
   );
 }
 
-function CurrentReadingCard() {
+type CurrentReadingCardProps = {
+  book: Book | null;
+  loading?: boolean;
+};
+
+function CurrentReadingCard({ book, loading = false }: CurrentReadingCardProps) {
   const { t } = useTranslation();
   const { shelfByStatus } = useShelf();
   const readingBooks = shelfByStatus.reading;
@@ -35,6 +41,13 @@ function CurrentReadingCard() {
   }
 
   const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : undefined);
+
+
+  if (loading) {
+    return <div className="reading-card reading-card--skeleton" />;
+  }
+
+  if (!book) return null;
 
   return (
     <article className="reading-card">
@@ -52,7 +65,7 @@ function CurrentReadingCard() {
         <div className="reading-card__header">
           <div>
             <h3 className="reading-card__title">{book.title}</h3>
-            <p className="reading-card__author">{book.authors[0]}</p>
+            <p className="reading-card__author">{book.authors.join(", ")}</p>
           </div>
           <div className="reading-card__streak">
             <FlameIcon />

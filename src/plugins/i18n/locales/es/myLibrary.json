@@ -7,6 +7,7 @@
     "pages": "{{current}}/{{total}} págs.",
     "shelfTitle": "Estantería",
     "seeAll": "Ver todo",
+    "emptyShelf": "Añadir libros",
     "viewHistory": "Ver historial",
     "updateProgress": "Actualizar progreso",
     "createList": "Crear nueva lista",

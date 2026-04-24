@@ -1,8 +1,8 @@
 {
   "landing": {
     "checkingSession": "Comprobando sesión...",
-    "title": "Bienvenido a Trama",
-    "subtitle": "Tu compañero de lectura. Descubre, organiza y comparte los libros que dan forma a tu mundo.",
+    "title": "Te damos la bienvenida a Trama",
+    "subtitle": "Descubre, organiza y comparte los libros que dan forma a tu mundo.",
     "loginBtn": "Iniciar Sesión",
     "guestBtn": "Entrar como Invitado"
   }

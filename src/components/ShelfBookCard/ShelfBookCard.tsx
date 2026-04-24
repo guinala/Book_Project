@@ -26,9 +26,7 @@ export default function ShelfBookCard({ book }: ShelfBookCardProps) {
         )}
       </div>
       <p className="shelf-book__title">{book.title}</p>
-      <p className="shelf-book__author">
-        {book.authors.length > 0 ? book.authors.join(", ") : ""}
-      </p>
+      <p className="shelf-book__author">{book.authors.length > 0 ? book.authors.join(", ") : ""}</p>
     </article>
   );
 }

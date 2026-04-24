@@ -11,14 +11,14 @@ function encodeKey(workKey: string): string {
 
 export async function getExploreBooksFromDB(
   lang: string,
-  minCount = 10
+  minCount = 48
 ): Promise<Book[] | null> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
     limit(minCount)
   );
-  
+
   const books = await getDocs(q);
   if (books.size < minCount) return null;
 

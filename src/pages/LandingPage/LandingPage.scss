@@ -42,13 +42,15 @@
       }
     }                                                                                                                                                                                                                              
                   
-    &__subtitle {                             
-      font-size: var(--text-md);          
 
-      @include from($bp-md) {                                                                                                                                                                                                      
+    &__subtitle {
+      font-size: var(--text-md);
+      white-space: nowrap;
+
+      @include from($bp-md) {
         font-size: var(--text-base);
-      }                                                                                                                                                                                                                            
-    }             
+      }
+    }
 
     &__actions {                              
       display: flex;                      
@@ -59,15 +61,26 @@
       margin-top: var(--space-3);             
     }                                     
 
-    &__btn-login {                                                                                                                                                                                                                 
+    &__btn-login {
       @include full-btn-primary;
-    }                                                                                                                                                                                                                              
-                                          
+      background: var(--color-brand-primary);
+      color: var(--color-text-on-brand);
+      transition: background var(--transition-fast);
+
+      &:hover {
+        background: var(--color-brand-dark);
+      }
+    }
+
     &__btn-guest {
-      @include ghost-button;                                                                                                                                                                                                       
-      padding: var(--space-3);
-      font-size: var(--text-base);                                                                                                                                                                                                 
-      border-radius: var(--radius-sm);        
-      width: 100%;                        
+      @include full-btn-primary;
+      background: var(--color-surface-secondary);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border-medium);
+      transition: filter var(--transition-fast);
+
+      &:hover {
+        filter: brightness(0.93);
+      }
     }
   }

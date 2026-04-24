@@ -4,8 +4,8 @@
   --font-editorial: "Crimson", Georgia, serif;
 
   // ─── LAYOUT ────────────────────────────────────────────
-  --max-width: 1200px;
-  --page-max-width: 1200px;
+  --max-width: 1400px;
+  --page-max-width: 1400px;
   --navbar-height: 50px;
   --page-padding-x: 40px;
   --page-padding-y: 48px;
@@ -40,9 +40,9 @@
   --color-brand-ember: #c44e12;
 
   // alias — los componentes existentes usan estos nombres                                                                                                                                                                       
-  --color-accent:        var(--color-brand-primary);                                                                                                                                                                               
-  --color-accent-dark:   var(--color-brand-dark);                                                                                                                                                                                  
-  --color-accent-light:  var(--color-brand-alpha-subtle);
+  --color-accent: var(--color-brand-primary);
+  --color-accent-dark: var(--color-brand-dark);
+  --color-accent-light: var(--color-brand-alpha-subtle);
 
   // Alpha brand
   --color-brand-alpha-subtle: rgba(232, 107, 48, 0.06);

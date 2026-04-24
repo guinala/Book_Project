@@ -1,20 +1,39 @@
 @use "../../styles/shared" as *;
 
+@keyframes progress-flow {
+  from { background-position: 0% 0; }
+  to   { background-position: -200% 0; }
+}
+
 .reading-card {
   display: flex;
   gap: var(--space-6);
   align-items: center;
   width: 100%;
   max-width: 860px;
-  padding: 20px 24px;
+  padding: var(--space-5) var(--space-6);
   background: var(--color-bg-card);
   border: 1px solid var(--color-border-medium);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
 
+  &--skeleton {
+    height: 200px;
+    @include shimmer-bg;
+  }
+
+  &__cover-placeholder {
+    width: 160px;
+    flex-shrink: 0;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radius-sm);
+    background: var(--color-neutral-alpha-muted);
+    @include shimmer-bg;
+  }
+
   &__cover-img {
     @include book-cover-img;
-    width: 120px;
+    width: 160px;
     flex-shrink: 0;
     box-shadow: var(--shadow-cover);
     cursor: pointer;
@@ -109,22 +128,26 @@
 
   &__progress-bar {
     height: 18px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     overflow: hidden;
-    background: var(--color-neutral-alpha-muted);
+    background: rgba(255, 255, 255, 0.3);
     border: 1px solid var(--color-border-warm);
   }
 
   &__progress-fill {
     height: 100%;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(247, 212, 196, 0.6) 30%,
-      rgba(238, 169, 137, 0.7) 60%,
-      rgba(223, 92, 32, 0.85) 100%
+      rgba(210, 95, 28, 0.90) 0%,
+      rgba(223, 92, 32, 0.88) 20%,
+      rgba(238, 140, 80, 0.75) 45%,
+      rgba(247, 210, 175, 0.65) 70%,
+      rgba(210, 95, 28, 0.90) 100%
     );
+    background-size: 200% 100%;
+    background-repeat: repeat-x;
+    animation: progress-flow 8s linear infinite;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -135,7 +158,7 @@
   &__progress-percent {
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
-    color: var(--color-brand-dark);
+    color: var(--color-text-secondary);
     letter-spacing: 0.06em;
   }
 
