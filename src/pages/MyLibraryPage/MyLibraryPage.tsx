@@ -40,7 +40,7 @@ function MyLibraryPage() {
   const { books, loading, fetchBooks } = useFantasyBooks_GoogleOpen();
 
   useEffect(() => {
-    fetchBooks(48, i18n.language);
+    fetchBooks(56, i18n.language);
   }, [fetchBooks, i18n.language]);
 
   return (

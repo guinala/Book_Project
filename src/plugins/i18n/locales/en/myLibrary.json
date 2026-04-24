@@ -6,6 +6,7 @@
     "pages": "{{current}}/{{total}} pgs.",
     "shelfTitle": "Bookshelf",
     "seeAll": "See all",
+    "emptyShelf": "Add books",
     "viewHistory": "View history",
     "updateProgress": "Update progress",
     "createList": "Create new list",
