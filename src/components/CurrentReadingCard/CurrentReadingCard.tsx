@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { useShelf } from "@/hooks/useShelf";
 import { getCoverUrl } from "@/utils/coverImage";
 import "./CurrentReadingCard.scss";
@@ -26,6 +27,7 @@ function ChevronRightIcon() {
 
 function CurrentReadingCard() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { shelfByStatus, loading } = useShelf();
   const readingBooks = shelfByStatus.reading;
   const book = readingBooks[0] ?? null;
@@ -42,15 +44,21 @@ function CurrentReadingCard() {
 
   return (
     <article className="reading-card">
-      {coverSrc ? (
-        <img
-          className="reading-card__cover-img"
-          src={coverSrc}
-          alt={t("book.coverAlt", { title: book.title })}
-        />
-      ) : (
-        <div className="reading-card__cover-placeholder" />
-      )}
+      <button
+        className="reading-card__cover-btn"
+        onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } })}
+        aria-label={t("book.coverAlt", { title: book.title })}
+      >
+        {coverSrc ? (
+          <img
+            className="reading-card__cover-img"
+            src={coverSrc}
+            alt=""
+          />
+        ) : (
+          <div className="reading-card__cover-placeholder" />
+        )}
+      </button>
 
       <div className="reading-card__body">
         <div className="reading-card__header">
@@ -89,7 +97,11 @@ function CurrentReadingCard() {
         </div>
       </div>
 
-      <button className="reading-card__chevron">
+      <button
+        className="reading-card__chevron"
+        onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } })}
+        aria-label={t("book.coverAlt", { title: book.title })}
+      >
         <ChevronRightIcon />
       </button>
     </article>

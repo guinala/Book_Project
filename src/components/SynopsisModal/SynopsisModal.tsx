@@ -17,6 +17,11 @@ export default function SynopsisModal({ text, onClose }: SynopsisModalProps) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
   return (
     <div
       className="synopsis-modal"

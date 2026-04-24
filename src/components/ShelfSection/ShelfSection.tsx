@@ -123,10 +123,15 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
                     if (slot.type === "add") return (
                       <div key="add" className="shelf-section__item">
                         <div className="shelf-section__add-book">
-                          <div className="shelf-section__add-book-icon">
-                            <PlusIcon />
+                          <div className="shelf-section__add-book-inner" aria-hidden="true" />
+                          <p className="shelf-section__add-book-ghost-title" aria-hidden="true">&nbsp;</p>
+                          <p className="shelf-section__add-book-ghost-author" aria-hidden="true">&nbsp;</p>
+                          <div className="shelf-section__add-book-content">
+                            <div className="shelf-section__add-book-icon">
+                              <PlusIcon />
+                            </div>
+                            <p className="shelf-section__add-book-text">{t("myLibrary.emptyShelf")}</p>
                           </div>
-                          <p className="shelf-section__add-book-text">{t("myLibrary.emptyShelf")}</p>
                         </div>
                       </div>
                     );

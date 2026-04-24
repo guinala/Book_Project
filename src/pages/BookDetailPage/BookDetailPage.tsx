@@ -31,27 +31,27 @@ export default function BookDetailPage() {
 
   if (loading) {
     return (
-      <main className="book-detail-page">
+      <div className="book-detail-page">
         <p className="book-detail-page__status">{t("bookDetail.loading")}</p>
-      </main>
+      </div>
     );
   }
 
   if (error || !book) {
     return (
-      <main className="book-detail-page">
+      <div className="book-detail-page">
         <p className="book-detail-page__status book-detail-page__status--error">
           {error ?? t("bookDetail.notFound")}
         </p>
         <button className="book-detail-page__back-btn" onClick={() => navigate(-1)}>
           {t("bookDetail.back")}
         </button>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="book-detail-page">
+    <div className="book-detail-page">
       <section className="book-detail-page__info-section">
         <BookInfoCard book={book} />
       </section>
@@ -66,6 +66,6 @@ export default function BookDetailPage() {
       {recommendedBooks.length > 0 && (
         <RecommendationsSection books={recommendedBooks} baseTitle={book.title} onRefresh={refreshRecs} />
       )}
-    </main>
+    </div>
   );
 }

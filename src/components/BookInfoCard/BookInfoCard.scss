@@ -18,6 +18,7 @@
   backdrop-filter: blur(8px);
   box-shadow: var(--shadow-card);
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: stretch;
   flex-direction: column;
@@ -43,7 +44,7 @@
     box-shadow: var(--shadow-cover);
 
     @include from($bp-md) {
-      width: 210px;
+      width: 250px;
       height: auto;
       align-self: stretch;
     }

@@ -7,6 +7,7 @@ import SynopsisModal from "@/components/SynopsisModal/SynopsisModal";
 import "./BookInfoCard.scss";
 import { useShelf } from "@/hooks/useShelf";
 import { useAuth } from "@/hooks/useAuth";
+import { genreToI18nKey } from "@/utils/genreUtils";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -121,7 +122,9 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
         </button>
 
         <div className="book-info-card__details">
-          <span className="book-info-card__genre">{book.genre}</span>
+          <span className="book-info-card__genre">
+            {book.genre ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre }) : ""}
+          </span>
           <h1 className="book-info-card__title">{book.title}</h1>
           <p className="book-info-card__author">{book.author}</p>
 

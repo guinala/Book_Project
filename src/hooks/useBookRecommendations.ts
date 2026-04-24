@@ -4,7 +4,7 @@ import type { Book } from "@/types/Book";
 import { fetchBooksByGenre } from "@/services/api/openLibraryApi";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 6;
 
 export function useBookRecommendations(genre: string, excludeKey: string) {
   const [pool, setPool] = useState<Book[]>([]);

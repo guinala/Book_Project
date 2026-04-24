@@ -3,14 +3,10 @@
 .book-detail-page {
   max-width: $max-width;
   margin: 0 auto;
-  padding: calc(var(--navbar-height) + var(--space-6)) $padding-horizontal var(--space-20);
+  padding: 0 $padding-horizontal var(--space-20);
   display: flex;
   flex-direction: column;
   gap: var(--space-12);
-
-  @include from($bp-md) {
-    padding-top: calc(var(--navbar-height) + var(--space-9));
-  }
 
   &__status {
     text-align: center;

@@ -22,6 +22,21 @@
     @include shimmer-bg;
   }
 
+  &__cover-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: block;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-brand-primary);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+  }
+
   &__cover-placeholder {
     width: 160px;
     flex-shrink: 0;

@@ -19,6 +19,8 @@
     "likeAriaLabel": "Me gusta ({{count}})",
     "commentAriaLabel": "Comentarios ({{count}})",
     "authorTitle": "Más sobre el autor",
-    "recsTitle": "Recomendaciones basadas en {{title}}"
+    "recsTitle": "Recomendaciones basadas en {{title}}",
+    "recsTitlePrefix": "Porque has leído",
+    "recsCta": "Generar más"
   }
 }
