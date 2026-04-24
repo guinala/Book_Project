@@ -5,6 +5,7 @@ import type { ReadingList } from "@/components/ListCard/ListCard";
 import ShelfSection from "@/components/ShelfSection/ShelfSection";
 import ListsSection from "@/components/ListsSection/ListsSection";
 import ProgressSection from "@/components/ProgressSection/ProgressSection";
+import { useShelf } from "@/hooks/useShelf";
 import "./MyLibraryPage.scss";
 
 import shelfCover1 from "@/assets/covers/shelf-1.jpg";
@@ -99,6 +100,7 @@ const READING_LISTS: ReadingList[] = [
 
 function MyLibraryPage() {
   const { t } = useTranslation();
+  const { shelfByStatus } = useShelf();
 
   return (
     <section className="my-library">
@@ -108,7 +110,7 @@ function MyLibraryPage() {
       </div>
 
       <div className="my-library__shelf-section">
-        <ShelfSection books={SHELF_BOOKS} />
+        <ShelfSection books={shelfByStatus} />
       </div>
 
       <div className="my-library__lists-section">

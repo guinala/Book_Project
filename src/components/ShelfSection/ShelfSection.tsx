@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import ShelfBookCard from "@/components/ShelfBookCard/ShelfBookCard";
 import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
+import type { ShelfStatus } from "@/types/BookDetail";
 
 const SHELF_FILTER_KEYS = ["wantToRead", "reading", "finished", "didNotFinish"] as const;
 type ShelfFilterKey = (typeof SHELF_FILTER_KEYS)[number];
@@ -16,7 +17,7 @@ function ChevronRightIcon() {
 }
 
 type ShelfSectionProps = {
-  books: Book[];
+  books: Record<ShelfStatus, Book[]>;
 };
 
 export default function ShelfSection({ books }: ShelfSectionProps) {
@@ -36,7 +37,7 @@ export default function ShelfSection({ books }: ShelfSectionProps) {
               onClick={() => setActiveFilter(key)}
             >
               {t(`myLibrary.shelf.${key}`)}
-              <span className="shelf-section__filter-count">{books.length}</span>
+              <span className="shelf-section__filter-count">{books[key].length}</span>
             </button>
           ))}
         </div>
@@ -45,7 +46,7 @@ export default function ShelfSection({ books }: ShelfSectionProps) {
 
       <div className="shelf-section__card">
         <div className="shelf-section__track">
-          {books.map((book) => (
+          {books[activeFilter].map((book) => (
             <div key={book.key} className="shelf-section__item">
               <ShelfBookCard book={book} />
             </div>
