@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import coverImage from "@/assets/el-nombre-del-viento.jpg";
+import { useShelf } from "@/hooks/useShelf";
+import { getCoverUrl } from "@/utils/coverImage";
 import "./CurrentReadingCard.scss";
 
 const CURRENT_PAGE = 344;
@@ -25,20 +26,33 @@ function ChevronRightIcon() {
 
 function CurrentReadingCard() {
   const { t } = useTranslation();
+  const { shelfByStatus } = useShelf();
+  const readingBooks = shelfByStatus.reading;
+  const book = readingBooks[0] ?? null;
+
+  if (!book) {
+    return <p className="reading-card__empty">{t("myLibrary.noCurrentReading")}</p>;
+  }
+
+  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : undefined);
 
   return (
     <article className="reading-card">
-      <img
-        className="reading-card__cover-img"
-        src={coverImage}
-        alt={t("book.coverAlt", { title: "El nombre del viento" })}
-      />
+      {coverSrc ? (
+        <img
+          className="reading-card__cover-img"
+          src={coverSrc}
+          alt={t("book.coverAlt", { title: book.title })}
+        />
+      ) : (
+        <div className="reading-card__cover-placeholder" />
+      )}
 
       <div className="reading-card__body">
         <div className="reading-card__header">
           <div>
-            <h3 className="reading-card__title">El nombre del viento</h3>
-            <p className="reading-card__author">Patrick Rothfuss</p>
+            <h3 className="reading-card__title">{book.title}</h3>
+            <p className="reading-card__author">{book.authors[0]}</p>
           </div>
           <div className="reading-card__streak">
             <FlameIcon />
