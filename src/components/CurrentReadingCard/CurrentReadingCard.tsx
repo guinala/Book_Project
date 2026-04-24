@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import coverImage from "@/assets/el-nombre-del-viento.jpg";
+import type { Book } from "@/types/Book";
 import "./CurrentReadingCard.scss";
 
 const CURRENT_PAGE = 344;
@@ -23,22 +23,38 @@ function ChevronRightIcon() {
   );
 }
 
-function CurrentReadingCard() {
+type CurrentReadingCardProps = {
+  book: Book | null;
+  loading?: boolean;
+};
+
+function CurrentReadingCard({ book, loading = false }: CurrentReadingCardProps) {
   const { t } = useTranslation();
+
+
+  if (loading) {
+    return <div className="reading-card reading-card--skeleton" />;
+  }
+
+  if (!book) return null;
 
   return (
     <article className="reading-card">
-      <img
-        className="reading-card__cover-img"
-        src={coverImage}
-        alt={t("book.coverAlt", { title: "El nombre del viento" })}
-      />
+      {book.cover_url ? (
+        <img
+          className="reading-card__cover-img"
+          src={book.cover_url}
+          alt={t("book.coverAlt", { title: book.title })}
+        />
+      ) : (
+        <div className="reading-card__cover-placeholder" />
+      )}
 
       <div className="reading-card__body">
         <div className="reading-card__header">
           <div>
-            <h3 className="reading-card__title">El nombre del viento</h3>
-            <p className="reading-card__author">Patrick Rothfuss</p>
+            <h3 className="reading-card__title">{book.title}</h3>
+            <p className="reading-card__author">{book.authors.join(", ")}</p>
           </div>
           <div className="reading-card__streak">
             <FlameIcon />

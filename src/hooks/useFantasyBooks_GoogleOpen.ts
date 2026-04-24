@@ -6,7 +6,7 @@ import { fetchFantasyBooks } from "@/services/api/openLibraryApi";
 import { getErrorMessage } from "@/utils/apiErrors";
 import { getExploreBooksFromDB, saveBooksToDB } from "@/services/firebase/firebase_books";
 
-const LOCAL_STORAGE_KEY = 'trama_cache';
+const LOCAL_STORAGE_KEY = 'trama_cache_v3';
 const LOCAL_STORAGE_TTL = 24 * 60 * 60 * 1000; // 24 horas (1 día)
 
 function loadFromStorage(): Book[] | null {
@@ -85,7 +85,7 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
 
     // Firestore 
     try {
-      const dbBooks = await getExploreBooksFromDB(lang);
+      const dbBooks = await getExploreBooksFromDB(lang, limit);
       if (dbBooks) {
         setBooks(dbBooks);
         setLoading(false);
