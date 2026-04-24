@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import CurrentReadingCard from "@/components/CurrentReadingCard/CurrentReadingCard";
 import type { ReadingList } from "@/components/ListCard/ListCard";
@@ -45,10 +44,12 @@ function MyLibraryPage() {
 
   return (
     <section className="my-library">
-      <div className="my-library__reading-section">
-        <h3 className="my-library__section-title">{t("myLibrary.heading")}</h3>
-        <CurrentReadingCard book={books[1] ?? null} loading={loading} />
-      </div>
+      {shelfByStatus.reading.length > 0 && (
+        <div className="my-library__reading-section">
+          <h3 className="my-library__section-title">{t("myLibrary.heading")}</h3>
+          <CurrentReadingCard />
+        </div>
+      )}
 
       <div className="my-library__shelf-section">
         <ShelfSection books={shelfByStatus} />

@@ -22,7 +22,7 @@ export default function BookDetailPage() {
   );
   const { books: recommendedBooks, refresh: refreshRecs } = useBookRecommendations(
     book?.genre ?? '',
-    id
+    book?.key ?? decodeURIComponent(id)
   );
 
   useEffect(() => {

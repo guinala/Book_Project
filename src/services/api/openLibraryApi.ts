@@ -26,7 +26,7 @@ const FANTASY_FIELDS = [
   "editions.isbn",
 ].join(",");
 
-const SEARCH_FIELDS = "key,title,author_name,author_key,first_publish_year,cover_i,edition_count,isbn,number_of_pages_median,ratings_average,ratings_count";
+const SEARCH_FIELDS = "key,title,author_name,author_key,first_publish_year,cover_i,edition_count,subject,isbn,number_of_pages_median,ratings_average,ratings_count";
 
 export async function fetchFantasyBooks(
   limit: number,
@@ -99,6 +99,7 @@ export async function searchBooks(
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
+      genre: doc.subject?.[0],
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
       isbn: doc.isbn?.[0],

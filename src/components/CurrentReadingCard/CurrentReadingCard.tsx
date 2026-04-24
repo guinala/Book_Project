@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
 import { getCoverUrl } from "@/utils/coverImage";
-import type { Book } from "@/types/Book";
 import "./CurrentReadingCard.scss";
 
 const CURRENT_PAGE = 344;
@@ -25,29 +24,21 @@ function ChevronRightIcon() {
   );
 }
 
-type CurrentReadingCardProps = {
-  book: Book | null;
-  loading?: boolean;
-};
-
-function CurrentReadingCard({ book, loading = false }: CurrentReadingCardProps) {
+function CurrentReadingCard() {
   const { t } = useTranslation();
-  const { shelfByStatus } = useShelf();
+  const { shelfByStatus, loading } = useShelf();
   const readingBooks = shelfByStatus.reading;
   const book = readingBooks[0] ?? null;
+
+  if (loading) {
+    return <div className="reading-card reading-card--skeleton" />;
+  }
 
   if (!book) {
     return <p className="reading-card__empty">{t("myLibrary.noCurrentReading")}</p>;
   }
 
   const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : undefined);
-
-
-  if (loading) {
-    return <div className="reading-card reading-card--skeleton" />;
-  }
-
-  if (!book) return null;
 
   return (
     <article className="reading-card">

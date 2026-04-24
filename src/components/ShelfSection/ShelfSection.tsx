@@ -9,15 +9,6 @@ const SHELF_FILTER_KEYS = ["wantToRead", "reading", "finished", "didNotFinish"] 
 type ShelfFilterKey = (typeof SHELF_FILTER_KEYS)[number];
 
 const PAGE_SIZE = 7;
-const CATEGORY_COUNT = 4;
-const BOOKS_PER_CATEGORY = PAGE_SIZE * 2;
-
-const CATEGORY_INDEX: Record<ShelfFilterKey, number> = {
-  wantToRead: 0,
-  reading: 1,
-  finished: 2,
-  didNotFinish: 3,
-};
 
 type Slot = { type: "book"; book: Book } | { type: "add" } | { type: "spacer" };
 
@@ -56,6 +47,7 @@ function PlusIcon() {
 
 type ShelfSectionProps = {
   books: Record<ShelfStatus, Book[]>;
+  loading?: boolean;
 };
 
 export default function ShelfSection({ books, loading = false }: ShelfSectionProps) {
@@ -63,19 +55,7 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
   const [activeFilter, setActiveFilter] = useState<ShelfFilterKey>(SHELF_FILTER_KEYS[0]);
   const [page, setPage] = useState(0);
 
-  const shuffledCategories = useMemo(() => {
-    const shuffled = [...books];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return Array.from({ length: CATEGORY_COUNT }, (_, i) =>
-      shuffled.slice(i * BOOKS_PER_CATEGORY, (i + 1) * BOOKS_PER_CATEGORY)
-    );
-  }, [books]);
-
-  const categoryIndex = CATEGORY_INDEX[activeFilter];
-  const categoryBooks = shuffledCategories[categoryIndex];
+  const categoryBooks = books[activeFilter];
 
   // +1 slot for the add-book card so it always occupies its own fixed position
   const totalPages = Math.ceil((categoryBooks.length + 1) / PAGE_SIZE);
@@ -120,11 +100,7 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
       </div>
 
       <div className="shelf-section__card">
-        <div className="shelf-section__track">
-          {books[activeFilter].map((book) => (
-            <div key={book.key} className="shelf-section__item">
-              <ShelfBookCard book={book} />
-        {categoryBooks.length === 0 ? (
+        {!loading && categoryBooks.length === 0 ? (
           <div className="shelf-section__empty">
             <div className="shelf-section__empty-icon">
               <PlusIcon />
@@ -158,15 +134,16 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
                   })
               }
             </div>
-            <div className="shelf-section__chevron-area">
-              <button
-                className="shelf-section__chevron"
-                onClick={handleChevron}
-                disabled={totalPages <= 1}
-              >
-                {isLastPage ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-              </button>
-            </div>
+            {totalPages > 1 && (
+              <div className="shelf-section__chevron-area">
+                <button
+                  className="shelf-section__chevron"
+                  onClick={handleChevron}
+                >
+                  {isLastPage ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
