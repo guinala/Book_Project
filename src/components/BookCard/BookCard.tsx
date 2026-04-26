@@ -6,6 +6,7 @@ import { getCoverUrl } from "@/utils/coverImage";
 import StarRating from "@/components/StarRating/StarRating";
 import "./BookCard.scss";
 import { useTranslation } from "react-i18next";
+import { genreToI18nKey } from "@/utils/genreUtils";
 
 type BookCardProps = {
   book: Book;
@@ -64,7 +65,7 @@ export default function BookCard({ book }: BookCardProps) {
       <div className="bookcard__info">
         {book.genre && (
           <span className="bookcard__genre">
-            {t(`book.genres.${book.genre?.toLowerCase()}`, { defaultValue: book.genre })}
+            {book.genre ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre }) : ""}
           </span>
         )}
 

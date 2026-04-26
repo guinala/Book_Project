@@ -5,6 +5,7 @@ import type { SearchFilter } from "@/types/Search";
 import { searchBooks } from "@/services/api/openLibraryApi";
 import { getErrorMessage } from "@/utils/apiErrors";
 import { getSearchParams } from "@/utils/searchParams";
+import { saveBooksToDB } from "@/services/firebase/firebase_books";
 
 type UseBookSearchResult = {
   books: Book[];
@@ -40,6 +41,7 @@ export function useBookSearch(): UseBookSearchResult {
 
         setBooks(result.books);
         setTotalResults(result.totalResults);
+        saveBooksToDB(result.books, lang);
       } catch (err) {
         if (axios.isCancel(err)) return;
         setError(getErrorMessage(err));

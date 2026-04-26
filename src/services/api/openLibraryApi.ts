@@ -3,7 +3,7 @@ import type { Book } from "@/types/Book";
 import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryWork, WikiSummary } from "@/types/OpenLibrary";
 import { openLibraryClient } from "@/services/api/apiConnections";
 import { getLangIso3Letters } from "@/utils/langConversion";
-import { handleFantasyGenre } from "@/utils/genreUtils";
+import { detectGenre } from "@/utils/genreUtils";
 import { getCoverUrl } from "@/utils/coverImage";
 
 const FANTASY_FIELDS = [
@@ -26,7 +26,14 @@ const FANTASY_FIELDS = [
   "editions.isbn",
 ].join(",");
 
-const SEARCH_FIELDS = "key,title,author_name,author_key,first_publish_year,cover_i,edition_count,subject,isbn,number_of_pages_median,ratings_average,ratings_count";
+const SEARCH_FIELDS = [
+  "key", "title", "author_name", "author_key",
+  "first_publish_year", "cover_i", "edition_count",
+  "subject", "isbn", "number_of_pages_median",
+  "ratings_average", "ratings_count",
+  "editions", "editions.title", "editions.language",
+  "editions.cover_i", "editions.isbn",
+].join(",");
 
 export async function fetchFantasyBooks(
   limit: number,
@@ -61,7 +68,7 @@ export async function fetchFantasyBooks(
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
-      genre: handleFantasyGenre(doc.subject),
+      genre: detectGenre(doc.subject),
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
@@ -76,6 +83,7 @@ export async function searchBooks(
   lang: string,
   signal: AbortSignal
 ): Promise<{ books: Book[]; totalResults: number }> {
+  const langCode = getLangIso3Letters(lang);
   const unknownAuthor = i18n.t("book.unknownAuthor");
 
   const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
@@ -89,20 +97,22 @@ export async function searchBooks(
   });
 
   const books: Book[] = data.docs.map((doc) => {
-    const cover_id = doc.cover_i ?? null;
+    const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+      ?? doc.editions?.docs?.[0];
+    const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
     return {
       key: doc.key,
-      title: doc.title,
+      title: bestEdition?.title ?? doc.title,
       authors: doc.author_name ?? [unknownAuthor],
       authorKeys: doc.author_key,
       first_publish_year: doc.first_publish_year ?? 0,
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
-      genre: doc.subject?.[0],
+      genre: detectGenre(doc.subject),
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
-      isbn: doc.isbn?.[0],
+      isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
       pages: doc.number_of_pages_median,
     };
   });
@@ -145,7 +155,7 @@ export async function fetchBookByTitle(
     cover_id,
     cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
     edition_count: doc.edition_count ?? 0,
-    genre: doc.subject?.[0],
+    genre: detectGenre(doc.subject),
     rating: doc.ratings_average,
     ratingCount: doc.ratings_count,
   };
@@ -197,7 +207,7 @@ export async function fetchAuthorBooks(
     params: {
       q: `author:${authorName} language:${langCode}`,
       lang,
-      fields: "key,title,author_name,author_key,cover_i,first_publish_year,edition_count,isbn,number_of_pages_median,ratings_average,ratings_count,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
+      fields: "key,title,author_name,author_key,cover_i,subject,first_publish_year,edition_count,isbn,number_of_pages_median,ratings_average,ratings_count,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
       limit,
     },
     signal,
@@ -215,6 +225,7 @@ export async function fetchAuthorBooks(
       first_publish_year: doc.first_publish_year ?? 0,
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
+      genre: detectGenre(doc.subject),
       edition_count: doc.edition_count ?? 0,
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
