@@ -6,6 +6,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import "./App.scss"
 import { ShelfProvider } from "./context/ShelfContext";
+import i18n from "./plugins/i18n/i18n";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -16,6 +17,13 @@ export default function App() {
     const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = i18n.language;
+    const handler = (lng: string) => { document.documentElement.lang = lng; };
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
   }, []);
 
   return (

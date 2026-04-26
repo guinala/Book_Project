@@ -116,3 +116,9 @@ export async function saveSynopsisToDB(
   const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
   await setDoc(refDoc, { synopsis }, { merge: true });
 }
+
+//Para arreglar los generos aun en null
+export async function saveGenreToDB(workKey: string, genre: string): Promise<void> {
+  const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
+  await setDoc(refDoc, { genre }, { merge: true });
+}
