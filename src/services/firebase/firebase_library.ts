@@ -2,6 +2,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/fi
 import { db } from "./firebase_init";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
+import { logActivity } from "./firebase_activity";
 
 export type ShelfEntry = { book: Book; status: ShelfStatus };
 
@@ -10,16 +11,34 @@ export function encodeKey(bookKey: string): string {
 }
 
 export async function addToShelf(
-    uid: string, 
-    book: Book, 
-    status: ShelfStatus): Promise<void>{
+  uid: string,
+  book: Book,
+  status: ShelfStatus
+): Promise<void> {
+  const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(book.key));
+  await setDoc(shelfRef, {
+    ...book,
+    status,
+    addedAt: new Date().toISOString(),
+  }, { merge: true });
 
-    const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(book.key));
-    await setDoc(shelfRef, {
-        ...book,
-        status,
-        addedAt: new Date().toISOString(),
-    }, { merge: true })
+  if (status === "wantToRead") {
+    await logActivity(uid, {
+      type: "watchlist_add",
+      bookId: book.key,
+      bookTitle: book.title,
+      bookCoverUrl: book.cover_url,
+      bookAuthor: book.authors[0],
+    });
+  } else if (status === "finished") {
+    await logActivity(uid, {
+      type: "book_finished",
+      bookId: book.key,
+      bookTitle: book.title,
+      bookCoverUrl: book.cover_url,
+      bookAuthor: book.authors[0],
+    });
+  }
 }
 
 export async function removeFromShelf(
