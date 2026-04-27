@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebase_init";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
@@ -44,17 +44,46 @@ export async function addToShelf(
   }
 }
 
-export async function removeFromShelf(
-    uid: string, 
-    bookKey: string): Promise<void>{
+export async function updateReadingProgress(
+  uid: string,
+  entry: ShelfEntry,
+  currentPage: number,
+  note?: string
+): Promise<void> {
+  const totalPages = entry.book.pages ?? 0;
+  const isFinished = totalPages > 0 && currentPage === totalPages;
+  const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(entry.book.key));
 
+  const update: Record<string, unknown> = { currentPage };
+  if (isFinished) update.status = "finished";
+  await updateDoc(shelfRef, update);
+
+  const base = {
+    bookId: entry.book.key,
+    bookTitle: entry.book.title,
+    bookCoverUrl: entry.book.cover_url,
+    bookAuthor: entry.book.authors[0],
+  };
+
+  logActivity(uid, { type: "progress", ...base, progress: currentPage, note })
+    .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+
+  if (isFinished) {
+    logActivity(uid, { type: "book_finished", ...base })
+      .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+  }
+}
+
+export async function removeFromShelf(
+    uid: string,
+    bookKey: string): Promise<void> {
     await deleteDoc(doc(db, "Users", uid, "Shelf", encodeKey(bookKey)));
 }
 
 export async function getShelf(uid: string): Promise<ShelfEntry[] | null> {
    const shelf = await getDocs(collection(db, "Users", uid, "Shelf"));
-    
-    if(shelf.size <= 0){
+
+    if (shelf.size <= 0) {
         return null;
     }
 
@@ -77,6 +106,7 @@ export async function getShelf(uid: string): Promise<ShelfEntry[] | null> {
                 pages: data.pages ?? undefined,
             } as Book,
             status: data.status as ShelfStatus,
+            currentPage: data.currentPage ?? undefined,
         };
     });
 }

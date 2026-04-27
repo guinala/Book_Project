@@ -44,6 +44,7 @@ export async function getActivity(
       rating: data.rating,
       progress: data.progress,
       listName: data.listName,
+      note: data.note,
     };
   });
 }
