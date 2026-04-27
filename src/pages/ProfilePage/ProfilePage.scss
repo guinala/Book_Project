@@ -3,6 +3,7 @@
 
 .profile-page {
   @include container;
+  max-width: 960px;
   padding-top: 0;
   padding-bottom: var(--space-10);
   display: flex;
