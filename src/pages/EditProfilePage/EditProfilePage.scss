@@ -195,6 +195,16 @@
     margin: 0;
   }
 
+  &__save-error {
+    font-size: var(--text-sm);
+    color: var(--color-error);
+    background: var(--color-error-bg, rgba(220, 53, 69, 0.08));
+    border: 1px solid var(--color-error-border, rgba(220, 53, 69, 0.3));
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    margin: 0;
+  }
+
   &__actions {
     display: flex;
     justify-content: flex-end;

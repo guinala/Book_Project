@@ -25,6 +25,7 @@ export default function EditProfilePage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -89,6 +90,7 @@ export default function EditProfilePage() {
   const onSubmit = async (data: EditProfileForm) => {
     if (!user) return;
     setSaving(true);
+    setSaveError(null);
     try {
       const updates: Partial<Omit<UserFullProfile, "uid">> = {
         name: data.name,
@@ -106,6 +108,10 @@ export default function EditProfilePage() {
 
       await updateUserProfile(user.uid, updates);
       navigate("/profile");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setSaveError(msg);
+      console.error("[EditProfilePage] save failed:", err);
     } finally {
       setSaving(false);
     }
@@ -244,6 +250,10 @@ export default function EditProfilePage() {
             />
           </div>
         </div>
+
+        {saveError && (
+          <p className="edit-profile__save-error">{saveError}</p>
+        )}
 
         <div className="edit-profile__actions">
           <button
