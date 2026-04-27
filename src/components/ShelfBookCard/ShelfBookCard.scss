@@ -13,6 +13,12 @@
     border-radius: var(--radius-sm);
     overflow: hidden;
     box-shadow: var(--shadow-cover);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+  }
+
+  &:hover &__cover-wrapper {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-3px);
   }
 
   &__cover {
