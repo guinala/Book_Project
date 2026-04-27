@@ -60,6 +60,9 @@ export default function ActivityItem({ item }: ActivityItemProps) {
         {typeof item.rating === "number" && item.rating > 0 && (
           <StarRating rating={item.rating} size={14} />
         )}
+        {item.note && (
+          <p className="activity-item__note">{item.note}</p>
+        )}
       </div>
     </div>
   );
