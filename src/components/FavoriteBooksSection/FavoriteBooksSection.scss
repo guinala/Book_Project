@@ -77,6 +77,16 @@
 
   &__cover-wrap {
     flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    @include transition(transform, opacity);
+
+    &:hover {
+      transform: translateY(-3px);
+      opacity: 0.9;
+    }
   }
 
   &__cover {

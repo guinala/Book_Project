@@ -1,4 +1,5 @@
 // src/components/FavoriteBooksSection/FavoriteBooksSection.tsx
+import { useNavigate } from "react-router";
 import "./FavoriteBooksSection.scss";
 import type { FavoriteBook } from "@/types/UserProfile";
 
@@ -13,6 +14,8 @@ export default function FavoriteBooksSection({
   isOwnProfile,
   onEditClick,
 }: FavoriteBooksSectionProps) {
+  const navigate = useNavigate();
+
   return (
     <div className="favorite-books">
       <div className="favorite-books__header">
@@ -55,7 +58,12 @@ export default function FavoriteBooksSection({
         {favorites.map((book, idx) => (
           <div key={book.key} className="favorite-books__item">
             <span className="favorite-books__number">{idx + 1}</span>
-            <div className="favorite-books__cover-wrap">
+            <button
+              type="button"
+              className="favorite-books__cover-wrap"
+              onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`)}
+              aria-label={book.title}
+            >
               {book.cover_url ? (
                 <img
                   className="favorite-books__cover"
@@ -67,7 +75,7 @@ export default function FavoriteBooksSection({
                   <span>{book.title.charAt(0)}</span>
                 </div>
               )}
-            </div>
+            </button>
           </div>
         ))}
       </div>
