@@ -1,10 +1,11 @@
 import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import type { Book } from "@/types/Book";
-import { fetchFantasyBooks } from "@/services/api/openLibraryApi";
+import { fetchFantasyBooks, getWork } from "@/services/api/openLibraryApi";
 // import { fetchGoogleCovers } from "@/services/api/googleBooksApi"; 
 import { getErrorMessage } from "@/utils/apiErrors";
-import { getExploreBooksFromDB, saveBooksToDB } from "@/services/firebase/firebase_books";
+import { getExploreBooksFromDB, saveBooksToDB, saveGenreToDB } from "@/services/firebase/firebase_books";
+import { detectGenre } from "@/utils/genreUtils";
 
 const LOCAL_STORAGE_KEY = 'trama_cache_v3';
 const LOCAL_STORAGE_TTL = 24 * 60 * 60 * 1000; // 24 horas (1 día)
@@ -55,6 +56,17 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
         setBooks(dbBooks);
         setLoading(false);
         saveToStorage(dbBooks); 
+        const nullGenreBooks = dbBooks.filter(b => !b.genre);
+        if (nullGenreBooks.length > 0) {
+          nullGenreBooks.forEach(async (b) => {
+            try {
+              const work = await getWork(b.key);
+              const genre = detectGenre(work.subjects);
+              if (genre) saveGenreToDB(b.key, genre);
+            } catch { console.log("No se ha podido obtener el genero (otra vez)") }
+          });
+        }
+
         return;
       }
     } catch {

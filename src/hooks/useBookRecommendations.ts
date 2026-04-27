@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import axios from "axios";
 import type { Book } from "@/types/Book";
 import { fetchBooksByGenre } from "@/services/api/openLibraryApi";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import { saveBooksToDB } from "@/services/firebase/firebase_books";
 
 const PAGE_SIZE = 6;
 
 export function useBookRecommendations(genre: string, excludeKey: string) {
   const [pool, setPool] = useState<Book[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(false);
   const shownKeys = useRef<Set<string>>(new Set());
   const abortController = useRef<AbortController | null>(null);
   const { lang } = useCurrentLanguage();
@@ -32,23 +32,18 @@ export function useBookRecommendations(genre: string, excludeKey: string) {
     abortController.current?.abort();
     abortController.current = new AbortController();
     shownKeys.current.clear();
-    setLoading(true);
 
     fetchBooksByGenre(genre, 30, lang, abortController.current.signal)
       .then((results) => {
         const filtered = results.filter((b) => b.key !== excludeKey);
         setPool(filtered);
         setBooks(pickNext(filtered));
-        setLoading(false);
+        saveBooksToDB(results, lang);
       })
       .catch((err) => {
-        if (axios.isCancel(err)) {
-          setLoading(false);
-          return;
-        }
-        setLoading(false);
+        if (axios.isCancel(err)) return;
       });
-
+    
     return () => abortController.current?.abort();
   }, [genre, excludeKey, lang, pickNext]);
 
@@ -56,5 +51,5 @@ export function useBookRecommendations(genre: string, excludeKey: string) {
     setBooks(pickNext(pool));
   }, [pool, pickNext]);
 
-  return { books, loading, refresh };
+  return { books, refresh };
 }
