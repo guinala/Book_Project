@@ -91,6 +91,14 @@ export default function EditProfilePage() {
     if (!user) return;
     setSaving(true);
     setSaveError(null);
+
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error("La subida tardó demasiado. Verifica que Firebase Storage esté habilitado en tu proyecto de Firebase Console.")),
+        15_000
+      )
+    );
+
     try {
       const updates: Partial<Omit<UserFullProfile, "uid">> = {
         name: data.name,
@@ -99,14 +107,17 @@ export default function EditProfilePage() {
         bio: data.bio,
       };
 
-      if (photoFile) {
-        updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
-      }
-      if (bannerFile) {
-        updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
-      }
+      const doSave = async () => {
+        if (photoFile) {
+          updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
+        }
+        if (bannerFile) {
+          updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
+        }
+        await updateUserProfile(user.uid, updates);
+      };
 
-      await updateUserProfile(user.uid, updates);
+      await Promise.race([doSave(), timeout]);
       navigate("/profile");
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
