@@ -1,5 +1,5 @@
 // src/hooks/useProfile.ts
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
 import { getUserProfile } from "@/services/firebase/firebase_users";
@@ -24,7 +24,12 @@ const EMPTY_SHELF: Record<ShelfStatus, Book[]> = {
 function entriesToShelf(
   entries: { book: Book; status: ShelfStatus }[]
 ): Record<ShelfStatus, Book[]> {
-  const result: Record<ShelfStatus, Book[]> = { ...EMPTY_SHELF };
+  const result: Record<ShelfStatus, Book[]> = {
+    wantToRead: [],
+    reading: [],
+    finished: [],
+    didNotFinish: [],
+  };
   for (const { book, status } of entries) {
     result[status].push(book);
   }
@@ -45,48 +50,53 @@ export function useProfile(userId: string) {
 
   useEffect(() => {
     if (!userId) return;
+    let cancelled = false;
+    const isOwn = !!user && user.uid === userId;
+
     setLoading(true);
+    setPublicShelf(EMPTY_SHELF);
 
     const fetches: Promise<void>[] = [
-      getUserProfile(userId).then((p) => setProfile(p)),
-      getActivity(userId, 10).then((a) => setActivity(a)),
+      getUserProfile(userId).then((p) => { if (!cancelled) setProfile(p); }),
+      getActivity(userId, 10).then((a) => { if (!cancelled) setActivity(a); }),
     ];
 
-    if (!isOwnProfile) {
+    if (!isOwn) {
       fetches.push(
-        getShelf(userId).then((entries) =>
-          setPublicShelf(entriesToShelf(entries ?? []))
-        )
+        getShelf(userId).then((entries) => {
+          if (!cancelled) setPublicShelf(entriesToShelf(entries ?? []));
+        })
       );
     }
 
-    if (user && !isOwnProfile) {
+    if (user && !isOwn) {
       fetches.push(
-        checkIsFollowing(user.uid, userId).then((f) =>
-          setIsFollowingState(f)
-        )
+        checkIsFollowing(user.uid, userId).then((f) => {
+          if (!cancelled) setIsFollowingState(f);
+        })
       );
     }
 
-    Promise.all(fetches).finally(() => setLoading(false));
-  }, [userId, isOwnProfile, user]);
+    Promise.all(fetches).finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [userId, user]);
 
   const shelf = isOwnProfile ? shelfByStatus : publicShelf;
   const shelfLoading = isOwnProfile ? ownShelfLoading : loading;
 
-  const follow = async () => {
+  const follow = useCallback(async () => {
     if (!user) return;
     await followUser(user.uid, userId);
     setIsFollowingState(true);
     setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
-  };
+  }, [user, userId]);
 
-  const unfollow = async () => {
+  const unfollow = useCallback(async () => {
     if (!user) return;
     await unfollowUser(user.uid, userId);
     setIsFollowingState(false);
     setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
-  };
+  }, [user, userId]);
 
   return {
     profile,

@@ -103,10 +103,14 @@ export default function ShelfSection({ books, loading = false, readOnly = false 
       <div className="shelf-section__card">
         {!loading && categoryBooks.length === 0 ? (
           <div className="shelf-section__empty">
-            <div className="shelf-section__empty-icon">
-              <PlusIcon />
-            </div>
-            <p className="shelf-section__empty-text">{t("myLibrary.emptyShelf")}</p>
+            {!readOnly && (
+              <div className="shelf-section__empty-icon">
+                <PlusIcon />
+              </div>
+            )}
+            <p className="shelf-section__empty-text">
+              {readOnly ? "Sin libros en esta estantería" : t("myLibrary.emptyShelf")}
+            </p>
           </div>
         ) : (
           <>
