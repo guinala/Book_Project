@@ -120,9 +120,8 @@ export default function EditProfilePage() {
       await Promise.race([doSave(), timeout]);
       navigate("/profile");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setSaveError(msg);
       console.error("[EditProfilePage] save failed:", err);
+      setSaveError("Error inesperado, inténtalo de nuevo más tarde.");
     } finally {
       setSaving(false);
     }
