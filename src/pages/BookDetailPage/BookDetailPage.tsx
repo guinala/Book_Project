@@ -41,7 +41,6 @@ export default function BookDetailPage() {
     return (
       <div className="book-detail-page">
         <div className="book-detail-page__under-construction">
-          <span className="book-detail-page__under-construction-icon" aria-hidden="true">🚧</span>
           <h2 className="book-detail-page__under-construction-title">
             Esta página está en obras, lo sentimos
           </h2>
