@@ -10,8 +10,6 @@ import ShelfSection from "@/components/ShelfSection/ShelfSection";
 import ActivitySection from "@/components/ActivitySection/ActivitySection";
 import ListsSection from "@/components/ListsSection/ListsSection";
 import FollowersModal from "@/components/FollowersModal/FollowersModal";
-import { updateUserProfile } from "@/services/firebase/firebase_users";
-import type { FavoriteBook } from "@/types/UserProfile";
 import type { ReadingList } from "@/components/ListCard/ListCard";
 import listCover1 from "@/assets/covers/shelf-1.jpg";
 import listCover2 from "@/assets/covers/shelf-2.jpg";
@@ -48,9 +46,7 @@ export default function ProfilePage() {
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
 
-  const handleFavSave = async (updated: FavoriteBook[]) => {
-    await updateUserProfile(resolvedUserId, { favoriteBooks: updated });
-  };
+  const handleFavSave = (_updated: unknown[]) => {};
 
   if (loading) {
     return (

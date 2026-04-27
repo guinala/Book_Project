@@ -49,7 +49,10 @@ export function useProfile(userId: string) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     const isOwn = !!user && user.uid === userId;
 
