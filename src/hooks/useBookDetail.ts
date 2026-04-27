@@ -1,5 +1,6 @@
 import type { BookDetail } from "@/types/BookDetail";
 import type { Book } from "@/types/Book";
+import { FALLBACK_REVIEWS } from "@/data/bookDetailData";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
@@ -115,7 +116,7 @@ export function useBookDetail(id: string): {
         year: bookFromState?.first_publish_year ?? 0,
         isbn: bookFromState?.isbn ?? '',
         synopsis,
-        reviews: [],
+        reviews: FALLBACK_REVIEWS,
         authorInfo: { name: '', photoUrl: '', bio: '', books: [] },
         recommendations: [],
       });

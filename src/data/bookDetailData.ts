@@ -104,6 +104,8 @@ const NOMBRE_DEL_VIENTO: BookDetail = {
 };
 
 
+export const FALLBACK_REVIEWS = NOMBRE_DEL_VIENTO.reviews;
+
 const BOOK_DETAIL_MAP: Record<string, BookDetail> = {
   [NOMBRE_DEL_VIENTO.key]: NOMBRE_DEL_VIENTO,
 };
