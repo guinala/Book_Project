@@ -154,7 +154,13 @@
     border: 1px solid var(--color-border-medium);
     background: var(--color-bg-card-solid);
     color: var(--color-text-primary);
+    outline: none;
     @include transition(border-color, box-shadow);
+
+    &:focus {
+      border-color: var(--color-brand-primary);
+      box-shadow: 0 0 0 3px var(--color-brand-alpha-subtle);
+    }
 
     &--with-prefix {
       padding-left: var(--space-8);
@@ -184,9 +190,15 @@
     border: 1px solid var(--color-border-medium);
     background: var(--color-bg-card-solid);
     color: var(--color-text-primary);
+    outline: none;
     @include transition(border-color, box-shadow);
     resize: vertical;
     min-height: 100px;
+
+    &:focus {
+      border-color: var(--color-brand-primary);
+      box-shadow: 0 0 0 3px var(--color-brand-alpha-subtle);
+    }
   }
 
   &__error {
