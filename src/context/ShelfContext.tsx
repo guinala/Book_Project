@@ -1,5 +1,5 @@
 import { auth } from "@/services/firebase/firebase_init";
-import { addToShelf, encodeKey, getShelf, removeFromShelf, type ShelfEntry } from "@/services/firebase/firebase_library";
+import { addToShelf, encodeKey, getShelf, removeFromShelf, updateReadingProgress, type ShelfEntry } from "@/services/firebase/firebase_library";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { onAuthStateChanged } from "firebase/auth";
@@ -43,10 +43,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addBook = async (book: Book, status: ShelfStatus) => {
-
-    if(!uid) {
-        return;
-    }
+    if (!uid) return;
 
     const prevStatus = entries.get(encodeKey(book.key))?.status ?? null;
     const rollback = new Map(entries);
@@ -55,19 +52,14 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     setEntries(newMap);
 
     try {
-       await addToShelf(uid, book, status, prevStatus);
+      await addToShelf(uid, book, status, prevStatus);
+    } catch {
+      setEntries(rollback);
     }
-    catch {
-        setEntries(rollback);
-    }
-
   };
 
   const removeBook = async (bookKey: string) => {
-
-    if (!uid) {
-        return;
-    }
+    if (!uid) return;
 
     const rollback = new Map(entries);
     const newMap = new Map(entries);
@@ -75,30 +67,52 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     setEntries(newMap);
 
     try {
-       await removeFromShelf(uid, bookKey);
+      await removeFromShelf(uid, bookKey);
+    } catch {
+      setEntries(rollback);
     }
-    catch {
-        setEntries(rollback);
-    }
-
   };
 
   const getStatus = (bookKey: string) => entries.get(encodeKey(bookKey))?.status ?? null;
 
+  const getEntry = (bookKey: string): ShelfEntry | null =>
+    entries.get(encodeKey(bookKey)) ?? null;
+
+  const updateProgress = async (bookKey: string, currentPage: number, note?: string) => {
+    if (!uid) return;
+
+    const encoded = encodeKey(bookKey);
+    const existing = entries.get(encoded);
+    if (!existing) return;
+
+    const rollback = new Map(entries);
+    const totalPages = existing.book.pages ?? 0;
+    const newStatus: ShelfStatus =
+      totalPages > 0 && currentPage === totalPages ? "finished" : existing.status;
+    const newMap = new Map(entries);
+    newMap.set(encoded, { ...existing, currentPage, status: newStatus });
+    setEntries(newMap);
+
+    try {
+      await updateReadingProgress(uid, existing, currentPage, note);
+    } catch {
+      setEntries(rollback);
+    }
+  };
+
   const shelfByStatus = useMemo(() => {
     const result: Record<ShelfStatus, Book[]> = {
-        wantToRead: [], reading: [], finished: [], didNotFinish: []
+      wantToRead: [], reading: [], finished: [], didNotFinish: [],
     };
     for (const { book, status } of entries.values()) {
-        result[status].push(book);
+      result[status].push(book);
     }
     return result;
   }, [entries]);
 
-
   return (
     <ShelfContext.Provider
-      value={{ shelfByStatus, loading, addBook, removeBook, getStatus }}
+      value={{ shelfByStatus, loading, addBook, removeBook, getStatus, getEntry, updateProgress }}
     >
       {children}
     </ShelfContext.Provider>
