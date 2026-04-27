@@ -5,6 +5,8 @@ import ExplorePage from "@/pages/ExplorePage/ExplorePage";
 import MyLibraryPage from "@/pages/MyLibraryPage/MyLibraryPage";
 import BookDetailPage from "@/pages/BookDetailPage/BookDetailPage";
 import CommunityPage from "@/pages/CommunityPage/CommunityPage";
+import ProfilePage from "@/pages/ProfilePage/ProfilePage";
+import EditProfilePage from "@/pages/EditProfilePage/EditProfilePage";
 import AuthRoute from "@/routes/AuthRoute";
 
 export const ROUTES = [
@@ -24,6 +26,26 @@ export const ROUTES = [
             <MyLibraryPage />
           </AuthRoute>
         ),
+      },
+      {
+        path: "profile",
+        element: (
+          <AuthRoute requireAuth>
+            <ProfilePage />
+          </AuthRoute>
+        ),
+      },
+      {
+        path: "profile/edit",
+        element: (
+          <AuthRoute requireAuth>
+            <EditProfilePage />
+          </AuthRoute>
+        ),
+      },
+      {
+        path: "profile/:userId",
+        element: <ProfilePage />,
       },
     ],
   },

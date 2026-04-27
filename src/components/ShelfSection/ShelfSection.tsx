@@ -48,9 +48,10 @@ function PlusIcon() {
 type ShelfSectionProps = {
   books: Record<ShelfStatus, Book[]>;
   loading?: boolean;
+  readOnly?: boolean;
 };
 
-export default function ShelfSection({ books, loading = false }: ShelfSectionProps) {
+export default function ShelfSection({ books, loading = false, readOnly = false }: ShelfSectionProps) {
   const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<ShelfFilterKey>(SHELF_FILTER_KEYS[0]);
   const [page, setPage] = useState(0);
@@ -58,15 +59,15 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
   const categoryBooks = books[activeFilter];
 
   // +1 slot for the add-book card so it always occupies its own fixed position
-  const totalPages = Math.ceil((categoryBooks.length + 1) / PAGE_SIZE);
+  const totalPages = Math.ceil((categoryBooks.length + (readOnly ? 0 : 1)) / PAGE_SIZE);
   const isLastPage = page === totalPages - 1;
 
   const slots: Slot[] = useMemo(() => Array.from({ length: PAGE_SIZE }, (_, i) => {
     const idx = page * PAGE_SIZE + i;
     if (idx < categoryBooks.length) return { type: "book", book: categoryBooks[idx] };
-    if (idx === categoryBooks.length) return { type: "add" };
+    if (!readOnly && idx === categoryBooks.length) return { type: "add" };
     return { type: "spacer" };
-  }), [categoryBooks, page]);
+  }), [categoryBooks, page, readOnly]);
 
   function handleFilterChange(key: ShelfFilterKey) {
     setActiveFilter(key);
@@ -102,10 +103,14 @@ export default function ShelfSection({ books, loading = false }: ShelfSectionPro
       <div className="shelf-section__card">
         {!loading && categoryBooks.length === 0 ? (
           <div className="shelf-section__empty">
-            <div className="shelf-section__empty-icon">
-              <PlusIcon />
-            </div>
-            <p className="shelf-section__empty-text">{t("myLibrary.emptyShelf")}</p>
+            {!readOnly && (
+              <div className="shelf-section__empty-icon">
+                <PlusIcon />
+              </div>
+            )}
+            <p className="shelf-section__empty-text">
+              {readOnly ? "Sin libros en esta estantería" : t("myLibrary.emptyShelf")}
+            </p>
           </div>
         ) : (
           <>

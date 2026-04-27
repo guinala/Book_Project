@@ -12,6 +12,14 @@ type ListCardProps = {
   list: ReadingList;
 };
 
+function ChevronRight() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
+
 export default function ListCard({ list }: ListCardProps) {
   const { t } = useTranslation();
   const covers = list.coverUrls.slice(0, 4);
@@ -21,12 +29,7 @@ export default function ListCard({ list }: ListCardProps) {
       <div className="list-card__mosaic">
         {covers.map((url, i) => (
           <div key={i} className="list-card__mosaic-cell">
-            <img
-              className="list-card__mosaic-img"
-              src={url}
-              alt=""
-              loading="lazy"
-            />
+            <img className="list-card__mosaic-img" src={url} alt="" loading="lazy" />
           </div>
         ))}
       </div>
@@ -37,6 +40,10 @@ export default function ListCard({ list }: ListCardProps) {
           {t("myLibrary.listsCount", { count: list.count })}
         </p>
       </div>
+
+      <span className="list-card__chevron">
+        <ChevronRight />
+      </span>
     </article>
   );
 }

@@ -15,10 +15,6 @@
     font-weight: var(--weight-bold);
     margin: 0;
     letter-spacing: -0.01em;
-
-    @include from($bp-md) {
-      font-size: var(--text-xl);
-    }
   }
 
   &__see-all {
@@ -36,70 +32,65 @@
     }
   }
 
-  &__row {
-    display: flex;
-    align-items: stretch;
-    gap: var(--space-3);
+  &__card {
+    background: var(--color-bg-card-solid);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border-medium);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
 
-    > * {
-      flex: 1;
-    }
-
-    @media (max-width: 640px) {
-      flex-wrap: wrap;
-    }
+  &__divider {
+    height: 1px;
+    background: var(--color-border-subtle);
+    margin: 0 var(--space-4);
   }
 
   &__create {
-    flex: 0 0 180px !important;
-    border: 1.5px dashed var(--color-border-medium);
-    border-radius: var(--radius-xl);
-    padding: var(--space-4);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    padding: var(--space-4);
+    width: 100%;
+    background: none;
+    border: none;
     cursor: pointer;
-    transition:
-      border-color var(--transition-fast),
-      background var(--transition-fast);
+    text-align: left;
+    color: var(--color-text-secondary);
+    transition: background var(--transition-fast);
 
     &:hover {
-      border-color: var(--color-accent);
-      background: var(--color-brand-alpha-subtle);
-    }
+      background: var(--color-bg-section);
 
-    &:hover &-icon {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
+      .lists-section__create-icon {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+      }
+
+      .lists-section__create-text {
+        color: var(--color-text-primary);
+      }
     }
   }
 
   &__create-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-border-medium);
+    width: 62px;
+    height: 62px;
+    border-radius: var(--radius-sm);
+    border: 1.5px dashed var(--color-border-medium);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-text-secondary);
+    flex-shrink: 0;
     transition:
       border-color var(--transition-fast),
       color var(--transition-fast);
-
-    svg {
-      width: 18px;
-      height: 18px;
-    }
   }
 
   &__create-text {
+    flex: 1;
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
-    color: var(--color-text-secondary);
-    text-align: center;
-    margin: 0;
+    transition: color var(--transition-fast);
   }
 }

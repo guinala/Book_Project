@@ -1,0 +1,110 @@
+// src/components/FavoriteBooksSection/FavoriteBooksSection.scss
+@use '../../styles/lib' as *;
+
+.favorite-books {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__edit-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: none;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-pill);
+    padding: var(--space-1) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    @include transition(border-color);
+
+    &:hover {
+      border-color: var(--color-border-strong);
+    }
+  }
+
+  &__card {
+    background: var(--color-bg-card-solid);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    overflow-x: auto;
+  }
+
+  &__empty {
+    color: var(--color-text-tertiary);
+    font-size: var(--text-md);
+    margin: 0;
+    padding: var(--space-6) 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+  }
+
+  &__number {
+    font-family: var(--font-editorial);
+    font-size: 120px;
+    line-height: 1;
+    color: var(--color-accent);
+    opacity: 0.54;
+    font-style: italic;
+  }
+
+  &__cover-wrap {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    @include transition(transform, opacity);
+
+    &:hover {
+      transform: translateY(-3px);
+      opacity: 0.9;
+    }
+  }
+
+  &__cover {
+    width: 120px;
+    height: 175px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    box-shadow: var(--shadow-cover);
+    display: block;
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg-section);
+      color: var(--color-text-tertiary);
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
+    }
+  }
+}

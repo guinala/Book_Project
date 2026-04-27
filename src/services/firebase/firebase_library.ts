@@ -2,6 +2,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/fi
 import { db } from "./firebase_init";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
+import { logActivity } from "./firebase_activity";
 
 export type ShelfEntry = { book: Book; status: ShelfStatus };
 
@@ -10,16 +11,37 @@ export function encodeKey(bookKey: string): string {
 }
 
 export async function addToShelf(
-    uid: string, 
-    book: Book, 
-    status: ShelfStatus): Promise<void>{
+  uid: string,
+  book: Book,
+  status: ShelfStatus,
+  prevStatus?: ShelfStatus | null
+): Promise<void> {
+  const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(book.key));
+  await setDoc(shelfRef, {
+    ...book,
+    status,
+    addedAt: new Date().toISOString(),
+  }, { merge: true });
 
-    const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(book.key));
-    await setDoc(shelfRef, {
-        ...book,
-        status,
-        addedAt: new Date().toISOString(),
-    }, { merge: true })
+  if (prevStatus === status) return;
+
+  const base = {
+    bookId: book.key,
+    bookTitle: book.title,
+    bookCoverUrl: book.cover_url,
+    bookAuthor: book.authors[0],
+  };
+
+  if (status === "wantToRead") {
+    logActivity(uid, { type: "watchlist_add", ...base })
+      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+  } else if (status === "reading") {
+    logActivity(uid, { type: "reading_started", ...base })
+      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+  } else if (status === "finished") {
+    logActivity(uid, { type: "book_finished", ...base })
+      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+  }
 }
 
 export async function removeFromShelf(
