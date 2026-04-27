@@ -64,6 +64,12 @@ export default function FavoriteBooksEditorModal({
     return () => clearTimeout(timer);
   }, [query]);
 
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
+
   const addFavorite = (book: Book) => {
     if (favorites.length >= MAX_FAVORITES) return;
     if (favorites.some((f) => f.key === book.key)) return;
@@ -86,10 +92,13 @@ export default function FavoriteBooksEditorModal({
 
   const handleSave = async () => {
     setSaving(true);
-    await updateUserProfile(userId, { favoriteBooks: favorites });
-    setSaving(false);
-    onSave(favorites);
-    onClose();
+    try {
+      await updateUserProfile(userId, { favoriteBooks: favorites });
+      onSave(favorites);
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
