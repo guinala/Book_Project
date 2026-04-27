@@ -26,10 +26,10 @@ export default function ActivitySection({ activity }: ActivitySectionProps) {
         {activity.length === 0 && (
           <p className="activity-section__empty">Sin actividad reciente</p>
         )}
-        {activity.slice(0, 3).map((item, idx) => (
+        {activity.slice(0, 3).map((item, idx, arr) => (
           <div key={item.id}>
             <ActivityItem item={item} />
-            {idx < Math.min(activity.length, 3) - 1 && (
+            {idx < arr.length - 1 && (
               <div className="activity-section__divider" />
             )}
           </div>

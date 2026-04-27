@@ -15,6 +15,7 @@ function timeAgo(timestamp: { toDate: () => Date }): string {
   const now = Date.now();
   const then = timestamp.toDate().getTime();
   const diff = Math.floor((now - then) / 1000);
+  if (diff <= 0) return "hace unos segundos";
   if (diff < 60) return "hace unos segundos";
   if (diff < 3600) return `hace ${Math.floor(diff / 60)}m`;
   if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`;
