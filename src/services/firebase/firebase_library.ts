@@ -23,21 +23,21 @@ export async function addToShelf(
   }, { merge: true });
 
   if (status === "wantToRead") {
-    await logActivity(uid, {
+    logActivity(uid, {
       type: "watchlist_add",
       bookId: book.key,
       bookTitle: book.title,
       bookCoverUrl: book.cover_url,
       bookAuthor: book.authors[0],
-    });
+    }).catch(() => {});
   } else if (status === "finished") {
-    await logActivity(uid, {
+    logActivity(uid, {
       type: "book_finished",
       bookId: book.key,
       bookTitle: book.title,
       bookCoverUrl: book.cover_url,
       bookAuthor: book.authors[0],
-    });
+    }).catch(() => {});
   }
 }
 
