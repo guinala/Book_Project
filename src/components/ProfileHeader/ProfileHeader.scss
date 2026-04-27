@@ -2,6 +2,9 @@
 @use '../../styles/lib' as *;
 
 .profile-header {
+  max-width: 960px;
+  width: 100%;
+  margin-inline: auto;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   overflow: visible;
 
