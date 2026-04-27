@@ -89,16 +89,24 @@ export function useProfile(userId: string) {
 
   const follow = useCallback(async () => {
     if (!user) return;
-    await followUser(user.uid, userId);
-    setIsFollowingState(true);
-    setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
+    try {
+      await followUser(user.uid, userId);
+      setIsFollowingState(true);
+      setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
+    } catch {
+      console.error("[useProfile] follow failed");
+    }
   }, [user, userId]);
 
   const unfollow = useCallback(async () => {
     if (!user) return;
-    await unfollowUser(user.uid, userId);
-    setIsFollowingState(false);
-    setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
+    try {
+      await unfollowUser(user.uid, userId);
+      setIsFollowingState(false);
+      setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
+    } catch {
+      console.error("[useProfile] unfollow failed");
+    }
   }, [user, userId]);
 
   return {

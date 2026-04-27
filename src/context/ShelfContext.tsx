@@ -12,26 +12,31 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
   const [uid, setUid] = useState<string | null>(null);
 
   useEffect(() => {
+    let generation = 0;
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       const uid = firebaseUser?.uid;
+      const myGen = ++generation;
 
-      if(uid) {
+      if (uid) {
         setUid(uid);
         setLoading(true);
-        const shelf = await getShelf(uid);
-        const shelfMap = new Map(
+        try {
+          const shelf = await getShelf(uid);
+          if (myGen !== generation) return;
+          const shelfMap = new Map(
             (shelf ?? []).map(e => [encodeKey(e.book.key), e])
-        )
-        // setUid(uid);
-        setEntries(shelfMap);
-        setLoading(false);
-      }
-
-      else {
+          );
+          setEntries(shelfMap);
+        } catch {
+          if (myGen !== generation) return;
+        } finally {
+          if (myGen === generation) setLoading(false);
+        }
+      } else {
         setUid(null);
         setEntries(new Map());
       }
-     
     });
 
     return () => unsubscribe();
@@ -43,13 +48,14 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
         return;
     }
 
+    const prevStatus = entries.get(encodeKey(book.key))?.status ?? null;
     const rollback = new Map(entries);
     const newMap = new Map(entries);
     newMap.set(encodeKey(book.key), { book, status });
     setEntries(newMap);
 
     try {
-       await addToShelf(uid, book, status);
+       await addToShelf(uid, book, status, prevStatus);
     }
     catch {
         setEntries(rollback);

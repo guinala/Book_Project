@@ -13,7 +13,8 @@ export function encodeKey(bookKey: string): string {
 export async function addToShelf(
   uid: string,
   book: Book,
-  status: ShelfStatus
+  status: ShelfStatus,
+  prevStatus?: ShelfStatus | null
 ): Promise<void> {
   const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(book.key));
   await setDoc(shelfRef, {
@@ -22,30 +23,24 @@ export async function addToShelf(
     addedAt: new Date().toISOString(),
   }, { merge: true });
 
+  if (prevStatus === status) return;
+
+  const base = {
+    bookId: book.key,
+    bookTitle: book.title,
+    bookCoverUrl: book.cover_url,
+    bookAuthor: book.authors[0],
+  };
+
   if (status === "wantToRead") {
-    logActivity(uid, {
-      type: "watchlist_add",
-      bookId: book.key,
-      bookTitle: book.title,
-      bookCoverUrl: book.cover_url,
-      bookAuthor: book.authors[0],
-    }).catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+    logActivity(uid, { type: "watchlist_add", ...base })
+      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "reading") {
-    logActivity(uid, {
-      type: "reading_started",
-      bookId: book.key,
-      bookTitle: book.title,
-      bookCoverUrl: book.cover_url,
-      bookAuthor: book.authors[0],
-    }).catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+    logActivity(uid, { type: "reading_started", ...base })
+      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "finished") {
-    logActivity(uid, {
-      type: "book_finished",
-      bookId: book.key,
-      bookTitle: book.title,
-      bookCoverUrl: book.cover_url,
-      bookAuthor: book.authors[0],
-    }).catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+    logActivity(uid, { type: "book_finished", ...base })
+      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   }
 }
 

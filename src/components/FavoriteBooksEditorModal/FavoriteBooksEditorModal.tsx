@@ -26,6 +26,7 @@ export default function FavoriteBooksEditorModal({
   const [results, setResults] = useState<Book[]>([]);
   const [searching, setSearching] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -92,10 +93,13 @@ export default function FavoriteBooksEditorModal({
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveError(null);
     try {
       await updateUserProfile(userId, { favoriteBooks: favorites });
       onSave(favorites);
       onClose();
+    } catch {
+      setSaveError("No se pudo guardar. Comprueba tu conexion e intenta de nuevo.");
     } finally {
       setSaving(false);
     }
@@ -194,21 +198,26 @@ export default function FavoriteBooksEditorModal({
         )}
 
         <div className="fav-editor-modal__footer">
-          <button
-            type="button"
-            className="fav-editor-modal__btn fav-editor-modal__btn--cancel"
-            onClick={onClose}
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="fav-editor-modal__btn fav-editor-modal__btn--save"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? "Guardando..." : "Guardar"}
-          </button>
+          {saveError && (
+            <p className="fav-editor-modal__save-error" role="alert">{saveError}</p>
+          )}
+          <div className="fav-editor-modal__footer-actions">
+            <button
+              type="button"
+              className="fav-editor-modal__btn fav-editor-modal__btn--cancel"
+              onClick={onClose}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="fav-editor-modal__btn fav-editor-modal__btn--save"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? "Guardando..." : "Guardar"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
