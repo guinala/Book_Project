@@ -49,7 +49,7 @@ export default function ProfileHeader({
               />
             ) : (
               <div className="profile-header__avatar profile-header__avatar--placeholder">
-                {displayName.charAt(0).toUpperCase()}
+                {(displayName.charAt(0) || "U").toUpperCase()}
               </div>
             )}
           </div>
