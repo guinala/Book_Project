@@ -4,7 +4,8 @@ import StarRating from "@/components/StarRating/StarRating";
 import "./ActivityItem.scss";
 
 const EVENT_LABELS: Record<string, string> = {
-  book_finished: "¡Libro terminado!",
+  reading_started: "Empezó a leer",
+  book_finished: "Terminó de leer",
   progress: "Actualizó su progreso",
   review: "Escribió una reseña",
   list_created: "Creó una lista",

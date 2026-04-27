@@ -34,7 +34,8 @@ export type ActivityType =
   | "review"
   | "list_created"
   | "watchlist_add"
-  | "book_finished";
+  | "book_finished"
+  | "reading_started";
 
 export type ActivityEvent = {
   type: ActivityType;

@@ -30,6 +30,14 @@ export async function addToShelf(
       bookCoverUrl: book.cover_url,
       bookAuthor: book.authors[0],
     }).catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+  } else if (status === "reading") {
+    logActivity(uid, {
+      type: "reading_started",
+      bookId: book.key,
+      bookTitle: book.title,
+      bookCoverUrl: book.cover_url,
+      bookAuthor: book.authors[0],
+    }).catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "finished") {
     logActivity(uid, {
       type: "book_finished",
