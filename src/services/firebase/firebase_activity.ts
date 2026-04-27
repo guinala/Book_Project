@@ -31,8 +31,19 @@ export async function getActivity(
     limit(maxResults)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({
-    id: d.id,
-    ...(d.data() as Omit<ActivityItem, "id">),
-  }));
+  return snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      type: data.type as ActivityItem["type"],
+      createdAt: data.createdAt as Timestamp,
+      bookId: data.bookId,
+      bookTitle: data.bookTitle,
+      bookCoverUrl: data.bookCoverUrl,
+      bookAuthor: data.bookAuthor,
+      rating: data.rating,
+      progress: data.progress,
+      listName: data.listName,
+    };
+  });
 }
