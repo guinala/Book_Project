@@ -1,5 +1,5 @@
 // src/pages/ProfilePage/ProfilePage.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -46,8 +46,13 @@ export default function ProfilePage() {
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
+  const [localFavorites, setLocalFavorites] = useState<FavoriteBook[]>([]);
 
-  const handleFavSave = (_updated: FavoriteBook[]) => {};
+  useEffect(() => {
+    if (profile) setLocalFavorites(profile.favoriteBooks);
+  }, [profile]);
+
+  const handleFavSave = (updated: FavoriteBook[]) => setLocalFavorites(updated);
 
   if (loading) {
     return (
@@ -80,7 +85,7 @@ export default function ProfilePage() {
       />
 
       <FavoriteBooksSection
-        favorites={profile.favoriteBooks}
+        favorites={localFavorites}
         isOwnProfile={isOwnProfile}
         onEditClick={() => setShowFavEditor(true)}
       />
@@ -107,7 +112,7 @@ export default function ProfilePage() {
       {showFavEditor && isOwnProfile && (
         <FavoriteBooksEditorModal
           userId={resolvedUserId}
-          currentFavorites={profile.favoriteBooks}
+          currentFavorites={localFavorites}
           onClose={() => setShowFavEditor(false)}
           onSave={handleFavSave}
         />
