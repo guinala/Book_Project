@@ -39,9 +39,33 @@ export function useBookSearch(): UseBookSearchResult {
         const params = getSearchParams(query.trim(), filter);
         const result = await searchBooks(params, limit, lang, abortController.current.signal);
 
-        setBooks(result.books);
+        // const deduplicated = result.books
+        //   .sort((a, b) => {
+        //     if (a.cover_id && !b.cover_id) return -1;
+        //     if (!a.cover_id && b.cover_id) return 1;
+        //     return (b.ratingCount ?? 0) - (a.ratingCount ?? 0);
+        //   })
+        //   .filter(
+        //     (book, i, self) => i === self.findIndex(b => b.title.toLowerCase().trim() === book.title.toLowerCase().trim())
+        //   );
+        const isBetter = (a: Book, b: Book) =>
+          (!!a.cover_id && !b.cover_id) ||
+          (!!a.cover_id === !!b.cover_id && (a.ratingCount ?? 0) > (b.ratingCount ?? 0));
+
+        const bestByTitle = new Map<string, Book>();
+        for (const book of result.books) {
+          const key = book.title.toLowerCase().trim();
+          const existing = bestByTitle.get(key);
+          if (!existing || isBetter(book, existing)) {
+            bestByTitle.set(key, book);
+          }
+        }
+
+        const deduplicated = [...bestByTitle.values()];
+
+        setBooks(deduplicated);
         setTotalResults(result.totalResults);
-        saveBooksToDB(result.books, lang);
+        saveBooksToDB(deduplicated, lang);
       } catch (err) {
         if (axios.isCancel(err)) return;
         setError(getErrorMessage(err));
