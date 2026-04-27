@@ -1,0 +1,60 @@
+// src/components/ActivitySection/ActivitySection.scss
+@use '../../styles/lib' as *;
+
+.activity-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__more {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    padding: 0;
+    @include transition(opacity);
+
+    &:hover { opacity: 0.7; }
+  }
+
+  &__card {
+    background: var(--color-bg-card-solid);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  &__empty {
+    color: var(--color-text-tertiary);
+    font-size: var(--text-md);
+    text-align: center;
+    margin: var(--space-4) 0;
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--color-border-subtle);
+  }
+}
