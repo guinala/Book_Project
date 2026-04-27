@@ -18,6 +18,35 @@
     &--error { color: #dc2626; }
   }
 
+  &__under-construction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-20) var(--space-6);
+    gap: var(--space-4);
+  }
+
+  &__under-construction-icon {
+    font-size: 48px;
+    line-height: 1;
+  }
+
+  &__under-construction-title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__under-construction-sub {
+    font-size: var(--text-md);
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 380px;
+  }
+
   &__back-btn {
     @include ghost-button;
     display: block;

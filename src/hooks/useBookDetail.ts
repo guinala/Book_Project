@@ -1,6 +1,5 @@
 import type { BookDetail } from "@/types/BookDetail";
 import type { Book } from "@/types/Book";
-import { getBookDetailById } from "@/data/bookDetailData";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
@@ -103,7 +102,6 @@ export function useBookDetail(id: string): {
 
       if (cancelled) return;
 
-      const fallback = getBookDetailById(decodedId);
       setBook({
         key: decodedId,
         cover_url: bookFromState?.cover_url ?? (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
@@ -117,9 +115,9 @@ export function useBookDetail(id: string): {
         year: bookFromState?.first_publish_year ?? 0,
         isbn: bookFromState?.isbn ?? '',
         synopsis,
-        reviews: fallback?.reviews ?? [],
-        authorInfo: fallback?.authorInfo ?? { name: '', photoUrl: '', bio: '', books: [] },
-        recommendations: fallback?.recommendations ?? [],
+        reviews: [],
+        authorInfo: { name: '', photoUrl: '', bio: '', books: [] },
+        recommendations: [],
       });
     };
 
@@ -138,14 +136,8 @@ export function useBookDetail(id: string): {
     };
   }, [decodedId, isAPIKey, t, bookFromState]);
 
-  // Estático
   if (!isAPIKey) {
-    const base = getBookDetailById(decodedId);
-    return {
-      book: base,
-      loading: false,
-      error: base ? null : t("bookDetail.notFound"),
-    };
+    return { book: null, loading: false, error: "under_construction" };
   }
 
   return { book, loading, error };

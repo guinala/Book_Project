@@ -40,12 +40,18 @@ export default function BookDetailPage() {
   if (error || !book) {
     return (
       <div className="book-detail-page">
-        <p className="book-detail-page__status book-detail-page__status--error">
-          {error ?? t("bookDetail.notFound")}
-        </p>
-        <button className="book-detail-page__back-btn" onClick={() => navigate(-1)}>
-          {t("bookDetail.back")}
-        </button>
+        <div className="book-detail-page__under-construction">
+          <span className="book-detail-page__under-construction-icon" aria-hidden="true">🚧</span>
+          <h2 className="book-detail-page__under-construction-title">
+            Esta página está en obras, lo sentimos
+          </h2>
+          <p className="book-detail-page__under-construction-sub">
+            Estamos trabajando para traerte la información de este libro pronto.
+          </p>
+          <button className="book-detail-page__back-btn" onClick={() => navigate(-1)}>
+            {t("bookDetail.back")}
+          </button>
+        </div>
       </div>
     );
   }
