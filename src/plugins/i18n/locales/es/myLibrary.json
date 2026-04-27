@@ -10,6 +10,17 @@
     "emptyShelf": "Añadir libros",
     "viewHistory": "Ver historial",
     "updateProgress": "Actualizar progreso",
+    "updateProgressModal": {
+      "title": "Actualizar progreso",
+      "currentPage": "Página actual",
+      "of": "de",
+      "finished": "¿Has terminado el libro?",
+      "notes": "Notas",
+      "notesPlaceholder": "¿Qué te ha parecido esta última lectura? ¿Alguna cita destacable?",
+      "abandon": "Marcar como dejado",
+      "save": "Guardar lectura",
+      "close": "Cerrar"
+    },
     "createList": "Crear nueva lista",
     "listsTitle": "Listas",
     "listsCount": "{{count}} libros",

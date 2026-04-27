@@ -10,6 +10,17 @@
     "emptyShelf": "Add books",
     "viewHistory": "View history",
     "updateProgress": "Update progress",
+    "updateProgressModal": {
+      "title": "Update progress",
+      "currentPage": "Current page",
+      "of": "of",
+      "finished": "Have you finished the book?",
+      "notes": "Notes",
+      "notesPlaceholder": "How did you find this reading session? Any notable quotes?",
+      "abandon": "Mark as abandoned",
+      "save": "Save reading",
+      "close": "Close"
+    },
     "createList": "Create new list",
     "listsTitle": "Lists",
     "listsCount": "{{count}} books",
