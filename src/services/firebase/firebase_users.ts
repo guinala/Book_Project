@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase_init";
 import type { UserFullProfile, UserMinimal } from "@/types/UserProfile";
 
@@ -59,5 +59,5 @@ export async function updateUserProfile(
   uid: string,
   data: Partial<Omit<UserFullProfile, "uid">>
 ): Promise<void> {
-  await updateDoc(doc(db, "Users", uid), data as Record<string, unknown>);
+  await setDoc(doc(db, "Users", uid), data, { merge: true });
 }
