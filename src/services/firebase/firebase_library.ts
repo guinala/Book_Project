@@ -29,7 +29,7 @@ export async function addToShelf(
       bookTitle: book.title,
       bookCoverUrl: book.cover_url,
       bookAuthor: book.authors[0],
-    }).catch(() => {});
+    }).catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "finished") {
     logActivity(uid, {
       type: "book_finished",
@@ -37,7 +37,7 @@ export async function addToShelf(
       bookTitle: book.title,
       bookCoverUrl: book.cover_url,
       bookAuthor: book.authors[0],
-    }).catch(() => {});
+    }).catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   }
 }
 
