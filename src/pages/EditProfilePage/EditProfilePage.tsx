@@ -1,0 +1,240 @@
+// src/pages/EditProfilePage/EditProfilePage.tsx
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { useAuth } from "@/hooks/useAuth";
+import { getUserProfile, updateUserProfile } from "@/services/firebase/firebase_users";
+import { uploadProfilePhoto, uploadBannerImage } from "@/services/firebase/firebase_storage";
+import type { UserFullProfile } from "@/types/UserProfile";
+import "./EditProfilePage.scss";
+
+type EditProfileForm = {
+  name: string;
+  surname: string;
+  username: string;
+  bio: string;
+};
+
+export default function EditProfilePage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<EditProfileForm>();
+
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    getUserProfile(user.uid).then((profile) => {
+      if (profile) {
+        reset({
+          name: profile.name,
+          surname: profile.surname,
+          username: profile.username,
+          bio: profile.bio,
+        });
+        if (profile.profilePhotoUrl) setPhotoPreview(profile.profilePhotoUrl);
+        if (profile.bannerImageUrl) setBannerPreview(profile.bannerImageUrl);
+      }
+      setLoadingProfile(false);
+    });
+  }, [user, reset]);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBannerFile(file);
+    setBannerPreview(URL.createObjectURL(file));
+  };
+
+  const onSubmit = async (data: EditProfileForm) => {
+    if (!user) return;
+    setSaving(true);
+
+    const updates: Partial<Omit<UserFullProfile, "uid">> = {
+      name: data.name,
+      surname: data.surname,
+      username: data.username,
+      bio: data.bio,
+    };
+
+    if (photoFile) {
+      updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
+    }
+    if (bannerFile) {
+      updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
+    }
+
+    await updateUserProfile(user.uid, updates);
+    setSaving(false);
+    navigate("/profile");
+  };
+
+  if (loadingProfile) {
+    return (
+      <div className="edit-profile edit-profile--loading">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+
+  return (
+    <section className="edit-profile">
+      <h1 className="edit-profile__title">Editar perfil</h1>
+
+      <form className="edit-profile__form" onSubmit={handleSubmit(onSubmit)}>
+
+        {/* Banner */}
+        <div className="edit-profile__banner-upload">
+          <div
+            className="edit-profile__banner-preview"
+            style={bannerPreview ? { backgroundImage: `url(${bannerPreview})` } : undefined}
+            onClick={() => bannerInputRef.current?.click()}
+          >
+            {!bannerPreview && (
+              <span className="edit-profile__upload-hint">Subir portada</span>
+            )}
+            <div className="edit-profile__banner-overlay">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+          </div>
+          <input
+            ref={bannerInputRef}
+            type="file"
+            accept="image/*"
+            className="edit-profile__file-input"
+            onChange={handleBannerChange}
+            aria-label="Subir imagen de portada"
+          />
+        </div>
+
+        {/* Avatar */}
+        <div className="edit-profile__photo-upload">
+          <div
+            className="edit-profile__photo-preview"
+            onClick={() => photoInputRef.current?.click()}
+          >
+            {photoPreview ? (
+              <img src={photoPreview} alt="Foto de perfil" className="edit-profile__photo-img" />
+            ) : (
+              <span className="edit-profile__upload-hint">Foto</span>
+            )}
+            <div className="edit-profile__photo-overlay">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+          </div>
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/*"
+            className="edit-profile__file-input"
+            onChange={handlePhotoChange}
+            aria-label="Subir foto de perfil"
+          />
+        </div>
+
+        {/* Fields */}
+        <div className="edit-profile__fields">
+          <div className="edit-profile__row">
+            <div className="edit-profile__field">
+              <label className="edit-profile__label" htmlFor="name">Nombre</label>
+              <input
+                id="name"
+                className="edit-profile__input"
+                type="text"
+                {...register("name", { required: "El nombre es obligatorio" })}
+              />
+              {errors.name && (
+                <p className="edit-profile__error">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div className="edit-profile__field">
+              <label className="edit-profile__label" htmlFor="surname">Apellido</label>
+              <input
+                id="surname"
+                className="edit-profile__input"
+                type="text"
+                {...register("surname")}
+              />
+            </div>
+          </div>
+
+          <div className="edit-profile__field">
+            <label className="edit-profile__label" htmlFor="username">Handle</label>
+            <div className="edit-profile__input-prefix-wrap">
+              <span className="edit-profile__prefix">@</span>
+              <input
+                id="username"
+                className="edit-profile__input edit-profile__input--with-prefix"
+                type="text"
+                {...register("username", {
+                  pattern: {
+                    value: /^[a-z0-9_]{3,20}$/,
+                    message: "Solo letras minúsculas, números y _, entre 3 y 20 caracteres",
+                  },
+                })}
+              />
+            </div>
+            {errors.username && (
+              <p className="edit-profile__error">{errors.username.message}</p>
+            )}
+          </div>
+
+          <div className="edit-profile__field">
+            <label className="edit-profile__label" htmlFor="bio">
+              Bio
+              <span className="edit-profile__label-hint">(máx. 300 caracteres)</span>
+            </label>
+            <textarea
+              id="bio"
+              className="edit-profile__textarea"
+              rows={4}
+              maxLength={300}
+              {...register("bio")}
+            />
+          </div>
+        </div>
+
+        <div className="edit-profile__actions">
+          <button
+            type="button"
+            className="edit-profile__btn edit-profile__btn--cancel"
+            onClick={() => navigate("/profile")}
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="edit-profile__btn edit-profile__btn--save"
+            disabled={saving}
+          >
+            {saving ? "Guardando..." : "Guardar cambios"}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}
