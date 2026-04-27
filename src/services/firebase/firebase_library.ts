@@ -4,7 +4,7 @@ import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { logActivity } from "./firebase_activity";
 
-export type ShelfEntry = { book: Book; status: ShelfStatus };
+export type ShelfEntry = { book: Book; status: ShelfStatus; currentPage?: number };
 
 export function encodeKey(bookKey: string): string {
   return bookKey.split("/").at(-1) ?? bookKey;

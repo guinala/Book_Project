@@ -46,6 +46,7 @@ export type ActivityEvent = {
   rating?: number;
   progress?: number;
   listName?: string;
+  note?: string;
 };
 
 export type ActivityItem = ActivityEvent & {
