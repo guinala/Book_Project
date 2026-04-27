@@ -54,7 +54,7 @@ export function useProfile(userId: string) {
     const isOwn = !!user && user.uid === userId;
 
     setLoading(true);
-    setPublicShelf(EMPTY_SHELF);
+    setPublicShelf({ wantToRead: [], reading: [], finished: [], didNotFinish: [] });
 
     const fetches: Promise<void>[] = [
       getUserProfile(userId).then((p) => { if (!cancelled) setProfile(p); }),
