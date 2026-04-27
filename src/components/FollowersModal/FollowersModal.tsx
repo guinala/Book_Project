@@ -28,11 +28,13 @@ export default function FollowersModal({
   }, [onClose]);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    const fetch = mode === "followers" ? getFollowers : getFollowing;
-    fetch(userId)
-      .then(setUsers)
-      .finally(() => setLoading(false));
+    const fetchFn = mode === "followers" ? getFollowers : getFollowing;
+    fetchFn(userId)
+      .then((result) => { if (!cancelled) setUsers(result); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [userId, mode]);
 
   return (
