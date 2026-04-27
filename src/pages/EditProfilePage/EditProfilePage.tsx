@@ -30,58 +30,85 @@ export default function EditProfilePage() {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
+  const photoPreviewRef = useRef<string | null>(null);
+  const bannerPreviewRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    photoPreviewRef.current = photoPreview;
+  }, [photoPreview]);
+
+  useEffect(() => {
+    bannerPreviewRef.current = bannerPreview;
+  }, [bannerPreview]);
+
+  useEffect(() => {
+    return () => {
+      if (photoPreviewRef.current?.startsWith("blob:")) URL.revokeObjectURL(photoPreviewRef.current);
+      if (bannerPreviewRef.current?.startsWith("blob:")) URL.revokeObjectURL(bannerPreviewRef.current);
+    };
+  }, []);
+
   useEffect(() => {
     if (!user) return;
-    getUserProfile(user.uid).then((profile) => {
-      if (profile) {
-        reset({
-          name: profile.name,
-          surname: profile.surname,
-          username: profile.username,
-          bio: profile.bio,
-        });
-        if (profile.profilePhotoUrl) setPhotoPreview(profile.profilePhotoUrl);
-        if (profile.bannerImageUrl) setBannerPreview(profile.bannerImageUrl);
-      }
-      setLoadingProfile(false);
-    });
+    getUserProfile(user.uid)
+      .then((profile) => {
+        if (profile) {
+          reset({
+            name: profile.name,
+            surname: profile.surname,
+            username: profile.username,
+            bio: profile.bio,
+          });
+          if (profile.profilePhotoUrl) setPhotoPreview(profile.profilePhotoUrl);
+          if (profile.bannerImageUrl) setBannerPreview(profile.bannerImageUrl);
+        }
+      })
+      .finally(() => setLoadingProfile(false));
   }, [user, reset]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setPhotoFile(file);
-    setPhotoPreview(URL.createObjectURL(file));
+    setPhotoPreview((prev) => {
+      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
   };
 
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setBannerFile(file);
-    setBannerPreview(URL.createObjectURL(file));
+    setBannerPreview((prev) => {
+      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
   };
 
   const onSubmit = async (data: EditProfileForm) => {
     if (!user) return;
     setSaving(true);
+    try {
+      const updates: Partial<Omit<UserFullProfile, "uid">> = {
+        name: data.name,
+        surname: data.surname,
+        username: data.username,
+        bio: data.bio,
+      };
 
-    const updates: Partial<Omit<UserFullProfile, "uid">> = {
-      name: data.name,
-      surname: data.surname,
-      username: data.username,
-      bio: data.bio,
-    };
+      if (photoFile) {
+        updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
+      }
+      if (bannerFile) {
+        updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
+      }
 
-    if (photoFile) {
-      updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
+      await updateUserProfile(user.uid, updates);
+      navigate("/profile");
+    } finally {
+      setSaving(false);
     }
-    if (bannerFile) {
-      updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
-    }
-
-    await updateUserProfile(user.uid, updates);
-    setSaving(false);
-    navigate("/profile");
   };
 
   if (loadingProfile) {
