@@ -11,6 +11,7 @@ import ActivitySection from "@/components/ActivitySection/ActivitySection";
 import ListsSection from "@/components/ListsSection/ListsSection";
 import FollowersModal from "@/components/FollowersModal/FollowersModal";
 import type { ReadingList } from "@/components/ListCard/ListCard";
+import type { FavoriteBook } from "@/types/UserProfile";
 import listCover1 from "@/assets/covers/shelf-1.jpg";
 import listCover2 from "@/assets/covers/shelf-2.jpg";
 import listCover3 from "@/assets/covers/shelf-3.jpg";
@@ -46,7 +47,7 @@ export default function ProfilePage() {
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
 
-  const handleFavSave = (_updated: unknown[]) => {};
+  const handleFavSave = (_updated: FavoriteBook[]) => {};
 
   if (loading) {
     return (
