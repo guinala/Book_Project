@@ -61,7 +61,7 @@ export default function FavoriteBooksSection({
             <button
               type="button"
               className="favorite-books__cover-wrap"
-              onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`)}
+              onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } })}
               aria-label={book.title}
             >
               {book.cover_url ? (
