@@ -17,7 +17,12 @@ async function compressImage(
       const canvas = document.createElement("canvas");
       canvas.width = Math.round(img.width * scale);
       canvas.height = Math.round(img.height * scale);
-      canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Failed to get 2D canvas context"));
+        return;
+      }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         (blob) =>
           blob ? resolve(blob) : reject(new Error("Canvas compression failed")),
@@ -26,7 +31,10 @@ async function compressImage(
       );
     };
 
-    img.onerror = reject;
+    img.onerror = (e) => {
+      URL.revokeObjectURL(objectUrl);
+      reject(e);
+    };
     img.src = objectUrl;
   });
 }
