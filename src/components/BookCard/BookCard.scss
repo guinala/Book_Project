@@ -1,12 +1,16 @@
 @use "../../styles/shared" as *;
 
 .bookcard {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
+  &__link {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    text-decoration: none;
+    color: inherit;
 
-  @include from($bp-md) {
-    gap: 20px;
+    @include from($bp-md) {
+      gap: 20px;
+    }
   }
 
   &__cover-wrapper {

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import type { MouseEvent } from "react";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import type { Book } from "@/types/Book";
 import { getCoverUrl } from "@/utils/coverImage";
 import StarRating from "@/components/StarRating/StarRating";
@@ -16,7 +16,6 @@ export default function BookCard({ book }: BookCardProps) {
   const coverRef = useRef<HTMLDivElement>(null);
   const [transformStyle, setTransformStyle] = useState("");
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!coverRef.current) return;
@@ -39,47 +38,50 @@ export default function BookCard({ book }: BookCardProps) {
   const displayRating = book.rating ?? 0;
 
   return (
-    <article className="bookcard" onClick={() => {
-  //console.log('navigating with state:', { book });
-  navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } });
-}} style={{ cursor: "pointer" }}>
-      <div
-        ref={coverRef}
-        className="bookcard__cover-wrapper"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ transform: transformStyle }}
+    <article className="bookcard">
+      <Link
+        to={`/book/${encodeURIComponent(book.key)}`}
+        state={{ book }}
+        className="bookcard__link"
       >
-        {book.cover_url || book.cover_id ? (
-          <img
-            className="bookcard__cover"
-            src={book.cover_url ?? getCoverUrl(book.cover_id!)}
-            alt={t("book.coverAlt", { title: book.title })}
-            loading="lazy"
-          />
-        ) : (
-          <div className="bookcard__cover-placeholder">📖</div>
-        )}
-      </div>
-
-      <div className="bookcard__info">
-        {book.genre && (
-          <span className="bookcard__genre">
-            {book.genre ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre }) : ""}
-          </span>
-        )}
-
-        <h3 className="bookcard__title">{book.title}</h3>
-
-        <p className="bookcard__author">
-          {book.authors.length > 0 ? book.authors.join(", ") : "Autor desconocido"}
-        </p>
-
-        <div className="bookcard__rating">
-          <StarRating rating={displayRating} />
-          <span className="bookcard__rating-value">({displayRating.toFixed(1)})</span>
+        <div
+          ref={coverRef}
+          className="bookcard__cover-wrapper"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          style={{ transform: transformStyle }}
+        >
+          {book.cover_url || book.cover_id ? (
+            <img
+              className="bookcard__cover"
+              src={book.cover_url ?? getCoverUrl(book.cover_id!)}
+              alt={t("book.coverAlt", { title: book.title })}
+              loading="lazy"
+            />
+          ) : (
+            <div className="bookcard__cover-placeholder">📖</div>
+          )}
         </div>
-      </div>
+
+        <div className="bookcard__info">
+          {book.genre && (
+            <span className="bookcard__genre">
+              {book.genre ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre }) : ""}
+            </span>
+          )}
+
+          <h3 className="bookcard__title">{book.title}</h3>
+
+          <p className="bookcard__author">
+            {book.authors.length > 0 ? book.authors.join(", ") : "Autor desconocido"}
+          </p>
+
+          <div className="bookcard__rating">
+            <StarRating rating={displayRating} />
+            <span className="bookcard__rating-value">({displayRating.toFixed(1)})</span>
+          </div>
+        </div>
+      </Link>
     </article>
   );
 }

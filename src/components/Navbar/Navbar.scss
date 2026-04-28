@@ -13,8 +13,8 @@
 
   &__inner {
     width: 100%;
-    background-color: var(--color-accent);
-    border: 1px solid var(--color-accent);
+    background-color: var(--color-brand-ember);
+    border: 1px solid var(--color-brand-ember);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-nav);
     display: grid;
@@ -64,7 +64,7 @@
     text-decoration: none;
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
-    color: rgba(255, 255, 255, 0.85);
+    color: #fff;
     white-space: nowrap;
     transition: color var(--transition-fast);
 

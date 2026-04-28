@@ -56,7 +56,6 @@ export default function Navbar({ hidden = false }: NavbarProps) {
     <header className={`navbar${hidden ? " navbar--hidden" : ""}`}>
       <div className="navbar__inner">
         <Link className="navbar__brand" to="/">
-          <span className="navbar__brand-icon"><BookIcon /></span>
           <span className="navbar__brand-name">Trama</span>
         </Link>
 
