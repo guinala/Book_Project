@@ -2,14 +2,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
-import { getUserProfile } from "@/services/firebase/firebase_users";
+import { getUserProfile } from "@/services/firebase/firebaseUsers";
 import {
   checkIsFollowing,
   followUser,
   unfollowUser,
-} from "@/services/firebase/firebase_follows";
-import { getActivity } from "@/services/firebase/firebase_activity";
-import { getShelf } from "@/services/firebase/firebase_library";
+} from "@/services/firebase/firebaseFollows";
+import { getActivity } from "@/services/firebase/firebaseActivity";
+import { getShelf } from "@/services/firebase/firebaseLibrary";
 import type { UserFullProfile, ActivityItem } from "@/types/UserProfile";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";

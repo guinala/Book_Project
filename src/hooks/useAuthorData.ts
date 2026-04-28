@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { getWikipediaSummary, fetchAuthorBooks } from "@/services/api/openLibraryApi";
 import { getCoverUrl } from "@/utils/coverImage";
 import type { AuthorInfo } from "@/types/BookDetail";
-import { getAuthorFromDB, saveAuthorToDB } from "@/services/firebase/firebase_authors";
-import { getAuthorBooksFromDB, saveBooksToDB } from "@/services/firebase/firebase_books";
+import { getAuthorFromDB, saveAuthorToDB } from "@/services/firebase/firebaseAuthors";
+import { getAuthorBooksFromDB, saveBooksToDB } from "@/services/firebase/firebaseBooks";
 
 async function fetchBioFromWikipedia(authorName: string): Promise<{ bio: string; photoUrl: string }> {
   const wikiData = await getWikipediaSummary(authorName);

@@ -1,0 +1,37 @@
+{
+  "profile": {
+    "loading": "Loading profile...",
+    "notFound": "Profile not found",
+
+    "edit": {
+      "title": "Edit profile",
+      "loading": "Loading...",
+      "saveBtn": "Save changes",
+      "saving": "Saving...",
+      "cancelBtn": "Cancel",
+      "saveError": "Unexpected error, please try again later.",
+      "uploadTimeoutError": "The upload took too long. Please verify that Firebase Storage is enabled in your Firebase Console project.",
+
+      "banner": {
+        "uploadHint": "Upload cover",
+        "ariaLabel": "Upload banner image"
+      },
+
+      "photo": {
+        "uploadHint": "Photo",
+        "alt": "Profile photo",
+        "ariaLabel": "Upload profile photo"
+      },
+
+      "fields": {
+        "name": "Name",
+        "nameRequired": "Name is required",
+        "surname": "Surname",
+        "username": "Handle",
+        "usernamePattern": "Only lowercase letters, numbers and _, between 3 and 20 characters",
+        "bio": "Bio",
+        "bioHint": "(max. 300 characters)"
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
-import { auth } from "@/services/firebase/firebase_init";
-import { addToShelf, encodeKey, getShelf, removeFromShelf, updateReadingProgress, type ShelfEntry } from "@/services/firebase/firebase_library";
+import { auth } from "@/services/firebase/firebaseInit";
+import { addToShelf, encodeKey, getShelf, removeFromShelf, updateReadingProgress, type ShelfEntry } from "@/services/firebase/firebaseLibrary";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { onAuthStateChanged } from "firebase/auth";

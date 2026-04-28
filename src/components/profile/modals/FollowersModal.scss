@@ -1,0 +1,73 @@
+// src/components/FollowersModal/FollowersModal.scss
+@use '../../../styles/lib' as *;
+
+.followers-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(44, 36, 32, 0.45);
+    backdrop-filter: blur(4px);
+  }
+
+  &__box {
+    position: relative;
+    background: var(--color-bg-card-solid);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-modal);
+    width: 100%;
+    max-width: 400px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  &__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    padding: var(--space-1);
+    @include transition(color);
+
+    &:hover { color: var(--color-text-primary); }
+  }
+
+  &__list {
+    overflow-y: auto;
+    padding: var(--space-3) var(--space-2);
+    flex: 1;
+  }
+
+  &__loading,
+  &__empty {
+    text-align: center;
+    font-size: var(--text-md);
+    color: var(--color-text-tertiary);
+    padding: var(--space-8) 0;
+    margin: 0;
+  }
+}

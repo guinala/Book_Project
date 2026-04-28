@@ -1,13 +1,13 @@
 import type { BookDetail } from "@/types/BookDetail";
 import type { Book } from "@/types/Book";
-import { FALLBACK_REVIEWS } from "@/data/bookDetailData";
+import { FALLBACK_REVIEWS } from "@/utils/bookDetailData";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 // import { extractSynopsis, getWork } from "@/services/api/openLibraryApi";  
 import { getCoverUrl } from "@/utils/coverImage";
 import { fetchGoogleSynopsis } from "@/services/api/googleBooksApi";
-import { getSynopsisFromDB, saveSynopsisToDB } from "@/services/firebase/firebase_books";
+import { getSynopsisFromDB, saveSynopsisToDB } from "@/services/firebase/firebaseBooks";
 
 export function useBookDetail(id: string): {
   book: BookDetail | null;

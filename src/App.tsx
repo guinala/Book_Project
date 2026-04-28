@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router";
-import Navbar from "@/components/Navbar/Navbar";
-import NavbarMini from "@/components/NavbarMini/NavbarMini";
+import Navbar from "@/components/layout/Navbar";
+import NavbarMini from "@/components/layout/NavbarMini";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import "./App.scss"

@@ -3,7 +3,7 @@ import axios from "axios";
 import type { Book } from "@/types/Book";
 import { fetchBooksByGenre } from "@/services/api/openLibraryApi";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
-import { saveBooksToDB } from "@/services/firebase/firebase_books";
+import { saveBooksToDB } from "@/services/firebase/firebaseBooks";
 
 const PAGE_SIZE = 6;
 
