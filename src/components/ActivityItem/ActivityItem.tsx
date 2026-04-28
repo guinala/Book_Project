@@ -1,4 +1,5 @@
 // src/components/ActivityItem/ActivityItem.tsx
+import { useNavigate } from "react-router";
 import type { ActivityItem as ActivityItemType } from "@/types/UserProfile";
 import StarRating from "@/components/StarRating/StarRating";
 import "./ActivityItem.scss";
@@ -28,16 +29,28 @@ type ActivityItemProps = {
 };
 
 export default function ActivityItem({ item }: ActivityItemProps) {
+  const navigate = useNavigate();
+
+  const handleCoverClick = item.bookId
+    ? () => navigate(`/book/${encodeURIComponent(item.bookId!)}`)
+    : undefined;
+
   return (
     <div className="activity-item">
-      {item.bookCoverUrl ? (
-        <img
-          className="activity-item__cover"
-          src={item.bookCoverUrl}
-          alt={item.bookTitle ?? ""}
-        />
+      {handleCoverClick ? (
+        <button className="activity-item__cover-btn" onClick={handleCoverClick} aria-label={item.bookTitle ?? ""}>
+          {item.bookCoverUrl ? (
+            <img className="activity-item__cover" src={item.bookCoverUrl} alt="" />
+          ) : (
+            <div className="activity-item__cover activity-item__cover--placeholder" />
+          )}
+        </button>
       ) : (
-        <div className="activity-item__cover activity-item__cover--placeholder" />
+        item.bookCoverUrl ? (
+          <img className="activity-item__cover" src={item.bookCoverUrl} alt={item.bookTitle ?? ""} />
+        ) : (
+          <div className="activity-item__cover activity-item__cover--placeholder" />
+        )
       )}
 
       <div className="activity-item__info">

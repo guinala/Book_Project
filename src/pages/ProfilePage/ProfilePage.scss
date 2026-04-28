@@ -31,7 +31,7 @@
 
     @include from($bp-lg) {
       grid-template-columns: 3fr 2fr;
-      align-items: start;
+      align-items: stretch;
     }
   }
 }

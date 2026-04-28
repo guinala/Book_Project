@@ -6,6 +6,26 @@
   align-items: flex-start;
   gap: var(--space-4);
 
+  &__cover-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: block;
+    border-radius: var(--radius-sm);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-brand-primary);
+      outline-offset: 3px;
+    }
+
+    &:hover .activity-item__cover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-book);
+    }
+  }
+
   &__cover {
     width: 80px;
     height: 116px;
@@ -13,6 +33,10 @@
     object-fit: cover;
     box-shadow: var(--shadow-cover);
     flex-shrink: 0;
+    display: block;
+    transition:
+      transform var(--transition-base),
+      box-shadow var(--transition-base);
 
     &--placeholder {
       background: var(--color-bg-section);

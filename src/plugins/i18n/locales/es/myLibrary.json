@@ -2,7 +2,7 @@
   "myLibrary": {
     "heading": "Estoy leyendo...",
     "noCurrentReading": "No estás leyendo ningún libro",
-    "streakDays": "{{count}} días seguidos",
+    "nextBook": "Ver siguiente libro leyendo",
     "readingProgress": "Progreso",
     "pages": "{{current}}/{{total}} págs.",
     "shelfTitle": "Estantería",

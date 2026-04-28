@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+  height: 100%;
 
   &__header {
     display: flex;
@@ -19,20 +20,21 @@
     margin: 0;
   }
 
-  &__more {
-    display: flex;
+  &__see-all {
+    display: inline-flex;
     align-items: center;
     gap: var(--space-1);
     background: none;
     border: none;
     cursor: pointer;
-    font-size: var(--text-md);
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-primary);
     padding: 0;
-    @include transition(opacity);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    @include transition(color);
 
-    &:hover { opacity: 0.7; }
+    &:hover { color: var(--color-text-primary); }
   }
 
   &__card {
@@ -43,7 +45,8 @@
     padding: var(--space-6);
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    gap: var(--space-5);
+    flex: 1;
   }
 
   &__empty {
@@ -56,5 +59,6 @@
   &__divider {
     height: 1px;
     background: var(--color-border-subtle);
+    margin-top: var(--space-5);
   }
 }
