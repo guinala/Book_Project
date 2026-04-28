@@ -80,9 +80,12 @@ function CurrentReadingCard() {
 
           <div className="reading-card__progress-box">
             <div className="reading-card__progress-labels">
-              <span className="reading-card__progress-label">
-                {t("myLibrary.readingProgress")}
-              </span>
+              <div className="reading-card__progress-label-group">
+                <span className="reading-card__progress-label">
+                  {t("myLibrary.readingProgress")}
+                </span>
+                <span className="reading-card__progress-percent">{progressPercent}%</span>
+              </div>
               <span className="reading-card__progress-pages">
                 {t("myLibrary.pages", { current: currentPage, total: totalPages })}
               </span>
@@ -91,9 +94,7 @@ function CurrentReadingCard() {
               <div
                 className="reading-card__progress-fill"
                 style={{ width: `${progressPercent}%` }}
-              >
-                <span className="reading-card__progress-percent">{progressPercent}%</span>
-              </div>
+              />
             </div>
           </div>
 

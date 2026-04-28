@@ -19,7 +19,9 @@
       "notesPlaceholder": "How did you find this reading session? Any notable quotes?",
       "abandon": "Mark as abandoned",
       "save": "Save reading",
-      "close": "Close"
+      "close": "Close",
+      "noteTooLong": "You've exceeded the maximum character limit",
+      "characters": "characters"
     },
     "createList": "Create new list",
     "listsTitle": "Lists",

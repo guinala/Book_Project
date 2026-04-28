@@ -15,12 +15,23 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
   const { t } = useTranslation();
   const { updateProgress, addBook } = useShelf();
   const panelRef = useRef<HTMLDivElement>(null);
+  const prevPageRef = useRef(entry.currentPage ?? 0);
   const totalPages = entry.book.pages ?? 0;
 
-  const [currentPage, setCurrentPage] = useState(entry.currentPage ?? 0);
+  const [pageInput, setPageInput] = useState(
+    entry.currentPage ? String(entry.currentPage) : ""
+  );
   const [note, setNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [noteSaveBlocked, setNoteSaveBlocked] = useState(false);
+  const [noteShaking, setNoteShaking] = useState(false);
 
+  const NOTE_MAX = 280;
+  const noteOverLimit = note.length > NOTE_MAX;
+
+  const currentPage = pageInput === ""
+    ? 0
+    : Math.max(0, Math.min(parseInt(pageInput, 10) || 0, totalPages));
   const finished = totalPages > 0 && currentPage === totalPages;
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
 
@@ -42,15 +53,28 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
   };
 
   const handlePageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, Math.min(Number(e.target.value), totalPages));
-    setCurrentPage(val);
+    const digits = e.target.value.replace(/\D/g, "");
+    const stripped = digits.replace(/^0+/, "");
+    if (stripped === "") { setPageInput(""); return; }
+    const clamped = totalPages > 0 ? Math.min(parseInt(stripped, 10), totalPages) : parseInt(stripped, 10);
+    setPageInput(String(clamped));
   };
 
   const handleToggleFinished = () => {
-    setCurrentPage(finished ? currentPage : totalPages);
+    if (finished) {
+      setPageInput(prevPageRef.current > 0 ? String(prevPageRef.current) : "");
+    } else {
+      prevPageRef.current = currentPage;
+      setPageInput(String(totalPages));
+    }
   };
 
   const handleSave = async () => {
+    if (noteOverLimit) {
+      setNoteSaveBlocked(true);
+      setNoteShaking(true);
+      return;
+    }
     setIsSubmitting(true);
     try {
       await updateProgress(entry.book.key, currentPage, note.trim() || undefined);
@@ -92,13 +116,15 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
 
         <div className="progress-modal__body">
           <div className="progress-modal__left">
-            {coverSrc ? (
-              <img className="progress-modal__cover" src={coverSrc} alt="" />
-            ) : (
-              <div className="progress-modal__cover progress-modal__cover--placeholder" />
-            )}
-            <p className="progress-modal__book-title">{entry.book.title}</p>
-            <p className="progress-modal__book-author">{entry.book.authors.join(", ")}</p>
+            <div className="progress-modal__book-info">
+              {coverSrc ? (
+                <img className="progress-modal__cover" src={coverSrc} alt="" />
+              ) : (
+                <div className="progress-modal__cover progress-modal__cover--placeholder" />
+              )}
+              <p className="progress-modal__book-title">{entry.book.title}</p>
+              <p className="progress-modal__book-author">{entry.book.authors.join(", ")}</p>
+            </div>
             <button className="progress-modal__abandon-btn" onClick={handleAbandon}>
               {t("myLibrary.updateProgressModal.abandon")}
             </button>
@@ -107,64 +133,84 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
           <div className="progress-modal__divider" aria-hidden="true" />
 
           <div className="progress-modal__right">
-            <div className="progress-modal__field">
-              <label className="progress-modal__label" htmlFor="progress-page-input">
-                {t("myLibrary.updateProgressModal.currentPage")}
-              </label>
-              <div className="progress-modal__page-row">
-                <input
-                  id="progress-page-input"
-                  className="progress-modal__page-input"
-                  type="number"
-                  min={0}
-                  max={totalPages || undefined}
-                  value={currentPage}
-                  onChange={handlePageChange}
+            <div className="progress-modal__section">
+              <div className="progress-modal__field">
+                <label className="progress-modal__label" htmlFor="progress-page-input">
+                  {t("myLibrary.updateProgressModal.currentPage")}
+                </label>
+                <div className="progress-modal__page-row">
+                  <input
+                    id="progress-page-input"
+                    className="progress-modal__page-input"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={pageInput}
+                    onChange={handlePageChange}
+                    onFocus={(e) => e.target.select()}
+                  />
+                  {totalPages > 0 && (
+                    <span className="progress-modal__page-total">
+                      {t("myLibrary.updateProgressModal.of")} {totalPages}
+                    </span>
+                  )}
+                  <span className="progress-modal__progress-pct">{progressPercent}%</span>
+                </div>
+                <div className="progress-modal__progress-track">
+                  <div
+                    className="progress-modal__progress-fill"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="progress-modal__field progress-modal__field--toggle">
+                <span className="progress-modal__label">
+                  {t("myLibrary.updateProgressModal.finished")}
+                </span>
+                <button
+                  className={`progress-modal__toggle${finished ? " progress-modal__toggle--on" : ""}`}
+                  role="switch"
+                  aria-checked={finished}
+                  onClick={handleToggleFinished}
+                >
+                  <span className="progress-modal__toggle-knob" />
+                </button>
+              </div>
+            </div>
+
+            <div className="progress-modal__section">
+              <div className="progress-modal__field">
+                <label className="progress-modal__label" htmlFor="progress-note-input">
+                  {t("myLibrary.updateProgressModal.notes")}
+                </label>
+                <textarea
+                  id="progress-note-input"
+                  className={[
+                    "progress-modal__textarea",
+                    noteSaveBlocked && noteOverLimit ? "progress-modal__textarea--error" : "",
+                    noteShaking ? "progress-modal__textarea--shaking" : "",
+                  ].filter(Boolean).join(" ")}
+                  value={note}
+                  onChange={(e) => {
+                    setNote(e.target.value);
+                    if (noteSaveBlocked && e.target.value.length <= NOTE_MAX) setNoteSaveBlocked(false);
+                  }}
+                  onAnimationEnd={() => setNoteShaking(false)}
+                  placeholder={t("myLibrary.updateProgressModal.notesPlaceholder")}
+                  rows={3}
                 />
-                {totalPages > 0 && (
-                  <span className="progress-modal__page-total">
-                    {t("myLibrary.updateProgressModal.of")} {totalPages}
+                <div className="progress-modal__note-footer">
+                  {noteSaveBlocked && noteOverLimit && (
+                    <span className="progress-modal__note-error">
+                      {t("myLibrary.updateProgressModal.noteTooLong")}
+                    </span>
+                  )}
+                  <span className={`progress-modal__note-count${noteOverLimit ? " progress-modal__note-count--over" : ""}`}>
+                    {note.length} / {NOTE_MAX} {t("myLibrary.updateProgressModal.characters")}
                   </span>
-                )}
+                </div>
               </div>
-            </div>
-
-            <div className="progress-modal__field">
-              <div className="progress-modal__progress-track">
-                <div
-                  className="progress-modal__progress-fill"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <span className="progress-modal__progress-pct">{progressPercent}%</span>
-            </div>
-
-            <div className="progress-modal__field progress-modal__field--toggle">
-              <span className="progress-modal__label">
-                {t("myLibrary.updateProgressModal.finished")}
-              </span>
-              <button
-                className={`progress-modal__toggle${finished ? " progress-modal__toggle--on" : ""}`}
-                role="switch"
-                aria-checked={finished}
-                onClick={handleToggleFinished}
-              >
-                <span className="progress-modal__toggle-knob" />
-              </button>
-            </div>
-
-            <div className="progress-modal__field">
-              <label className="progress-modal__label" htmlFor="progress-note-input">
-                {t("myLibrary.updateProgressModal.notes")}
-              </label>
-              <textarea
-                id="progress-note-input"
-                className="progress-modal__textarea"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder={t("myLibrary.updateProgressModal.notesPlaceholder")}
-                rows={3}
-              />
             </div>
           </div>
         </div>

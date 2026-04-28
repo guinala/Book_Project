@@ -19,7 +19,9 @@
       "notesPlaceholder": "¿Qué te ha parecido esta última lectura? ¿Alguna cita destacable?",
       "abandon": "Marcar como dejado",
       "save": "Guardar lectura",
-      "close": "Cerrar"
+      "close": "Cerrar",
+      "noteTooLong": "Has superado el máximo de caracteres",
+      "characters": "caracteres"
     },
     "createList": "Crear nueva lista",
     "listsTitle": "Listas",
