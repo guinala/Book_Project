@@ -45,17 +45,21 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
     
     const stored = loadFromStorage();
     if (stored) {
+      console.log("[Explore] Sirviendo desde localStorage:", stored.length, "libros");
       setBooks(stored);
       setLoading(false);
       return;
     }
 
+    console.log("[Explore] localStorage vacío o expirado. Consultando Firestore con lang:", lang, "limit:", limit);
+
     try {
       const dbBooks = await getExploreBooksFromDB(lang, limit);
+      console.log("[Explore] Firestore devolvió:", dbBooks ? dbBooks.length + " libros" : "null (insuficientes)");
       if (dbBooks) {
         setBooks(dbBooks);
         setLoading(false);
-        saveToStorage(dbBooks); 
+        saveToStorage(dbBooks);
         const nullGenreBooks = dbBooks.filter(b => !b.genre);
         if (nullGenreBooks.length > 0) {
           nullGenreBooks.forEach(async (b) => {
@@ -82,11 +86,20 @@ export function useFantasyBooks_GoogleOpen(): UseFantasyBooksHybridResult {
         setError(null);
 
         const mappedBooks = await fetchFantasyBooks(limit, lang, abortController.current!.signal);
-        setBooks(mappedBooks);
+        const deduplicated = mappedBooks
+          .sort((a, b) => {
+            if (a.cover_id && !b.cover_id) return -1;
+            if (!a.cover_id && b.cover_id) return 1;
+            return (b.ratingCount ?? 0) - (a.ratingCount ?? 0);
+          })
+          .filter(
+            (book, i, self) => i === self.findIndex(b => b.title.toLowerCase().trim() === book.title.toLowerCase().trim())
+          );
+        setBooks(deduplicated);
         setLoading(false);
 
-        saveToStorage(mappedBooks);
-        saveBooksToDB(mappedBooks, lang);
+        saveToStorage(deduplicated);
+        saveBooksToDB(deduplicated, lang);
         // fetchCovers(mappedBooks); 
       } catch (err) {
         if (axios.isCancel(err)) return;

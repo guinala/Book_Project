@@ -45,26 +45,26 @@ export async function getExploreBooksFromDB(
 export async function saveBooksToDB(books: Book[], lang: string): Promise<void> {
     //Agrupa las peticiones en una sola peticion, por lo que es mas eficiente
     const batch = writeBatch(db);
-
-  for (const book of books) {
-    const ref = doc(db, BOOKS_COLLECTION, encodeKey(book.key));
-    batch.set(ref, {
-      key: book.key,
-      title: book.title,
-      authors: book.authors,
-      first_publish_year: book.first_publish_year,
-      cover_id: book.cover_id,
-      cover_url: book.cover_url ?? null,
-      edition_count: book.edition_count,
-      genre: book.genre ?? null,
-      rating: book.rating ?? null,
-      ratingCount: book.ratingCount ?? null,
-      isbn: book.isbn ?? null,
-      pages: book.pages ?? null,
-      authorKeys: book.authorKeys ?? [],
-      langs: arrayUnion(lang),
-    }, { merge: true });
-  }
+    
+    for (const book of books) {
+      const ref = doc(db, BOOKS_COLLECTION, encodeKey(book.key));
+      batch.set(ref, {
+        key: book.key,
+        title: book.title,
+        authors: book.authors,
+        first_publish_year: book.first_publish_year,
+        cover_id: book.cover_id,
+        cover_url: book.cover_url ?? null,
+        edition_count: book.edition_count,
+        genre: book.genre ?? null,
+        rating: book.rating ?? null,
+        ratingCount: book.ratingCount ?? null,
+        isbn: book.isbn ?? null,
+        pages: book.pages ?? null,
+        authorKeys: book.authorKeys ?? [],
+        langs: arrayUnion(lang),
+      }, { merge: true });
+    }
 
   await batch.commit();
 }
