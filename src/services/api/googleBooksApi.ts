@@ -3,6 +3,7 @@ import type { Book } from "@/types/Book";
 import type { GoogleBooksImageLinks, GoogleBooksResponse } from "@/types/GoogleBooks";
 import { googleBooksClient } from "@/services/api/apiConnections";
 import axios from "axios";
+import { logger } from "@/utils/logger";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
 
@@ -185,7 +186,7 @@ export async function fetchGoogleSynopsis(
         signal,
       });
       const synopsis = extractDescription(data);
-      console.log('[Synopsis] Intento 1 (ISBN):', synopsis ? `OK (${synopsis.length} chars)` : 'vacío');
+      logger.log('[Synopsis] Intento 1 (ISBN):', synopsis ? `OK (${synopsis.length} chars)` : 'vacío');
       if (synopsis.trim().length > 50) return synopsis;
     }
 
@@ -201,7 +202,7 @@ export async function fetchGoogleSynopsis(
       signal,
     });
     const synopsis2 = extractDescription(data2);
-    console.log('[Synopsis] Intento 2 (título+autor ES):', synopsis2 ? `OK (${synopsis2.length} chars)` : 'vacío');
+    logger.log('[Synopsis] Intento 2 (título+autor ES):', synopsis2 ? `OK (${synopsis2.length} chars)` : 'vacío');
     if (synopsis2.trim().length > 50) return synopsis2;
 
     // Intento 3: título+autor sin restricción de idioma
@@ -215,7 +216,7 @@ export async function fetchGoogleSynopsis(
       signal,
     });
     const synopsis3 = extractDescription(data3);
-    console.log('[Synopsis] Intento 3 (título+autor sin idioma):', synopsis3 ? `OK (${synopsis3.length} chars)` : 'vacío');
+    logger.log('[Synopsis] Intento 3 (título+autor sin idioma):', synopsis3 ? `OK (${synopsis3.length} chars)` : 'vacío');
     return synopsis3;
 
   } catch (err) {

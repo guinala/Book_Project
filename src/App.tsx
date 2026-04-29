@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import "./App.scss"
 import { ShelfProvider } from "./context/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -27,16 +28,18 @@ export default function App() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <ShelfProvider>
-          <Navbar hidden={scrolled} />
-          <NavbarMini visible={scrolled} />
-          <main>
-            <Outlet />
-          </main>
-        </ShelfProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <ShelfProvider>
+            <Navbar hidden={scrolled} />
+            <NavbarMini visible={scrolled} />
+            <main>
+              <Outlet />
+            </main>
+          </ShelfProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

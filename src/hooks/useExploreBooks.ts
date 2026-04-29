@@ -6,6 +6,7 @@ import { fetchFantasyBooks, getWork } from "@/services/api/openLibraryApi";
 import { getErrorMessage } from "@/utils/apiErrors";
 import { getExploreBooksFromDB, saveBooksToDB, saveGenreToDB } from "@/services/firebase/firebaseBooks";
 import { detectGenre } from "@/utils/genreUtils";
+import { logger } from "@/utils/logger";
 
 const LOCAL_STORAGE_KEY = 'trama_cache_v3';
 const LOCAL_STORAGE_TTL = 24 * 60 * 60 * 1000; // 24 horas (1 día)
@@ -45,17 +46,17 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
     
     const stored = loadFromStorage();
     if (stored) {
-      console.log("[Explore] Sirviendo desde localStorage:", stored.length, "libros");
+      logger.log("[Explore] Sirviendo desde localStorage:", stored.length, "libros");
       setBooks(stored);
       setLoading(false);
       return;
     }
 
-    console.log("[Explore] localStorage vacío o expirado. Consultando Firestore con lang:", lang, "limit:", limit);
+    logger.log("[Explore] localStorage vacío o expirado. Consultando Firestore con lang:", lang, "limit:", limit);
 
     try {
       const dbBooks = await getExploreBooksFromDB(lang, limit);
-      console.log("[Explore] Firestore devolvió:", dbBooks ? dbBooks.length + " libros" : "null (insuficientes)");
+      logger.log("[Explore] Firestore devolvió:", dbBooks ? dbBooks.length + " libros" : "null (insuficientes)");
       if (dbBooks) {
         setBooks(dbBooks);
         setLoading(false);
@@ -67,14 +68,14 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
               const work = await getWork(b.key);
               const genre = detectGenre(work.subjects);
               if (genre) saveGenreToDB(b.key, genre);
-            } catch { console.log("No se ha podido obtener el genero (otra vez)") }
+            } catch { logger.log("No se ha podido obtener el genero (otra vez)") }
           });
         }
 
         return;
       }
     } catch {
-      console.log("Ha habido un error o no se han encontrado libros")
+      logger.log("Ha habido un error o no se han encontrado libros")
     }
 
     abortController.current?.abort();

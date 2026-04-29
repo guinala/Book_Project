@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { signInWithGoogle } from "@/services/firebase/firebaseAuth";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import { createUserProfile } from "@/services/firebase/firebaseUsers";
+import googleLogo from "@/assets/google-logo.svg"
 
 type SignInGoogleButtonProps = {
   disabled?: boolean;
@@ -37,7 +38,7 @@ export default function SignInGoogleButton({ disabled, onError }: SignInGoogleBu
       disabled={disabled || isLoading}
     >
       <img
-        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+        src={googleLogo}
         alt="Google"
       />
       {t("auth.googleBtn")}

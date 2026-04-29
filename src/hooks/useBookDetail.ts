@@ -8,6 +8,7 @@ import { useLocation } from "react-router";
 import { getCoverUrl } from "@/utils/coverImage";
 import { fetchGoogleSynopsis } from "@/services/api/googleBooksApi";
 import { getSynopsisFromDB, saveSynopsisToDB } from "@/services/firebase/firebaseBooks";
+import { logger } from "@/utils/logger";
 
 export function useBookDetail(id: string): {
   book: BookDetail | null;
@@ -17,8 +18,8 @@ export function useBookDetail(id: string): {
   const { t } = useTranslation();
   const location = useLocation();
   const bookFromState: Book | undefined = location.state?.book;
-  console.log('location.state:', location.state);
-  console.log('bookFromState:', bookFromState);
+  logger.log('location.state:', location.state);
+  logger.log('bookFromState:', bookFromState);
 
 
   const decodedId = decodeURIComponent(id);
@@ -40,9 +41,6 @@ export function useBookDetail(id: string): {
   //     bookFromState?.isbn,
   //     bookFromState?.authors?.[0],
   //   ).then(synopsis => {
-  //       console.log('isbn enviado:', bookFromState?.isbn);
-  //       console.log('título enviado:', bookFromState?.title);
-  //       console.log('synopsis recibida:', synopsis);
   //       if (cancelled) return;
   //       const fallback = getBookDetailById(decodedId);
   //       setBook({

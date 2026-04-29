@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import "./StarRating.scss";
 
 type StarRatingProps = {
@@ -6,8 +7,10 @@ type StarRatingProps = {
 };
 
 export default function StarRating({ rating, size = 16 }: StarRatingProps) {
+  const { t } = useTranslation();
+  
   return (
-    <div className="star-rating" aria-label={`Valoración: ${rating} de 5`}>
+    <div className="star-rating" aria-label={t("book.starRatingLabel", { rating })}>
       {[1, 2, 3, 4, 5].map((i) => {
         const filled = rating >= i;
         const half = !filled && rating >= i - 0.5;

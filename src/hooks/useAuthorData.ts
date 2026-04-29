@@ -70,7 +70,6 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
             photoUrl = dbAuthorData.photoUrl;
           } else {
             ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
-            console.log("Insertando autor");
             saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl });
           }
         } catch {
