@@ -2,11 +2,15 @@ import { useState, useEffect } from "react";
 import { getWikipediaSummary, fetchAuthorBooks } from "@/services/api/openLibraryApi";
 import { getCoverUrl } from "@/utils/coverImage";
 import type { AuthorInfo } from "@/types/BookDetail";
-import { getAuthorFromDB, saveAuthorToDB } from "@/services/firebase/firebaseAuthors";
+import { getAuthorFromDB, resolveBio, saveAuthorToDB } from "@/services/firebase/firebaseAuthors";
 import { getAuthorBooksFromDB, saveBooksToDB } from "@/services/firebase/firebaseBooks";
+import { useTranslation } from "react-i18next";
 
-async function fetchBioFromWikipedia(authorName: string): Promise<{ bio: string; photoUrl: string }> {
-  const wikiData = await getWikipediaSummary(authorName);
+async function fetchBioFromWikipedia(
+  authorName: string,
+  lang: string
+): Promise<{ bio: string; photoUrl: string }> {
+  const wikiData = await getWikipediaSummary(authorName, lang);
   return {
     bio: wikiData?.extract ?? '',
     photoUrl: wikiData?.thumbnail?.source ?? '',
@@ -17,6 +21,9 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
   authorInfo: AuthorInfo | null;
   loading: boolean;
 } {
+  const { i18n } = useTranslation();
+  const lang = i18n.language.split('-')[0];
+
   const [authorInfo, setAuthorInfo] = useState<AuthorInfo | null>(null);
   const [loading, setLoading] = useState(!!authorName);
 
@@ -66,17 +73,17 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
         try {
           const dbAuthorData = await getAuthorFromDB(authorKey);
           if (dbAuthorData) {
-            bio = dbAuthorData.bio;
+            bio = resolveBio(dbAuthorData.bio, lang);
             photoUrl = dbAuthorData.photoUrl;
           } else {
-            ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
-            saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl });
+            ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName, lang));
+            saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl }, lang);
           }
         } catch {
-          ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
+          ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName, lang));
         }
       } else {
-        ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName));
+        ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName, lang));
       }
 
       let books: AuthorInfo['books'] = [];
@@ -101,8 +108,8 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
 
       if (books.length < 2) {
         try {
-          const apiBooks = await fetchAuthorBooks(authorName, 'es', 10);
-          saveBooksToDB(apiBooks, 'es'); 
+          const apiBooks = await fetchAuthorBooks(authorName, lang, 10);
+          saveBooksToDB(apiBooks, lang); 
           books = apiBooks
             .filter(b => b.cover_id !== null &&
               b.title.toLowerCase() !== currentBookTitle.toLowerCase())
@@ -128,7 +135,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
-  }, [authorName, currentBookTitle, authorKey]);
+  }, [authorName, currentBookTitle, authorKey, lang]);
 
   return { authorInfo, loading };
 }

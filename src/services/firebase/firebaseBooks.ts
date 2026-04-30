@@ -4,6 +4,9 @@ import { db } from "./firebaseInit";
 
 const BOOKS_COLLECTION = "Books";
 
+// String para las sinopsis antiguas que solo estaban en español
+type SynopsisField = string | Record<string, string>;
+
 function encodeKey(workKey: string): string {
   // Ejemplo: "/works/OL123W" => "OL123W"
   return workKey.split("/").at(-1) ?? workKey;
@@ -42,7 +45,10 @@ export async function getExploreBooksFromDB(
   });
 }
 
-export async function saveBooksToDB(books: Book[], lang: string): Promise<void> {
+export async function saveBooksToDB(
+  books: Book[], 
+  lang: string
+): Promise<void> {
     //Agrupa las peticiones en una sola peticion, por lo que es mas eficiente
     const batch = writeBatch(db);
     
@@ -102,19 +108,30 @@ export async function getAuthorBooksFromDB(
 }
 
 
-export async function getSynopsisFromDB(workKey: string): Promise<string | null> {
+export async function getSynopsisFromDB(
+  workKey: string,
+  lang: string
+): Promise<string | null> {
   const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
   const document = await getDoc(refDoc);
   if (!document.exists()) return null;
-  return document.data().synopsis ?? null;
+
+  const synopsis = document.data().synopsis as SynopsisField | undefined;
+  if(!synopsis) return null;
+
+  //Se hace esto porque hasta ahora las sinopsis eran solo string
+  if(typeof synopsis === 'string') return synopsis;
+
+  return synopsis[lang] ?? synopsis['es'] ?? synopsis['en'] ?? null;
 }
 
 export async function saveSynopsisToDB(
   workKey: string,
-  synopsis: string
+  synopsis: string,
+  lang: string
 ): Promise<void> {
   const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
-  await setDoc(refDoc, { synopsis }, { merge: true });
+  await setDoc(refDoc, { [`synopsis.${lang}`]: synopsis }, { merge: true });
 }
 
 //Para arreglar los generos aun en null

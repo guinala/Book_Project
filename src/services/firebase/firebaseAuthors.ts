@@ -4,7 +4,7 @@ import { db } from "./firebaseInit";
 export type AuthorData = {
   key: string;
   name: string;
-  bio: string;
+  bio: Record<string, string>; 
   photoUrl: string;
   cachedAt: string;
 };
@@ -22,13 +22,36 @@ export async function getAuthorFromDB(authorKey: string): Promise<AuthorData | n
     return null;
   }
 
-  return document.data() as AuthorData;
+  const data = document.data();
+  const bioField = data.bio as string | Record<string, string> | undefined;
+
+  //Por si alguna biografía aún está en string
+  const bio : Record<string, string> = typeof bioField === 'string' ? { es: bioField } : (bioField ?? {});
+
+  return {
+    key: data.key,
+    name: data.name,
+    bio,
+    photoUrl: data.photoUrl ?? '',
+    cachedAt: data.cachedAt ?? '',
+  };
+}
+
+export function resolveBio(bio: Record<string, string>, lang: string): string {
+  return bio[lang] ?? bio['es'] ?? bio['en'] ?? '';
 }
 
 export async function saveAuthorToDB(
   authorKey: string,
-  data: Omit<AuthorData, "cachedAt">
+  data: { key: string; name: string; bio: string; photoUrl: string },
+  lang = 'es'
 ): Promise<void> {
   const ref = doc(db, "Authors", encodeAuthorKey(authorKey));
-  await setDoc(ref, { ...data, cachedAt: new Date().toISOString() }, { merge: true });
+  await setDoc(ref, {
+    key: data.key,
+    name: data.name,
+    photoUrl: data.photoUrl,
+    [`bio.${lang}`]: data.bio,    
+    cachedAt: new Date().toISOString(),
+  }, { merge: true });
 }

@@ -15,7 +15,8 @@ export function useBookDetail(id: string): {
   loading: boolean;
   error: string | null;
 } {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language.split('-')[0];
   const location = useLocation();
   const bookFromState: Book | undefined = location.state?.book;
   logger.log('location.state:', location.state);
@@ -82,7 +83,7 @@ export function useBookDetail(id: string): {
 
     const load = async () => {
       // Firestore
-      const cached = await getSynopsisFromDB(decodedId);
+      const cached = await getSynopsisFromDB(decodedId, lang);
       const synopsis = cached !== null && cached.trim().length > 0
         ? cached
         : await (async () => {
@@ -92,9 +93,10 @@ export function useBookDetail(id: string): {
               controller.signal,
               bookFromState?.isbn,
               bookFromState?.authors?.[0],
+              lang
             );
             if (fetched.trim().length > 0) {
-              saveSynopsisToDB(decodedId, fetched);
+              saveSynopsisToDB(decodedId, fetched, lang);
             }
             return fetched;
           })();
@@ -133,7 +135,7 @@ export function useBookDetail(id: string): {
       controller.abort();
       cancelled = true;
     };
-  }, [decodedId, isAPIKey, t, bookFromState]);
+  }, [decodedId, isAPIKey, t, bookFromState, lang]);
 
   if (!isAPIKey) {
     return { book: null, loading: false, error: "under_construction" };

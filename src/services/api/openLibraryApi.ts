@@ -273,7 +273,10 @@ export async function fetchBooksByGenre(
   });
 }
 
-export async function getWikipediaSummary(name: string): Promise<WikiSummary | null> {
+export async function getWikipediaSummary(
+  name: string,
+  lang: string
+): Promise<WikiSummary | null> {
   const title = encodeURIComponent(name.trim().replace(/ /g, '_'));
 
   const attempt = async (lang: string): Promise<WikiSummary | null> => {
@@ -288,6 +291,6 @@ export async function getWikipediaSummary(name: string): Promise<WikiSummary | n
     }
   };
 
-  return (await attempt('es')) ?? (await attempt('en'));
+  return (await attempt(lang)) ?? (await attempt('en'));
 }
 
