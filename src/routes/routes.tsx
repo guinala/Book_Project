@@ -17,7 +17,7 @@ export const ROUTES = [
       { index: true, element: <LandingPage /> },
       { path: "auth", element: <AuthPage /> },
       { path: "explore", element: <ExplorePage /> },
-      { path: "book/:id", element: <BookDetailPage /> },
+      { path: "books/:bookId", element: <BookDetailPage /> },
       { path: "community", element: <CommunityPage /> },
       {
         path: "my-library",

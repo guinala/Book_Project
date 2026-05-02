@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router";
 import "./FavoriteBooksSection.scss";
 import type { FavoriteBook } from "@/types/UserProfile";
+import { encodeKey } from "@/utils/bookPaths";
 
 type FavoriteBooksSectionProps = {
   favorites: FavoriteBook[];
@@ -47,7 +48,7 @@ export default function FavoriteBooksSection({
             <button
               type="button"
               className="favorite-books__cover-wrap"
-              onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } })}
+              onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })}
               aria-label={book.title}
             >
               {book.cover_url ? (

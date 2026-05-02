@@ -9,12 +9,13 @@ import "./BookDetailPage.scss";
 import { useAuthorData } from "@/hooks/useAuthorData";
 import { useBookRecommendations } from "@/hooks/useBookRecommendations";
 import { useEffect } from "react";
+import { toWorkKey } from "@/utils/bookPaths";
 
 export default function BookDetailPage() {
-  const { id = "" } = useParams<{ id: string }>();
+  const { bookId = "" } = useParams<{ bookId: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { book, loading, error } = useBookDetail(id);
+  const { book, loading, error } = useBookDetail(bookId);
   const { authorInfo, loading: authorLoading } = useAuthorData(
     book?.author ?? '',
     book?.title ?? '',
@@ -22,12 +23,12 @@ export default function BookDetailPage() {
   );
   const { books: recommendedBooks, refresh: refreshRecs } = useBookRecommendations(
     book?.genre ?? '',
-    book?.key ?? decodeURIComponent(id)
+    book?.key ?? toWorkKey(bookId)
   );
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [id]);
+  }, [bookId]);
 
   if (loading) {
     return (

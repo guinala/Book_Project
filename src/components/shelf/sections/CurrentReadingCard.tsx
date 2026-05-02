@@ -5,6 +5,7 @@ import { useShelf } from "@/hooks/useShelf";
 import { getCoverUrl } from "@/utils/coverImage";
 import UpdateProgressModal from "@/components/shelf/modals/UpdateProgressModal";
 import "./CurrentReadingCard.scss";
+import { encodeKey } from "@/utils/bookPaths";
 
 function ChevronRightIcon() {
   return (
@@ -44,7 +45,7 @@ function CurrentReadingCard() {
       <article className="reading-card">
         <button
           className="reading-card__cover-btn"
-          onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } })}
+          onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })}
           aria-label={t("book.coverAlt", { title: book.title })}
         >
           {coverSrc ? (

@@ -33,7 +33,7 @@ const ITEMS: NavItem[] = [
 ];
 
 const activeFromPath = (pathname: string) => {
-  if (pathname.startsWith("/book/")) return "/explore";
+  if (pathname.startsWith("/books/")) return "/explore";
   return pathname;
 };
 

@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import "./ExploreBookCard.scss";
 import { useShelf } from "@/hooks/useShelf";
 import { useAuth } from "@/hooks/useAuth";
+import { encodeKey } from "@/utils/bookPaths";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -39,7 +40,7 @@ export default function ExploreBookCard({ book, rank }: ExploreBookCardProps) {
   }, [dropdownOpen]);
 
   const handleCardClick = () => {
-    navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } });
+    navigate(`/books/${encodeKey(book.key)}`, { state: { book } });
   };
 
   const handleSaveBtnClick = (e: React.MouseEvent) => {

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
 import { getCoverUrl } from "@/utils/coverImage";
 import "./ShelfBookCard.scss";
+import { encodeKey } from "@/utils/bookPaths";
 
 type ShelfBookCardProps = {
   book: Book;
@@ -12,7 +13,7 @@ export default function ShelfBookCard({ book }: ShelfBookCardProps) {
   const navigate = useNavigate();
 
   return (
-    <article className="shelf-book" onClick={() => navigate(`/book/${encodeURIComponent(book.key)}`, { state: { book } })} style={{ cursor: "pointer" }}>
+    <article className="shelf-book" onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })} style={{ cursor: "pointer" }}>
       <div className="shelf-book__cover-wrapper">
         {coverSrc ? (
           <img

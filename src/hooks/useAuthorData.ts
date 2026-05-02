@@ -110,13 +110,13 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
             bio = resolveBio(dbAuthorData.bio, lang);
             photoUrl = dbAuthorData.photoUrl;
 
-            // Si no hay bio en el idioma actual, fetchear y guardar en background
+            // Si no hay bio en el idioma actual, se intenta obtener en wikipedia
             if (!dbAuthorData.bio[lang]) {
               fetchBioFromWikipedia(authorName, lang)
                 .then(({ bio: newBio }) => {
                   if (!newBio) return;
                   updateAuthorBioToDB(authorKey, newBio, lang).catch(() => {});
-                  // Actualizar estado del usuario actual:
+
                   if (!cancelled) {
                     setAuthorInfo(prev => prev ? { ...prev, bio: newBio } : prev);
                   }
@@ -126,7 +126,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
           } else {
             ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName, lang));
             logger.log("Guardando autor")
-            saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl }, lang);
+            saveAuthorToDB(authorKey, { key: authorKey, name: authorName, bio, photoUrl }, lang).catch(() => {});
           }
         } catch {
           ({ bio, photoUrl } = await fetchBioFromWikipedia(authorName, lang));
@@ -181,7 +181,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
       if (books.length < 2) {
         try {
           const apiBooks = await fetchAuthorBooks(authorName, lang, 10);
-          saveBooksToDB(apiBooks, lang); 
+          saveBooksToDB(apiBooks, lang).catch(() => {}); 
           books = apiBooks
             .filter(b => b.cover_id !== null &&
               b.title.toLowerCase() !== currentBookTitle.toLowerCase())

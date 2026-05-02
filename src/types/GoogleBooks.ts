@@ -9,6 +9,7 @@ export type GoogleBooksVolumeInfo = {
   publishedDate?: string;
   imageLinks?: GoogleBooksImageLinks;
   description?: string;
+  language?: string;
 }
 
 export type GoogleBooksItem = {

@@ -76,14 +76,14 @@ export async function saveBooksToDB(
 
   await batch.commit();
 
-  // Escribir titles.{lang} para el idioma actual
+  // Asignar titulos al idioma actual
   await Promise.all(
     books.map(book =>
       updateBookTitleToDB(book.key, book.title, lang, book.isbn).catch(() => {})
     )
   );
 
-  // Background: buscar título en el otro idioma y guardarlo
+  // Buscar titulo en otro idioma
   const otherLang = lang === 'es' ? 'en' : 'es';
   Promise.all(
     books.map(async book => {
@@ -150,7 +150,7 @@ export async function getSynopsisFromDB(
     return lang === 'es' ? synopsis : null;
   }
 
-  return synopsis[lang] ?? synopsis['es'] ?? synopsis['en'] ?? null;
+  return synopsis[lang] ?? null;
 }
 
 export async function saveSynopsisToDB(
@@ -160,16 +160,15 @@ export async function saveSynopsisToDB(
 ): Promise<void> {
   const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
   try {
-    // Caso normal: el doc ya existe (libro guardado previamente vía saveBooksToDB)
+    // No se puede asignar valores a campos anidados con setDoc, por eso se utiliza updateDoc
     await updateDoc(refDoc, { [`synopsis.${lang}`]: synopsis });
   } catch {
-    // Caso acceso directo por URL: el doc aún no existe, crearlo con setDoc
-    // Se usa objeto anidado real (no dot-notation) para que synopsis.{lang} sea un mapa
+    //Aquí se acepta porque el doc no existe en este caso
     await setDoc(refDoc, { synopsis: { [lang]: synopsis } }, { merge: true });
   }
 }
 
-//Para arreglar los generos aun en null
+//Para arreglar los generos que aun están en null
 export async function saveGenreToDB(workKey: string, genre: string): Promise<void> {
   const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
   await setDoc(refDoc, { genre }, { merge: true });
@@ -200,7 +199,7 @@ export async function getRecommendationsFromDB(
     collection(db, BOOKS_COLLECTION),
     where("genre", "==", genre),
     where("langs", "array-contains", lang),
-    limit(minCount + 1) // +1 para compensar el excludeKey
+    limit(minCount + 1) //En el filtrado se excliye el libro actual, +1 para compensar
   );
 
   const doc = await getDocs(q);

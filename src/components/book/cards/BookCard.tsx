@@ -7,6 +7,7 @@ import StarRating from "@/components/common/StarRating";
 import "./BookCard.scss";
 import { useTranslation } from "react-i18next";
 import { genreToI18nKey } from "@/utils/genreUtils";
+import { encodeKey } from "@/utils/bookPaths";
 
 type BookCardProps = {
   book: Book;
@@ -40,7 +41,7 @@ export default function BookCard({ book }: BookCardProps) {
   return (
     <article className="bookcard">
       <Link
-        to={`/book/${encodeURIComponent(book.key)}`}
+        to={`/books/${encodeKey(book.key)}`}
         state={{ book }}
         className="bookcard__link"
       >

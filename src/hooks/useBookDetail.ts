@@ -7,8 +7,10 @@ import { useLocation } from "react-router";
 // import { extractSynopsis, getWork } from "@/services/api/openLibraryApi";  
 import { getCoverUrl } from "@/utils/coverImage";
 import { fetchGoogleSynopsis } from "@/services/api/googleBooksApi";
-import { getSynopsisFromDB, saveSynopsisToDB } from "@/services/firebase/firebaseBooks";
+import { getSynopsisFromDB, saveSynopsisToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { logger } from "@/utils/logger";
+import { toWorkKey } from "@/utils/bookPaths";
+import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
 
 export function useBookDetail(id: string): {
   book: BookDetail | null;
@@ -23,8 +25,11 @@ export function useBookDetail(id: string): {
   logger.log('bookFromState:', bookFromState);
 
 
-  const decodedId = decodeURIComponent(id);
-  const isAPIKey = decodedId.startsWith('/works/');
+  // const decodedId = decodeURIComponent(id);
+  // const isAPIKey = decodedId.startsWith('/works/');
+  const workKey = toWorkKey(id); 
+  const isAPIKey = workKey.startsWith('/works/');
+  
 
   const [book, setBook] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(isAPIKey);
@@ -76,27 +81,39 @@ export function useBookDetail(id: string): {
   // }, [decodedId, isAPIKey, t, bookFromState]);
 
   useEffect(() => {
-    if (!isAPIKey) return;
+    if(!isAPIKey) return;
 
     let cancelled = false;
     const controller = new AbortController();
 
     const load = async () => {
       // Firestore
-      const cached = await getSynopsisFromDB(decodedId, lang);
+      const cached = await getSynopsisFromDB(workKey, lang);
       const synopsis = cached !== null && cached.trim().length > 0
         ? cached
         : await (async () => {
             // Obtener de Google Books
+            let langIsbn = bookFromState?.isbns?.[lang];
+            let langTitle = bookFromState?.titles?.[lang];
+
+            if (!langIsbn || !langTitle) {
+              const edition = await fetchWorkEditionByLang(workKey, lang);
+              if (edition?.isbn) {
+                langIsbn = edition.isbn;
+                langTitle = edition.title;
+                updateBookTitleToDB(workKey, edition.title, lang, edition.isbn).catch(() => {});
+              }
+            }
+
             const fetched = await fetchGoogleSynopsis(
-              bookFromState?.title ?? decodedId,
+              langTitle ?? workKey,
               controller.signal,
-              bookFromState?.isbn,
+              langIsbn ?? bookFromState?.isbn,
               bookFromState?.authors?.[0],
               lang
             );
             if (fetched.trim().length > 0) {
-              saveSynopsisToDB(decodedId, fetched, lang);
+              saveSynopsisToDB(workKey, fetched, lang);
             }
             return fetched;
           })();
@@ -104,7 +121,7 @@ export function useBookDetail(id: string): {
       if (cancelled) return;
 
       setBook({
-        key: decodedId,
+        key: workKey,
         cover_url: bookFromState?.cover_url ?? (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
         genre: bookFromState?.genre ?? '',
         title: bookFromState?.title ?? '',
@@ -121,19 +138,23 @@ export function useBookDetail(id: string): {
         recommendations: [],
       });
 
-      // Background: asegurar que el otro idioma también tenga sinopsis
+      // Obtener sinopsis para otro idioma
       const otherLang = lang === 'es' ? 'en' : 'es';
-      getSynopsisFromDB(decodedId, otherLang).then(otherCached => {
+      const otherTitle = bookFromState?.titles?.[otherLang] ?? '';
+      const otherIsbn = bookFromState?.isbns?.[otherLang];
+      getSynopsisFromDB(workKey, otherLang).then(otherCached => {
         if (otherCached && otherCached.trim().length > 0) return;
         fetchGoogleSynopsis(
-          bookFromState?.title ?? decodedId,
+          //bookFromState?.title ?? workKey,
+          otherTitle,
           controller.signal,
-          bookFromState?.isbn,
+          //bookFromState?.isbn,
+          otherIsbn,
           bookFromState?.authors?.[0],
           otherLang
         ).then(otherSynopsis => {
           if (otherSynopsis.trim().length > 0) {
-            saveSynopsisToDB(decodedId, otherSynopsis, otherLang);
+            saveSynopsisToDB(workKey, otherSynopsis, otherLang);
           }
         }).catch(() => {});
       }).catch(() => {});
@@ -152,11 +173,7 @@ export function useBookDetail(id: string): {
       controller.abort();
       cancelled = true;
     };
-  }, [decodedId, isAPIKey, t, bookFromState, lang]);
-
-  if (!isAPIKey) {
-    return { book: null, loading: false, error: "under_construction" };
-  }
+  }, [workKey, isAPIKey, t, bookFromState, lang]);
 
   return { book, loading, error };
 }

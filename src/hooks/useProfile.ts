@@ -90,7 +90,7 @@ export function useProfile(userId: string) {
 
     Promise.all(fetches).finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [userId, user]);
+  }, [userId, user, lang]);
 
   const shelf = isOwnProfile ? shelfByStatus : publicShelf;
   const shelfLoading = isOwnProfile ? ownShelfLoading : loading;

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import type { ActivityItem as ActivityItemType } from "@/types/UserProfile";
 import StarRating from "@/components/common/StarRating";
 import "./ActivityItem.scss";
+import { encodeKey } from "@/utils/bookPaths";
 
 const EVENT_LABELS: Record<string, string> = {
   reading_started: "Empezó a leer",
@@ -32,7 +33,7 @@ export default function ActivityItem({ item }: ActivityItemProps) {
   const navigate = useNavigate();
 
   const handleCoverClick = item.bookId
-    ? () => navigate(`/book/${encodeURIComponent(item.bookId!)}`)
+    ? () => navigate(`/books/${encodeKey(item.bookId!)}`)
     : undefined;
 
   return (

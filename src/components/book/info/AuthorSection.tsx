@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { AuthorBook, AuthorInfo } from "@/types/BookDetail";
 import "./AuthorSection.scss";
 import type { Book } from "@/types/Book";
+import { encodeKey } from "@/utils/bookPaths";
 
 type AuthorSectionProps = {
   authorInfo: AuthorInfo;
@@ -66,7 +67,7 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
         {authorInfo.books.map((book) => (
           <Link
             key={book.id}
-            to={`/book/${encodeURIComponent(book.id)}`}
+            to={`/books/${encodeKey(book.id)}`}
             state={{ book: toBookState(book) }}
             className="author-section__book"
           >
