@@ -15,7 +15,7 @@ export function genreToI18nKey(genre: string): string {
 //   "Fairy tales",
 // ];
 const GENRE_MAP: Record<string, string[]> = {
-  "Fantasy":                    ["fantasy", "fantasy fiction", "epic fantasy", "high fantasy", "dark fantasy", "wizards", "fairy tales"],
+  "Fantasy":                    ["fantasy", "fantasy fiction", "epic fantasy", "high fantasy", "dark fantasy", "wizards", "fairy tales", "Fiction, fantasy, epic"],
   "Historical Fiction":         ["historical fiction", "historical novel", "history"],
   "Horror":                     ["horror", "horror fiction", "ghost stories", "supernatural fiction"],
   "Humor":                      ["humor", "humour", "comedy", "satire"],

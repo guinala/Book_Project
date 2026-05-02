@@ -1,0 +1,37 @@
+{
+  "profile": {
+    "loading": "Cargando perfil...",
+    "notFound": "Perfil no encontrado",
+
+    "edit": {
+      "title": "Editar perfil",
+      "loading": "Cargando...",
+      "saveBtn": "Guardar cambios",
+      "saving": "Guardando...",
+      "cancelBtn": "Cancelar",
+      "saveError": "Error inesperado, inténtalo de nuevo más tarde.",
+      "uploadTimeoutError": "La subida tardó demasiado. Verifica que Firebase Storage esté habilitado en tu proyecto de Firebase Console.",
+
+      "banner": {
+        "uploadHint": "Subir portada",
+        "ariaLabel": "Subir imagen de portada"
+      },
+
+      "photo": {
+        "uploadHint": "Foto",
+        "alt": "Foto de perfil",
+        "ariaLabel": "Subir foto de perfil"
+      },
+
+      "fields": {
+        "name": "Nombre",
+        "nameRequired": "El nombre es obligatorio",
+        "surname": "Apellido",
+        "username": "Handle",
+        "usernamePattern": "Solo letras minúsculas, números y _, entre 3 y 20 caracteres",
+        "bio": "Bio",
+        "bioHint": "(máx. 300 caracteres)"
+      }
+    }
+  }
+}

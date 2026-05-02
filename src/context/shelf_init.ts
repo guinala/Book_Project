@@ -1,6 +1,6 @@
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import type { ShelfEntry } from "@/services/firebase/firebase_library";
+import type { ShelfEntry } from "@/services/firebase/firebaseLibrary";
 import { createContext } from "react";
 
 export type ShelfContextType = {

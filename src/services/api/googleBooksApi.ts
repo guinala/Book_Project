@@ -3,6 +3,7 @@ import type { Book } from "@/types/Book";
 import type { GoogleBooksImageLinks, GoogleBooksResponse } from "@/types/GoogleBooks";
 import { googleBooksClient } from "@/services/api/apiConnections";
 import axios from "axios";
+import { logger } from "@/utils/logger";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY as string;
 
@@ -169,15 +170,16 @@ export async function fetchGoogleSynopsis(
   signal: AbortSignal,
   isbn?: string,
   author?: string,
+  lang = 'es',
 ): Promise<string> {
   try {
     const titleAuthorQuery = author ? `intitle:${title}+inauthor:${author}` : `intitle:${title}`;
-
-    // Intento 1: ISBN de la edición española
+    // Intento 1: ISBN 
     if (isbn) {
       const { data } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
         params: {
           q: `isbn:${isbn}`,
+          langRestrict: lang,
           maxResults: 1,
           fields: 'items(volumeInfo/description,searchInfo/textSnippet)',
           key: API_KEY,
@@ -185,24 +187,33 @@ export async function fetchGoogleSynopsis(
         signal,
       });
       const synopsis = extractDescription(data);
-      console.log('[Synopsis] Intento 1 (ISBN):', synopsis ? `OK (${synopsis.length} chars)` : 'vacío');
-      if (synopsis.trim().length > 50) return synopsis;
+      logger.log('[Synopsis] Intento 1 (ISBN):', synopsis ? `OK (${synopsis.length} chars, (${lang}, ${isbn}))` : 'vacío');
+      if (synopsis.trim().length > 30) return synopsis;
     }
 
-    // Intento 2: título+autor en español
+    // Intento 2: título+autor en idioma actual
     const { data: data2 } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
       params: {
         q: titleAuthorQuery,
-        langRestrict: 'es',
-        maxResults: 1,
-        fields: 'items(volumeInfo/description,searchInfo/textSnippet)',
+        langRestrict: lang,
+        maxResults: 5,
+        fields: 'items(volumeInfo(description,language),searchInfo/textSnippet)',
         key: API_KEY,
       },
       signal,
     });
-    const synopsis2 = extractDescription(data2);
-    console.log('[Synopsis] Intento 2 (título+autor ES):', synopsis2 ? `OK (${synopsis2.length} chars)` : 'vacío');
-    if (synopsis2.trim().length > 50) return synopsis2;
+    // const synopsis2 = extractDescription(data2);
+    // logger.log(`[Synopsis] Intento 2 (título+autor ${lang.toUpperCase()}):`, synopsis2 ? `OK (${synopsis2.length} chars, (${lang}, ${isbn})))` : 'vacío');
+    // if (synopsis2.trim().length > 50) return synopsis2;
+    const match = data2.items?.find(
+      item => item.volumeInfo.language === lang
+        && (item.volumeInfo.description ?? item.searchInfo?.textSnippet ?? '').trim().length > 50
+    );
+    const synopsis2 = match
+      ? (match.volumeInfo.description ?? match.searchInfo?.textSnippet ?? '')
+      : '';
+    logger.log(`[Synopsis] ) Intento 2 (título+autor ${lang.toUpperCase()}):`, synopsis2 ? `OK (${synopsis2.length} chars, (${lang}, ${isbn})))` : 'vacío');
+    return synopsis2;
 
     // Intento 3: título+autor sin restricción de idioma
     const { data: data3 } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {
@@ -215,7 +226,7 @@ export async function fetchGoogleSynopsis(
       signal,
     });
     const synopsis3 = extractDescription(data3);
-    console.log('[Synopsis] Intento 3 (título+autor sin idioma):', synopsis3 ? `OK (${synopsis3.length} chars)` : 'vacío');
+    logger.log('[Synopsis] Intento 3 (título+autor sin idioma):', synopsis3 ? `OK (${synopsis3.length} chars)` : 'vacío');
     return synopsis3;
 
   } catch (err) {

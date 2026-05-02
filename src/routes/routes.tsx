@@ -1,12 +1,12 @@
 import App from "@/App";
-import LandingPage from "@/pages/LandingPage/LandingPage";
-import AuthPage from "@/pages/AuthPage/AuthPage";
-import ExplorePage from "@/pages/ExplorePage/ExplorePage";
-import MyLibraryPage from "@/pages/MyLibraryPage/MyLibraryPage";
-import BookDetailPage from "@/pages/BookDetailPage/BookDetailPage";
-import CommunityPage from "@/pages/CommunityPage/CommunityPage";
-import ProfilePage from "@/pages/ProfilePage/ProfilePage";
-import EditProfilePage from "@/pages/EditProfilePage/EditProfilePage";
+import LandingPage from "@/pages/landing/LandingPage";
+import AuthPage from "@/pages/auth/AuthPage";
+import ExplorePage from "@/pages/explore/ExplorePage";
+import MyLibraryPage from "@/pages/my-library/MyLibraryPage";
+import BookDetailPage from "@/pages/book-detail/BookDetailPage";
+import CommunityPage from "@/pages/community/CommunityPage";
+import ProfilePage from "@/pages/profile/ProfilePage";
+import EditProfilePage from "@/pages/edit-profile/EditProfilePage";
 import AuthRoute from "@/routes/AuthRoute";
 
 export const ROUTES = [
@@ -17,7 +17,7 @@ export const ROUTES = [
       { index: true, element: <LandingPage /> },
       { path: "auth", element: <AuthPage /> },
       { path: "explore", element: <ExplorePage /> },
-      { path: "book/:id", element: <BookDetailPage /> },
+      { path: "books/:bookId", element: <BookDetailPage /> },
       { path: "community", element: <CommunityPage /> },
       {
         path: "my-library",

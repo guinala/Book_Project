@@ -11,6 +11,7 @@ import enBook from "./locales/en/book.json";
 import enErrors from "./locales/en/errors.json";
 import enFooter from "./locales/en/footer.json";
 import enBookDetail from "./locales/en/bookDetail.json";
+import enProfile from "./locales/en/profile.json";
 
 import esNavbar from "./locales/es/navbar.json";
 import esLanding from "./locales/es/landing.json";
@@ -21,6 +22,7 @@ import esBook from "./locales/es/book.json";
 import esErrors from "./locales/es/errors.json";
 import esFooter from "./locales/es/footer.json";
 import esBookDetail from "./locales/es/bookDetail.json";
+import esProfile from "./locales/es/profile.json";
 
 i18n
   .use(LanguageDetector)
@@ -38,6 +40,7 @@ i18n
           ...enErrors,
           ...enFooter,
           ...enBookDetail,
+          ...enProfile,
         },
       },
       es: {
@@ -51,6 +54,7 @@ i18n
           ...esErrors,
           ...esFooter,
           ...esBookDetail,
+          ...esProfile,
         },
       },
     },

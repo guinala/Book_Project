@@ -5,7 +5,7 @@ import type { SearchFilter } from "@/types/Search";
 import { searchBooks } from "@/services/api/openLibraryApi";
 import { getErrorMessage } from "@/utils/apiErrors";
 import { getSearchParams } from "@/utils/searchParams";
-import { saveBooksToDB } from "@/services/firebase/firebase_books";
+import { saveBooksToDB } from "@/services/firebase/firebaseBooks";
 
 type UseBookSearchResult = {
   books: Book[];

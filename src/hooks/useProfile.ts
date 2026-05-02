@@ -1,15 +1,16 @@
 // src/hooks/useProfile.ts
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
-import { getUserProfile } from "@/services/firebase/firebase_users";
+import { getUserProfile } from "@/services/firebase/firebaseUsers";
 import {
   checkIsFollowing,
   followUser,
   unfollowUser,
-} from "@/services/firebase/firebase_follows";
-import { getActivity } from "@/services/firebase/firebase_activity";
-import { getShelf } from "@/services/firebase/firebase_library";
+} from "@/services/firebase/firebaseFollows";
+import { getActivity } from "@/services/firebase/firebaseActivity";
+import { getShelf } from "@/services/firebase/firebaseLibrary";
 import type { UserFullProfile, ActivityItem } from "@/types/UserProfile";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
@@ -22,7 +23,8 @@ const EMPTY_SHELF: Record<ShelfStatus, Book[]> = {
 };
 
 function entriesToShelf(
-  entries: { book: Book; status: ShelfStatus }[]
+  entries: { book: Book; status: ShelfStatus }[],
+  lang: string,
 ): Record<ShelfStatus, Book[]> {
   const result: Record<ShelfStatus, Book[]> = {
     wantToRead: [],
@@ -31,7 +33,11 @@ function entriesToShelf(
     didNotFinish: [],
   };
   for (const { book, status } of entries) {
-    result[status].push(book);
+    result[status].push({
+      ...book,
+      title: book.titles?.[lang] ?? book.titles?.es ?? book.titles?.en ?? book.title ?? "",
+      isbn: book.isbns?.[lang] ?? book.isbns?.es ?? book.isbns?.en ?? book.isbn,
+    });
   }
   return result;
 }
@@ -39,6 +45,8 @@ function entriesToShelf(
 export function useProfile(userId: string) {
   const { user } = useAuth();
   const { shelfByStatus, loading: ownShelfLoading } = useShelf();
+  const { i18n } = useTranslation();
+  const lang = i18n.language.split('-')[0];
 
   const isOwnProfile = !!user && user.uid === userId;
 
@@ -67,7 +75,7 @@ export function useProfile(userId: string) {
     if (!isOwn) {
       fetches.push(
         getShelf(userId).then((entries) => {
-          if (!cancelled) setPublicShelf(entriesToShelf(entries ?? []));
+          if (!cancelled) setPublicShelf(entriesToShelf(entries ?? [], lang));
         })
       );
     }
@@ -82,7 +90,7 @@ export function useProfile(userId: string) {
 
     Promise.all(fetches).finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [userId, user]);
+  }, [userId, user, lang]);
 
   const shelf = isOwnProfile ? shelfByStatus : publicShelf;
   const shelfLoading = isOwnProfile ? ownShelfLoading : loading;

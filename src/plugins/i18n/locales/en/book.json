@@ -2,6 +2,7 @@
   "book": {
     "unknownAuthor": "Unknown author",
     "coverAlt": "Cover of {{title}}",
+    "starRatingLabel": "Rating: {{rating}} out of 5",
     "genres": {
       "fantasy": "Fantasy",
       "fantasy_fiction": "Fantasy",

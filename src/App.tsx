@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router";
-import Navbar from "@/components/Navbar/Navbar";
-import NavbarMini from "@/components/NavbarMini/NavbarMini";
+import Navbar from "@/components/layout/Navbar";
+import NavbarMini from "@/components/layout/NavbarMini";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import "./App.scss"
 import { ShelfProvider } from "./context/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -27,16 +28,18 @@ export default function App() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <ShelfProvider>
-          <Navbar hidden={scrolled} />
-          <NavbarMini visible={scrolled} />
-          <main>
-            <Outlet />
-          </main>
-        </ShelfProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <ShelfProvider>
+            <Navbar hidden={scrolled} />
+            <NavbarMini visible={scrolled} />
+            <main>
+              <Outlet />
+            </main>
+          </ShelfProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

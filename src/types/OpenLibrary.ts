@@ -56,3 +56,13 @@ export type WikiSummary = {
   thumbnail?: { source: string };
 }
 
+export type WorkEditionEntry = {
+  title?: string;
+  languages?: { key: string }[];   
+  isbn_13?: string[];
+  isbn_10?: string[];
+};
+
+export type WorkEditionsResponse = {
+  entries?: WorkEditionEntry[];
+};
