@@ -1,6 +1,6 @@
 import i18n from "@/plugins/i18n/i18n";
 import type { Book } from "@/types/Book";
-import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryWork, WikiSummary } from "@/types/OpenLibrary";
+import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryWork, WikiSummary, WorkEditionsResponse } from "@/types/OpenLibrary";
 import { openLibraryClient } from "@/services/api/apiConnections";
 import { getLangIso3Letters } from "@/utils/langConversion";
 import { detectGenre } from "@/utils/genreUtils";
@@ -291,6 +291,34 @@ export async function getWikipediaSummary(
     }
   };
 
-  return (await attempt(lang)) ?? (await attempt('en'));
+  const fallback = lang === 'en' ? 'es' : 'en';
+  return (await attempt(lang)) ?? (await attempt(fallback));
+}
+
+export async function fetchWorkEditionByLang(
+  workKey: string,
+  lang: string
+): Promise<{ title: string; isbn?: string } | null> {
+  const langPath = `/languages/${getLangIso3Letters(lang)}`;  // reutiliza helper existente
+
+  try {
+    const { data } = await openLibraryClient.get<WorkEditionsResponse>(
+      `${workKey}/editions.json`,
+      { params: { limit: 20 } }
+    );
+
+    const edition = data.entries?.find(e =>
+      e.languages?.some(l => l.key === langPath)
+    );
+
+    if (!edition?.title) return null;
+
+    return {
+      title: edition.title,
+      isbn: edition.isbn_13?.[0] ?? edition.isbn_10?.[0],
+    };
+  } catch {
+    return null;
+  }
 }
 

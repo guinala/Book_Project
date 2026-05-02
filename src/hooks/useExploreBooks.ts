@@ -1,32 +1,15 @@
 import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import type { Book } from "@/types/Book";
-import { fetchFantasyBooks, getWork } from "@/services/api/openLibraryApi";
+import { fetchFantasyBooks, fetchWorkEditionByLang, getWork } from "@/services/api/openLibraryApi";
 // import { fetchGoogleCovers } from "@/services/api/googleBooksApi"; 
 import { getErrorMessage } from "@/utils/apiErrors";
-import { getExploreBooksFromDB, saveBooksToDB, saveGenreToDB } from "@/services/firebase/firebaseBooks";
+import { getExploreBooksFromDB, saveBooksToDB, saveGenreToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { detectGenre } from "@/utils/genreUtils";
 import { logger } from "@/utils/logger";
 
-const LOCAL_STORAGE_KEY = 'trama_cache_v3';
+const LOCAL_STORAGE_KEY = (lang: string) => `trama_cache_${lang}`;
 const LOCAL_STORAGE_TTL = 24 * 60 * 60 * 1000; // 24 horas (1 día)
-
-function loadFromStorage(): Book[] | null {
-  try {
-    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!data) return null;
-    const { books, ts } = JSON.parse(data) as { books: Book[]; ts: number };
-    if (Date.now() - ts > LOCAL_STORAGE_TTL) { localStorage.removeItem(LOCAL_STORAGE_KEY); return null; }
-    return books;
-  } catch { return null; }
-}
-
-function saveToStorage(books: Book[]): void {
-  try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ books, ts: Date.now() }));
-  } 
-  catch { /* storage lleno */ }
-}
 
 type UseFantasyBooksHybridResult = {
   books: Book[];
@@ -34,6 +17,58 @@ type UseFantasyBooksHybridResult = {
   error: string | null;
   fetchBooks: (limit?: number, lang?: string) => Promise<void>;
   cancelRequest: () => void;
+}
+
+function loadFromStorage(lang: string): Book[] | null {
+  try {
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY(lang));
+    if (!data) return null;
+    const { books, ts } = JSON.parse(data) as { books: Book[]; ts: number };
+    if (Date.now() - ts > LOCAL_STORAGE_TTL) { localStorage.removeItem(LOCAL_STORAGE_KEY(lang)); return null; }
+    return books;
+  } catch { return null; }
+}
+
+function saveToStorage(books: Book[], lang: string): void {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY(lang), JSON.stringify({ books, ts: Date.now() }));
+  } 
+  catch { /* storage lleno */ }
+}
+
+async function completeTitles(books: Book[], lang: string): Promise<Book[]> {
+  const missing = books.filter(b => !b.titles?.[lang]);
+  if (missing.length === 0) return books;
+
+  const results = await Promise.all(
+    missing.map(async (book) => {
+      const result = await fetchWorkEditionByLang(book.key, lang);
+      if (result) {
+        updateBookTitleToDB(book.key, result.title, lang, result.isbn)
+          .catch(err => console.warn('[Enrich] Error guardando título:', err));
+      }
+      return { key: book.key, result };
+    })
+  );
+
+  const completedMap = new Map(
+    results
+      .filter(r => r.result !== null)
+      .map(r => [r.key, r.result!])
+  );
+
+  if (completedMap.size === 0) return books;
+
+  return books.map(book => {
+    const completed = completedMap.get(book.key);
+    if (!completed) return book;
+    return {
+      ...book,
+      title: completed.title,
+      titles: { ...(book.titles ?? {}), [lang]: completed.title },
+      ...(completed.isbn ? { isbns: { ...(book.isbns ?? {}), [lang]: completed.isbn } } : {}),
+    };
+  });
 }
 
 export function useExploreBooks(): UseFantasyBooksHybridResult {
@@ -44,7 +79,7 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
 
   const fetchBooks = useCallback(async (limit: number = 20, lang: string = "es") => {
     
-    const stored = loadFromStorage();
+    const stored = loadFromStorage(lang);
     if (stored) {
       logger.log("[Explore] Sirviendo desde localStorage:", stored.length, "libros");
       setBooks(stored);
@@ -60,7 +95,17 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
       if (dbBooks) {
         setBooks(dbBooks);
         setLoading(false);
-        saveToStorage(dbBooks);
+        saveToStorage(dbBooks, lang);
+
+        completeTitles(dbBooks, lang)
+          .then(completed => {
+            if(completed !== dbBooks) {
+              setBooks(completed);
+              saveToStorage(completed, lang);
+            }
+          })
+          .catch(() => {});
+          
         const nullGenreBooks = dbBooks.filter(b => !b.genre);
         if (nullGenreBooks.length > 0) {
           nullGenreBooks.forEach(async (b) => {
@@ -99,7 +144,7 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
         setBooks(deduplicated);
         setLoading(false);
 
-        saveToStorage(deduplicated);
+        saveToStorage(deduplicated, lang);
         saveBooksToDB(deduplicated, lang);
         // fetchCovers(mappedBooks); 
       } catch (err) {

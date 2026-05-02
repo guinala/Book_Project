@@ -1,5 +1,6 @@
 // src/hooks/useProfile.ts
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
 import { getUserProfile } from "@/services/firebase/firebaseUsers";
@@ -22,7 +23,8 @@ const EMPTY_SHELF: Record<ShelfStatus, Book[]> = {
 };
 
 function entriesToShelf(
-  entries: { book: Book; status: ShelfStatus }[]
+  entries: { book: Book; status: ShelfStatus }[],
+  lang: string,
 ): Record<ShelfStatus, Book[]> {
   const result: Record<ShelfStatus, Book[]> = {
     wantToRead: [],
@@ -31,7 +33,11 @@ function entriesToShelf(
     didNotFinish: [],
   };
   for (const { book, status } of entries) {
-    result[status].push(book);
+    result[status].push({
+      ...book,
+      title: book.titles?.[lang] ?? book.titles?.es ?? book.titles?.en ?? book.title ?? "",
+      isbn: book.isbns?.[lang] ?? book.isbns?.es ?? book.isbns?.en ?? book.isbn,
+    });
   }
   return result;
 }
@@ -39,6 +45,8 @@ function entriesToShelf(
 export function useProfile(userId: string) {
   const { user } = useAuth();
   const { shelfByStatus, loading: ownShelfLoading } = useShelf();
+  const { i18n } = useTranslation();
+  const lang = i18n.language.split('-')[0];
 
   const isOwnProfile = !!user && user.uid === userId;
 
@@ -67,7 +75,7 @@ export function useProfile(userId: string) {
     if (!isOwn) {
       fetches.push(
         getShelf(userId).then((entries) => {
-          if (!cancelled) setPublicShelf(entriesToShelf(entries ?? []));
+          if (!cancelled) setPublicShelf(entriesToShelf(entries ?? [], lang));
         })
       );
     }

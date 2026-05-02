@@ -17,11 +17,26 @@ export async function addToShelf(
   prevStatus?: ShelfStatus | null
 ): Promise<void> {
   const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(book.key));
+  const { titles, isbns, ...bookData } = book;
   await setDoc(shelfRef, {
-    ...book,
+    ...bookData,
     status,
     addedAt: new Date().toISOString(),
   }, { merge: true });
+
+  // Escribir titles/isbns con dot-notation para no pisar otros idiomas
+  if (titles && Object.keys(titles).length > 0) {
+    const langUpdates: Record<string, string> = {};
+    for (const [lang, t] of Object.entries(titles)) {
+      langUpdates[`titles.${lang}`] = t;
+    }
+    if (isbns) {
+      for (const [lang, isbn] of Object.entries(isbns)) {
+        langUpdates[`isbns.${lang}`] = isbn;
+      }
+    }
+    await updateDoc(shelfRef, langUpdates);
+  }
 
   if (prevStatus === status) return;
 
@@ -92,7 +107,7 @@ export async function getShelf(uid: string): Promise<ShelfEntry[] | null> {
         return {
             book: {
                 key: data.key,
-                title: data.title,
+                title: data.titles?.es ?? data.titles?.en ?? data.title ?? "",
                 authors: data.authors,
                 authorKeys: data.authorKeys ?? undefined,
                 first_publish_year: data.first_publish_year,
@@ -103,7 +118,9 @@ export async function getShelf(uid: string): Promise<ShelfEntry[] | null> {
                 rating: data.rating ?? undefined,
                 ratingCount: data.ratingCount ?? undefined,
                 isbn: data.isbn ?? undefined,
+                isbns: data.isbns ?? undefined,
                 pages: data.pages ?? undefined,
+                titles: data.titles ?? {},
             } as Book,
             status: data.status as ShelfStatus,
             currentPage: data.currentPage ?? undefined,
@@ -118,4 +135,17 @@ export async function getBookStatus(
 
     if (!bookDoc.exists()) return null;
     return (bookDoc.data().status as ShelfStatus) ?? null;
+}
+
+export async function updateShelfBookTitleToDB(
+  uid: string,
+  bookKey: string,
+  title: string,
+  lang: string,
+  isbn?: string,
+): Promise<void> {
+  const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(bookKey));
+  const update: Record<string, string> = { [`titles.${lang}`]: title };
+  if (isbn) update[`isbns.${lang}`] = isbn;
+  await updateDoc(shelfRef, update);
 }

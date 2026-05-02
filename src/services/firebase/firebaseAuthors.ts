@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseInit";
 
 export type AuthorData = {
@@ -47,11 +47,23 @@ export async function saveAuthorToDB(
   lang = 'es'
 ): Promise<void> {
   const ref = doc(db, "Authors", encodeAuthorKey(authorKey));
+  // Paso 1: crear/actualizar campos no-bio con merge para no sobreescribir
+  // otros idiomas si dos usuarios llegan simultáneamente por primera vez
   await setDoc(ref, {
     key: data.key,
     name: data.name,
     photoUrl: data.photoUrl,
-    [`bio.${lang}`]: data.bio,    
     cachedAt: new Date().toISOString(),
   }, { merge: true });
+  // Paso 2: escribir bio.{lang} con dot-notation para no pisar otros idiomas
+  await updateDoc(ref, { [`bio.${lang}`]: data.bio });
+}
+
+export async function updateAuthorBioToDB(
+  authorKey: string,
+  bio: string,
+  lang: string
+): Promise<void> {
+  const ref = doc(db, "Authors", encodeAuthorKey(authorKey));
+  await updateDoc(ref, { [`bio.${lang}`]: bio });
 }

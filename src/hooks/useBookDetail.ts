@@ -120,6 +120,23 @@ export function useBookDetail(id: string): {
         authorInfo: { name: '', photoUrl: '', bio: '', books: [] },
         recommendations: [],
       });
+
+      // Background: asegurar que el otro idioma también tenga sinopsis
+      const otherLang = lang === 'es' ? 'en' : 'es';
+      getSynopsisFromDB(decodedId, otherLang).then(otherCached => {
+        if (otherCached && otherCached.trim().length > 0) return;
+        fetchGoogleSynopsis(
+          bookFromState?.title ?? decodedId,
+          controller.signal,
+          bookFromState?.isbn,
+          bookFromState?.authors?.[0],
+          otherLang
+        ).then(otherSynopsis => {
+          if (otherSynopsis.trim().length > 0) {
+            saveSynopsisToDB(decodedId, otherSynopsis, otherLang);
+          }
+        }).catch(() => {});
+      }).catch(() => {});
     };
 
     load()

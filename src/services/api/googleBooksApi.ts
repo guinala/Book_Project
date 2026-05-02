@@ -188,7 +188,7 @@ export async function fetchGoogleSynopsis(
       });
       const synopsis = extractDescription(data);
       logger.log('[Synopsis] Intento 1 (ISBN):', synopsis ? `OK (${synopsis.length} chars)` : 'vacío');
-      if (synopsis.trim().length > 50) return synopsis;
+      if (synopsis.trim().length > 30) return synopsis;
     }
 
     // Intento 2: título+autor en idioma actual

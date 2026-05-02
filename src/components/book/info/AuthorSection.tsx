@@ -12,7 +12,7 @@ type AuthorSectionProps = {
 export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
   const { t } = useTranslation();
   //const [photoError, setPhotoError] = useState(false);
-  const [photoError, setPhotoError] = useState(!authorInfo.photoUrl)
+  const [photoError, setPhotoError] = useState(false)
 
   const toBookState = (book: AuthorBook): Book => ({
     key: book.id,
