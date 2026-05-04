@@ -18,9 +18,11 @@ export default function SignInGoogleButton({ disabled, onError }: SignInGoogleBu
     setIsLoading(true);
     try {
       const credential = await signInWithGoogle();
+      const [firstName = "", ...rest] = (credential.user.displayName ?? "").split(" ");
       await createUserProfile(credential.user.uid, {
         email: credential.user.email ?? "",
-        name: credential.user.displayName ?? "",
+        name: firstName,
+        surname: rest.join(" "),
       });
     } catch (error: unknown) {
       const firebaseError = error as { code?: string };

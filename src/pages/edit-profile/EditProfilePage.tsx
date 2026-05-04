@@ -18,7 +18,7 @@ type EditProfileForm = {
 export default function EditProfilePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<EditProfileForm>();
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<EditProfileForm>();
 
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
@@ -27,6 +27,12 @@ export default function EditProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [bioSaveBlocked, setBioSaveBlocked] = useState(false);
+  const [bioShaking, setBioShaking] = useState(false);
+
+  const BIO_MAX = 300;
+  const bioValue = watch("bio") ?? "";
+  const bioOverLimit = bioValue.length > BIO_MAX;
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
@@ -48,6 +54,10 @@ export default function EditProfilePage() {
       if (bannerPreviewRef.current?.startsWith("blob:")) URL.revokeObjectURL(bannerPreviewRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (bioSaveBlocked && !bioOverLimit) setBioSaveBlocked(false);
+  }, [bioValue, bioSaveBlocked, bioOverLimit]);
 
   useEffect(() => {
     if (!user) return;
@@ -89,6 +99,11 @@ export default function EditProfilePage() {
 
   const onSubmit = async (data: EditProfileForm) => {
     if (!user) return;
+    if (bioOverLimit) {
+      setBioSaveBlocked(true);
+      setBioShaking(true);
+      return;
+    }
     setSaving(true);
     setSaveError(null);
 
@@ -226,7 +241,7 @@ export default function EditProfilePage() {
           </div>
 
           <div className="edit-profile__field">
-            <label className="edit-profile__label" htmlFor="username">Handle</label>
+            <label className="edit-profile__label" htmlFor="username">Nickname</label>
             <div className="edit-profile__input-prefix-wrap">
               <span className="edit-profile__prefix">@</span>
               <input
@@ -247,17 +262,26 @@ export default function EditProfilePage() {
           </div>
 
           <div className="edit-profile__field">
-            <label className="edit-profile__label" htmlFor="bio">
-              Bio
-              <span className="edit-profile__label-hint">(máx. 300 caracteres)</span>
-            </label>
+            <label className="edit-profile__label" htmlFor="bio">Biografía</label>
             <textarea
               id="bio"
-              className="edit-profile__textarea"
+              className={[
+                "edit-profile__textarea",
+                bioSaveBlocked && bioOverLimit ? "edit-profile__textarea--error" : "",
+                bioShaking ? "edit-profile__textarea--shaking" : "",
+              ].filter(Boolean).join(" ")}
               rows={4}
-              maxLength={300}
+              onAnimationEnd={() => setBioShaking(false)}
               {...register("bio")}
             />
+            <div className="edit-profile__bio-footer">
+              {bioSaveBlocked && bioOverLimit && (
+                <span className="edit-profile__bio-error">Demasiados caracteres</span>
+              )}
+              <span className={`edit-profile__bio-count${bioOverLimit ? " edit-profile__bio-count--over" : ""}`}>
+                {bioValue.length} / {BIO_MAX} caracteres
+              </span>
+            </div>
           </div>
         </div>
 
