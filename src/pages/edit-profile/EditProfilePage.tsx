@@ -157,60 +157,66 @@ export default function EditProfilePage() {
       <form className="edit-profile__form" onSubmit={handleSubmit(onSubmit)}>
 
         {/* Banner */}
-        <div className="edit-profile__banner-upload">
-          <div
-            className="edit-profile__banner-preview"
-            style={bannerPreview ? { backgroundImage: `url(${bannerPreview})` } : undefined}
-            onClick={() => bannerInputRef.current?.click()}
-          >
-            {!bannerPreview && (
-              <span className="edit-profile__upload-hint">Subir portada</span>
-            )}
-            <div className="edit-profile__banner-overlay">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
+        <div className="edit-profile__field">
+          <span className="edit-profile__label">Foto de portada</span>
+          <div className="edit-profile__banner-upload">
+            <div
+              className="edit-profile__banner-preview"
+              style={bannerPreview ? { backgroundImage: `url(${bannerPreview})` } : undefined}
+              onClick={() => bannerInputRef.current?.click()}
+            >
+              {!bannerPreview && (
+                <span className="edit-profile__upload-hint">Subir portada</span>
+              )}
+              <div className="edit-profile__banner-overlay">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
             </div>
+            <input
+              ref={bannerInputRef}
+              type="file"
+              accept="image/*"
+              className="edit-profile__file-input"
+              onChange={handleBannerChange}
+              aria-label="Subir imagen de portada"
+            />
           </div>
-          <input
-            ref={bannerInputRef}
-            type="file"
-            accept="image/*"
-            className="edit-profile__file-input"
-            onChange={handleBannerChange}
-            aria-label="Subir imagen de portada"
-          />
         </div>
 
         {/* Avatar */}
-        <div className="edit-profile__photo-upload">
-          <div
-            className="edit-profile__photo-preview"
-            onClick={() => photoInputRef.current?.click()}
-          >
-            {photoPreview ? (
-              <img src={photoPreview} alt="Foto de perfil" className="edit-profile__photo-img" />
-            ) : (
-              <span className="edit-profile__upload-hint">Foto</span>
-            )}
-            <div className="edit-profile__photo-overlay">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
+        <div className="edit-profile__field">
+          <span className="edit-profile__label">Foto de perfil</span>
+          <div className="edit-profile__photo-upload">
+            <div
+              className="edit-profile__photo-preview"
+              onClick={() => photoInputRef.current?.click()}
+            >
+              {photoPreview ? (
+                <img src={photoPreview} alt="Foto de perfil" className="edit-profile__photo-img" />
+              ) : (
+                <span className="edit-profile__upload-hint">Foto</span>
+              )}
+              <div className="edit-profile__photo-overlay">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
             </div>
+            <input
+              ref={photoInputRef}
+              type="file"
+              accept="image/*"
+              className="edit-profile__file-input"
+              onChange={handlePhotoChange}
+              aria-label="Subir foto de perfil"
+            />
           </div>
-          <input
-            ref={photoInputRef}
-            type="file"
-            accept="image/*"
-            className="edit-profile__file-input"
-            onChange={handlePhotoChange}
-            aria-label="Subir foto de perfil"
-          />
         </div>
 
         {/* Fields */}
