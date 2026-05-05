@@ -5,5 +5,7 @@ export const logger = {
   warn: (...args: unknown[]) => {
     if (import.meta.env.DEV) console.warn(...args);
   },
-  error: console.error,  // los errores SÍ queremos en prod
+  error: (...args: unknown[]) => {
+    console.error(...args);
+  },
 };

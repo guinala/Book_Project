@@ -6,6 +6,7 @@ import { getCoverUrl } from "@/utils/coverImage";
 import UpdateProgressModal from "@/components/shelf/modals/UpdateProgressModal";
 import "./CurrentReadingCard.scss";
 import { encodeKey } from "@/utils/bookPaths";
+import HistoryModal from "@/components/shelf/modals/HistoryModal";
 
 function ChevronRightIcon() {
   return (
@@ -19,7 +20,8 @@ function CurrentReadingCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { shelfByStatus, loading, getEntry } = useShelf();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const readingBooks = shelfByStatus.reading;
@@ -86,10 +88,10 @@ function CurrentReadingCard() {
           </div>
 
           <div className="reading-card__actions">
-            <button className="reading-card__btn-outline">{t("myLibrary.viewHistory")}</button>
+            <button className="reading-card__btn-outline" onClick={() => setIsHistoryModalOpen(true)}>{t("myLibrary.viewHistory")}</button>
             <button
               className="reading-card__btn-fill"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsUpdateModalOpen(true)}
             >
               {t("myLibrary.updateProgress")}
             </button>
@@ -107,10 +109,20 @@ function CurrentReadingCard() {
         )}
       </article>
 
-      {isModalOpen && (
+      {isUpdateModalOpen && (
         <UpdateProgressModal
           entry={entry}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsUpdateModalOpen(false)}
+        />
+      )}
+
+      {isHistoryModalOpen && (
+        <HistoryModal
+          bookId={book.key}
+          bookTitle={book.title}
+          bookAuthor={book.authors.join(", ")}
+          bookCoverUrl={coverSrc}
+          onClose={() => setIsHistoryModalOpen(false)}
         />
       )}
     </>
