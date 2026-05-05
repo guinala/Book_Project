@@ -1,0 +1,70 @@
+@use "../../../styles/shared" as *;
+
+.history-modal {
+  @include modal-backdrop;
+
+  &__panel {
+    @include modal-panel(760px);
+    max-height: 90vh;
+  }
+
+  &__header {
+    @include modal-header;
+  }
+
+  &__title {
+    @include modal-title;
+  }
+
+  &__close {
+    @include modal-close;
+  }
+
+  &__body {
+    @include modal-body;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__left {
+    @include modal-left;
+  }
+
+  &__book-info {
+    @include modal-book-info;
+  }
+
+  &__cover {
+    @include modal-cover;
+  }
+
+  &__book-title {
+    @include modal-book-title;
+  }
+
+  &__book-author {
+    @include modal-book-author;
+  }
+
+  &__divider {
+    @include modal-divider;
+  }
+
+  &__right {
+    @include modal-right;
+    overflow-y: auto;
+  }
+
+  &__empty {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+    font-style: italic;
+    padding: var(--space-4) 0;
+  }
+
+  &__item-divider {
+    height: 1px;
+    background: var(--color-border-subtle);
+  }
+}
