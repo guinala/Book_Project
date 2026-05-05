@@ -97,13 +97,14 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
           ))}
         </div>
         {onSeeAll && (
-          <button
-            type="button"
+          <a
+            role="button"
             className="shelf-section__see-all"
             onClick={onSeeAll}
+            style={{ cursor: "pointer" }}
           >
             {t("myLibrary.seeAll")} <ChevronRightSmall />
-          </button>
+          </a>
         )}
       </div>
 
