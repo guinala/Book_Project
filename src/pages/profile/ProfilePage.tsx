@@ -94,6 +94,7 @@ export default function ProfilePage() {
         books={shelf}
         loading={shelfLoading}
         readOnly={!isOwnProfile}
+        onSeeAll={isOwnProfile ? () => navigate("/my-library/shelf") : undefined}
       />
 
       <div className="profile-page__bottom-row">

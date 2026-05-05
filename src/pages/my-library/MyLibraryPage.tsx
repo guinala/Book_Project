@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import CurrentReadingCard from "@/components/shelf/sections/CurrentReadingCard";
 import type { ReadingList } from "@/components/shelf/cards/ListCard";
 import ShelfSection from "@/components/shelf/sections/ShelfSection";
@@ -36,6 +37,7 @@ const READING_LISTS: ReadingList[] = [
 
 function MyLibraryPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { shelfByStatus } = useShelf();
   
   //useEffect(() => {
@@ -52,7 +54,7 @@ function MyLibraryPage() {
       )}
 
       <div className="my-library__shelf-section">
-        <ShelfSection books={shelfByStatus} />
+        <ShelfSection books={shelfByStatus} onSeeAll={() => navigate("/my-library/shelf")} />
       </div>
 
       <div className="my-library__lists-section">
