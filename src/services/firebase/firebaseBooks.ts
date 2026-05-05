@@ -1,5 +1,5 @@
 import type { Book } from "@/types/Book";
-import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, orderBy, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "./firebaseInit";
 import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
 
@@ -259,11 +259,13 @@ export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]>
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
-    orderBy("addCount", "desc"),
-    limit(count + 10),
+    limit(100),
   );
   const snap = await getDocs(q);
-  return snap.docs.map(d => mapBookDoc(d.data(), lang)).slice(0, count);
+  return snap.docs
+    .sort((a, b) => (b.data().addCount ?? 0) - (a.data().addCount ?? 0))
+    .slice(0, count)
+    .map(d => mapBookDoc(d.data(), lang));
 }
 
 export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]> {
