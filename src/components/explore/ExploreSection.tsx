@@ -20,6 +20,7 @@ type ExploreSectionProps = {
   params?: ExploreSectionParams;
   titleKey?: string;
   titleFallbackKey?: string;
+  titleHighlight?: string;
   onNavigate?: () => void;
 };
 
@@ -37,11 +38,24 @@ function buildSectionUrl(type: ExploreSectionType, params: ExploreSectionParams 
   return qs ? `${base}?${qs}` : base;
 }
 
+function renderTitle(title: string, highlight: string | undefined): React.ReactNode {
+  if (!highlight || !title.includes(highlight)) return title;
+  const [before, after] = title.split(highlight);
+  return (
+    <>
+      {before}
+      <span className="explore-section__title-accent">{highlight}</span>
+      {after}
+    </>
+  );
+}
+
 export default function ExploreSection({
   type,
   params = {},
   titleKey,
   titleFallbackKey,
+  titleHighlight,
   onNavigate,
 }: ExploreSectionProps) {
   const { t } = useTranslation();
@@ -68,7 +82,7 @@ export default function ExploreSection({
   return (
     <section className="explore-section">
       <div className="explore-section__header">
-        <h2 className="explore-section__title">{title}</h2>
+        <h2 className="explore-section__title">{renderTitle(title, titleHighlight)}</h2>
         {!loading && !error && books.length > 0 && (
           <button
             type="button"

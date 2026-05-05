@@ -18,6 +18,10 @@
     color: var(--color-text-primary);
     margin: 0;
 
+    &-accent {
+      color: var(--color-brand-primary);
+    }
+
     @include from($bp-md) {
       font-size: var(--text-2xl);
     }

@@ -198,6 +198,7 @@ function ExplorePage() {
                     referenceGenre: shelfDerived.referenceBook.genre,
                   }}
                   titleKey="explore.sections.becauseReading"
+                  titleHighlight={truncate(shelfDerived.referenceBook.title)}
                   onNavigate={handleNavigateToSection}
                 />
               )}
@@ -207,6 +208,7 @@ function ExplorePage() {
                   type="more-genre"
                   params={{ ...shelfParams, favoriteGenre: shelfDerived.favoriteGenre }}
                   titleKey="explore.sections.moreGenre"
+                  titleHighlight={shelfDerived.favoriteGenre}
                   onNavigate={handleNavigateToSection}
                 />
               )}
@@ -237,6 +239,7 @@ function ExplorePage() {
                     favoriteAuthorName: shelfDerived.favoriteAuthorName ?? undefined,
                   }}
                   titleKey="explore.sections.moreAuthor"
+                  titleHighlight={shelfDerived.favoriteAuthorName ?? undefined}
                   onNavigate={handleNavigateToSection}
                 />
               )}

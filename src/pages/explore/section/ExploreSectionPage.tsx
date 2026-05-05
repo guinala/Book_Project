@@ -26,6 +26,18 @@ const SECTION_FALLBACK_KEYS: Partial<Record<ExploreSectionType, string>> = {
   "new-releases-for-you": "explore.sections.newReleasesFallback",
 };
 
+function renderTitle(title: string, highlight: string | undefined) {
+  if (!highlight || !title.includes(highlight)) return title;
+  const [before, after] = title.split(highlight);
+  return (
+    <>
+      {before}
+      <span className="section-page__title-accent">{highlight}</span>
+      {after}
+    </>
+  );
+}
+
 export default function ExploreSectionPage() {
   const { type } = useParams<{ type: string }>();
   const [searchParams] = useSearchParams();
@@ -62,6 +74,12 @@ export default function ExploreSectionPage() {
     author: params.favoriteAuthorName,
   });
 
+  const titleHighlight =
+    sectionType === "because-reading" ? params.referenceBookTitle :
+    sectionType === "more-genre" ? params.favoriteGenre :
+    sectionType === "more-author" ? params.favoriteAuthorName :
+    undefined;
+
   return (
     <div className="section-page">
       <div className="section-page__header">
@@ -72,7 +90,7 @@ export default function ExploreSectionPage() {
         >
           {t("explore.backBtn")}
         </button>
-        <h1 className="section-page__title">{title}</h1>
+        <h1 className="section-page__title">{renderTitle(title, titleHighlight)}</h1>
       </div>
 
       {loading && <ExploreGridSkeleton />}
