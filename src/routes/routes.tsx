@@ -4,6 +4,7 @@ import AuthPage from "@/pages/auth/AuthPage";
 import ExplorePage from "@/pages/explore/ExplorePage";
 import ExploreSectionPage from "@/pages/explore/section/ExploreSectionPage";
 import MyLibraryPage from "@/pages/my-library/MyLibraryPage";
+import FullShelfPage from "@/pages/my-library/shelf/FullShelfPage";
 import BookDetailPage from "@/pages/book-detail/BookDetailPage";
 import CommunityPage from "@/pages/community/CommunityPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
@@ -26,6 +27,14 @@ export const ROUTES = [
         element: (
           <AuthRoute requireAuth>
             <MyLibraryPage />
+          </AuthRoute>
+        ),
+      },
+      {
+        path: "my-library/shelf",
+        element: (
+          <AuthRoute requireAuth>
+            <FullShelfPage />
           </AuthRoute>
         ),
       },

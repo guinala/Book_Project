@@ -49,9 +49,10 @@ type ShelfSectionProps = {
   books: Record<ShelfStatus, Book[]>;
   loading?: boolean;
   readOnly?: boolean;
+  onSeeAll?: () => void;
 };
 
-export default function ShelfSection({ books, loading = false, readOnly = false }: ShelfSectionProps) {
+export default function ShelfSection({ books, loading = false, readOnly = false, onSeeAll }: ShelfSectionProps) {
   const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<ShelfFilterKey>(SHELF_FILTER_KEYS[0]);
   const [page, setPage] = useState(0);
@@ -95,9 +96,16 @@ export default function ShelfSection({ books, loading = false, readOnly = false 
             </button>
           ))}
         </div>
-        <a href="#" className="shelf-section__see-all">
-          {t("myLibrary.seeAll")} <ChevronRightSmall />
-        </a>
+        {onSeeAll && (
+          <a
+            role="button"
+            className="shelf-section__see-all"
+            onClick={onSeeAll}
+            style={{ cursor: "pointer" }}
+          >
+            {t("myLibrary.seeAll")} <ChevronRightSmall />
+          </a>
+        )}
       </div>
 
       <div className="shelf-section__card">
