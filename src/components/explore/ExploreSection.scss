@@ -1,0 +1,77 @@
+@use '../../styles/lib' as *;
+
+.explore-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  &__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+
+    @include from($bp-md) {
+      font-size: var(--text-2xl);
+    }
+  }
+
+  &__see-more {
+    @include ghost-button;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-brand-primary);
+    padding: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover { opacity: 0.75; }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    align-items: start;
+
+    @include from($bp-md) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @include from($bp-lg) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-6) 0;
+  }
+
+  &__error-text {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  &__retry {
+    @include ghost-button;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-brand-primary);
+    padding: 0;
+
+    &:hover { opacity: 0.75; }
+  }
+}
