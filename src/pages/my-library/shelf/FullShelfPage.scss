@@ -16,7 +16,7 @@
   }
 
   &__page-title {
-    font-size: clamp(var(--text-2xl), 4vw, 36px);
+    font-size: var(--text-2xl);
     font-weight: var(--weight-extrabold);
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
@@ -241,15 +241,9 @@
     color: var(--color-text-secondary);
     cursor: pointer;
     padding: 0;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: transparent;
-    transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+    transition: color var(--transition-fast);
 
-    &:hover {
-      color: var(--color-brand-primary);
-      text-decoration-color: var(--color-brand-primary);
-    }
+    &:hover { color: var(--color-brand-primary); }
   }
 
   // ── Books grid ───────────────────────────────────────
@@ -336,7 +330,7 @@
 
   &__no-results-title {
     font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-medium);
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
     line-height: 1.2;

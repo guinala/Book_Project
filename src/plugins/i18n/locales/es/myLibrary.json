@@ -12,7 +12,7 @@
     "resultsCount_one": "{{count}} resultado para",
     "resultsCount_other": "{{count}} resultados para",
     "noResults": "¡Oops! No hemos encontrado el libro que buscas",
-    "clearSearch": "Ocultar búsqueda",
+    "clearSearch": "Borrar búsqueda",
     "emptyShelf": "Añadir libros",
     "viewHistory": "Ver historial",
     "updateProgress": "Actualizar progreso",
