@@ -5,6 +5,7 @@ import {
   getAuthorBooksFromDB,
   getAuthorNewReleases,
   getBooksByGenre,
+  getGenreNewReleases,
   getNewReleaseBooks,
   getQuickAndGoodBooks,
   getRecommendationsByGenre,
@@ -40,7 +41,7 @@ export function useExploreSection(
   }, [
     type, lang, count,
     params.referenceBookKey, params.referenceGenre,
-    params.favoriteGenre, params.favoriteAuthorKey,
+    params.favoriteGenre, params.favoriteAuthorKey, params.favoriteGenreLabel,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     params.userAuthorKeys?.join(","),
   ]);
@@ -101,13 +102,24 @@ async function fetchSection(
     }
 
     case "new-releases-for-you": {
-      if (params.userAuthorKeys && params.userAuthorKeys.length > 0) {
-        const raw = await getAuthorNewReleases(params.userAuthorKeys, year, 3, lang, count + 10);
-        const filtered = raw
-          .filter(b => !params.userShelfKeys?.has(b.key))
-          .slice(0, count);
-        if (filtered.length >= 6) return { books: filtered, isFallback: false };
+      const [byAuthor, byGenre] = await Promise.all([
+        params.userAuthorKeys?.length
+          ? getAuthorNewReleases(params.userAuthorKeys, year, lang, count + 10)
+          : Promise.resolve([] as Book[]),
+        params.favoriteGenre
+          ? getGenreNewReleases(params.favoriteGenre, year, lang, count + 10)
+          : Promise.resolve([] as Book[]),
+      ]);
+      const seen = new Set<string>();
+      const merged: Book[] = [];
+      for (const b of [...byAuthor, ...byGenre]) {
+        if (!seen.has(b.key) && !params.userShelfKeys?.has(b.key)) {
+          seen.add(b.key);
+          merged.push(b);
+        }
       }
+      merged.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+      if (merged.length > 0) return { books: merged.slice(0, count), isFallback: false };
       return { books: await getNewReleaseBooks(year, lang, count), isFallback: true };
     }
 

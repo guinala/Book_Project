@@ -225,7 +225,10 @@ function ExplorePage() {
 
               <ExploreSection
                 type="new-releases-for-you"
-                params={shelfParams}
+                params={{
+                  ...shelfParams,
+                  favoriteGenre: shelfDerived?.favoriteGenre ?? undefined,
+                }}
                 titleKey="explore.sections.newReleasesForYou"
                 titleFallbackKey="explore.sections.newReleasesFallback"
                 onNavigate={handleNavigateToSection}

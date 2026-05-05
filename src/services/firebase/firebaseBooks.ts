@@ -301,13 +301,12 @@ export async function getNewReleaseBooks(year: number, lang: string, count = 6):
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
-    where("first_publish_year", ">=", year),
-    limit(count + 20),
+    limit(150),
   );
   const snap = await getDocs(q);
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
-    .filter(b => (b.rating ?? 0) >= 3)
+    .filter(b => (b.first_publish_year ?? 0) >= year && (b.rating ?? 0) >= 3)
     .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, count);
 }
@@ -330,7 +329,6 @@ export async function getQuickAndGoodBooks(lang: string, count = 6): Promise<Boo
 export async function getAuthorNewReleases(
   authorKeys: string[],
   year: number,
-  minRating: number,
   lang: string,
   count = 6,
 ): Promise<Book[]> {
@@ -339,13 +337,32 @@ export async function getAuthorNewReleases(
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("authorKeys", "array-contains-any", keys),
-    where("first_publish_year", ">=", year),
-    limit(count + 20),
+    limit(100),
   );
   const snap = await getDocs(q);
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
-    .filter(b => (b.rating ?? 0) >= minRating)
+    .filter(b => (b.first_publish_year ?? 0) >= year)
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .slice(0, count);
+}
+
+export async function getGenreNewReleases(
+  genre: string,
+  year: number,
+  lang: string,
+  count = 6,
+): Promise<Book[]> {
+  const q = query(
+    collection(db, BOOKS_COLLECTION),
+    where("genre", "==", genre),
+    where("langs", "array-contains", lang),
+    limit(count + 30),
+  );
+  const snap = await getDocs(q);
+  return snap.docs
+    .map(d => mapBookDoc(d.data(), lang))
+    .filter(b => (b.first_publish_year ?? 0) >= year)
     .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, count);
 }
