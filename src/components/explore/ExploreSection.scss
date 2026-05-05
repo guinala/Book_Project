@@ -24,15 +24,21 @@
   }
 
   &__see-more {
-    @include ghost-button;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
-    color: var(--color-brand-primary);
-    padding: 0;
+    color: var(--color-text-secondary);
+    cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
+    padding: 0;
+    transition: color var(--transition-fast);
 
-    &:hover { opacity: 0.75; }
+    &:hover { color: var(--color-text-primary); }
   }
 
   &__grid {
