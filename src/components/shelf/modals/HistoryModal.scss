@@ -4,7 +4,7 @@
   @include modal-backdrop;
 
   &__panel {
-    @include modal-panel(760px);
+    @include modal-panel(900px);
     max-height: 90vh;
   }
 
@@ -54,6 +54,14 @@
   &__right {
     @include modal-right;
     overflow-y: auto;
+    padding-right: var(--space-4);
+
+    .activity-item {
+      &__cover-btn,
+      &__cover {
+        display: none;
+      }
+    }
   }
 
   &__empty {
@@ -66,5 +74,6 @@
   &__item-divider {
     height: 1px;
     background: var(--color-border-subtle);
+    margin: var(--space-4) 0;
   }
 }
