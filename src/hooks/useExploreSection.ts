@@ -44,6 +44,7 @@ export function useExploreSection(
     params.favoriteGenre, params.favoriteAuthorKey, params.favoriteGenreLabel,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     params.userAuthorKeys?.join(","),
+    params.userShelfKeys?.size,
   ]);
 
   useEffect(() => { fetch(); }, [fetch]);
@@ -63,9 +64,12 @@ async function fetchSection(
 
   switch (type) {
     case "trending": {
-      const books = await getTrendingBooks(lang, count);
+      const raw = await getTrendingBooks(lang, count + 10);
+      const books = raw.filter(b => !params.userShelfKeys?.has(b.key)).slice(0, count);
       if (books.length > 0) return { books, isFallback: false };
-      return { books: await getTopRatedBooks(lang, count), isFallback: true };
+      const fallbackRaw = await getTopRatedBooks(lang, count + 10);
+      const fallback = fallbackRaw.filter(b => !params.userShelfKeys?.has(b.key)).slice(0, count);
+      return { books: fallback, isFallback: true };
     }
 
     case "top-rated":

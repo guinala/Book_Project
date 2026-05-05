@@ -29,7 +29,6 @@ type ListsSectionProps = {
 export default function ListsSection({ lists }: ListsSectionProps) {
   const { t } = useTranslation();
   const visibleLists = lists.slice(0, MAX_LISTS);
-  const showAddRow = visibleLists.length < MAX_LISTS;
 
   return (
     <section className="lists-section">
@@ -48,20 +47,16 @@ export default function ListsSection({ lists }: ListsSectionProps) {
           </div>
         ))}
 
-        {showAddRow && (
-          <>
-            {visibleLists.length > 0 && <div className="lists-section__divider" />}
-            <button type="button" className="lists-section__create">
-              <div className="lists-section__create-icon">
-                <PlusIcon />
-              </div>
-              <span className="lists-section__create-text">
-                {t("myLibrary.createList")}
-              </span>
-              <ChevronRightSmall />
-            </button>
-          </>
-        )}
+        {visibleLists.length > 0 && <div className="lists-section__divider" />}
+        <button type="button" className="lists-section__create">
+          <div className="lists-section__create-icon">
+            <PlusIcon />
+          </div>
+          <span className="lists-section__create-text">
+            {t("myLibrary.createList")}
+          </span>
+          <ChevronRightSmall />
+        </button>
       </div>
     </section>
   );

@@ -15,18 +15,22 @@
   }
 
   &__back {
-    @include ghost-button;
+    background: none;
+    border: none;
+    font-size: var(--text-base);
+    font-weight: var(--weight-bold);
+    color: var(--color-brand-primary);
+    cursor: pointer;
+    padding: 4px 0;
     align-self: flex-start;
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-secondary);
-    padding: 0;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: var(--space-1);
+    transition: opacity var(--transition-fast);
 
-    &::before { content: "←"; }
-    &:hover { color: var(--color-text-primary); }
+    svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    &:hover { opacity: 0.7; }
   }
 
   &__title {

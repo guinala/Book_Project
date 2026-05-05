@@ -91,18 +91,16 @@
     height: 24px;
     margin-right: var(--space-2);
     border-radius: var(--radius-pill);
-    background: var(--color-border-subtle);
+    background: transparent;
     border: none;
     color: var(--color-text-tertiary);
     cursor: pointer;
     flex-shrink: 0;
     transition:
-      background var(--transition-fast),
       color var(--transition-fast);
 
     &:hover {
-      background: var(--color-border-medium);
-      color: var(--color-text-primary);
+      color: var(--color-brand-primary);
     }
   }
 }

@@ -131,6 +131,7 @@ function ExplorePage() {
               : t("explore.resultsFound", { count: search.totalResults })}
           </p>
           <button onClick={handleClearSearch} className="explore-page__clear-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
             {t("explore.backBtn")}
           </button>
         </div>
@@ -141,11 +142,18 @@ function ExplorePage() {
           {search.loading && <GridLoading />}
           {search.error && <p className="explore-page__error">{search.error}</p>}
           {!search.loading && !search.error && (
-            <div className="explore-page__search-grid">
-              {search.books.map(book => (
-                <BookGridCard key={book.key} book={book} />
-              ))}
-            </div>
+            search.books.length === 0 ? (
+              <div className="explore-page__no-results">
+                <h3 className="explore-page__no-results-title">{t("myLibrary.noResults")}</h3>
+                <img src="/no-results.png" alt="" className="explore-page__no-results-img" />
+              </div>
+            ) : (
+              <div className="explore-page__search-grid">
+                {search.books.map(book => (
+                  <BookGridCard key={book.key} book={book} />
+                ))}
+              </div>
+            )
           )}
         </section>
       ) : (
