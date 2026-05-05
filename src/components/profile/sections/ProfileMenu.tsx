@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/hooks/useTheme";
 import "./ProfileMenu.scss";
 
 interface ProfileMenuProps {

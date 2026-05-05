@@ -54,18 +54,18 @@ export function useProfile(userId: string) {
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [publicShelf, setPublicShelf] = useState<Record<ShelfStatus, Book[]>>(EMPTY_SHELF);
   const [isFollowingState, setIsFollowingState] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !!userId);
+  const [prevUserId, setPrevUserId] = useState(userId);
+  if (userId !== prevUserId) {
+    setPrevUserId(userId);
+    setLoading(!!userId);
+    setPublicShelf(EMPTY_SHELF);
+  }
 
   useEffect(() => {
-    if (!userId) {
-      setLoading(false);
-      return;
-    }
+    if (!userId) return;
     let cancelled = false;
     const isOwn = !!user && user.uid === userId;
-
-    setLoading(true);
-    setPublicShelf({ wantToRead: [], reading: [], finished: [], didNotFinish: [] });
 
     const fetches: Promise<void>[] = [
       getUserProfile(userId).then((p) => { if (!cancelled) setProfile(p); }),

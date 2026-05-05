@@ -1,5 +1,5 @@
 // src/pages/ProfilePage/ProfilePage.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -46,11 +46,14 @@ export default function ProfilePage() {
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
-  const [localFavorites, setLocalFavorites] = useState<FavoriteBook[]>([]);
-
-  useEffect(() => {
-    if (profile) setLocalFavorites(profile.favoriteBooks);
-  }, [profile]);
+  const [localFavorites, setLocalFavorites] = useState<FavoriteBook[]>(
+    profile?.favoriteBooks ?? []
+  );
+  const [prevProfile, setPrevProfile] = useState(profile);
+  if (profile !== prevProfile) {
+    setPrevProfile(profile);
+    setLocalFavorites(profile?.favoriteBooks ?? []);
+  }
 
   const handleFavSave = (updated: FavoriteBook[]) => setLocalFavorites(updated);
 

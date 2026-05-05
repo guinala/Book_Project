@@ -18,6 +18,12 @@ export default function FollowersModal({
 }: FollowersModalProps) {
   const [users, setUsers] = useState<UserMinimal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [prevDeps, setPrevDeps] = useState({ userId, mode });
+  if (userId !== prevDeps.userId || mode !== prevDeps.mode) {
+    setPrevDeps({ userId, mode });
+    setLoading(true);
+    setUsers([]);
+  }
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -29,7 +35,6 @@ export default function FollowersModal({
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     const fetchFn = mode === "followers" ? getFollowers : getFollowing;
     fetchFn(userId)
       .then((result) => { if (!cancelled) setUsers(result); })

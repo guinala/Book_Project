@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, NavLink } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
@@ -47,10 +47,11 @@ export default function Navbar({ hidden = false }: NavbarProps) {
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
+  const [prevHidden, setPrevHidden] = useState(hidden);
+  if (hidden !== prevHidden) {
+    setPrevHidden(hidden);
     if (hidden) setMenuOpen(false);
-  }, [hidden]);
+  }
 
   return (
     <header className={`navbar${hidden ? " navbar--hidden" : ""}`}>

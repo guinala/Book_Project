@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/layouts/AuthLayout";
-import LoginForm from "@/components/auth/forms/LoginForm";
-import RegisterForm from "@/components/auth/forms/RegisterForm";
+import LoginForm from "@/components/auth/Forms/LoginForm";
+import RegisterForm from "@/components/auth/Forms/RegisterForm";
 import "./AuthForm.scss";
 
 type FormScreen = "login" | "register";
