@@ -11,7 +11,7 @@
     "searchPlaceholder": "Busca por título o autor",
     "resultsCount_one": "{{count}} resultado para",
     "resultsCount_other": "{{count}} resultados para",
-    "noResults": "Sin resultados",
+    "noResults": "¡Oops! No hemos encontrado el libro que buscas",
     "clearSearch": "Ocultar búsqueda",
     "emptyShelf": "Añadir libros",
     "viewHistory": "Ver historial",

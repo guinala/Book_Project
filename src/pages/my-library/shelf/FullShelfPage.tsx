@@ -168,7 +168,10 @@ export default function FullShelfPage() {
             <BookCard key={book.key} book={book} />
           ))}
           {displayBooks.length === 0 && (
-            <p className="full-shelf__empty">{t("myLibrary.noResults")}</p>
+            <div className="full-shelf__no-results">
+              <h3 className="full-shelf__no-results-title">{t("myLibrary.noResults")}</h3>
+              <img src="/no-results.png" alt="" className="full-shelf__no-results-img" />
+            </div>
           )}
         </div>
       )}

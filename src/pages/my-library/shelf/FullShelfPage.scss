@@ -324,13 +324,33 @@
     margin: 0;
   }
 
-  &__empty {
+  &__no-results {
     grid-column: 1 / -1;
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    margin: 0;
-    padding: var(--space-8) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-6) 0;
     text-align: center;
+  }
+
+  &__no-results-title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0;
+
+    @media (max-width: 767px) {
+      white-space: normal;
+    }
+  }
+
+  &__no-results-img {
+    width: 210px;
+    height: 210px;
+    object-fit: contain;
   }
 
   // ── Skeleton ─────────────────────────────────────────
