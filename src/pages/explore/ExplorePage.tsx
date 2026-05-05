@@ -9,6 +9,7 @@ import BookGridCard from "@/components/book/cards/BookGridCard";
 import GridLoading from "@/components/layout/GridLoading";
 import ExploreSection from "@/components/explore/ExploreSection";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
+import { genreToI18nKey } from "@/utils/genreUtils";
 import type { ExploreSectionParams } from "@/types/ExploreTypes";
 import type { SearchFilter } from "@/types/Search";
 import "./ExplorePage.scss";
@@ -83,17 +84,22 @@ function ExplorePage() {
 
     const userAuthorKeys = [...new Set(allBooks.flatMap(b => b.authorKeys ?? []))];
 
+    const favoriteGenreLabel = favoriteGenre
+      ? t(`book.genres.${genreToI18nKey(favoriteGenre)}`, { defaultValue: favoriteGenre })
+      : null;
+
     return {
       userShelfKeys,
       referenceBook,
       favoriteGenre,
+      favoriteGenreLabel,
       favoriteAuthorKey: favoriteAuthor?.[0] ?? null,
       favoriteAuthorName: favoriteAuthor?.[1].name ?? null,
       userAuthorKeys,
       wantToReadBooks: shelfByStatus.wantToRead,
       hasBooks: allBooks.length > 0,
     };
-  }, [isLoggedIn, shelfLoading, shelfByStatus]);
+  }, [isLoggedIn, shelfLoading, shelfByStatus, t]);
 
   const handleSearch = (query: string, filter: SearchFilter) => {
     setSearchQuery(query);
@@ -206,9 +212,13 @@ function ExplorePage() {
               {shelfDerived?.favoriteGenre && (
                 <ExploreSection
                   type="more-genre"
-                  params={{ ...shelfParams, favoriteGenre: shelfDerived.favoriteGenre }}
+                  params={{
+                    ...shelfParams,
+                    favoriteGenre: shelfDerived.favoriteGenre,
+                    favoriteGenreLabel: shelfDerived.favoriteGenreLabel ?? undefined,
+                  }}
                   titleKey="explore.sections.moreGenre"
-                  titleHighlight={shelfDerived.favoriteGenre}
+                  titleHighlight={shelfDerived.favoriteGenreLabel ?? shelfDerived.favoriteGenre}
                   onNavigate={handleNavigateToSection}
                 />
               )}

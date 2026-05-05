@@ -16,6 +16,7 @@ export type ExploreSectionParams = {
   referenceBookTitle?: string;
   referenceGenre?: string;
   favoriteGenre?: string;
+  favoriteGenreLabel?: string;
   favoriteAuthorKey?: string;
   favoriteAuthorName?: string;
   userAuthorKeys?: string[];

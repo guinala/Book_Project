@@ -47,11 +47,14 @@ export default function ExploreSectionPage() {
 
   const sectionType = type as ExploreSectionType;
 
+  const favoriteGenreLabel = searchParams.get("genreLabel") ?? undefined;
+
   const params: ExploreSectionParams = {
     referenceBookKey: searchParams.get("bookKey") ?? undefined,
     referenceBookTitle: searchParams.get("bookTitle") ?? undefined,
     referenceGenre: searchParams.get("genre") ?? undefined,
     favoriteGenre: searchParams.get("genre") ?? undefined,
+    favoriteGenreLabel,
     favoriteAuthorKey: searchParams.get("authorKey") ?? undefined,
     favoriteAuthorName: searchParams.get("authorName") ?? undefined,
     userAuthorKeys: searchParams.get("authorKeys")?.split(",").filter(Boolean) ?? undefined,
@@ -70,13 +73,13 @@ export default function ExploreSectionPage() {
 
   const title = t(titleKey, {
     title: params.referenceBookTitle,
-    genre: params.favoriteGenre,
+    genre: params.favoriteGenreLabel ?? params.favoriteGenre,
     author: params.favoriteAuthorName,
   });
 
   const titleHighlight =
     sectionType === "because-reading" ? params.referenceBookTitle :
-    sectionType === "more-genre" ? params.favoriteGenre :
+    sectionType === "more-genre" ? (params.favoriteGenreLabel ?? params.favoriteGenre) :
     sectionType === "more-author" ? params.favoriteAuthorName :
     undefined;
 

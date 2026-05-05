@@ -31,6 +31,7 @@ function buildSectionUrl(type: ExploreSectionType, params: ExploreSectionParams 
   if (params.referenceBookTitle) search.set("bookTitle", params.referenceBookTitle);
   if (params.referenceGenre) search.set("genre", params.referenceGenre);
   if (params.favoriteGenre) search.set("genre", params.favoriteGenre);
+  if (params.favoriteGenreLabel) search.set("genreLabel", params.favoriteGenreLabel);
   if (params.favoriteAuthorKey) search.set("authorKey", params.favoriteAuthorKey);
   if (params.favoriteAuthorName) search.set("authorName", params.favoriteAuthorName);
   if (params.userAuthorKeys?.length) search.set("authorKeys", params.userAuthorKeys.join(","));
@@ -67,7 +68,7 @@ export default function ExploreSection({
   const title = resolvedTitleKey
     ? t(resolvedTitleKey, {
         title: params.referenceBookTitle,
-        genre: params.favoriteGenre,
+        genre: params.favoriteGenreLabel ?? params.favoriteGenre,
         author: params.favoriteAuthorName,
       })
     : "";
