@@ -80,7 +80,7 @@ export async function updateReadingProgress(
     bookAuthor: entry.book.authors[0],
   };
 
-  logActivity(uid, { type: "progress", ...base, progress: currentPage, note })
+  logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
     .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
 
   if (isFinished) {
