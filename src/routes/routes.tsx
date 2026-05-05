@@ -2,6 +2,7 @@ import App from "@/App";
 import LandingPage from "@/pages/landing/LandingPage";
 import AuthPage from "@/pages/auth/AuthPage";
 import ExplorePage from "@/pages/explore/ExplorePage";
+import ExploreSectionPage from "@/pages/explore/section/ExploreSectionPage";
 import MyLibraryPage from "@/pages/my-library/MyLibraryPage";
 import BookDetailPage from "@/pages/book-detail/BookDetailPage";
 import CommunityPage from "@/pages/community/CommunityPage";
@@ -17,6 +18,7 @@ export const ROUTES = [
       { index: true, element: <LandingPage /> },
       { path: "auth", element: <AuthPage /> },
       { path: "explore", element: <ExplorePage /> },
+      { path: "explore/section/:type", element: <ExploreSectionPage /> },
       { path: "books/:bookId", element: <BookDetailPage /> },
       { path: "community", element: <CommunityPage /> },
       {

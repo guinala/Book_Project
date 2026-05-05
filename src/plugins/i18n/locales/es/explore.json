@@ -6,7 +6,30 @@
     "backBtn": "Volver",
     "resultsTitle": "Resultados para \"{{query}}\"",
     "fantasyTitle": "Fantasía",
-    "saveTooltip": "Inicia sesión para guardar"
+    "saveTooltip": "Inicia sesión para guardar",
+    "seeMore": "Ver más",
+    "retry": "Reintentar",
+    "sectionError": "No se pudo cargar esta sección",
+    "sections": {
+      "trending": "Tendencias esta semana",
+      "trendingFallback": "Populares en Trama",
+      "topRated": "Mejor valorados",
+      "fiction": "Ficción",
+      "nonFiction": "No ficción",
+      "newReleases": "Nuevos lanzamientos",
+      "newReleasesFallback": "Novedades destacadas",
+      "quickReads": "Rápidos y muy buenos",
+      "becauseReading": "Porque estás leyendo {{title}}",
+      "moreGenre": "Más de {{genre}}",
+      "newReleasesForYou": "Nuevos lanzamientos para ti",
+      "waiting": "Fantásticas tramas te esperan",
+      "moreAuthor": "Más de {{author}}"
+    },
+    "banner": {
+      "title": "Descubre libros para ti",
+      "body": "Crea una cuenta para ver recomendaciones personalizadas según lo que lees.",
+      "cta": "Crear cuenta"
+    }
   },
   "search": {
     "all": "Todo",

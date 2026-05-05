@@ -3,6 +3,7 @@ import { db } from "./firebaseInit";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { logActivity } from "./firebaseActivity";
+import { incrementBookAddCount } from "./firebaseBooks";
 
 export type ShelfEntry = { book: Book; status: ShelfStatus; currentPage?: number };
 
@@ -57,6 +58,9 @@ export async function addToShelf(
     logActivity(uid, { type: "book_finished", ...base })
       .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   }
+
+  incrementBookAddCount(book.key)
+    .catch((err) => console.warn("[addToShelf] incrementTrending failed:", err));
 }
 
 export async function updateReadingProgress(
