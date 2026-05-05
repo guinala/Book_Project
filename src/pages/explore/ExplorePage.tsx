@@ -58,10 +58,11 @@ function ExplorePage() {
 
     const userShelfKeys = new Set(allBooks.map(b => b.key));
 
-    const readingBook = shelfByStatus.reading[0] ?? null;
     const highRatedBook = [...shelfByStatus.finished, ...shelfByStatus.reading]
       .find(b => (b.rating ?? 0) >= 4) ?? null;
-    const referenceBook = readingBook ?? highRatedBook;
+    const referenceBooks = shelfByStatus.reading.length > 0
+      ? shelfByStatus.reading
+      : highRatedBook ? [highRatedBook] : [];
 
     const genreCounts: Record<string, number> = {};
     for (const b of [...shelfByStatus.finished, ...shelfByStatus.reading]) {
@@ -90,7 +91,7 @@ function ExplorePage() {
 
     return {
       userShelfKeys,
-      referenceBook,
+      referenceBooks,
       favoriteGenre,
       favoriteGenreLabel,
       favoriteAuthorKey: favoriteAuthor?.[0] ?? null,
@@ -194,20 +195,21 @@ function ExplorePage() {
             </>
           ) : (
             <>
-              {shelfDerived?.referenceBook && (
+              {shelfDerived?.referenceBooks.map(book => (
                 <ExploreSection
+                  key={book.key}
                   type="because-reading"
                   params={{
                     ...shelfParams,
-                    referenceBookKey: shelfDerived.referenceBook.key,
-                    referenceBookTitle: truncate(shelfDerived.referenceBook.title),
-                    referenceGenre: shelfDerived.referenceBook.genre,
+                    referenceBookKey: book.key,
+                    referenceBookTitle: truncate(book.title),
+                    referenceGenre: book.genre,
                   }}
                   titleKey="explore.sections.becauseReading"
-                  titleHighlight={truncate(shelfDerived.referenceBook.title)}
+                  titleHighlight={truncate(book.title)}
                   onNavigate={handleNavigateToSection}
                 />
-              )}
+              ))}
 
               {shelfDerived?.favoriteGenre && (
                 <ExploreSection
