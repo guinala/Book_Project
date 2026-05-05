@@ -1,0 +1,74 @@
+@use '../../../styles/lib' as *;
+
+.section-page {
+  @include container;
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  &__back {
+    @include ghost-button;
+    align-self: flex-start;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-secondary);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+
+    &::before { content: "←"; }
+    &:hover { color: var(--color-text-primary); }
+  }
+
+  &__title {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+
+    @include from($bp-md) {
+      font-size: var(--text-3xl);
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    align-items: start;
+
+    @include from($bp-md) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @include from($bp-lg) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: flex-start;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+
+    button {
+      @include ghost-button;
+      color: var(--color-brand-primary);
+      font-weight: var(--weight-semibold);
+      padding: 0;
+    }
+  }
+}
