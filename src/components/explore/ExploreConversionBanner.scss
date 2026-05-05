@@ -1,0 +1,58 @@
+@use '../../styles/lib' as *;
+
+.explore-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--color-brand-alpha-subtle);
+  border: 1px solid var(--color-brand-alpha-medium);
+  border-radius: var(--radius-xl);
+
+  @include from($bp-md) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+  }
+
+  &__body {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  &__cta {
+    align-self: flex-start;
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-brand-primary);
+    color: var(--color-text-on-brand);
+    border: none;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    @include transition(background);
+
+    &:hover { background: var(--color-brand-dark); }
+
+    @include from($bp-md) {
+      align-self: center;
+    }
+  }
+}
