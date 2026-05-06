@@ -20,6 +20,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: var(--space-3);
+    padding-right: var(--space-2);
   }
 
   &__filter-tabs {
@@ -81,11 +82,16 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
+    background: none;
+    border: none;
+    padding: 0;
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     color: var(--color-text-secondary);
     text-decoration: none;
     white-space: nowrap;
+    flex-shrink: 0;
+    cursor: pointer;
     transition: color var(--transition-fast);
 
     &:hover {
@@ -133,69 +139,28 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    border-radius: var(--radius-sm);
     cursor: pointer;
-    position: relative;
-    transition: background var(--transition-fast);
 
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border: 1.5px dashed var(--color-border-medium);
-      border-radius: var(--radius-sm);
-      pointer-events: none;
-      transition: border-color var(--transition-fast);
+    &:hover &-cover {
+      border-color: var(--color-accent);
+      background: var(--color-brand-alpha-subtle);
     }
 
-    &:hover {
-      background: var(--color-brand-alpha-subtle);
-
-      &::before { border-color: var(--color-accent); }
-
-      .shelf-section__add-book-icon {
-        border-color: var(--color-accent);
-        color: var(--color-accent);
-      }
+    &:hover &-icon {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
     }
   }
 
-  &__add-book-inner {
+  &__add-book-cover {
     width: 100%;
     aspect-ratio: 2 / 3;
-    visibility: hidden;
-  }
-
-  &__add-book-content {
-    position: absolute;
-    inset: 0;
+    border-radius: var(--radius-sm);
+    border: 1.5px dashed var(--color-border-medium);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
-  }
-
-  &__add-book-ghost-title {
-    font-family: var(--font-editorial);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    margin: 0;
-    visibility: hidden;
-  }
-
-  &__add-book-ghost-author {
-    font-family: var(--font-editorial);
-    font-size: var(--text-xs);
-    font-style: italic;
-    white-space: nowrap;
-    overflow: hidden;
-    margin: 0;
-    visibility: hidden;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
   }
 
   &__add-book-icon {
@@ -215,59 +180,29 @@
     }
   }
 
-  &__add-book-text {
+  &__add-book-title {
+    margin: 0;
+    padding-left: var(--space-1);
+    font-family: var(--font-main);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-secondary);
+    @include line-clamp(1);
+  }
+
+  &__add-book-author {
+    margin: 0;
+    font-family: var(--font-editorial);
     font-size: var(--text-xs);
-    font-weight: var(--weight-bold);
+    font-style: italic;
+    visibility: hidden;
+  }
+
+  &__empty-readonly {
+    flex: 1;
+    font-size: var(--text-sm);
     color: var(--color-text-secondary);
     text-align: center;
-    margin: 0;
-  }
-
-  &__empty {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    border: 1.5px dashed var(--color-border-medium);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    cursor: pointer;
-    transition: border-color var(--transition-fast), background var(--transition-fast);
-
-    &:hover {
-      border-color: var(--color-accent);
-      background: var(--color-brand-alpha-subtle);
-
-      .shelf-section__empty-icon {
-        border-color: var(--color-accent);
-        color: var(--color-accent);
-      }
-    }
-  }
-
-  &__empty-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-border-medium);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-text-secondary);
-    transition: border-color var(--transition-fast), color var(--transition-fast);
-
-    svg {
-      width: 18px;
-      height: 18px;
-    }
-  }
-
-  &__empty-text {
-    font-size: var(--text-sm);
-    font-weight: var(--weight-bold);
-    color: var(--color-text-secondary);
     margin: 0;
   }
 

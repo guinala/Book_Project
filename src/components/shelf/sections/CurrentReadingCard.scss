@@ -6,11 +6,19 @@
 }
 
 .reading-card {
+  &__wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+    max-width: 860px;
+  }
+
   display: flex;
+  flex: 1;
   gap: var(--space-6);
   align-items: center;
   width: 100%;
-  max-width: 860px;
   padding: var(--space-5) var(--space-6);
   background: var(--color-bg-card);
   border: 1px solid var(--color-border-medium);

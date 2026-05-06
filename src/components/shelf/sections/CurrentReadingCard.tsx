@@ -37,59 +37,61 @@ function CurrentReadingCard() {
 
   return (
     <>
-      <article className="reading-card">
-        <button
-          className="reading-card__cover-btn"
-          onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })}
-          aria-label={t("book.coverAlt", { title: book.title })}
-        >
-          {coverSrc ? (
-            <img
-              className="reading-card__cover-img"
-              src={coverSrc}
-              alt=""
-            />
-          ) : (
-            <div className="reading-card__cover-placeholder" />
-          )}
-        </button>
-
-        <div className="reading-card__body">
-          <div className="reading-card__header">
-            <div>
-              <h3 className="reading-card__title">{book.title}</h3>
-              <p className="reading-card__author">{book.authors.join(", ")}</p>
-            </div>
-          </div>
-
-          <div className="reading-card__progress-box">
-            <div className="reading-card__progress-labels">
-              <span className="reading-card__progress-label">
-                {t("myLibrary.readingProgress")}:{" "}
-                <span className="reading-card__progress-percent">{progressPercent}%</span>
-              </span>
-              <span className="reading-card__progress-pages">
-                {t("myLibrary.pages", { current: currentPage, total: totalPages })}
-              </span>
-            </div>
-            <div className="reading-card__progress-bar">
-              <div
-                className="reading-card__progress-fill"
-                style={{ width: `${progressPercent}%` }}
+      <div className="reading-card__wrapper">
+        <article className="reading-card">
+          <button
+            className="reading-card__cover-btn"
+            onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })}
+            aria-label={t("book.coverAlt", { title: book.title })}
+          >
+            {coverSrc ? (
+              <img
+                className="reading-card__cover-img"
+                src={coverSrc}
+                alt=""
               />
+            ) : (
+              <div className="reading-card__cover-placeholder" />
+            )}
+          </button>
+
+          <div className="reading-card__body">
+            <div className="reading-card__header">
+              <div>
+                <h3 className="reading-card__title">{book.title}</h3>
+                <p className="reading-card__author">{book.authors.join(", ")}</p>
+              </div>
+            </div>
+
+            <div className="reading-card__progress-box">
+              <div className="reading-card__progress-labels">
+                <span className="reading-card__progress-label">
+                  {t("myLibrary.readingProgress")}:{" "}
+                  <span className="reading-card__progress-percent">{progressPercent}%</span>
+                </span>
+                <span className="reading-card__progress-pages">
+                  {t("myLibrary.pages", { current: currentPage, total: totalPages })}
+                </span>
+              </div>
+              <div className="reading-card__progress-bar">
+                <div
+                  className="reading-card__progress-fill"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="reading-card__actions">
+              <button className="reading-card__btn-outline" onClick={() => setIsHistoryModalOpen(true)}>{t("myLibrary.viewHistory")}</button>
+              <button
+                className="reading-card__btn-fill"
+                onClick={() => setIsUpdateModalOpen(true)}
+              >
+                {t("myLibrary.updateProgress")}
+              </button>
             </div>
           </div>
-
-          <div className="reading-card__actions">
-            <button className="reading-card__btn-outline" onClick={() => setIsHistoryModalOpen(true)}>{t("myLibrary.viewHistory")}</button>
-            <button
-              className="reading-card__btn-fill"
-              onClick={() => setIsUpdateModalOpen(true)}
-            >
-              {t("myLibrary.updateProgress")}
-            </button>
-          </div>
-        </div>
+        </article>
 
         {readingBooks.length > 1 && (
           <button
@@ -100,7 +102,7 @@ function CurrentReadingCard() {
             <ChevronRight />
           </button>
         )}
-      </article>
+      </div>
 
       {isUpdateModalOpen && (
         <UpdateProgressModal

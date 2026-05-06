@@ -77,17 +77,8 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
       </div>
 
       <div className="shelf-section__card">
-        {!loading && categoryBooks.length === 0 ? (
-          <div className="shelf-section__empty">
-            {!readOnly && (
-              <div className="shelf-section__empty-icon">
-                <Plus />
-              </div>
-            )}
-            <p className="shelf-section__empty-text">
-              {readOnly ? "Sin libros en esta estantería" : t("myLibrary.emptyShelf")}
-            </p>
-          </div>
+        {!loading && categoryBooks.length === 0 && readOnly ? (
+          <p className="shelf-section__empty-readonly">Sin libros en esta estantería</p>
         ) : (
           <>
             <div className="shelf-section__track">
@@ -104,15 +95,13 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
                     if (slot.type === "add") return (
                       <div key="add" className="shelf-section__item">
                         <div className="shelf-section__add-book">
-                          <div className="shelf-section__add-book-inner" aria-hidden="true" />
-                          <p className="shelf-section__add-book-ghost-title" aria-hidden="true">&nbsp;</p>
-                          <p className="shelf-section__add-book-ghost-author" aria-hidden="true">&nbsp;</p>
-                          <div className="shelf-section__add-book-content">
+                          <div className="shelf-section__add-book-cover">
                             <div className="shelf-section__add-book-icon">
                               <Plus />
                             </div>
-                            <p className="shelf-section__add-book-text">{t("myLibrary.emptyShelf")}</p>
                           </div>
+                          <p className="shelf-section__add-book-title">{t("myLibrary.emptyShelf")}</p>
+                          <p className="shelf-section__add-book-author" aria-hidden="true">&nbsp;</p>
                         </div>
                       </div>
                     );
