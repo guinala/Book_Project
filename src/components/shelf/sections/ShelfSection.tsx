@@ -4,6 +4,7 @@ import BookTile from "@/components/shelf/cards/BookTile";
 import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
 import type { ShelfStatus } from "@/types/BookDetail";
+import { ChevronRight, ChevronLeft, Plus } from "lucide-react";
 
 const SHELF_FILTER_KEYS = ["wantToRead", "reading", "finished", "didNotFinish"] as const;
 type ShelfFilterKey = (typeof SHELF_FILTER_KEYS)[number];
@@ -11,39 +12,6 @@ type ShelfFilterKey = (typeof SHELF_FILTER_KEYS)[number];
 const PAGE_SIZE = 7;
 
 type Slot = { type: "book"; book: Book } | { type: "add" } | { type: "spacer" };
-
-function ChevronRightIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
-  );
-}
-
-function ChevronRightSmall() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
-  );
-}
-
-function ChevronLeftIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  );
-}
 
 type ShelfSectionProps = {
   books: Record<ShelfStatus, Book[]>;
@@ -103,7 +71,7 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
             onClick={onSeeAll}
             style={{ cursor: "pointer" }}
           >
-            {t("myLibrary.seeAll")} <ChevronRightSmall />
+            {t("myLibrary.seeAll")} <ChevronRight size={14} aria-hidden="true" />
           </a>
         )}
       </div>
@@ -113,7 +81,7 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
           <div className="shelf-section__empty">
             {!readOnly && (
               <div className="shelf-section__empty-icon">
-                <PlusIcon />
+                <Plus />
               </div>
             )}
             <p className="shelf-section__empty-text">
@@ -141,7 +109,7 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
                           <p className="shelf-section__add-book-ghost-author" aria-hidden="true">&nbsp;</p>
                           <div className="shelf-section__add-book-content">
                             <div className="shelf-section__add-book-icon">
-                              <PlusIcon />
+                              <Plus />
                             </div>
                             <p className="shelf-section__add-book-text">{t("myLibrary.emptyShelf")}</p>
                           </div>
@@ -158,7 +126,7 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
                   className="shelf-section__chevron"
                   onClick={handleChevron}
                 >
-                  {isLastPage ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                  {isLastPage ? <ChevronLeft /> : <ChevronRight />}
                 </button>
               </div>
             )}

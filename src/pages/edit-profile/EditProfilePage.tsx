@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getUserProfile, updateUserProfile } from "@/services/firebase/firebaseUsers";
 import { uploadProfilePhoto, uploadBannerImage } from "@/services/firebase/firebaseStorage";
 import type { UserFullProfile } from "@/types/UserProfile";
+import { Upload } from "lucide-react";
 import "./EditProfilePage.scss";
 
 type EditProfileForm = {
@@ -169,11 +170,7 @@ export default function EditProfilePage() {
                 <span className="edit-profile__upload-hint">Subir portada</span>
               )}
               <div className="edit-profile__banner-overlay">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
+                <Upload size={24} aria-hidden="true" />
               </div>
             </div>
             <input
@@ -201,11 +198,7 @@ export default function EditProfilePage() {
                 <span className="edit-profile__upload-hint">Foto</span>
               )}
               <div className="edit-profile__photo-overlay">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
+                <Upload size={20} aria-hidden="true" />
               </div>
             </div>
             <input

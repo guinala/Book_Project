@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
 import type { ShelfEntry } from "@/services/firebase/firebaseLibrary";
 import { getCoverUrl } from "@/utils/coverImage";
+import { X } from "lucide-react";
 import "./UpdateProgressModal.scss";
 
 interface UpdateProgressModalProps {
@@ -107,10 +108,7 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
             onClick={onClose}
             aria-label={t("myLibrary.updateProgressModal.close")}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <X />
           </button>
         </div>
 

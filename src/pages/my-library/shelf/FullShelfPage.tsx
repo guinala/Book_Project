@@ -6,36 +6,11 @@ import { getCoverUrl } from "@/utils/coverImage";
 import { encodeKey } from "@/utils/bookPaths";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
+import { Search, Filter, X, ChevronLeft } from "lucide-react";
 import "./FullShelfPage.scss";
 
 const SHELF_STATUSES: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 const SKELETON_COUNT = 14;
-
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-function FilterIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="8" y1="12" x2="16" y2="12" />
-      <line x1="11" y1="18" x2="13" y2="18" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
-}
 
 function BookTile({ book }: { book: Book }) {
   const navigate = useNavigate();
@@ -94,7 +69,7 @@ export default function FullShelfPage() {
 
       <div className="full-shelf__header">
         <button type="button" className="full-shelf__back" onClick={() => navigate(-1)}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+          <ChevronLeft aria-hidden="true" />
           {t("explore.backBtn")}
         </button>
         <h1 className="full-shelf__page-title">{t("myLibrary.shelfTitle")}</h1>
@@ -116,7 +91,7 @@ export default function FullShelfPage() {
         </div>
 
         <div className="full-shelf__search-bar">
-          <span className="full-shelf__search-icon"><SearchIcon /></span>
+          <span className="full-shelf__search-icon"><Search aria-hidden="true" /></span>
           <span className="full-shelf__search-divider" />
           <input
             type="text"
@@ -131,13 +106,13 @@ export default function FullShelfPage() {
               onClick={clearSearch}
               aria-label={t("myLibrary.clearSearch")}
             >
-              <CloseIcon />
+              <X aria-hidden="true" />
             </button>
           )}
         </div>
 
         <button type="button" className="full-shelf__filter-btn" disabled aria-label="Filtros">
-          <FilterIcon />
+          <Filter aria-hidden="true" />
         </button>
       </div>
 

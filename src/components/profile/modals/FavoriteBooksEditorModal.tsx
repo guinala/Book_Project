@@ -4,6 +4,7 @@ import { searchBooks } from "@/services/api/openLibraryApi";
 import { updateUserProfile } from "@/services/firebase/firebaseUsers";
 import type { FavoriteBook } from "@/types/UserProfile";
 import type { Book } from "@/types/Book";
+import { X } from "lucide-react";
 import "./FavoriteBooksEditorModal.scss";
 
 const MAX_FAVORITES = 5;
@@ -117,10 +118,7 @@ export default function FavoriteBooksEditorModal({
             onClick={onClose}
             aria-label="Cerrar"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 
@@ -145,7 +143,7 @@ export default function FavoriteBooksEditorModal({
                 onClick={() => removeFavorite(book.key)}
                 aria-label={`Eliminar ${book.title}`}
               >
-                ×
+                <X size={16} aria-hidden="true" />
               </button>
             </div>
           ))}

@@ -2,15 +2,8 @@
 import { useTranslation } from "react-i18next";
 import type { ActivityItem as ActivityItemType } from "@/types/UserProfile";
 import ActivityItem from "@/components/profile/sections/ActivityItem";
+import { ChevronRight } from "lucide-react";
 import "./ActivitySection.scss";
-
-function ChevronRightSmall() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
-}
 
 type ActivitySectionProps = {
   activity: ActivityItemType[];
@@ -25,7 +18,7 @@ export default function ActivitySection({ activity }: ActivitySectionProps) {
         <h2 className="activity-section__title">Actividad reciente</h2>
         {activity.length > 3 && (
           <button type="button" className="activity-section__see-all">
-            {t("myLibrary.seeAll")} <ChevronRightSmall />
+            {t("myLibrary.seeAll")} <ChevronRight size={14} aria-hidden="true" />
           </button>
         )}
       </div>

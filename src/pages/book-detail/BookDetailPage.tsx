@@ -10,6 +10,7 @@ import { useAuthorData } from "@/hooks/useAuthorData";
 import { useBookRecommendations } from "@/hooks/useBookRecommendations";
 import { useEffect } from "react";
 import { toWorkKey } from "@/utils/bookPaths";
+import { ChevronLeft } from "lucide-react";
 
 export default function BookDetailPage() {
   const { bookId = "" } = useParams<{ bookId: string }>();
@@ -49,7 +50,7 @@ export default function BookDetailPage() {
             Estamos trabajando para traerte la información de este libro pronto.
           </p>
           <button className="book-detail-page__back-btn" onClick={() => navigate(-1)}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+            <ChevronLeft aria-hidden="true" />
             {t("bookDetail.back")}
           </button>
         </div>

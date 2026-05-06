@@ -12,6 +12,7 @@ import ExploreConversionBanner from "@/components/explore/ExploreConversionBanne
 import { genreToI18nKey } from "@/utils/genreUtils";
 import type { ExploreSectionParams } from "@/types/ExploreTypes";
 import type { SearchFilter } from "@/types/Search";
+import { ChevronLeft } from "lucide-react";
 import "./ExplorePage.scss";
 
 const SCROLL_KEY = "explore_scroll";
@@ -131,7 +132,7 @@ function ExplorePage() {
               : t("explore.resultsFound", { count: search.totalResults })}
           </p>
           <button onClick={handleClearSearch} className="explore-page__clear-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+            <ChevronLeft aria-hidden="true" />
             {t("explore.backBtn")}
           </button>
         </div>

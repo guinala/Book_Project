@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getActivity } from "@/services/firebase/firebaseActivity";
 import { encodeKey } from "@/utils/bookPaths";
 import type { ActivityItem } from "@/types/UserProfile";
+import { X } from "lucide-react";
 import "./HistoryModal.scss";
 
 const EVENT_LABELS: Record<string, string> = {
@@ -141,10 +142,7 @@ export default function HistoryModal({
             onClick={onClose}
             aria-label="Cerrar"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <X />
           </button>
         </div>
 

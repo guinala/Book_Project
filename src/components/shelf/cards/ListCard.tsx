@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { ChevronRight } from "lucide-react";
 import "./ListCard.scss";
 
 export type ReadingList = {
@@ -11,14 +12,6 @@ export type ReadingList = {
 type ListCardProps = {
   list: ReadingList;
 };
-
-function ChevronRight() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
-}
 
 export default function ListCard({ list }: ListCardProps) {
   const { t } = useTranslation();
@@ -42,7 +35,7 @@ export default function ListCard({ list }: ListCardProps) {
       </div>
 
       <span className="list-card__chevron">
-        <ChevronRight />
+        <ChevronRight size={16} aria-hidden="true" />
       </span>
     </article>
   );

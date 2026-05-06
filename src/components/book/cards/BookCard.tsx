@@ -8,6 +8,7 @@ import "./BookCard.scss";
 import { useShelf } from "@/hooks/useShelf";
 import { useAuth } from "@/hooks/useAuth";
 import { encodeKey } from "@/utils/bookPaths";
+import { BookOpen, Bookmark, Plus, Check, Star } from "lucide-react";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -81,10 +82,7 @@ export default function BookCard({ book, rank }: BookCardProps) {
           />
         ) : (
           <div className="book-card__cover-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-            </svg>
+            <BookOpen strokeWidth={1.5} />
           </div>
         )}
         {rank && <span className="book-card__rank">{rank}</span>}
@@ -103,13 +101,9 @@ export default function BookCard({ book, rank }: BookCardProps) {
           aria-label="Guardar libro"
         >
           {saved && !dropdownOpen ? (
-            <svg className="book-card__save-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-              <path d="M5 3a2 2 0 0 0-2 2v16l9-6 9 6V5a2 2 0 0 0-2-2H5z"/>
-            </svg>
+            <Bookmark className="book-card__save-icon" fill="currentColor" stroke="none" />
           ) : (
-            <svg className={`book-card__save-icon${dropdownOpen ? " book-card__save-icon--open" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
+            <Plus className={`book-card__save-icon${dropdownOpen ? " book-card__save-icon--open" : ""}`} />
           )}
         </button>
 
@@ -121,11 +115,7 @@ export default function BookCard({ book, rank }: BookCardProps) {
                   className={`book-card__dropdown-item${saved === opt ? " book-card__dropdown-item--active" : ""}`}
                   onClick={(e) => handleSelect(e, opt)}
                 >
-                  {saved === opt && (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  )}
+                  {saved === opt && <Check size={16} />}
                   {t(`myLibrary.shelf.${opt}`)}
                 </button>
               </li>
@@ -142,7 +132,7 @@ export default function BookCard({ book, rank }: BookCardProps) {
           </p>
         </div>
         <div className="book-card__rating">
-          <span className="book-card__star">★</span>
+          <Star className="book-card__star" size={13} fill="currentColor" stroke="none" />
           {(book.rating ?? 0) > 0 ? (
             <>
               <span className="book-card__rating-value">{book.rating!.toFixed(1)}</span>

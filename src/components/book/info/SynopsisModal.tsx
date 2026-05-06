@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { X } from "lucide-react";
 import "./SynopsisModal.scss";
 
 type SynopsisModalProps = {
@@ -34,16 +35,7 @@ export default function SynopsisModal({ text, onClose }: SynopsisModalProps) {
         <div className="synopsis-modal__header">
           <h3 className="synopsis-modal__title">{t("bookDetail.synopsis")}</h3>
           <button className="synopsis-modal__close" onClick={onClose} aria-label={t("bookDetail.close")}>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <X />
           </button>
         </div>
         <div className="synopsis-modal__body">

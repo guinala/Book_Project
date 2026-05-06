@@ -5,6 +5,7 @@ import { useExploreSection } from "@/hooks/useExploreSection";
 import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
+import { ChevronLeft } from "lucide-react";
 import "./ExploreSectionPage.scss";
 
 const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
@@ -91,7 +92,7 @@ export default function ExploreSectionPage() {
           className="section-page__back"
           onClick={() => navigate(-1)}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+          <ChevronLeft aria-hidden="true" />
           {t("explore.backBtn")}
         </button>
         <h1 className="section-page__title">{renderTitle(title, titleHighlight)}</h1>
