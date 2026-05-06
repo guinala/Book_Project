@@ -37,7 +37,7 @@ function CloseIcon() {
   );
 }
 
-function BookCard({ book }: { book: Book }) {
+function BookTile({ book }: { book: Book }) {
   const navigate = useNavigate();
   const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : null);
 
@@ -165,7 +165,7 @@ export default function FullShelfPage() {
       ) : (
         <div className="full-shelf__grid">
           {displayBooks.map(book => (
-            <BookCard key={book.key} book={book} />
+            <BookTile key={book.key} book={book} />
           ))}
           {displayBooks.length === 0 && (
             <div className="full-shelf__no-results">

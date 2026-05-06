@@ -1,88 +1,160 @@
-import { useState, useRef } from "react";
-import type { MouseEvent } from "react";
-import { Link } from "react-router";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
+import type { ShelfStatus } from "@/types/BookDetail";
 import { getCoverUrl } from "@/utils/coverImage";
-import StarRating from "@/components/common/StarRating";
-import "./BookCard.scss";
 import { useTranslation } from "react-i18next";
-import { genreToI18nKey } from "@/utils/genreUtils";
+import "./BookCard.scss";
+import { useShelf } from "@/hooks/useShelf";
+import { useAuth } from "@/hooks/useAuth";
 import { encodeKey } from "@/utils/bookPaths";
+
+const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
 type BookCardProps = {
   book: Book;
-}
+  rank?: number;
+};
 
-export default function BookCard({ book }: BookCardProps) {
-  const coverRef = useRef<HTMLDivElement>(null);
-  const [transformStyle, setTransformStyle] = useState("");
+export default function BookCard({ book, rank }: BookCardProps) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [coverFailed, setCoverFailed] = useState(false);
+  const { addBook, removeBook, getStatus } = useShelf();
+  const { isAuthenticated } = useAuth();
+  const saved = getStatus(book.key);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!coverRef.current) return;
-    const rect = coverRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -15;
-    const rotateY = ((x - centerX) / centerX) * 15;
-    setTransformStyle(
-      `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.04, 1.04, 1.04)`
-    );
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dropdownOpen]);
+
+  const handleCardClick = () => {
+    navigate(`/books/${encodeKey(book.key)}`, { state: { book } });
   };
 
-  const handleMouseLeave = () => {
-    setTransformStyle("perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
+  const handleSaveBtnClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      setTooltipVisible(true);
+      setTimeout(() => setTooltipVisible(false), 2000);
+      return;
+    }
+    setDropdownOpen((o) => !o);
   };
 
-  const displayRating = book.rating ?? 0;
+  const handleSelect = (e: React.MouseEvent, option: ShelfStatus) => {
+    e.stopPropagation();
+    if (saved === option) {
+      removeBook(book.key);
+    } else {
+      addBook(book, option);
+    }
+    setDropdownOpen(false);
+  };
+
+  const hasCover = (book.cover_url || book.cover_id) && !coverFailed;
+  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : "");
 
   return (
-    <article className="bookcard">
-      <Link
-        to={`/books/${encodeKey(book.key)}`}
-        state={{ book }}
-        className="bookcard__link"
-      >
-        <div
-          ref={coverRef}
-          className="bookcard__cover-wrapper"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          style={{ transform: transformStyle }}
+    <article
+      className={`book-card${dropdownOpen ? " book-card--open" : ""}`}
+      onClick={handleCardClick}
+    >
+      <div className="book-card__cover-wrapper">
+        {hasCover ? (
+          <img
+            className="book-card__cover"
+            src={coverSrc}
+            alt={t("book.coverAlt", { title: book.title })}
+            loading="lazy"
+            onError={() => setCoverFailed(true)}
+          />
+        ) : (
+          <div className="book-card__cover-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+        )}
+        {rank && <span className="book-card__rank">{rank}</span>}
+      </div>
+
+      <div className="book-card__save-wrapper" ref={wrapperRef}>
+        {tooltipVisible && (
+          <span className="book-card__tooltip">
+            {t("explore.saveTooltip")}
+          </span>
+        )}
+
+        <button
+          className={`book-card__save-btn${dropdownOpen ? " book-card__save-btn--open" : ""}${saved && !dropdownOpen ? " book-card__save-btn--saved" : ""}`}
+          onClick={handleSaveBtnClick}
+          aria-label="Guardar libro"
         >
-          {book.cover_url || book.cover_id ? (
-            <img
-              className="bookcard__cover"
-              src={book.cover_url ?? getCoverUrl(book.cover_id!)}
-              alt={t("book.coverAlt", { title: book.title })}
-              loading="lazy"
-            />
+          {saved && !dropdownOpen ? (
+            <svg className="book-card__save-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M5 3a2 2 0 0 0-2 2v16l9-6 9 6V5a2 2 0 0 0-2-2H5z"/>
+            </svg>
           ) : (
-            <div className="bookcard__cover-placeholder">📖</div>
+            <svg className={`book-card__save-icon${dropdownOpen ? " book-card__save-icon--open" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
           )}
-        </div>
+        </button>
 
-        <div className="bookcard__info">
-          {book.genre && (
-            <span className="bookcard__genre">
-              {book.genre ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre }) : ""}
-            </span>
-          )}
+        {dropdownOpen && (
+          <ul className="book-card__dropdown" onClick={(e) => e.stopPropagation()}>
+            {SHELF_OPTIONS.map((opt) => (
+              <li key={opt}>
+                <button
+                  className={`book-card__dropdown-item${saved === opt ? " book-card__dropdown-item--active" : ""}`}
+                  onClick={(e) => handleSelect(e, opt)}
+                >
+                  {saved === opt && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  )}
+                  {t(`myLibrary.shelf.${opt}`)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-          <h3 className="bookcard__title">{book.title}</h3>
-
-          <p className="bookcard__author">
+      <div className="book-card__info">
+        <div className="book-card__text">
+          <h3 className="book-card__title">{book.title}</h3>
+          <p className="book-card__author">
             {book.authors.length > 0 ? book.authors.join(", ") : "Autor desconocido"}
           </p>
-
-          <div className="bookcard__rating">
-            <StarRating rating={displayRating} />
-            <span className="bookcard__rating-value">({displayRating.toFixed(1)})</span>
-          </div>
         </div>
-      </Link>
+        <div className="book-card__rating">
+          <span className="book-card__star">★</span>
+          {(book.rating ?? 0) > 0 ? (
+            <>
+              <span className="book-card__rating-value">{book.rating!.toFixed(1)}</span>
+              {book.ratingCount && (
+                <span className="book-card__rating-count">({book.ratingCount.toLocaleString()})</span>
+              )}
+            </>
+          ) : (
+            <span className="book-card__rating-count">Sin valorar</span>
+          )}
+        </div>
+      </div>
     </article>
   );
 }

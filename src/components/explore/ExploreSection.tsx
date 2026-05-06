@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import BookGridCard from "@/components/book/cards/BookGridCard";
+import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "./ExploreGridSkeleton";
 import { useExploreSection } from "@/hooks/useExploreSection";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
@@ -109,7 +109,7 @@ export default function ExploreSection({
       {!loading && !error && books.length > 0 && (
         <div className="explore-section__grid">
           {books.map(book => (
-            <BookGridCard key={book.key} book={book} />
+            <BookCard key={book.key} book={book} />
           ))}
         </div>
       )}

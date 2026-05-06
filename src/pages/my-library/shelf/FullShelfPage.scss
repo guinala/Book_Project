@@ -318,6 +318,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
+    padding-left: var(--space-1);
   }
 
   &__author {
@@ -327,6 +328,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
+    padding-left: var(--space-1);
   }
 
   &__no-results {

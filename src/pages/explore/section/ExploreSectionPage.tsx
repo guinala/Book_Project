@@ -2,7 +2,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import { useExploreSection } from "@/hooks/useExploreSection";
-import BookGridCard from "@/components/book/cards/BookGridCard";
+import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import "./ExploreSectionPage.scss";
@@ -111,7 +111,7 @@ export default function ExploreSectionPage() {
       {!loading && !error && (
         <div className="section-page__grid">
           {books.map(book => (
-            <BookGridCard key={book.key} book={book} />
+            <BookCard key={book.key} book={book} />
           ))}
         </div>
       )}

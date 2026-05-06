@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import ShelfBookCard from "@/components/shelf/cards/ShelfBookCard";
+import BookTile from "@/components/shelf/cards/BookTile";
 import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
 import type { ShelfStatus } from "@/types/BookDetail";
@@ -130,7 +130,7 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
                 : slots.map((slot, i) => {
                     if (slot.type === "book") return (
                       <div key={slot.book.key} className="shelf-section__item">
-                        <ShelfBookCard book={slot.book} />
+                        <BookTile book={slot.book} />
                       </div>
                     );
                     if (slot.type === "add") return (

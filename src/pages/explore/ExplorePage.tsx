@@ -5,7 +5,7 @@ import { useShelf } from "@/hooks/useShelf";
 import { useBookSearch } from "@/hooks/useBookSearch";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import SearchBar from "@/components/common/Searchbar";
-import BookGridCard from "@/components/book/cards/BookGridCard";
+import BookCard from "@/components/book/cards/BookCard";
 import GridLoading from "@/components/layout/GridLoading";
 import ExploreSection from "@/components/explore/ExploreSection";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
@@ -150,7 +150,7 @@ function ExplorePage() {
             ) : (
               <div className="explore-page__search-grid">
                 {search.books.map(book => (
-                  <BookGridCard key={book.key} book={book} />
+                  <BookCard key={book.key} book={book} />
                 ))}
               </div>
             )

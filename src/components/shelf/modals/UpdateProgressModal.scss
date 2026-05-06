@@ -42,6 +42,7 @@
 
   &__book-info {
     @include modal-book-info;
+    flex: none;
   }
 
   &__cover {
@@ -58,6 +59,7 @@
   }
 
   &__abandon-btn {
+    margin-top: calc(-1 * var(--space-2));
     font-size: var(--text-xs);
     color: var(--color-error, #b83232);
     background: none;

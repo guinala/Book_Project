@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { Book } from "@/types/Book";
-import BookGridCard from "@/components/book/cards/BookGridCard";
+import BookCard from "@/components/book/cards/BookCard";
 import "./RecommendationsSection.scss";
 
 type RecommendationsSectionProps = {
@@ -24,7 +24,7 @@ export default function RecommendationsSection({
       </h2>
       <div className="recs-section__grid">
         {books.map((book) => (
-          <BookGridCard key={book.key} book={book} />
+          <BookCard key={book.key} book={book} />
         ))}
       </div>
       <div className="recs-section__cta">
