@@ -29,7 +29,13 @@ export function useExploreSection(
     setError(null);
     try {
       const result = await fetchSection(type, params, lang, count);
-      setBooks(result.books);
+      const seen = new Set<string>();
+      const unique = result.books.filter(b => {
+        if (seen.has(b.key)) return false;
+        seen.add(b.key);
+        return true;
+      });
+      setBooks(unique);
       setIsFallback(result.isFallback);
     } catch {
       setError("error");

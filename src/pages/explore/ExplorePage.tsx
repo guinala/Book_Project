@@ -203,21 +203,21 @@ function ExplorePage() {
             </>
           ) : (
             <>
-              {shelfDerived?.referenceBooks.map(book => (
+              {shelfDerived?.referenceBooks[0] && (
                 <ExploreSection
-                  key={book.key}
+                  key={shelfDerived.referenceBooks[0].key}
                   type="because-reading"
                   params={{
                     ...shelfParams,
-                    referenceBookKey: book.key,
-                    referenceBookTitle: truncate(book.title),
-                    referenceGenre: book.genre,
+                    referenceBookKey: shelfDerived.referenceBooks[0].key,
+                    referenceBookTitle: truncate(shelfDerived.referenceBooks[0].title),
+                    referenceGenre: shelfDerived.referenceBooks[0].genre,
                   }}
                   titleKey="explore.sections.becauseReading"
-                  titleHighlight={truncate(book.title)}
+                  titleHighlight={truncate(shelfDerived.referenceBooks[0].title)}
                   onNavigate={handleNavigateToSection}
                 />
-              ))}
+              )}
 
               {shelfDerived?.favoriteGenre && (
                 <ExploreSection
@@ -233,6 +233,22 @@ function ExplorePage() {
                 />
               )}
 
+              {shelfDerived?.referenceBooks[1] && (
+                <ExploreSection
+                  key={shelfDerived.referenceBooks[1].key}
+                  type="because-reading"
+                  params={{
+                    ...shelfParams,
+                    referenceBookKey: shelfDerived.referenceBooks[1].key,
+                    referenceBookTitle: truncate(shelfDerived.referenceBooks[1].title),
+                    referenceGenre: shelfDerived.referenceBooks[1].genre,
+                  }}
+                  titleKey="explore.sections.becauseReading"
+                  titleHighlight={truncate(shelfDerived.referenceBooks[1].title)}
+                  onNavigate={handleNavigateToSection}
+                />
+              )}
+
               <ExploreSection
                 type="new-releases-for-you"
                 params={{
@@ -244,6 +260,22 @@ function ExplorePage() {
                 onNavigate={handleNavigateToSection}
               />
 
+              {shelfDerived?.referenceBooks[2] && (
+                <ExploreSection
+                  key={shelfDerived.referenceBooks[2].key}
+                  type="because-reading"
+                  params={{
+                    ...shelfParams,
+                    referenceBookKey: shelfDerived.referenceBooks[2].key,
+                    referenceBookTitle: truncate(shelfDerived.referenceBooks[2].title),
+                    referenceGenre: shelfDerived.referenceBooks[2].genre,
+                  }}
+                  titleKey="explore.sections.becauseReading"
+                  titleHighlight={truncate(shelfDerived.referenceBooks[2].title)}
+                  onNavigate={handleNavigateToSection}
+                />
+              )}
+
               {(shelfDerived?.wantToReadBooks?.length ?? 0) > 0 && (
                 <ExploreSection
                   type="waiting"
@@ -252,6 +284,22 @@ function ExplorePage() {
                   onNavigate={handleNavigateToSection}
                 />
               )}
+
+              {shelfDerived?.referenceBooks.slice(3).map(book => (
+                <ExploreSection
+                  key={book.key}
+                  type="because-reading"
+                  params={{
+                    ...shelfParams,
+                    referenceBookKey: book.key,
+                    referenceBookTitle: truncate(book.title),
+                    referenceGenre: book.genre,
+                  }}
+                  titleKey="explore.sections.becauseReading"
+                  titleHighlight={truncate(book.title)}
+                  onNavigate={handleNavigateToSection}
+                />
+              ))}
 
               {shelfDerived?.favoriteAuthorKey && (
                 <ExploreSection
