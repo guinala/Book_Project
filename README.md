@@ -220,19 +220,38 @@ Página de detalle de un libro, estructurada en cuatro bloques:
 **Recomendaciones:** libros relacionados basados en el género del libro actual. El usuario puede generar nuevas recomendaciones con un botón específico si quiere descubrir más títulos similares.
 
 ### MyLibraryPage `/my-library`
-Panel principal de la biblioteca personal del usuario. Muestra el libro que está leyendo actualmente, un resumen de la estantería por estados, listas de lectura y seguimiento de progreso.
+Página exclusiva para usuarios autenticados y centro de control de su actividad lectora. Agrupa todo lo que el usuario ha generado en la plataforma:
+
+- **Lectura en curso:** libros marcados como "leyendo" con acceso directo a su historial de progreso y la opción de actualizarlo (página actual + notas).
+- **Estantería:** resumen de los libros organizados por estado (quiero leer, leyendo, terminado, no terminé), con acceso a la vista completa.
+- **Listas:** el usuario puede crear listas de libros personalizadas y consultarlas desde aquí.
+- **Estadísticas:** meta anual de lectura, actividad semanal y géneros favoritos.
 
 ### FullShelfPage `/my-library/shelf`
-Vista completa de la estantería con filtrado por estado (quiero leer / leyendo / terminado / no terminé) y búsqueda por título o autor.
+Vista extendida de la estantería personal del usuario. Muestra todos los libros organizados por estado (quiero leer, leyendo, terminado, no terminé) y permite buscar por título o autor. El filtrado avanzado está planificado para fases posteriores.
 
 ### ProfilePage `/profile` y `/profile/:userId`
-Perfil propio o público. Incluye foto, banner, bio, contadores de seguidores/seguidos, libros favoritos (editables en perfil propio), estantería, actividad reciente y listas de lectura. Los usuarios autenticados pueden seguir/dejar de seguir perfiles públicos.
+Página de perfil del usuario, accesible en modo propio (`/profile`) o público (`/profile/:userId`). La visibilidad puede configurarse como pública o privada según las preferencias del usuario.
+
+El perfil se compone de:
+
+- **Tarjeta identificativa:** imagen de banner, foto de perfil, nombre, nickname (@) y biografía. El propio usuario puede personalizarla desde la página de edición.
+- **Libros favoritos:** selección manual de libros que el usuario quiere destacar en su perfil.
+- **Estantería:** vista de los libros organizados por estado, visible para otros usuarios si el perfil es público.
+- **Listas:** listas de libros creadas por el usuario.
+- **Actividad reciente:** historial de acciones del usuario (libros añadidos, actualizaciones de progreso, libros terminados, etc.).
+
+Desde el perfil público de otro usuario se puede seguir o dejar de seguir, y consultar sus seguidores y seguidos.
 
 ### EditProfilePage `/profile/edit`
-Formulario para editar foto de perfil, banner, nombre, apellidos, nombre de usuario (@) y bio (máx. 300 caracteres). Las imágenes se comprimen antes de subirse (400px para foto de perfil, 1200px para banner).
+Formulario para editar la información personal del perfil: foto de portada, foto de perfil, nombre, apellidos, nombre de usuario (@) y biografía (máx. 300 caracteres). Las imágenes se comprimen automáticamente antes de subirse (400px para foto de perfil, 1200px para banner).
 
 ### CommunityPage `/community`
-Placeholder — próximamente.
+Pendiente de desarrollo. La intención es que sea el espacio social de la plataforma, donde el usuario pueda:
+
+- Consultar la actividad reciente de las personas que sigue (libros que están leyendo, han terminado, han añadido a su estantería, etc.)
+- Descubrir listas creadas por usuarios que no conoce
+- Ver qué libros son populares entre la gente que sigue
 
 ---
 
