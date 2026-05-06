@@ -126,6 +126,7 @@
   font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
+  padding-left: var(--space-1);
   line-height: 1.4;
   width: 100%;
   @include text-truncate;
@@ -136,6 +137,7 @@
   color: var(--color-text-secondary);
   font-style: italic;
   margin: 0;
+  padding-left: var(--space-1);
   width: 100%;
   @include text-truncate;
 }

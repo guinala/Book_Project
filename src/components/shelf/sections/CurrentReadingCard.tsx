@@ -122,6 +122,7 @@ function CurrentReadingCard() {
           bookTitle={book.title}
           bookAuthor={book.authors.join(", ")}
           bookCoverUrl={coverSrc}
+          totalPages={totalPages}
           onClose={() => setIsHistoryModalOpen(false)}
         />
       )}
