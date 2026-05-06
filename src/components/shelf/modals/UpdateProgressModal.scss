@@ -54,6 +54,7 @@
 
   &__book-author {
     @include modal-book-author;
+    margin-top: calc(-1 * var(--space-2));
   }
 
   &__abandon-btn {
