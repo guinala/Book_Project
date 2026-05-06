@@ -93,10 +93,11 @@ export default function FullShelfPage() {
     <main className="full-shelf">
 
       <div className="full-shelf__header">
-        <h1 className="full-shelf__page-title">{t("myLibrary.shelfTitle")}</h1>
-        <button type="button" className="full-shelf__hide-btn" onClick={() => navigate(-1)}>
-          {t("myLibrary.hide")}
+        <button type="button" className="full-shelf__back" onClick={() => navigate(-1)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+          {t("explore.backBtn")}
         </button>
+        <h1 className="full-shelf__page-title">{t("myLibrary.shelfTitle")}</h1>
       </div>
 
       <div className="full-shelf__tools">
