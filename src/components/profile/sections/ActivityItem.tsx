@@ -12,6 +12,7 @@ const EVENT_LABELS: Record<string, string> = {
   review: "Escribió una reseña",
   list_created: "Creó una lista",
   watchlist_add: "Añadió a su lista",
+  book_rated: "Calificó un libro"
 };
 
 function timeAgo(timestamp: { toDate: () => Date }): string {

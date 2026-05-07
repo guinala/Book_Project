@@ -96,7 +96,7 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
     entry.currentPage ? String(entry.currentPage) : ""
   );
   const [note, setNote] = useState("");
-  const [rating, setRating] = useState(entry.rating ?? 0);
+  const [rating, setRating] = useState(0);
   const [review, setReview] = useState(entry.review ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [noteSaveBlocked, setNoteSaveBlocked] = useState(false);
