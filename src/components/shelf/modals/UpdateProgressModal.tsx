@@ -96,12 +96,18 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
     entry.currentPage ? String(entry.currentPage) : ""
   );
   const [note, setNote] = useState("");
+  const [rating, setRating] = useState(entry.rating ?? 0);
+  const [review, setReview] = useState(entry.review ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [noteSaveBlocked, setNoteSaveBlocked] = useState(false);
   const [noteShaking, setNoteShaking] = useState(false);
+  const [reviewSaveBlocked, setReviewSaveBlocked] = useState(false);
+  const [reviewShaking, setReviewShaking] = useState(false);
 
   const NOTE_MAX = 280;
+  const REVIEW_MAX = 600;
   const noteOverLimit = note.length > NOTE_MAX;
+  const reviewOverLimit = review.length > REVIEW_MAX;
 
   const currentPage = pageInput === ""
     ? 0
@@ -144,17 +150,38 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
   };
 
   const handleSave = async () => {
-    if (noteOverLimit) {
-      setNoteSaveBlocked(true);
-      setNoteShaking(true);
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      await updateProgress(entry.book.key, currentPage, note.trim() || undefined);
-    } finally {
-      setIsSubmitting(false);
-      onClose();
+    if (finished) {
+      if (reviewOverLimit) {
+        setReviewSaveBlocked(true);
+        setReviewShaking(true);
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        await updateProgress(
+          entry.book.key,
+          currentPage,
+          undefined,
+          rating || undefined,
+          review.trim() || undefined
+        );
+      } finally {
+        setIsSubmitting(false);
+        onClose();
+      }
+    } else {
+      if (noteOverLimit) {
+        setNoteSaveBlocked(true);
+        setNoteShaking(true);
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        await updateProgress(entry.book.key, currentPage, note.trim() || undefined);
+      } finally {
+        setIsSubmitting(false);
+        onClose();
+      }
     }
   };
 
@@ -175,7 +202,9 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
     >
       <div className="progress-modal__panel" ref={panelRef}>
         <div className="progress-modal__header">
-          <h2 className="progress-modal__title">{t("myLibrary.updateProgressModal.title")}</h2>
+          <h2 className="progress-modal__title">
+            {t("myLibrary.updateProgressModal.title")}
+          </h2>
           <button
             className="progress-modal__close"
             onClick={onClose}
@@ -194,7 +223,9 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                 <div className="progress-modal__cover progress-modal__cover--placeholder" />
               )}
               <p className="progress-modal__book-title">{entry.book.title}</p>
-              <p className="progress-modal__book-author">{entry.book.authors.join(", ")}</p>
+              <p className="progress-modal__book-author">
+                {entry.book.authors.join(", ")}
+              </p>
             </div>
             <button className="progress-modal__abandon-btn" onClick={handleAbandon}>
               {t("myLibrary.updateProgressModal.abandon")}
@@ -206,7 +237,10 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
           <div className="progress-modal__right">
             <div className="progress-modal__section">
               <div className="progress-modal__field">
-                <label className="progress-modal__label" htmlFor="progress-page-input">
+                <label
+                  className="progress-modal__label"
+                  htmlFor="progress-page-input"
+                >
                   {t("myLibrary.updateProgressModal.currentPage")}
                 </label>
                 <div className="progress-modal__page-row">
@@ -225,7 +259,9 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                       {t("myLibrary.updateProgressModal.of")} {totalPages}
                     </span>
                   )}
-                  <span className="progress-modal__progress-pct">{progressPercent}%</span>
+                  <span className="progress-modal__progress-pct">
+                    {progressPercent}%
+                  </span>
                 </div>
                 <div className="progress-modal__progress-track">
                   <div
@@ -248,40 +284,108 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                   <span className="progress-modal__toggle-knob" />
                 </button>
               </div>
+
+              {finished && (
+                <div className="progress-modal__rating-block">
+                  <span className="progress-modal__label">
+                    {t("myLibrary.updateProgressModal.rateBook")}
+                  </span>
+                  <div className="progress-modal__rating-row">
+                    <StarRating rating={rating} onChange={setRating} />
+                    {rating > 0 && (
+                      <span className="progress-modal__rating-value">
+                        {rating} / 5
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="progress-modal__section">
-              <div className="progress-modal__field">
-                <label className="progress-modal__label" htmlFor="progress-note-input">
-                  {t("myLibrary.updateProgressModal.notes")}
-                </label>
-                <textarea
-                  id="progress-note-input"
-                  className={[
-                    "progress-modal__textarea",
-                    noteSaveBlocked && noteOverLimit ? "progress-modal__textarea--error" : "",
-                    noteShaking ? "progress-modal__textarea--shaking" : "",
-                  ].filter(Boolean).join(" ")}
-                  value={note}
-                  onChange={(e) => {
-                    setNote(e.target.value);
-                    if (noteSaveBlocked && e.target.value.length <= NOTE_MAX) setNoteSaveBlocked(false);
-                  }}
-                  onAnimationEnd={() => setNoteShaking(false)}
-                  placeholder={t("myLibrary.updateProgressModal.notesPlaceholder")}
-                  rows={3}
-                />
-                <div className="progress-modal__note-footer">
-                  {noteSaveBlocked && noteOverLimit && (
-                    <span className="progress-modal__note-error">
-                      {t("myLibrary.updateProgressModal.noteTooLong")}
+              {finished ? (
+                <div className="progress-modal__field">
+                  <label
+                    className="progress-modal__label"
+                    htmlFor="progress-review-input"
+                  >
+                    {t("myLibrary.updateProgressModal.review")}
+                  </label>
+                  <textarea
+                    id="progress-review-input"
+                    className={[
+                      "progress-modal__textarea",
+                      reviewSaveBlocked && reviewOverLimit
+                        ? "progress-modal__textarea--error"
+                        : "",
+                      reviewShaking ? "progress-modal__textarea--shaking" : "",
+                    ].filter(Boolean).join(" ")}
+                    value={review}
+                    onChange={(e) => {
+                      setReview(e.target.value);
+                      if (reviewSaveBlocked && e.target.value.length <= REVIEW_MAX)
+                        setReviewSaveBlocked(false);
+                    }}
+                    onAnimationEnd={() => setReviewShaking(false)}
+                    placeholder={t("myLibrary.updateProgressModal.reviewPlaceholder")}
+                    rows={4}
+                  />
+                  <div className="progress-modal__note-footer">
+                    {reviewSaveBlocked && reviewOverLimit && (
+                      <span className="progress-modal__note-error">
+                        {t("myLibrary.updateProgressModal.noteTooLong")}
+                      </span>
+                    )}
+                    <span
+                      className={`progress-modal__note-count${reviewOverLimit ? " progress-modal__note-count--over" : ""}`}
+                    >
+                      {review.length} / {REVIEW_MAX}{" "}
+                      {t("myLibrary.updateProgressModal.characters")}
                     </span>
-                  )}
-                  <span className={`progress-modal__note-count${noteOverLimit ? " progress-modal__note-count--over" : ""}`}>
-                    {note.length} / {NOTE_MAX} {t("myLibrary.updateProgressModal.characters")}
-                  </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="progress-modal__field">
+                  <label
+                    className="progress-modal__label"
+                    htmlFor="progress-note-input"
+                  >
+                    {t("myLibrary.updateProgressModal.notes")}
+                  </label>
+                  <textarea
+                    id="progress-note-input"
+                    className={[
+                      "progress-modal__textarea",
+                      noteSaveBlocked && noteOverLimit
+                        ? "progress-modal__textarea--error"
+                        : "",
+                      noteShaking ? "progress-modal__textarea--shaking" : "",
+                    ].filter(Boolean).join(" ")}
+                    value={note}
+                    onChange={(e) => {
+                      setNote(e.target.value);
+                      if (noteSaveBlocked && e.target.value.length <= NOTE_MAX)
+                        setNoteSaveBlocked(false);
+                    }}
+                    onAnimationEnd={() => setNoteShaking(false)}
+                    placeholder={t("myLibrary.updateProgressModal.notesPlaceholder")}
+                    rows={3}
+                  />
+                  <div className="progress-modal__note-footer">
+                    {noteSaveBlocked && noteOverLimit && (
+                      <span className="progress-modal__note-error">
+                        {t("myLibrary.updateProgressModal.noteTooLong")}
+                      </span>
+                    )}
+                    <span
+                      className={`progress-modal__note-count${noteOverLimit ? " progress-modal__note-count--over" : ""}`}
+                    >
+                      {note.length} / {NOTE_MAX}{" "}
+                      {t("myLibrary.updateProgressModal.characters")}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
