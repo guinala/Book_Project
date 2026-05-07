@@ -143,7 +143,12 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     };
   };
 
-  const updateProgress = async (bookKey: string, currentPage: number, note?: string) => {
+  const updateProgress = async (
+    bookKey: string, 
+    currentPage: number, 
+    note?: string,
+    rating?: number,
+    review?: string) => {
     if (!uid) return;
 
     const encoded = encodeKey(bookKey);
@@ -155,11 +160,17 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     const newStatus: ShelfStatus =
       totalPages > 0 && currentPage === totalPages ? "finished" : existing.status;
     const newMap = new Map(entries);
-    newMap.set(encoded, { ...existing, currentPage, status: newStatus });
+    newMap.set(encoded, {
+      ...existing,
+      currentPage,
+      status: newStatus,
+      ...(rating !== undefined && { rating }),
+      ...(review !== undefined && { review }),
+    });
     setEntries(newMap);
 
     try {
-      await updateReadingProgress(uid, existing, currentPage, note);
+      await updateReadingProgress(uid, existing, currentPage, note, rating, review);
     } catch {
       setEntries(rollback);
     }
