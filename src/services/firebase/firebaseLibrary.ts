@@ -5,7 +5,13 @@ import type { ShelfStatus } from "@/types/BookDetail";
 import { logActivity } from "./firebaseActivity";
 import { incrementBookAddCount } from "./firebaseBooks";
 
-export type ShelfEntry = { book: Book; status: ShelfStatus; currentPage?: number };
+export type ShelfEntry = { 
+  book: Book; 
+  status: ShelfStatus; 
+  currentPage?: number;
+  rating?: number;
+  review?: string; 
+};
 
 export function encodeKey(bookKey: string): string {
   return bookKey.split("/").at(-1) ?? bookKey;
@@ -25,7 +31,7 @@ export async function addToShelf(
     addedAt: new Date().toISOString(),
   }, { merge: true });
 
-  // Escribir titles/isbns con dot-notation para no pisar otros idiomas
+  // Escribir titles/isbns con dot-notation para mantener otros idiomas
   if (titles && Object.keys(titles).length > 0) {
     const langUpdates: Record<string, string> = {};
     for (const [lang, t] of Object.entries(titles)) {
@@ -67,14 +73,24 @@ export async function updateReadingProgress(
   uid: string,
   entry: ShelfEntry,
   currentPage: number,
-  note?: string
+  note?: string,
+  rating?: number,
+  review?: string
 ): Promise<void> {
   const totalPages = entry.book.pages ?? 0;
   const isFinished = totalPages > 0 && currentPage === totalPages;
   const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(entry.book.key));
 
   const update: Record<string, unknown> = { currentPage };
-  if (isFinished) update.status = "finished";
+  if (isFinished) {
+    update.status = "finished";
+    if (rating !== undefined) {
+      update.rating = rating;
+    }
+    if (review !== undefined) {
+      update.review = review;
+    }
+  }
   await updateDoc(shelfRef, update);
 
   const base = {
@@ -90,6 +106,11 @@ export async function updateReadingProgress(
   if (isFinished) {
     logActivity(uid, { type: "book_finished", ...base })
       .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+    
+    if (rating !== undefined) {
+      logActivity(uid, { type: "book_rated", ...base, rating, ...(review !== undefined && { note: review }) })
+        .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+    }
   }
 }
 
@@ -109,25 +130,27 @@ export async function getShelf(uid: string): Promise<ShelfEntry[] | null> {
     return shelf.docs.map((d) => {
         const data = d.data();
         return {
-            book: {
-                key: data.key,
-                title: data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-                authors: data.authors,
-                authorKeys: data.authorKeys ?? undefined,
-                first_publish_year: data.first_publish_year,
-                cover_id: data.cover_id,
-                cover_url: data.cover_url ?? undefined,
-                edition_count: data.edition_count,
-                genre: data.genre ?? undefined,
-                rating: data.rating ?? undefined,
-                ratingCount: data.ratingCount ?? undefined,
-                isbn: data.isbn ?? undefined,
-                isbns: data.isbns ?? undefined,
-                pages: data.pages ?? undefined,
-                titles: data.titles ?? {},
-            } as Book,
-            status: data.status as ShelfStatus,
-            currentPage: data.currentPage ?? undefined,
+          book: {
+              key: data.key,
+              title: data.titles?.es ?? data.titles?.en ?? data.title ?? "",
+              authors: data.authors,
+              authorKeys: data.authorKeys ?? undefined,
+              first_publish_year: data.first_publish_year,
+              cover_id: data.cover_id,
+              cover_url: data.cover_url ?? undefined,
+              edition_count: data.edition_count,
+              genre: data.genre ?? undefined,
+              rating: data.rating ?? undefined,
+              ratingCount: data.ratingCount ?? undefined,
+              isbn: data.isbn ?? undefined,
+              isbns: data.isbns ?? undefined,
+              pages: data.pages ?? undefined,
+              titles: data.titles ?? {},
+          } as Book,
+          status: data.status as ShelfStatus,
+          currentPage: data.currentPage ?? undefined,
+          rating: data.rating ?? undefined,
+          review: data.review ?? undefined,
         };
     });
 }
