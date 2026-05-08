@@ -27,7 +27,10 @@
       "save": "Save reading",
       "close": "Close",
       "noteTooLong": "You've exceeded the maximum character limit",
-      "characters": "characters"
+      "characters": "characters",
+      "rateBook": "Your rating",
+      "review": "Review",
+      "reviewPlaceholder": "Tell us what you thought of the book. Would you recommend it?"
     },
     "createList": "Create new list",
     "listsTitle": "Lists",
