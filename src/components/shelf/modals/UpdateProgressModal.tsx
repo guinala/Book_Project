@@ -285,7 +285,10 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                 </button>
               </div>
 
-              {finished && (
+            </div>
+
+            {finished && (
+              <div className="progress-modal__section">
                 <div className="progress-modal__rating-block">
                   <span className="progress-modal__label">
                     {t("myLibrary.updateProgressModal.rateBook")}
@@ -299,8 +302,8 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                     )}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="progress-modal__section">
               {finished ? (
