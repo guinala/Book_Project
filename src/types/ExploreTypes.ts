@@ -9,7 +9,8 @@ export type ExploreSectionType =
   | "more-genre"
   | "new-releases-for-you"
   | "waiting"
-  | "more-author";
+  | "more-author"
+  | "top-genre";
 
 export type ExploreSectionParams = {
   referenceBookKey?: string;

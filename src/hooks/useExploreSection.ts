@@ -18,6 +18,7 @@ export function useExploreSection(
   params: ExploreSectionParams = {},
   lang: string,
   count = 6,
+  disabled = false,
 ): UseSectionResult {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,10 @@ export function useExploreSection(
   const [isFallback, setIsFallback] = useState(false);
 
   const fetch = useCallback(async () => {
+    if (disabled) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -37,7 +42,8 @@ export function useExploreSection(
       });
       setBooks(unique);
       setIsFallback(result.isFallback);
-    } catch {
+    } catch (err) {
+      console.error("[ExploreSection error]", err); 
       setError("error");
     } finally {
       setLoading(false);
@@ -45,6 +51,7 @@ export function useExploreSection(
   // params es un objeto nuevo en cada render; desestructuramos las deps relevantes
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    disabled,
     type, lang, count,
     params.referenceBookKey, params.referenceGenre,
     params.favoriteGenre, params.favoriteAuthorKey, params.favoriteGenreLabel,
@@ -97,6 +104,17 @@ async function fetchSection(
       if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
       const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10);
       const books = raw
+        .filter(b => (b.rating ?? 0) >= 4)
+        .filter(b => !params.userShelfKeys?.has(b.key))
+        .slice(0, count);
+      return { books, isFallback: false };
+    }
+
+    case "top-genre": {
+      if (!params.favoriteGenre) return { books: [], isFallback: false };
+      const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10);
+      const books = raw
+        .filter(b => (b.rating ?? 0) >= 4.3)
         .filter(b => !params.userShelfKeys?.has(b.key))
         .slice(0, count);
       return { books, isFallback: false };
