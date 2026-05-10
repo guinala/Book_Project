@@ -7,10 +7,12 @@ import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import { ChevronRight } from "lucide-react";
 import "./ExploreSection.scss";
+import type { SectionEntry } from "@/hooks/useExploreSections";
 
 type ExploreSectionProps = {
   type: ExploreSectionType;
   params?: ExploreSectionParams;
+  override?: Pick<SectionEntry, "books" | "isFallback">;  
   titleKey?: string;
   titleFallbackKey?: string;
   titleHighlight?: string;
@@ -47,6 +49,7 @@ function renderTitle(title: string, highlight: string | undefined): React.ReactN
 export default function ExploreSection({
   type,
   params = {},
+  override,
   titleKey,
   titleFallbackKey,
   titleHighlight,
@@ -55,7 +58,8 @@ export default function ExploreSection({
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
   const navigate = useNavigate();
-  const { books, loading, error, retry, isFallback } = useExploreSection(type, params, lang, 6);
+  const result = useExploreSection(type, params, lang, 6, !!override);
+  const { books, loading, error, retry, isFallback } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback } : result
 
   const resolvedTitleKey = isFallback && titleFallbackKey ? titleFallbackKey : titleKey;
   const title = resolvedTitleKey
