@@ -3,7 +3,8 @@
     "allow": [
       "Bash(Get-ChildItem -Recurse -Path \"c:\\\\Users\\\\USUARIO\\\\OneDrive\\\\Escritorio\\\\Book_Project\\\\src\\\\components\\\\shelf\\\\modals\\\\\" -Filter \"*UpdateProgressModal*\" | Select-Object FullName)",
       "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "WebSearch"
     ]
   }
 }

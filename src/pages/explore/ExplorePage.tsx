@@ -10,16 +10,64 @@ import GridLoading from "@/components/layout/GridLoading";
 import ExploreSection from "@/components/explore/ExploreSection";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
 import { genreToI18nKey } from "@/utils/genreUtils";
-import type { ExploreSectionParams } from "@/types/ExploreTypes";
+import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import type { SearchFilter } from "@/types/Search";
 import { ChevronLeft } from "lucide-react";
 import "./ExplorePage.scss";
+import { useExploreSections, type SectionEntry } from "@/hooks/useExploreSections";
 
 const SCROLL_KEY = "explore_scroll";
+
+type ShelfDerived = {
+  userShelfKeys: Set<string>;
+  userAuthorKeys: string[];
+  referenceBooks: import("@/types/Book").Book[];
+  favoriteGenre: string | null;
+  favoriteGenreLabel: string | null;
+  favoriteAuthorKey: string | null;
+  favoriteAuthorName: string | null;
+  wantToReadBooks: import("@/types/Book").Book[];
+  hasBooks: boolean;
+};
 
 function truncate(text: string, max = 40): string {
   return text.length > max ? text.slice(0, max - 1) + "…" : text;
 }
+
+function buildParamsForEntry(entry: SectionEntry, shelf: ShelfDerived): ExploreSectionParams {
+  return {
+    userShelfKeys: shelf.userShelfKeys,
+    userAuthorKeys: shelf.userAuthorKeys,
+    referenceBookKey: entry.referenceBookKey,
+    referenceBookTitle: entry.referenceBookTitle,
+    referenceGenre: entry.referenceGenre,
+    favoriteGenre: entry.favoriteGenre,
+    favoriteGenreLabel: entry.favoriteGenreLabel,
+    favoriteAuthorKey: entry.favoriteAuthorKey,
+    favoriteAuthorName: entry.favoriteAuthorName,
+  };
+}
+
+function titleKeyForEntry(entry: SectionEntry): string {
+  const map: Partial<Record<ExploreSectionType, string>> = {
+    "trending": "explore.sections.trending",
+    "because-reading": "explore.sections.becauseReading",
+    "more-genre": "explore.sections.moreGenre",
+    "top-genre": "explore.sections.topGenre",
+    "new-releases-for-you": "explore.sections.newReleasesForYou",
+    "waiting": "explore.sections.waiting",
+    "more-author": "explore.sections.moreAuthor",
+  };
+  return map[entry.type] ?? "explore.sections.trending";
+}
+
+function titleHighlightForEntry(entry: SectionEntry): string | undefined {
+  if (entry.referenceBookTitle) return truncate(entry.referenceBookTitle);
+  if (entry.favoriteGenreLabel ?? entry.favoriteGenre) return entry.favoriteGenreLabel ?? entry.favoriteGenre;
+  if (entry.favoriteAuthorName) return entry.favoriteAuthorName;
+  return undefined;
+}
+
 
 function ExplorePage() {
   const { t } = useTranslation();
@@ -103,6 +151,28 @@ function ExplorePage() {
     };
   }, [isLoggedIn, shelfLoading, shelfByStatus, t]);
 
+  const sectionsResult = useExploreSections(
+    isLoggedIn && shelfDerived?.hasBooks
+      ? {
+          lang,
+          userShelfKeys: shelfDerived.userShelfKeys,
+          userAuthorKeys: shelfDerived.userAuthorKeys,
+          favoriteGenre: shelfDerived.favoriteGenre,
+          favoriteGenreLabel: shelfDerived.favoriteGenreLabel,
+          favoriteAuthorKey: shelfDerived.favoriteAuthorKey,
+          favoriteAuthorName: shelfDerived.favoriteAuthorName,
+          referenceBooks: shelfDerived.referenceBooks,
+          wantToReadBooks: shelfDerived.wantToReadBooks,
+        }
+      : {
+          lang, userShelfKeys: new Set(), userAuthorKeys: [],
+          favoriteGenre: null, favoriteGenreLabel: null,
+          favoriteAuthorKey: null, favoriteAuthorName: null,
+          referenceBooks: [], wantToReadBooks: [],
+        },
+      !(isLoggedIn && shelfDerived?.hasBooks)
+  );
+
   const handleSearch = (query: string, filter: SearchFilter) => {
     setSearchQuery(query);
     if (query.trim()) search.fetchBooks(query, filter, 20, lang);
@@ -160,15 +230,37 @@ function ExplorePage() {
       ) : (
         <div className="explore-page__sections">
 
-          <ExploreSection
-            type="trending"
-            params={shelfParams}
-            titleKey="explore.sections.trending"
-            titleFallbackKey="explore.sections.trendingFallback"
-            onNavigate={handleNavigateToSection}
-          />
+          {showGuestVersion && (
+            <ExploreSection
+              type="trending"
+              params={shelfParams}
+              titleKey="explore.sections.trending"
+              titleFallbackKey="explore.sections.trendingFallback"
+              onNavigate={handleNavigateToSection}
+            />
+          )}
 
-          {showGuestVersion ? (
+          {!showGuestVersion && (
+            <>
+              {sectionsResult.sections.map(entry => (
+                <ExploreSection
+                  key={entry.id}
+                  type={entry.type}
+                  override={{ books: entry.books, isFallback: entry.isFallback }}
+                  params={buildParamsForEntry(entry, shelfDerived!)}
+                  titleKey={titleKeyForEntry(entry)}
+                  titleFallbackKey={entry.type === "trending" ? "explore.sections.trendingFallback"
+                    : entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback"
+                    : undefined}
+                  titleHighlight={titleHighlightForEntry(entry)}
+                  onNavigate={handleNavigateToSection}
+                />
+              ))}
+            </>
+          )}
+
+
+          {showGuestVersion && (
             <>
               <ExploreSection
                 type="top-rated"
@@ -201,120 +293,6 @@ function ExplorePage() {
                 titleKey="explore.sections.quickReads"
                 onNavigate={handleNavigateToSection}
               />
-            </>
-          ) : (
-            <>
-              {shelfDerived?.referenceBooks[0] && (
-                <ExploreSection
-                  key={shelfDerived.referenceBooks[0].key}
-                  type="because-reading"
-                  params={{
-                    ...shelfParams,
-                    referenceBookKey: shelfDerived.referenceBooks[0].key,
-                    referenceBookTitle: truncate(shelfDerived.referenceBooks[0].title),
-                    referenceGenre: shelfDerived.referenceBooks[0].genre,
-                  }}
-                  titleKey="explore.sections.becauseReading"
-                  titleHighlight={truncate(shelfDerived.referenceBooks[0].title)}
-                  onNavigate={handleNavigateToSection}
-                />
-              )}
-
-              {shelfDerived?.favoriteGenre && (
-                <ExploreSection
-                  type="more-genre"
-                  params={{
-                    ...shelfParams,
-                    favoriteGenre: shelfDerived.favoriteGenre,
-                    favoriteGenreLabel: shelfDerived.favoriteGenreLabel ?? undefined,
-                  }}
-                  titleKey="explore.sections.moreGenre"
-                  titleHighlight={shelfDerived.favoriteGenreLabel ?? shelfDerived.favoriteGenre}
-                  onNavigate={handleNavigateToSection}
-                />
-              )}
-
-              {shelfDerived?.referenceBooks[1] && (
-                <ExploreSection
-                  key={shelfDerived.referenceBooks[1].key}
-                  type="because-reading"
-                  params={{
-                    ...shelfParams,
-                    referenceBookKey: shelfDerived.referenceBooks[1].key,
-                    referenceBookTitle: truncate(shelfDerived.referenceBooks[1].title),
-                    referenceGenre: shelfDerived.referenceBooks[1].genre,
-                  }}
-                  titleKey="explore.sections.becauseReading"
-                  titleHighlight={truncate(shelfDerived.referenceBooks[1].title)}
-                  onNavigate={handleNavigateToSection}
-                />
-              )}
-
-              <ExploreSection
-                type="new-releases-for-you"
-                params={{
-                  ...shelfParams,
-                  favoriteGenre: shelfDerived?.favoriteGenre ?? undefined,
-                }}
-                titleKey="explore.sections.newReleasesForYou"
-                titleFallbackKey="explore.sections.newReleasesFallback"
-                onNavigate={handleNavigateToSection}
-              />
-
-              {shelfDerived?.referenceBooks[2] && (
-                <ExploreSection
-                  key={shelfDerived.referenceBooks[2].key}
-                  type="because-reading"
-                  params={{
-                    ...shelfParams,
-                    referenceBookKey: shelfDerived.referenceBooks[2].key,
-                    referenceBookTitle: truncate(shelfDerived.referenceBooks[2].title),
-                    referenceGenre: shelfDerived.referenceBooks[2].genre,
-                  }}
-                  titleKey="explore.sections.becauseReading"
-                  titleHighlight={truncate(shelfDerived.referenceBooks[2].title)}
-                  onNavigate={handleNavigateToSection}
-                />
-              )}
-
-              {(shelfDerived?.wantToReadBooks?.length ?? 0) > 0 && (
-                <ExploreSection
-                  type="waiting"
-                  params={{ ...shelfParams, wantToReadBooks: shelfDerived!.wantToReadBooks }}
-                  titleKey="explore.sections.waiting"
-                  onNavigate={handleNavigateToSection}
-                />
-              )}
-
-              {shelfDerived?.referenceBooks.slice(3).map(book => (
-                <ExploreSection
-                  key={book.key}
-                  type="because-reading"
-                  params={{
-                    ...shelfParams,
-                    referenceBookKey: book.key,
-                    referenceBookTitle: truncate(book.title),
-                    referenceGenre: book.genre,
-                  }}
-                  titleKey="explore.sections.becauseReading"
-                  titleHighlight={truncate(book.title)}
-                  onNavigate={handleNavigateToSection}
-                />
-              ))}
-
-              {shelfDerived?.favoriteAuthorKey && (
-                <ExploreSection
-                  type="more-author"
-                  params={{
-                    ...shelfParams,
-                    favoriteAuthorKey: shelfDerived.favoriteAuthorKey,
-                    favoriteAuthorName: shelfDerived.favoriteAuthorName ?? undefined,
-                  }}
-                  titleKey="explore.sections.moreAuthor"
-                  titleHighlight={shelfDerived.favoriteAuthorName ?? undefined}
-                  onNavigate={handleNavigateToSection}
-                />
-              )}
             </>
           )}
         </div>

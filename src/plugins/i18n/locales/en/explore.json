@@ -23,7 +23,8 @@
       "moreGenre": "More {{genre}}",
       "newReleasesForYou": "New releases for you",
       "waiting": "Fantastic stories await you",
-      "moreAuthor": "More by {{author}}"
+      "moreAuthor": "More by {{author}}",
+      "topGenre": "Top Books of {{genre}}"
     },
     "banner": {
       "title": "Discover books for you",
