@@ -23,24 +23,21 @@ export default function ListsSection({ lists }: ListsSectionProps) {
         </a>
       </div>
 
-      <div className="lists-section__card">
-        {visibleLists.map((list, i) => (
-          <div key={list.id}>
-            {i > 0 && <div className="lists-section__divider" />}
-            <ListCard list={list} />
-          </div>
+      <div className="lists-section__grid">
+        {visibleLists.map((list) => (
+          <ListCard key={list.id} list={list} />
         ))}
 
-        {visibleLists.length > 0 && <div className="lists-section__divider" />}
-        <button type="button" className="lists-section__create">
-          <div className="lists-section__create-icon">
-            <Plus size={18} aria-hidden="true" />
-          </div>
-          <span className="lists-section__create-text">
-            {t("myLibrary.createList")}
-          </span>
-          <ChevronRight size={14} aria-hidden="true" />
-        </button>
+        {visibleLists.length < MAX_LISTS && (
+          <button type="button" className="lists-section__create">
+            <div className="lists-section__create-icon">
+              <Plus size={18} aria-hidden="true" />
+            </div>
+            <span className="lists-section__create-text">
+              {t("myLibrary.createList")}
+            </span>
+          </button>
+        )}
       </div>
     </section>
   );

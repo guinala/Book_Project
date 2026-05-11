@@ -75,10 +75,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition:
-      background var(--transition-fast),
-      color var(--transition-fast),
-      border-color var(--transition-fast);
+    transition: border-color var(--transition-fast), color var(--transition-fast);
 
     svg {
       width: 14px;
@@ -86,9 +83,8 @@
     }
 
     &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
-      background: var(--color-brand-alpha-subtle);
+      border-color: var(--color-text-primary);
+      color: var(--color-text-primary);
     }
   }
 

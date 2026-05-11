@@ -15,7 +15,7 @@ export default function ProgressSection() {
   ];
 
   const genres = [
-    { key: "fantasy",    percentage: 42, color: "var(--color-accent)" },
+    { key: "fantasy",    percentage: 42, color: "var(--color-text-primary)" },
     { key: "drama",      percentage: 20, color: "var(--color-text-secondary)" },
     { key: "historical", percentage: 18, color: "var(--color-genre-historical)" },
     { key: "others",     percentage: 12, color: "var(--color-text-tertiary)" },
@@ -27,20 +27,9 @@ export default function ProgressSection() {
     <section className="progresses">
       <h3 className="progresses__title">{t("myLibrary.progress.title")}</h3>
 
-      <div className="progresses__grid">
-        <div className="progresses__card">
-          <p className="progresses__card-title">{t("myLibrary.progress.annualGoal")}</p>
-          <div className="progresses__goal-outer">
-            <div className="progresses__goal-inner">
-              <span className="progresses__goal-number">20/20</span>
-              <span className="progresses__goal-label">{t("myLibrary.progress.books")}</span>
-            </div>
-          </div>
-          <p className="progresses__goal-completed">{t("myLibrary.progress.completed")}</p>
-        </div>
+      <div className="progresses__card">
 
-        <div className="progresses__card">
-          <p className="progresses__card-title">{t("myLibrary.progress.weeklyActivity")}</p>
+        <div className="progresses__chart-area">
           <div className="progresses__bar-chart">
             {weekActivity.map(({ day, pages, currentDay }) => (
               <div key={day} className="progresses__bar-col">
@@ -70,25 +59,41 @@ export default function ProgressSection() {
           </div>
         </div>
 
-        <div className="progresses__card">
-          <p className="progresses__card-title">{t("myLibrary.progress.favoriteGenres")}</p>
-          <div className="progresses__genres">
-            {genres.map(({ key, percentage, color }) => (
-              <div key={key} className="progresses__genre">
-                <div className="progresses__genre-row">
-                  <span className="progresses__genre-name">{t(`myLibrary.genres.${key}`)}</span>
-                  <span className="progresses__genre-percentage">{percentage}%</span>
-                </div>
-                <div className="progresses__genre-track">
-                  <div
-                    className="progresses__genre-fill"
-                    style={{ width: `${percentage}%`, background: color }}
-                  />
-                </div>
+        <div className="progresses__divider" />
+
+        <div className="progresses__bottom">
+          <div className="progresses__goal">
+            <p className="progresses__section-label">{t("myLibrary.progress.annualGoal")}</p>
+            <div className="progresses__goal-outer">
+              <div className="progresses__goal-inner">
+                <span className="progresses__goal-number">20/20</span>
+                <span className="progresses__goal-label">{t("myLibrary.progress.books")}</span>
               </div>
-            ))}
+            </div>
+            <p className="progresses__goal-completed">{t("myLibrary.progress.completed")}</p>
+          </div>
+
+          <div className="progresses__genres-wrap">
+            <p className="progresses__section-label">{t("myLibrary.progress.favoriteGenres")}</p>
+            <div className="progresses__genres">
+              {genres.map(({ key, percentage, color }) => (
+                <div key={key} className="progresses__genre">
+                  <div className="progresses__genre-row">
+                    <span className="progresses__genre-name">{t(`myLibrary.genres.${key}`)}</span>
+                    <span className="progresses__genre-percentage">{percentage}%</span>
+                  </div>
+                  <div className="progresses__genre-track">
+                    <div
+                      className="progresses__genre-fill"
+                      style={{ width: `${percentage}%`, background: color }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+
       </div>
     </section>
   );
