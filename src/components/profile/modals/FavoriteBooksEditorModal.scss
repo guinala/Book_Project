@@ -13,7 +13,7 @@
   &__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(44, 36, 32, 0.45);
+    background: var(--color-overlay);
     backdrop-filter: blur(4px);
   }
 
@@ -124,8 +124,8 @@
     @include transition(border-color, box-shadow);
 
     &:focus {
-      border-color: var(--color-brand-primary);
-      box-shadow: 0 0 0 3px var(--color-brand-alpha-subtle);
+      border-color: var(--color-text-primary);
+      box-shadow: 0 0 0 3px var(--color-neutral-alpha-muted);
     }
   }
 
@@ -207,7 +207,7 @@
 
   &__btn {
     padding: var(--space-2) var(--space-6);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-sm);
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     cursor: pointer;
@@ -215,16 +215,16 @@
 
     &--cancel {
       background: none;
-      border: 1px solid var(--color-border-medium);
+      border: 1.5px solid var(--color-border-medium);
       color: var(--color-text-primary);
-      &:hover { border-color: var(--color-border-strong); }
+      &:hover { border-color: var(--color-text-primary); }
     }
 
     &--save {
-      background: var(--color-accent);
+      background: var(--color-text-primary);
       border: none;
-      color: var(--color-text-on-brand);
-      &:hover { background: var(--color-accent-dark); }
+      color: #fff;
+      &:hover { background: var(--color-bg-darkest); }
       &:disabled { opacity: 0.6; cursor: default; }
     }
   }

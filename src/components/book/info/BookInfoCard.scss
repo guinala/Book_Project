@@ -113,6 +113,7 @@
   }
 
   &__title {
+    font-family: var(--font-editorial);
     font-size: var(--text-xl);
     font-weight: var(--weight-bold);
     color: var(--color-text-primary);
@@ -122,6 +123,7 @@
   }
 
   &__author {
+    font-family: var(--font-main);
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
     font-weight: var(--weight-regular);

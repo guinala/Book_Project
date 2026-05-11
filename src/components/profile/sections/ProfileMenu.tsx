@@ -18,8 +18,15 @@ export default function ProfileMenu({ onClose }: ProfileMenuProps) {
     const handleClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [onClose]);
 
   return (
@@ -42,6 +49,8 @@ export default function ProfileMenu({ onClose }: ProfileMenuProps) {
         {theme === "light" ? <Moon /> : <Sun />}
         {theme === "light" ? "Tema oscuro" : "Tema claro"}
       </button>
+
+      <div className="profile-menu__divider" />
 
       <button
         className="profile-menu__item profile-menu__item--danger"

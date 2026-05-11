@@ -42,8 +42,8 @@
     overflow: hidden;
 
     &--focused {
-      border-color: var(--color-brand-primary);
-      box-shadow: 0 0 0 3px var(--color-brand-alpha-subtle);
+      border-color: var(--color-text-primary);
+      box-shadow: 0 0 0 3px var(--color-neutral-alpha-muted);
     }
   }
 
@@ -99,8 +99,10 @@
     transition:
       color var(--transition-fast);
 
+    svg { width: 16px; height: 16px; }
+
     &:hover {
-      color: var(--color-brand-primary);
+      color: var(--color-text-primary);
     }
   }
 }

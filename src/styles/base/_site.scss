@@ -20,6 +20,7 @@ body {
   font-weight: var(--weight-regular);
   color: var(--color-text-primary);
   background-color: var(--color-bg-page);
+  background-image: linear-gradient(to bottom, var(--color-bg-card), var(--color-bg-page));
   line-height: 1.6;
 }
 
