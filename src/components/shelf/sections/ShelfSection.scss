@@ -40,7 +40,7 @@
     padding: 7px 14px;
     border-radius: var(--radius-pill);
     border: 1.5px solid var(--color-border-medium);
-    background: var(--color-bg-card-solid);
+    background: #fff;
     font-family: var(--font-main);
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
@@ -49,17 +49,17 @@
     transition: all var(--transition-fast);
 
     &:hover {
-      border-color: var(--color-accent);
-      background: var(--color-brand-alpha-subtle);
+      border-color: var(--color-text-primary);
+      background: #fff;
     }
 
     &--active {
-      border-color: var(--color-accent);
-      background: var(--color-bg-card-solid);
+      border-color: var(--color-text-primary);
+      background: #fff;
 
       &:hover {
         cursor: default;
-        background: var(--color-bg-card-solid);
+        background: #fff;
       }
     }
   }

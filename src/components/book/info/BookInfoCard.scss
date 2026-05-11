@@ -40,7 +40,6 @@
     align-self: auto;
     border-radius: var(--radius-md);
     overflow: hidden;
-    cursor: pointer;
     box-shadow: var(--shadow-cover);
 
     @include from($bp-md) {
@@ -56,39 +55,6 @@
     object-fit: cover;
     display: block;
     border-radius: var(--radius-md);
-    transition: transform var(--transition-base);
-  }
-
-  &__cover-wrap:hover &__cover {
-    transform: scale(1.03);
-  }
-
-  &__cover-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 30%,
-      rgba(232, 107, 48, 0.75) 100%
-    );
-    opacity: 0;
-    transition: opacity var(--transition-base);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 20px;
-    border-radius: var(--radius-md);
-  }
-
-  &__cover-wrap:hover &__cover-overlay {
-    opacity: 1;
-  }
-
-  &__cover-overlay-text {
-    font-size: var(--text-sm);
-    font-weight: var(--weight-bold);
-    color: var(--color-text-on-brand);
-    letter-spacing: 0.04em;
   }
 
   &__share-btn {
@@ -301,13 +267,13 @@
     justify-content: center;
     gap: var(--space-1);
     padding: 9px 20px;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-sm);
     border: 2px solid transparent;
-    background: var(--color-accent);
+    background: var(--color-text-primary);
     font-family: var(--font-main);
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
-    color: var(--color-text-on-brand);
+    color: #fff;
     cursor: pointer;
     transition:
       background var(--transition-fast),
@@ -316,7 +282,7 @@
       border-color var(--transition-fast);
 
     &:hover {
-      background: var(--color-accent-dark);
+      background: var(--color-bg-darkest);
     }
     &:active {
       transform: scale(0.97);
@@ -324,11 +290,12 @@
 
     &--saved {
       background: transparent;
-      border-color: var(--color-accent);
-      color: var(--color-accent);
+      border-color: var(--color-border-medium);
+      color: var(--color-text-primary);
 
       &:hover {
-        background: var(--color-brand-alpha-subtle);
+        background: transparent;
+        border-color: var(--color-text-primary);
       }
     }
   }

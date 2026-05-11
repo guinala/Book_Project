@@ -121,7 +121,7 @@
     max-width: 34px;
     background: var(--color-neutral-alpha-muted);
     border: 1px solid var(--color-border-medium);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-pill);
     font-size: var(--text-xs);
     font-weight: var(--weight-bold);
     color: var(--color-text-secondary);
@@ -165,7 +165,7 @@
     height: 34px;
     background: var(--color-neutral-alpha-muted);
     border: 1px solid var(--color-border-medium);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-pill);
     color: var(--color-text-secondary);
     cursor: pointer;
     flex-shrink: 0;

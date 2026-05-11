@@ -2,8 +2,8 @@
 
 .profile-menu {
   position: absolute;
-  top: calc(100% + var(--space-6));
-  left: 0;
+  top: calc(100% + var(--space-2));
+  right: 0;
   min-width: 200px;
   background: var(--color-bg-card-solid);
   border: 1px solid var(--color-border-subtle);
@@ -42,7 +42,7 @@
     }
 
     &:hover {
-      border-color: var(--color-brand-primary);
+      border-color: var(--color-text-primary);
     }
 
     &:focus-visible {
