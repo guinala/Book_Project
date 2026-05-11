@@ -13,46 +13,28 @@ Las tareas se agrupan en cuatro frentes por afinidad técnica. Cada frente puede
 
 ---
 
-## Frente A — Reducir escrituras innecesarias a Firestore
+## Frente A — Verificación de auto-estabilización (REVISADO)
 
-### A.1 `useBookRecommendations` reescribe sin TTL
+**Hipótesis original (descartada):** `useBookRecommendations` y `useAuthorData` causaban write amplification a Firestore al re-llamar la API cada navegación. La propuesta era TTL en localStorage.
 
-**Problema:** [useBookRecommendations.ts:57](../../../src/hooks/useBookRecommendations.ts#L57) — cada vez que un género tiene < 20 libros en Firestore se llama a la API y se reescriben 30 libros. Navegar entre 5 libros del mismo género dispara 150 escrituras.
+**Análisis correcto:** el flujo se auto-estabiliza solo:
 
-**Solución:** TTL de 24h por `(genre, lang)` en localStorage:
+- `getRecommendationsFromDB` ([firebaseBooks.ts:192-231](../../../src/services/firebase/firebaseBooks.ts#L192-L231)) devuelve `null` solo si hay **menos de 20** libros para `(genre, lang)`.
+- `saveBooksToDB` escribe `genre` y `langs: arrayUnion(lang)`.
+- Tras la primera escritura de 30 libros, la siguiente navegación con el mismo `(genre, lang)` encuentra los datos y **no vuelve a llamar a la API**.
+- Mismo razonamiento en `useAuthorData` con `getAuthorBooksFromDB` + `dbBooks.length >= 2`.
 
-```ts
-const RECS_TTL = 24 * 60 * 60 * 1000;
-const recsKey = (genre: string, lang: string) => `trama_recs_${genre}_${lang}`;
+Por tanto **no hay problema de write amplification**. La escritura ocurre como mucho una vez por `(genre, lang)` o `(authorKey, lang)` durante la vida del proyecto.
 
-// Sustituir saveBooksToDB(deduplicatedBooks, lang); en línea 57:
-const last = localStorage.getItem(recsKey(genre, lang));
-if (!last || Date.now() - Number(last) > RECS_TTL) {
-  saveBooksToDB(deduplicatedBooks, lang);
-  localStorage.setItem(recsKey(genre, lang), String(Date.now()));
-}
-```
+### A — Tarea real: verificar integridad de datos guardados
 
-Reduce escrituras de N navegaciones → 1 cada 24h por género/idioma.
+Si en algún momento se observa que `getRecommendationsFromDB` o `getAuthorBooksFromDB` siguen devolviendo `null` repetidamente para el mismo `(genre, lang)` tras la primera escritura, **el bug está en la escritura**, no en la lectura. Posibles causas:
 
----
+- Libros guardados con `genre: null` (cuando `book.genre` es undefined en `fetchBooksByGenre`).
+- Libros guardados sin `langs[lang]` por algún fallo en el `arrayUnion`.
+- Race entre múltiples saves concurrentes.
 
-### A.2 `useAuthorData` reescribe sin condicional
-
-**Problema:** [useAuthorData.ts:184](../../../src/hooks/useAuthorData.ts#L184) — cada fallback al fetch de OpenLibrary escribe los 10 libros del autor a Firestore, sin importar si ya estaban allí.
-
-**Solución:** Mismo patrón que A.1, indexado por `authorKey`:
-
-```ts
-const AUTHOR_TTL = 24 * 60 * 60 * 1000;
-const authorRecsKey = (key: string, lang: string) => `trama_author_${key}_${lang}`;
-
-const last = localStorage.getItem(authorRecsKey(authorKey, lang));
-if (!last || Date.now() - Number(last) > AUTHOR_TTL) {
-  saveBooksToDB(apiBooks, lang).catch(() => {});
-  localStorage.setItem(authorRecsKey(authorKey, lang), String(Date.now()));
-}
-```
+**Acción:** monitorizar via consola Firebase tras un día de uso real. Si las escrituras a `Books/...` siguen disparándose con frecuencia inesperada, abrir investigación específica. Sin evidencia, no se hace nada.
 
 ---
 
@@ -230,9 +212,7 @@ Pendiente decidir. Por defecto se asume Opción 1 (no hacer nada) salvo que la U
 ### Por frente (independientes)
 
 **A — Escrituras a Firestore**
-- [ ] A.1 aplicado en `useBookRecommendations` con TTL 24h.
-- [ ] A.2 aplicado en `useAuthorData` con TTL 24h.
-- [ ] Tras navegar 5 libros del mismo género en < 24h, solo se ve **una** escritura `Books/...` en la consola Firebase.
+- [ ] Verificación pasiva: tras un día de uso real, las escrituras a `Books/...` no se repiten con la misma frecuencia que las navegaciones (sería signo de bug en la escritura, no en el patrón).
 
 **B — Dedup de editions**
 - [ ] B aplicado en `fetchWorkEditionByLang`.
