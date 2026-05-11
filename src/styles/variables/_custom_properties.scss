@@ -1,7 +1,7 @@
 :root {
   // ─── FUENTES ───────────────────────────────────────────
   --font-main: "Manrope", sans-serif;
-  --font-editorial: "Crimson", Georgia, serif;
+  --font-editorial: "Libre Baskerville", Georgia, serif;
 
   // ─── LAYOUT ────────────────────────────────────────────
   --max-width: 1400px;
@@ -50,10 +50,10 @@
   --color-brand-alpha-medium: rgba(232, 107, 48, 0.12);
 
   // Alpha neutral
-  --color-neutral-alpha-light: rgba(44, 36, 32, 0.04);
-  --color-neutral-alpha-subtle: rgba(44, 36, 32, 0.06);
-  --color-neutral-alpha-muted: rgba(44, 36, 32, 0.08);
-  --color-neutral-alpha-medium: rgba(44, 36, 32, 0.14);
+  --color-neutral-alpha-light: rgba(0, 0, 0, 0.03);
+  --color-neutral-alpha-subtle: rgba(0, 0, 0, 0.05);
+  --color-neutral-alpha-muted: rgba(0, 0, 0, 0.07);
+  --color-neutral-alpha-medium: rgba(0, 0, 0, 0.12);
 
   // ─── STATUS ────────────────────────────────────────────
   --color-success: #5a7a60;
@@ -66,30 +66,30 @@
   --color-info-bg: #dde4ee;
 
   // ─── SUPERFICIES ───────────────────────────────────────
-  --color-bg-page: #fafaf8;
-  --color-bg-section: #f5f2ee;
-  --color-surface-secondary: #f0ece8;
-  --color-bg-card: rgba(255, 255, 255, 0.72);
-  --color-bg-card-solid: #ffffff;
-  --color-bg-overlay: rgba(244, 238, 233, 0.85);
-  --color-bg-synopsis: rgba(252, 242, 236, 0.85);
+  --color-bg-page: #fafafa;
+  --color-bg-section: #f5f5f5;
+  --color-surface-secondary: #f0f0f0;
+  --color-bg-card: #f8f8f8;
+  --color-bg-card-solid: #f8f8f8;
+  --color-bg-overlay: rgba(248, 248, 248, 0.97);
+  --color-bg-synopsis: rgba(248, 248, 248, 0.85);
   --color-bg-darkest: #1a1714;
   --color-bg-medium: #3a3530;
 
   // ─── TEXTO ─────────────────────────────────────────────
-  --color-text-primary: #2c2420;
-  --color-text-secondary: #6b635a;
-  --color-text-tertiary: #9c9488;
+  --color-text-primary: #444340;
+  --color-text-secondary: #838178;
+  --color-text-tertiary: #9a988b;
   --color-text-on-brand: #ffffff;
   --color-text-on-dark: #faf6f1;
-  --color-text-subtle: #a09a94;
+  --color-text-subtle: #c4c2ba;
 
   // ─── BORDES ────────────────────────────────────────────
-  --color-border-subtle: rgba(44, 36, 32, 0.08);
-  --color-border-medium: rgba(44, 36, 32, 0.18);
-  --color-border-strong: rgba(44, 36, 32, 0.3);
-  --color-border-warm: rgba(175, 138, 120, 0.4);
-  --color-border: rgba(44, 36, 32, 0.18);
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+  --color-border-medium: #e1dddd;
+  --color-border-strong: #c4c2ba;
+  --color-border-warm: rgba(0, 0, 0, 0.12);
+  --color-border: #eee;
 
   // ─── GÉNEROS ───────────────────────────────────────────
   --color-genre-fiction: #d4500f;
@@ -101,17 +101,17 @@
   --color-genre-historical: #a78a6e;
 
   // ─── BORDER RADIUS ─────────────────────────────────────
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
   --radius-pill: 9999px;
   --border-radius-sm: var(--radius-sm);
   --border-radius-md: var(--radius-md);
   --border-radius-lg: var(--radius-lg);
   --border-radius-xl: var(--radius-xl);
   --border-radius-pill: var(--radius-pill);
-  --border-radius-btn: var(--radius-pill);
+  --border-radius-btn: 4px;
 
   // ─── SOMBRAS ───────────────────────────────────────────
   --shadow-card:
@@ -158,29 +158,29 @@
   --color-bg-page: #1a1714;
   --color-bg-section: #221e1b;
   --color-surface-secondary: #2a2521;
-  --color-bg-card: rgba(38, 34, 30, 0.85);
+  --color-bg-card: #242220;
   --color-bg-card-solid: #2e2924;
-  --color-bg-overlay: rgba(26, 23, 20, 0.85);
-  --color-bg-synopsis: rgba(38, 30, 24, 0.85);
+  --color-bg-overlay: rgba(26, 23, 20, 0.97);
+  --color-bg-synopsis: rgba(36, 34, 32, 0.85);
 
-  --color-text-primary: #f0ebe5;
-  --color-text-secondary: #b5aa9e;
-  --color-text-tertiary: #7a7268;
-  --color-text-subtle: #6b6358;
+  --color-text-primary: #e8e6e3;
+  --color-text-secondary: #9a988b;
+  --color-text-tertiary: #6c6c67;
+  --color-text-subtle: #4a4845;
 
-  --color-border-subtle: rgba(255, 240, 225, 0.08);
-  --color-border-medium: rgba(255, 240, 225, 0.15);
-  --color-border-strong: rgba(255, 240, 225, 0.25);
-  --color-border-warm: rgba(200, 160, 130, 0.3);
-  --color-border: rgba(255, 240, 225, 0.15);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-medium: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.22);
+  --color-border-warm: rgba(255, 255, 255, 0.10);
+  --color-border: rgba(255, 255, 255, 0.10);
 
-  --color-neutral-alpha-light: rgba(255, 240, 225, 0.04);
-  --color-neutral-alpha-subtle: rgba(255, 240, 225, 0.06);
-  --color-neutral-alpha-muted: rgba(255, 240, 225, 0.09);
-  --color-neutral-alpha-medium: rgba(255, 240, 225, 0.14);
+  --color-neutral-alpha-light: rgba(255, 255, 255, 0.03);
+  --color-neutral-alpha-subtle: rgba(255, 255, 255, 0.05);
+  --color-neutral-alpha-muted: rgba(255, 255, 255, 0.08);
+  --color-neutral-alpha-medium: rgba(255, 255, 255, 0.13);
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-  --shadow-card-hover: 0 4px 20px rgba(232, 107, 48, 0.3), 0 1px 6px rgba(232, 107, 48, 0.15);
+  --shadow-card-hover: 0 4px 20px rgba(232, 107, 48, 0.25), 0 1px 6px rgba(232, 107, 48, 0.12);
   --shadow-nav: 0 4px 20px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
   --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
 }
