@@ -118,7 +118,9 @@ export function useBookDetail(id: string): {
               author: bookFromState?.authors?.[0],
               lang,
               signal: controller.signal,
+              workKey,   
             });
+
             if (fetched.trim().length > 0) {
               saveSynopsisToDB(workKey, fetched, lang);
             }
@@ -169,6 +171,7 @@ export function useBookDetail(id: string): {
           author: bookFromState?.authors?.[0],
           lang: otherLang,
           signal: controller.signal,
+          workKey
         });
 
         if (otherSynopsis.trim().length > 0) {
