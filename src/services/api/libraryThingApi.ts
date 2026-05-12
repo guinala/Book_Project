@@ -43,6 +43,7 @@ export async function fetchLibraryThingSynopsis(
   if (!isbn || !API_KEY) return '';
 
   try {
+    logger.log("Procede a probarse");
     const { data } = await libraryThingClient.get<string>('/', {
       params: {
         method: 'librarything.ck.getwork',

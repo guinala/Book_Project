@@ -322,3 +322,16 @@ export async function fetchWorkEditionByLang(
   }
 }
 
+export async function fetchOpenLibrarySynopsis(
+  workKey: string,
+  signal?: AbortSignal
+): Promise<string> {
+  try {
+    const work = await getWork(workKey, signal);
+    return extractSynopsis(work);
+  } catch {
+    return '';
+  }
+}
+
+
