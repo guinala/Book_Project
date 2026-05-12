@@ -24,28 +24,12 @@
     }
   }
 
-  &__logo {
-    @include flex-center;
-    gap: var(--space-2);
-    text-decoration: none;
-    margin-bottom: var(--space-1);
-  }
-
-  &__logo-icon {
-    @include flex-center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
-    font-size: var(--text-lg);
-    background: var(--color-brand-alpha-medium);
-    color: var(--color-brand-primary);
-  }
-
-  &__logo-text {
-    font-size: var(--text-2xl);
-    font-weight: var(--weight-semibold);
-    letter-spacing: 0.01em;
+  &__brand {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: -0.02em;
     color: var(--color-text-primary);
+    text-align: center;
   }
 
   &__title {
@@ -54,11 +38,19 @@
     text-align: center;
     margin: 0 0 var(--space-2);
     letter-spacing: 0.01em;
-    color: var(--color-text-primary);
+    color: var(--color-text-secondary);
 
     @include from($bp-md) {
       margin-bottom: var(--space-4);
     }
+  }
+
+  &__description {
+    font-size: var(--text-md);
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin: 0;
+    line-height: 1.6;
   }
 
   &__form {
