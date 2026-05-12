@@ -2,7 +2,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "
 import { db } from "./firebaseInit";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import { deleteProgressActivitiesAbove, logActivity } from "./firebaseActivity";
+import { deleteActivitiesByTypeAndBook, deleteProgressActivitiesAbove, logActivity } from "./firebaseActivity";
 import { incrementBookAddCount } from "./firebaseBooks";
 
 export type ShelfEntry = { book: Book; status: ShelfStatus; currentPage?: number };
@@ -52,6 +52,8 @@ export async function addToShelf(
     logActivity(uid, { type: "watchlist_add", ...base })
       .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "reading") {
+    deleteActivitiesByTypeAndBook(uid, "watchlist_add", book.key)
+      .catch((err) => console.warn("[addToShelf] deleteWatchlistAdd failed:", err));
     logActivity(uid, { type: "reading_started", ...base })
       .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "finished") {

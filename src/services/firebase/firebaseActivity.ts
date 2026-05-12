@@ -23,6 +23,20 @@ export async function logActivity(
   });
 }
 
+export async function deleteActivitiesByTypeAndBook(
+  uid: string,
+  type: string,
+  bookId: string
+): Promise<void> {
+  const q = query(
+    collection(db, "Users", uid, "activity"),
+    where("type", "==", type),
+    where("bookId", "==", bookId)
+  );
+  const snap = await getDocs(q);
+  await Promise.all(snap.docs.map((d) => deleteDoc(d.ref)));
+}
+
 export async function deleteProgressActivitiesAbove(
   uid: string,
   bookId: string,
