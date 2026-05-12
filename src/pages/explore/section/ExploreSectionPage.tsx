@@ -20,6 +20,7 @@ const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
   "new-releases-for-you": "explore.sections.newReleasesForYou",
   "waiting": "explore.sections.waiting",
   "more-author": "explore.sections.moreAuthor",
+  "top-genre": "explore.sections.topGenre",
 };
 
 const SECTION_FALLBACK_KEYS: Partial<Record<ExploreSectionType, string>> = {

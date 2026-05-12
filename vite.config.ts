@@ -17,4 +17,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/api/lt': {
+        target: 'https://www.librarything.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/lt/, '/services/rest/1.1'),
+      },
+    },
+  },
 })

@@ -33,7 +33,10 @@
       "save": "Guardar lectura",
       "close": "Cerrar",
       "noteTooLong": "Has superado el máximo de caracteres",
-      "characters": "caracteres"
+      "characters": "caracteres",
+      "rateBook": "Valoración",
+      "review": "Reseña",
+      "reviewPlaceholder": "Cuéntanos qué te ha parecido el libro. ¿Lo recomendarías?"
     },
     "createList": "Crear nueva lista",
     "listsTitle": "Listas",

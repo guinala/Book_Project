@@ -10,7 +10,13 @@ export type ShelfContextType = {
   removeBook: (bookKey: string) => Promise<void>;
   getStatus: (bookKey: string) => ShelfStatus | null;
   getEntry: (bookKey: string) => ShelfEntry | null;
-  updateProgress: (bookKey: string, currentPage: number, note?: string) => Promise<void>;
+  updateProgress: (
+    bookKey: string, 
+    currentPage: number, 
+    note?: string,
+    rating?: number,   
+    review?: string
+  ) => Promise<void>;
 }
 
 export const ShelfContext = createContext<ShelfContextType | null>(null);

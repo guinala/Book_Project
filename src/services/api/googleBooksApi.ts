@@ -188,7 +188,9 @@ export async function fetchGoogleSynopsis(
       });
       const synopsis = extractDescription(data);
       logger.log('[Synopsis] Intento 1 (ISBN):', synopsis ? `OK (${synopsis.length} chars, (${lang}, ${isbn}))` : 'vacío');
-      if (synopsis.trim().length > 30) return synopsis;
+      if (synopsis.trim().length > 30) {
+        return synopsis;
+      }
     }
 
     // Intento 2: título+autor en idioma actual
@@ -213,7 +215,9 @@ export async function fetchGoogleSynopsis(
       ? (match.volumeInfo.description ?? match.searchInfo?.textSnippet ?? '')
       : '';
     logger.log(`[Synopsis] ) Intento 2 (título+autor ${lang.toUpperCase()}):`, synopsis2 ? `OK (${synopsis2.length} chars, (${lang}, ${isbn})))` : 'vacío');
-    return synopsis2;
+    if (synopsis2.trim().length > 0) {
+      return synopsis2;
+    }
 
     // Intento 3: título+autor sin restricción de idioma
     const { data: data3 } = await googleBooksClient.get<GoogleBooksResponse>("/volumes", {

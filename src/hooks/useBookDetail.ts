@@ -6,11 +6,11 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 // import { extractSynopsis, getWork } from "@/services/api/openLibraryApi";  
 import { getCoverUrl } from "@/utils/coverImage";
-import { fetchGoogleSynopsis } from "@/services/api/googleBooksApi";
 import { getSynopsisFromDB, saveSynopsisToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { logger } from "@/utils/logger";
 import { toWorkKey } from "@/utils/bookPaths";
 import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
+import { fetchSynopsisRace } from "@/services/api/synopsisSources";
 
 export function useBookDetail(id: string): {
   book: BookDetail | null;
@@ -105,13 +105,20 @@ export function useBookDetail(id: string): {
               }
             }
 
-            const fetched = await fetchGoogleSynopsis(
-              langTitle ?? workKey,
-              controller.signal,
-              langIsbn ?? bookFromState?.isbn,
-              bookFromState?.authors?.[0],
-              lang
-            );
+            // const fetched = await fetchGoogleSynopsis(
+            //   langTitle ?? workKey,
+            //   controller.signal,
+            //   langIsbn ?? bookFromState?.isbn,
+            //   bookFromState?.authors?.[0],
+            //   lang
+            // );
+            const fetched = await fetchSynopsisRace({
+              title: langTitle ?? workKey,
+              isbn: langIsbn ?? bookFromState?.isbn,
+              author: bookFromState?.authors?.[0],
+              lang,
+              signal: controller.signal,
+            });
             if (fetched.trim().length > 0) {
               saveSynopsisToDB(workKey, fetched, lang);
             }
@@ -124,14 +131,14 @@ export function useBookDetail(id: string): {
         key: workKey,
         cover_url: bookFromState?.cover_url ?? (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
         genre: bookFromState?.genre ?? '',
-        title: bookFromState?.title ?? '',
+        title: bookFromState?.titles?.[lang] ?? bookFromState?.title ?? '',
         author: bookFromState?.authors?.[0] ?? '',
         authorKey: bookFromState?.authorKeys?.[0],
         rating: bookFromState?.rating ?? 0,
         reviewCount: bookFromState?.ratingCount ?? 0,
         pages: bookFromState?.pages ?? 0,
         year: bookFromState?.first_publish_year ?? 0,
-        isbn: bookFromState?.isbn ?? '',
+        isbn: bookFromState?.isbns?.[lang] ?? bookFromState?.isbn ?? '',
         synopsis,
         reviews: FALLBACK_REVIEWS,
         authorInfo: { name: '', photoUrl: '', bio: '', books: [] },
@@ -140,23 +147,33 @@ export function useBookDetail(id: string): {
 
       // Obtener sinopsis para otro idioma
       const otherLang = lang === 'es' ? 'en' : 'es';
-      const otherTitle = bookFromState?.titles?.[otherLang] ?? '';
-      const otherIsbn = bookFromState?.isbns?.[otherLang];
-      getSynopsisFromDB(workKey, otherLang).then(otherCached => {
+      getSynopsisFromDB(workKey, otherLang).then(async otherCached => {
         if (otherCached && otherCached.trim().length > 0) return;
-        fetchGoogleSynopsis(
-          //bookFromState?.title ?? workKey,
-          otherTitle,
-          controller.signal,
-          //bookFromState?.isbn,
-          otherIsbn,
-          bookFromState?.authors?.[0],
-          otherLang
-        ).then(otherSynopsis => {
-          if (otherSynopsis.trim().length > 0) {
-            saveSynopsisToDB(workKey, otherSynopsis, otherLang);
+        // Resolver título/isbn del otro idioma si faltan
+        let otherTitle = bookFromState?.titles?.[otherLang];
+        let otherIsbn = bookFromState?.isbns?.[otherLang];
+        if (!otherTitle || !otherIsbn) {
+          const edition = await fetchWorkEditionByLang(workKey, otherLang);
+          if (edition?.title) {
+            otherTitle = edition.title;
+            otherIsbn = edition.isbn;
+            updateBookTitleToDB(workKey, edition.title, otherLang, edition.isbn).catch(() => {});
           }
-        }).catch(() => {});
+        }
+
+        if (!otherTitle) return;
+
+        const otherSynopsis = await fetchSynopsisRace({
+          title: otherTitle,
+          isbn: otherIsbn,
+          author: bookFromState?.authors?.[0],
+          lang: otherLang,
+          signal: controller.signal,
+        });
+
+        if (otherSynopsis.trim().length > 0) {
+          saveSynopsisToDB(workKey, otherSynopsis, otherLang);
+        }
       }).catch(() => {});
     };
 
