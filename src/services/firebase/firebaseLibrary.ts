@@ -2,7 +2,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "
 import { db } from "./firebaseInit";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import { logActivity } from "./firebaseActivity";
+import { deleteProgressActivitiesAbove, logActivity } from "./firebaseActivity";
 import { incrementBookAddCount } from "./firebaseBooks";
 
 export type ShelfEntry = { book: Book; status: ShelfStatus; currentPage?: number };
@@ -84,10 +84,16 @@ export async function updateReadingProgress(
     bookAuthor: entry.book.authors[0],
   };
 
-  const pageChanged = currentPage !== (entry.currentPage ?? 0);
+  const prevPage = entry.currentPage ?? 0;
+  const pageChanged = currentPage !== prevPage;
   if (pageChanged) {
-    logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
-      .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+    if (currentPage > prevPage) {
+      logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
+        .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+    } else {
+      deleteProgressActivitiesAbove(uid, entry.book.key, currentPage)
+        .catch((err) => console.warn("[updateReadingProgress] deleteProgressActivities failed:", err));
+    }
   }
 
   if (isFinished) {

@@ -217,18 +217,17 @@
     width: 36px;
     height: 36px;
     border-radius: var(--radius-pill);
-    border: none;
-    background: var(--color-neutral-alpha-subtle);
-    color: var(--color-text-secondary);
+    border: 1.5px solid var(--color-border-medium);
+    background: transparent;
+    color: var(--color-text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background var(--transition-fast), color var(--transition-fast);
+    transition: border-color var(--transition-fast);
 
     &:hover {
-      background: var(--color-neutral-alpha-medium);
-      color: var(--color-text-primary);
+      border-color: var(--color-text-primary);
     }
 
     svg {

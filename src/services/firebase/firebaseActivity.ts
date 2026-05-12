@@ -3,10 +3,12 @@ import {
   Timestamp,
   addDoc,
   collection,
+  deleteDoc,
   getDocs,
   limit,
   orderBy,
   query,
+  where,
 } from "firebase/firestore";
 import { db } from "./firebaseInit";
 import type { ActivityEvent, ActivityItem } from "@/types/UserProfile";
@@ -19,6 +21,21 @@ export async function logActivity(
     ...event,
     createdAt: Timestamp.now(),
   });
+}
+
+export async function deleteProgressActivitiesAbove(
+  uid: string,
+  bookId: string,
+  abovePage: number
+): Promise<void> {
+  const q = query(
+    collection(db, "Users", uid, "activity"),
+    where("type", "==", "progress"),
+    where("bookId", "==", bookId),
+    where("progress", ">", abovePage)
+  );
+  const snap = await getDocs(q);
+  await Promise.all(snap.docs.map((d) => deleteDoc(d.ref)));
 }
 
 export async function getActivity(

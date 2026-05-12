@@ -67,21 +67,4 @@
     color: var(--color-text-tertiary);
   }
 
-  &__chevron {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-border-medium);
-    background: transparent;
-    color: var(--color-text-tertiary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-  }
 }

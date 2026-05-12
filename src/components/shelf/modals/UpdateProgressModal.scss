@@ -153,7 +153,7 @@
   }
 
   &__progress-track {
-    height: 18px;
+    height: 10px;
     border-radius: var(--radius-md);
     overflow: hidden;
     background: rgba(255, 255, 255, 0.3);
@@ -163,7 +163,6 @@
 
   &__progress-fill {
     height: 100%;
-    border-radius: var(--radius-md);
     background: linear-gradient(
       90deg,
       rgba(210, 95, 28, 0.90) 0%,
