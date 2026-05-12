@@ -7,7 +7,7 @@
   left: 0;
   right: 0;
   width: 100%;
-  background-color: #f8f8f8;
+  background-color: var(--color-bg-card-solid);
   border-bottom: 1px solid var(--color-border);
   transition: opacity 280ms ease-out, transform 280ms ease-out;
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
 import { getCoverUrl } from "@/utils/coverImage";
@@ -11,17 +12,23 @@ type BookTileProps = {
 export default function BookTile({ book }: BookTileProps) {
   const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : null);
   const navigate = useNavigate();
+  const [coverLoaded, setCoverLoaded] = useState(false);
 
   return (
     <article className="book-tile" onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })} style={{ cursor: "pointer" }}>
       <div className="book-tile__cover-wrapper">
         {coverSrc ? (
-          <img
-            className="book-tile__cover"
-            src={coverSrc}
-            alt={book.title}
-            loading="lazy"
-          />
+          <>
+            {!coverLoaded && <div className="book-tile__cover-skeleton" />}
+            <img
+              className="book-tile__cover"
+              src={coverSrc}
+              alt={book.title}
+              loading="lazy"
+              onLoad={() => setCoverLoaded(true)}
+              style={{ opacity: coverLoaded ? 1 : 0 }}
+            />
+          </>
         ) : (
           <div className="book-tile__cover-placeholder">Portada</div>
         )}

@@ -21,7 +21,7 @@
   width: 100%;
   padding: var(--space-5) var(--space-6);
   background: transparent;
-  border: 1px solid var(--color-border-medium);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
 
@@ -106,7 +106,7 @@
     display: inline-block;
     margin-bottom: var(--space-2);
     padding: 3px 10px;
-    border: 1px solid var(--color-border-medium);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
     font-size: var(--text-xs);
     font-weight: var(--weight-semibold);
@@ -115,8 +115,8 @@
   }
 
   &__progress-box {
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border-medium);
+    background: transparent;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: var(--space-3) var(--space-4);
     display: flex;
@@ -140,7 +140,7 @@
   &__progress-pages {
     font-size: var(--text-xs);
     font-weight: var(--weight-semibold);
-    color: var(--color-accent);
+    color: var(--color-text-secondary);
   }
 
   &__progress-bar {
@@ -175,7 +175,7 @@
   &__progress-percent {
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
-    color: var(--color-accent);
+    color: var(--color-text-secondary);
   }
 
   &__actions {
@@ -209,10 +209,10 @@
   &__btn-fill {
     border: none;
     background: var(--color-text-primary);
-    color: #fff;
+    color: var(--color-btn-primary-fg);
 
     &:hover {
-      background: var(--color-bg-darkest);
+      background: var(--color-btn-primary-hover);
     }
   }
 

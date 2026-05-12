@@ -40,10 +40,10 @@ export default function ProfileMenu({ onClose }: ProfileMenuProps) {
         Ver perfil
       </Link>
 
-      <button className="profile-menu__item" type="button">
+      <Link className="profile-menu__item" to="/settings" onClick={onClose}>
         <Settings />
         Ajustes
-      </button>
+      </Link>
 
       <button className="profile-menu__item" type="button" onClick={toggleTheme}>
         {theme === "light" ? <Moon /> : <Sun />}

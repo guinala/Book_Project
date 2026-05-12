@@ -117,15 +117,14 @@
     font-size: var(--text-md);
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid var(--color-border-medium);
+    border: 1px solid var(--color-border);
     background: var(--color-bg-card-solid);
     color: var(--color-text-primary);
     outline: none;
-    @include transition(border-color, box-shadow);
+    @include transition(border-color);
 
     &:focus {
       border-color: var(--color-text-primary);
-      box-shadow: 0 0 0 3px var(--color-neutral-alpha-muted);
     }
   }
 
@@ -223,8 +222,8 @@
     &--save {
       background: var(--color-text-primary);
       border: none;
-      color: #fff;
-      &:hover { background: var(--color-bg-darkest); }
+      color: var(--color-btn-primary-fg);
+      &:hover { background: var(--color-btn-primary-hover); }
       &:disabled { opacity: 0.6; cursor: default; }
     }
   }

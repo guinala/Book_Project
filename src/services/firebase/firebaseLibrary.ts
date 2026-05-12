@@ -84,8 +84,11 @@ export async function updateReadingProgress(
     bookAuthor: entry.book.authors[0],
   };
 
-  logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
-    .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+  const pageChanged = currentPage !== (entry.currentPage ?? 0);
+  if (pageChanged) {
+    logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
+      .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+  }
 
   if (isFinished) {
     logActivity(uid, { type: "book_finished", ...base })

@@ -14,7 +14,7 @@ interface UpdateProgressModalProps {
 
 export default function UpdateProgressModal({ entry, onClose }: UpdateProgressModalProps) {
   const { t } = useTranslation();
-  const { updateProgress, addBook } = useShelf();
+  const { updateProgress, removeBook } = useShelf();
   const panelRef = useRef<HTMLDivElement>(null);
   const prevPageRef = useRef(entry.currentPage ?? 0);
   const totalPages = entry.book.pages ?? 0;
@@ -26,6 +26,7 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [noteSaveBlocked, setNoteSaveBlocked] = useState(false);
   const [noteShaking, setNoteShaking] = useState(false);
+  const [confirmAbandon, setConfirmAbandon] = useState(false);
 
   const NOTE_MAX = 280;
   const noteOverLimit = note.length > NOTE_MAX;
@@ -35,6 +36,7 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
     : Math.max(0, Math.min(parseInt(pageInput, 10) || 0, totalPages));
   const finished = totalPages > 0 && currentPage === totalPages;
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
+  const pageChanged = currentPage !== (entry.currentPage ?? 0);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -85,9 +87,11 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
     }
   };
 
-  const handleAbandon = async () => {
-    await addBook(entry.book, "didNotFinish");
+  const handleAbandon = () => setConfirmAbandon(true);
+
+  const handleConfirmAbandon = () => {
     onClose();
+    removeBook(entry.book.key);
   };
 
   const coverSrc = entry.book.cover_url ?? (entry.book.cover_id ? getCoverUrl(entry.book.cover_id) : undefined);
@@ -123,9 +127,6 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
               <p className="progress-modal__book-title">{entry.book.title}</p>
               <p className="progress-modal__book-author">{entry.book.authors.join(", ")}</p>
             </div>
-            <button className="progress-modal__abandon-btn" onClick={handleAbandon}>
-              {t("myLibrary.updateProgressModal.abandon")}
-            </button>
           </div>
 
           <div className="progress-modal__divider" aria-hidden="true" />
@@ -186,10 +187,12 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                   id="progress-note-input"
                   className={[
                     "progress-modal__textarea",
+                    !pageChanged ? "progress-modal__textarea--disabled" : "",
                     noteSaveBlocked && noteOverLimit ? "progress-modal__textarea--error" : "",
                     noteShaking ? "progress-modal__textarea--shaking" : "",
                   ].filter(Boolean).join(" ")}
                   value={note}
+                  disabled={!pageChanged}
                   onChange={(e) => {
                     setNote(e.target.value);
                     if (noteSaveBlocked && e.target.value.length <= NOTE_MAX) setNoteSaveBlocked(false);
@@ -214,6 +217,9 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
         </div>
 
         <div className="progress-modal__footer">
+          <button className="progress-modal__abandon-btn" onClick={handleAbandon}>
+            {t("myLibrary.updateProgressModal.abandon")}
+          </button>
           <button
             className="progress-modal__save-btn"
             onClick={handleSave}
@@ -222,6 +228,27 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
             {t("myLibrary.updateProgressModal.save")}
           </button>
         </div>
+
+        {confirmAbandon && (
+          <div className="progress-modal__confirm-overlay">
+            <div className="progress-modal__confirm-box">
+              <p className="progress-modal__confirm-title">
+                {t("myLibrary.updateProgressModal.abandonConfirm.title")}
+              </p>
+              <p className="progress-modal__confirm-subtitle">
+                {t("myLibrary.updateProgressModal.abandonConfirm.subtitle")}
+              </p>
+              <div className="progress-modal__confirm-actions">
+                <button className="progress-modal__confirm-accept" onClick={handleConfirmAbandon}>
+                  {t("myLibrary.updateProgressModal.abandonConfirm.confirm")}
+                </button>
+                <button className="progress-modal__confirm-cancel" onClick={() => setConfirmAbandon(false)}>
+                  {t("myLibrary.updateProgressModal.abandonConfirm.cancel")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>,
     document.body

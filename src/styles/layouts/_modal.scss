@@ -118,6 +118,7 @@
 }
 
 @mixin modal-book-title {
+  font-family: var(--font-editorial);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
@@ -129,6 +130,7 @@
 }
 
 @mixin modal-book-author {
+  font-family: var(--font-main);
   font-size: var(--text-xs);
   color: var(--color-text-secondary);
   font-style: italic;
@@ -143,6 +145,8 @@
   background: var(--color-border-subtle);
   align-self: stretch;
   flex-shrink: 0;
+  margin-top: calc(-1 * var(--space-6));
+  margin-bottom: calc(-1 * var(--space-6));
 }
 
 @mixin modal-right {

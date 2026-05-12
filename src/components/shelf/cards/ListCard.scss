@@ -6,7 +6,7 @@
   gap: var(--space-3);
   padding: var(--space-4);
   background: transparent;
-  border: 1px solid var(--color-border-medium);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
   cursor: pointer;
@@ -69,8 +69,19 @@
 
   &__chevron {
     flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--color-border-medium);
+    background: transparent;
     color: var(--color-text-tertiary);
     display: flex;
     align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
   }
 }

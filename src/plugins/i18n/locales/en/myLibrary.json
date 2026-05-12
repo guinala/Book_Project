@@ -24,6 +24,12 @@
       "notes": "Notes",
       "notesPlaceholder": "How did you find this reading session? Any notable quotes?",
       "abandon": "Mark as abandoned",
+      "abandonConfirm": {
+        "title": "Are you sure you want to remove this book from your library?",
+        "subtitle": "This action cannot be undone.",
+        "confirm": "Accept",
+        "cancel": "Cancel"
+      },
       "save": "Save reading",
       "close": "Close",
       "noteTooLong": "You've exceeded the maximum character limit",

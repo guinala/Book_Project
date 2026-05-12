@@ -4,6 +4,8 @@ import Navbar from "@/components/layout/Navbar";
 import NavbarMini from "@/components/layout/NavbarMini";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { PreferencesProvider } from "@/context/PreferencesContext";
+import { usePreferences } from "@/hooks/usePreferences";
 import "./App.scss"
 import { ShelfProvider } from "./context/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
@@ -11,15 +13,32 @@ import ErrorBoundary from "./components/common/ErrorBoundary";
 
 const SCROLL_THRESHOLD = 80;
 
-export default function App() {
+function AppShell() {
+  const { miniNavEnabled } = usePreferences();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    if (!miniNavEnabled) {
+      setScrolled(false);
+      return;
+    }
     const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [miniNavEnabled]);
 
+  return (
+    <>
+      <Navbar hidden={scrolled} />
+      <NavbarMini visible={scrolled} />
+      <main>
+        <Outlet />
+      </main>
+    </>
+  );
+}
+
+export default function App() {
   useEffect(() => {
     document.documentElement.lang = i18n.language;
     const handler = (lng: string) => { document.documentElement.lang = lng; };
@@ -30,15 +49,13 @@ export default function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <AuthProvider>
-          <ShelfProvider>
-            <Navbar hidden={scrolled} />
-            <NavbarMini visible={scrolled} />
-            <main>
-              <Outlet />
-            </main>
-          </ShelfProvider>
-        </AuthProvider>
+        <PreferencesProvider>
+          <AuthProvider>
+            <ShelfProvider>
+              <AppShell />
+            </ShelfProvider>
+          </AuthProvider>
+        </PreferencesProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

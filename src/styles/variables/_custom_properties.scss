@@ -116,6 +116,10 @@
   --border-radius-pill: var(--radius-pill);
   --border-radius-btn: 4px;
 
+  // ─── BOTÓN PRIMARIO ────────────────────────────────────
+  --color-btn-primary-fg: var(--color-bg-page);
+  --color-btn-primary-hover: var(--color-bg-darkest);
+
   // ─── SOMBRAS ───────────────────────────────────────────
   --shadow-card:
     0 1px 3px rgba(44, 36, 32, 0.06), 0 4px 12px rgba(44, 36, 32, 0.04);
@@ -181,6 +185,8 @@
   --color-neutral-alpha-subtle: rgba(255, 255, 255, 0.05);
   --color-neutral-alpha-muted: rgba(255, 255, 255, 0.08);
   --color-neutral-alpha-medium: rgba(255, 255, 255, 0.13);
+
+  --color-btn-primary-hover: #cfcbc5;
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 6px rgba(0, 0, 0, 0.12);

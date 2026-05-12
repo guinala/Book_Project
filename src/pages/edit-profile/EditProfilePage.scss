@@ -280,8 +280,8 @@
     &--save {
       background: var(--color-text-primary);
       border: none;
-      color: #fff;
-      &:hover { background: var(--color-bg-darkest); }
+      color: var(--color-btn-primary-fg);
+      &:hover { background: var(--color-btn-primary-hover); }
       &:disabled { opacity: 0.6; cursor: default; }
     }
   }

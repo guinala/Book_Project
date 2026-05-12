@@ -24,7 +24,7 @@
     align-items: center;
     gap: var(--space-2);
     background: none;
-    border: 1px solid var(--color-border-medium);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
     padding: var(--space-1) var(--space-4);
     font-size: var(--text-sm);
@@ -40,7 +40,7 @@
 
   &__card {
     background: transparent;
-    border: 1px solid var(--color-border-medium);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
     padding: var(--space-5) var(--space-6);
