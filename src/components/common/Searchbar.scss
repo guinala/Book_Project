@@ -53,6 +53,11 @@
     color: var(--color-text-tertiary);
     flex-shrink: 0;
     pointer-events: none;
+    transition: color var(--transition-fast);
+
+    .searchbar__input-row--focused & {
+      color: var(--color-text-primary);
+    }
   }
 
   &__divider {
@@ -70,7 +75,7 @@
     outline: none;
     padding: 0 var(--space-3);
     height: 44px;
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-family: var(--font-main);
     color: var(--color-text-primary);
     letter-spacing: 0.01em;
@@ -96,7 +101,7 @@
     transition:
       color var(--transition-fast);
 
-    svg { width: 16px; height: 16px; }
+    svg { width: 18px; height: 18px; }
 
     &:hover {
       color: var(--color-text-primary);
