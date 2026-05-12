@@ -3,13 +3,13 @@ import { Link, NavLink } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import ProfileMenu from "@/components/profile/sections/ProfileMenu";
-import { BookOpen, Search, Users, Plus, Bell, User } from "lucide-react";
+import { Search, Plus, Bell, User } from "lucide-react";
 import "./Navbar.scss";
 
 const NAV_LINKS = [
-  { path: "/my-library", labelKey: "nav.myLibrary", icon: <BookOpen /> },
-  { path: "/explore",    labelKey: "nav.explore",   icon: <Search /> },
-  { path: "/community",  labelKey: "nav.community", icon: <Users /> },
+  { path: "/my-library", labelKey: "nav.myLibrary" },
+  { path: "/explore",    labelKey: "nav.explore"   },
+  { path: "/community",  labelKey: "nav.community" },
 ];
 
 interface NavbarProps {
@@ -29,14 +29,24 @@ export default function Navbar({ hidden = false }: NavbarProps) {
   return (
     <header className={`navbar${hidden ? " navbar--hidden" : ""}`}>
       <div className="navbar__inner">
-        <Link className="navbar__brand" to="/">
-          <span className="navbar__brand-name">Trama</span>
-        </Link>
+        <div className="navbar__left">
+          <Link className="navbar__brand" to="/">
+            <span className="navbar__brand-name">Trama</span>
+          </Link>
+          <form className="navbar__search" role="search">
+            <Search size={14} className="navbar__search-icon" aria-hidden="true" />
+            <input
+              className="navbar__search-input"
+              type="search"
+              aria-label={t("navbar.search")}
+              placeholder={t("navbar.search")}
+            />
+          </form>
+        </div>
 
         <nav className="navbar__nav">
-          {NAV_LINKS.map(({ path, labelKey, icon }) => (
+          {NAV_LINKS.map(({ path, labelKey }) => (
             <NavLink key={path} to={path} className="navbar__link">
-              <span className="navbar__link-icon">{icon}</span>
               {t(labelKey)}
             </NavLink>
           ))}
@@ -56,6 +66,8 @@ export default function Navbar({ hidden = false }: NavbarProps) {
                 className="navbar__btn-icon navbar__btn-icon--avatar"
                 type="button"
                 aria-label={t("navbar.profile")}
+                aria-haspopup="true"
+                aria-expanded={menuOpen}
                 onClick={() => setMenuOpen(o => !o)}
               >
                 <User size={18} />

@@ -2,7 +2,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "
 import { db } from "./firebaseInit";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import { logActivity } from "./firebaseActivity";
+import { deleteActivitiesByTypeAndBook, deleteProgressActivitiesAbove, logActivity } from "./firebaseActivity";
 import { incrementBookAddCount } from "./firebaseBooks";
 
 export type ShelfEntry = { 
@@ -58,6 +58,8 @@ export async function addToShelf(
     logActivity(uid, { type: "watchlist_add", ...base })
       .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "reading") {
+    deleteActivitiesByTypeAndBook(uid, "watchlist_add", book.key)
+      .catch((err) => console.warn("[addToShelf] deleteWatchlistAdd failed:", err));
     logActivity(uid, { type: "reading_started", ...base })
       .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "finished") {
@@ -100,8 +102,17 @@ export async function updateReadingProgress(
     bookAuthor: entry.book.authors[0],
   };
 
-  logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
-    .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+  const prevPage = entry.currentPage ?? 0;
+  const pageChanged = currentPage !== prevPage;
+  if (pageChanged) {
+    if (currentPage > prevPage) {
+      logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
+        .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+    } else {
+      deleteProgressActivitiesAbove(uid, entry.book.key, currentPage)
+        .catch((err) => console.warn("[updateReadingProgress] deleteProgressActivities failed:", err));
+    }
+  }
 
   if (isFinished) {
     logActivity(uid, { type: "book_finished", ...base })

@@ -42,17 +42,17 @@
 
   &__cta-btn {
     padding: 11px 32px;
-    border: 2px solid var(--color-brand-primary);
-    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--color-border-medium);
+    border-radius: var(--radius-sm);
     background: transparent;
     font-family: var(--font-main);
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
-    color: var(--color-brand-primary);
+    color: var(--color-text-primary);
     cursor: pointer;
-    transition: background var(--transition-fast), color var(--transition-fast), transform 100ms;
+    transition: border-color var(--transition-fast), transform 100ms;
 
-    &:hover  { background: var(--color-brand-primary); color: var(--color-text-on-brand); }
+    &:hover  { border-color: var(--color-text-primary); }
     &:active { transform: scale(0.97); }
   }
 }
