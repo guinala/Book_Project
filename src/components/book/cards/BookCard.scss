@@ -7,7 +7,7 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-2) var(--space-3);
   background: transparent;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-outline);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   cursor: pointer;
@@ -87,7 +87,7 @@
     width: 36px;
     height: 36px;
     border-radius: var(--radius-pill);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-outline);
     background: var(--color-bg-card-solid);
     color: var(--color-text-primary);
     cursor: pointer;
@@ -133,7 +133,7 @@
     margin: 0;
     padding: var(--space-2);
     background: var(--color-bg-card-solid);
-    border: 1px solid var(--color-border-medium);
+    border: 1px solid var(--color-border-outline);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card-hover);
     min-width: 168px;

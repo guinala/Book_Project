@@ -50,7 +50,7 @@
   }
 
   &__info {
-    background: var(--color-bg-card-solid);
+    background: var(--color-bg-page);
     border: 1px solid var(--color-border-medium);
     border-top: none;
     border-radius: 0 0 var(--radius-xl) var(--radius-xl);
@@ -75,7 +75,7 @@
     width: 96px;
     height: 96px;
     border-radius: 50%;
-    border: 3px solid var(--color-bg-card-solid);
+    border: 3px solid var(--color-bg-page);
     overflow: hidden;
     position: relative;
 

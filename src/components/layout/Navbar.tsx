@@ -30,7 +30,11 @@ export default function Navbar({ hidden = false }: NavbarProps) {
     <header className={`navbar${hidden ? " navbar--hidden" : ""}`}>
       <div className="navbar__inner">
         <div className="navbar__left">
-          <Link className="navbar__brand" to="/">
+          <Link
+            className="navbar__brand"
+            to="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <span className="navbar__brand-name">Trama</span>
           </Link>
           <form className="navbar__search" role="search">

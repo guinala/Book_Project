@@ -70,6 +70,40 @@
     }
   }
 
+  &__skeleton-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  &__skeleton-title {
+    height: 22px;
+    width: 200px;
+    background: linear-gradient(
+      90deg,
+      var(--color-neutral-alpha-muted) 25%,
+      var(--color-border-subtle) 50%,
+      var(--color-neutral-alpha-muted) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  &__break {
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+    width: 100vw;
+    height: 80px;
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-bg-page),
+      var(--color-bg-card-solid) 50%,
+      var(--color-bg-page)
+    );
+  }
+
   &__error {
     text-align: center;
     padding: var(--space-10) var(--space-4);

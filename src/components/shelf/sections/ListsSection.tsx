@@ -17,7 +17,7 @@ export default function ListsSection({ lists }: ListsSectionProps) {
   return (
     <section className="lists-section">
       <div className="lists-section__header">
-        <h3 className="lists-section__title">{t("myLibrary.listsTitle")}</h3>
+        <h2 className="lists-section__title">{t("myLibrary.listsTitle")}</h2>
         <a href="#" className="lists-section__see-all">
           {t("myLibrary.seeAll")} <ChevronRight size={14} aria-hidden="true" />
         </a>

@@ -25,7 +25,7 @@ export default function ProgressSection() {
 
   return (
     <section className="progresses">
-      <h3 className="progresses__title">{t("myLibrary.progress.title")}</h3>
+      <h2 className="progresses__title">{t("myLibrary.progress.title")}</h2>
 
       <div className="progresses__card">
 

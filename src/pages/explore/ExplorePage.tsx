@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { useShelf } from "@/hooks/useShelf";
@@ -8,6 +8,7 @@ import SearchBar from "@/components/common/Searchbar";
 import BookCard from "@/components/book/cards/BookCard";
 import GridLoading from "@/components/layout/GridLoading";
 import ExploreSection from "@/components/explore/ExploreSection";
+import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
 import { genreToI18nKey } from "@/utils/genreUtils";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
@@ -240,25 +241,39 @@ function ExplorePage() {
             />
           )}
 
-          {!showGuestVersion && (
+          {!showGuestVersion && sectionsResult.loading && (
             <>
-              {sectionsResult.sections.map(entry => (
-                <ExploreSection
-                  key={entry.id}
-                  type={entry.type}
-                  override={{ books: entry.books, isFallback: entry.isFallback }}
-                  params={buildParamsForEntry(entry, shelfDerived!)}
-                  titleKey={titleKeyForEntry(entry)}
-                  titleFallbackKey={entry.type === "trending" ? "explore.sections.trendingFallback"
-                    : entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback"
-                    : undefined}
-                  titleHighlight={titleHighlightForEntry(entry)}
-                  onNavigate={handleNavigateToSection}
-                />
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="explore-page__skeleton-section">
+                  <div className="explore-page__skeleton-title" />
+                  <ExploreGridSkeleton />
+                </div>
               ))}
             </>
           )}
 
+          {!showGuestVersion && !sectionsResult.loading && (
+            <>
+              {sectionsResult.sections.map((entry, index) => (
+                <Fragment key={entry.id}>
+                  {sectionsResult.sections.length > 1 && index === Math.floor(sectionsResult.sections.length / 2) && (
+                    <div className="explore-page__break" aria-hidden="true" />
+                  )}
+                  <ExploreSection
+                    type={entry.type}
+                    override={{ books: entry.books, isFallback: entry.isFallback }}
+                    params={buildParamsForEntry(entry, shelfDerived!)}
+                    titleKey={titleKeyForEntry(entry)}
+                    titleFallbackKey={entry.type === "trending" ? "explore.sections.trendingFallback"
+                      : entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback"
+                      : undefined}
+                    titleHighlight={titleHighlightForEntry(entry)}
+                    onNavigate={handleNavigateToSection}
+                  />
+                </Fragment>
+              ))}
+            </>
+          )}
 
           {showGuestVersion && (
             <>
@@ -267,6 +282,8 @@ function ExplorePage() {
                 titleKey="explore.sections.topRated"
                 onNavigate={handleNavigateToSection}
               />
+
+              <div className="explore-page__break" aria-hidden="true" />
 
               {isGuest && <ExploreConversionBanner />}
 

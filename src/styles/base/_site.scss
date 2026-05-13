@@ -4,13 +4,6 @@
   box-sizing: border-box;
 }
 
-:root {
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 body {
   margin: 0;
   min-width: 320px;
@@ -20,8 +13,12 @@ body {
   font-weight: var(--weight-regular);
   color: var(--color-text-primary);
   background-color: var(--color-bg-page);
-  background-image: linear-gradient(to bottom, var(--color-bg-card), var(--color-bg-page));
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 button,
