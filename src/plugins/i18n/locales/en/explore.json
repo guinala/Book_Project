@@ -12,7 +12,7 @@
     "sectionError": "Could not load this section",
     "sections": {
       "trending": "Trending this week",
-      "trendingFallback": "Popular on Trama",
+      "trendingFallback": "Popular this week",
       "topRated": "Top rated",
       "fiction": "Fiction",
       "nonFiction": "Non-fiction",

@@ -12,7 +12,7 @@
     "sectionError": "No se pudo cargar esta sección",
     "sections": {
       "trending": "Tendencias esta semana",
-      "trendingFallback": "Populares en Trama",
+      "trendingFallback": "Populares esta semana",
       "topRated": "Mejor valorados",
       "fiction": "Ficción",
       "nonFiction": "No ficción",
