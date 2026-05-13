@@ -16,7 +16,7 @@
   font-size: var(--text-md);
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid var(--color-border-medium);
+  border: 1px solid var(--color-text-input);
   background: var(--color-bg-card-solid);
   color: var(--color-text-primary);
   @include mixins.transition(border-color, box-shadow);

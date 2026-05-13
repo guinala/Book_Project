@@ -63,12 +63,12 @@
 
     &__btn-login {
       @include full-btn-primary;
-      background: var(--color-brand-primary);
-      color: var(--color-text-on-brand);
+      background: var(--color-text-primary);
+      color: var(--color-btn-primary-fg);
       transition: background var(--transition-fast);
 
       &:hover {
-        background: var(--color-brand-dark);
+        background: var(--color-btn-primary-hover);
       }
     }
 

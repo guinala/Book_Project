@@ -16,13 +16,13 @@
 
   // ─── ESCALA TIPOGRÁFICA ────────────────────────────────
   --text-xs: 12px;
-  --text-sm: 13px;
+  --text-sm: 14px;
   --text-md: 15px;
   --text-base: 16px;
   --text-lg: 18px;
-  --text-xl: 22px;
+  --text-xl: 20px;
   --text-2xl: 24px;
-  --text-3xl: 28px;
+  --text-3xl: 32px;
 
   // ─── PESOS ─────────────────────────────────────────────
   --weight-regular: 400;
@@ -69,7 +69,7 @@
   --color-overlay: rgba(0, 0, 0, 0.45);
 
   // ─── SUPERFICIES ───────────────────────────────────────
-  --color-bg-page: #ffffff;
+  --color-bg-page: #fff;
   --color-bg-section: #f5f5f5;
   --color-surface-secondary: #f0f0f0;
   --color-bg-card: #f8f8f8;
@@ -83,9 +83,10 @@
   --color-text-primary: #444340;
   --color-text-secondary: #838178;
   --color-text-tertiary: #9a988b;
-  --color-text-on-brand: #ffffff;
+  --color-text-on-brand: #fff;
   --color-text-on-dark: #faf6f1;
   --color-text-subtle: #c4c2ba;
+  --color-text-input: #e1dddd;
 
   // ─── BORDES ────────────────────────────────────────────
   --color-border-subtle: rgba(0, 0, 0, 0.06);
