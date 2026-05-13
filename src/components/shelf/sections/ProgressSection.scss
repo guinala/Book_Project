@@ -5,8 +5,8 @@
 
   &__title {
     font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
-    margin: 0 0 var(--space-3) 0;
+    font-weight: var(--weight-semibold);
+    margin: 0 0 var(--space-5) 0;
     letter-spacing: -0.01em;
   }
 
@@ -14,7 +14,7 @@
     display: flex;
     flex-direction: column;
     background: transparent;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-outline);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-card);
     overflow: hidden;
@@ -72,7 +72,7 @@
 
     &--currentDay {
       color: var(--color-text-primary);
-      font-weight: var(--weight-bold);
+      font-weight: var(--weight-semibold);
     }
   }
 
