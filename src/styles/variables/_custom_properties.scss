@@ -5,12 +5,10 @@
 
   // ─── LAYOUT ────────────────────────────────────────────
   --max-width: 1400px;
-  --page-max-width: 1400px;
   --navbar-height: 80px;
   --navbar-padding: 30px;
   --page-padding-x: 40px;
   --page-padding-y: 48px;
-  --page-top-padding: 120px;
   --grid-cols: 3;
   --cover-size: 174px;
   --z-navbar: 100;
@@ -18,8 +16,7 @@
   // ─── ESCALA TIPOGRÁFICA ────────────────────────────────
   --text-xs: 12px;
   --text-sm: 14px;
-  --text-md: 15px;
-  --text-base: 16px;
+  --text-md: 16px;
   --text-lg: 18px;
   --text-xl: 20px;
   --text-2xl: 24px;
@@ -72,7 +69,7 @@
   // ─── SUPERFICIES ───────────────────────────────────────
   --color-bg-page: #fff;
   --color-bg-section: #f5f5f5;
-  --color-surface-secondary: #f0f0f0;
+  --color-bg-secondary: #f0f0f0;
   --color-bg-card: #f8f8f8;
   --color-bg-card-solid: #f2f1ef;
   --color-bg-overlay: rgba(248, 248, 248, 0.97);
@@ -87,7 +84,6 @@
   --color-text-on-brand: #fff;
   --color-text-on-dark: #faf6f1;
   --color-text-subtle: #c4c2ba;
-  --color-text-input: #e1dddd;
 
   // ─── BORDES ────────────────────────────────────────────
   --color-border-subtle: rgba(0, 0, 0, 0.06);
@@ -95,6 +91,7 @@
   --color-border-strong: #c4c2ba;
   --color-border-warm: rgba(0, 0, 0, 0.12);
   --color-border-outline: #eee;
+  --color-border-input: #e1dddd;
 
   // ─── GÉNEROS ───────────────────────────────────────────
   --color-genre-fiction: #d4500f;
@@ -111,12 +108,6 @@
   --radius-lg: 8px;
   --radius-xl: 10px;
   --radius-pill: 9999px;
-  --border-radius-sm: var(--radius-sm);
-  --border-radius-md: var(--radius-md);
-  --border-radius-lg: var(--radius-lg);
-  --border-radius-xl: var(--radius-xl);
-  --border-radius-pill: var(--radius-pill);
-  --border-radius-btn: 4px;
 
   // ─── BOTÓN PRIMARIO ────────────────────────────────────
   --color-btn-primary-fg: var(--color-bg-page);
@@ -154,7 +145,6 @@
   --space-24: 96px;
   --space-30: 120px;
   --space-40: 160px;
-  --padding-vertical: 15px;
 
   // ─── TRANSICIONES ──────────────────────────────────────
   --transition-fast: 150ms ease-out;
@@ -166,7 +156,7 @@
 [data-theme="dark"] {
   --color-bg-page: #1a1714;
   --color-bg-section: #221e1b;
-  --color-surface-secondary: #2a2521;
+  --color-bg-secondary: #2a2521;
   --color-bg-card: #242220;
   --color-bg-card-solid: #2e2924;
   --color-bg-overlay: rgba(26, 23, 20, 0.97);
@@ -214,7 +204,6 @@
   :root {
     --page-padding-x: 16px;
     --page-padding-y: 24px;
-    --page-top-padding: 80px;
     --grid-cols: 1;
     --cover-size: 120px;
   }
