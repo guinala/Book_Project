@@ -49,7 +49,7 @@ export default function FullShelfPage() {
           <ChevronLeft aria-hidden="true" />
           {t("explore.backBtn")}
         </button>
-        <h1 className="full-shelf__page-title">{t("myLibrary.shelfTitle")}</h1>
+        <h2 className="full-shelf__page-title">{t("myLibrary.shelfTitle")}</h2>
       </div>
 
       <div className="full-shelf__tools">

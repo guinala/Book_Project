@@ -96,7 +96,7 @@ export default function ExploreSectionPage() {
           <ChevronLeft aria-hidden="true" />
           {t("explore.backBtn")}
         </button>
-        <h1 className="section-page__title">{renderTitle(title, titleHighlight)}</h1>
+        <h2 className="section-page__title">{renderTitle(title, titleHighlight)}</h2>
       </div>
 
       {loading && <ExploreGridSkeleton />}

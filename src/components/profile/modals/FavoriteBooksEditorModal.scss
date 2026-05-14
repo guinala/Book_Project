@@ -19,7 +19,7 @@
 
   &__box {
     position: relative;
-    background: var(--color-bg-card-solid);
+    background: var(--color-bg-page);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-modal);
@@ -37,6 +37,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-bottom: var(--space-4);
+    margin-inline: calc(-1 * var(--space-6));
+    padding-inline: var(--space-6);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   &__title {
@@ -90,11 +94,28 @@
     flex-shrink: 0;
   }
 
-  &__fav-title {
+  &__fav-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__fav-title {
+    display: block;
+    font-family: var(--font-editorial);
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
+    @include text-truncate;
+  }
+
+  &__fav-author {
+    display: block;
+    font-family: var(--font-main);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
     @include text-truncate;
   }
 
@@ -108,7 +129,7 @@
     padding: 0 var(--space-1);
     @include transition(color);
 
-    &:hover { color: var(--color-error); }
+    &:hover { color: var(--color-text-primary); }
   }
 
   &__search {
@@ -117,8 +138,8 @@
     font-size: var(--text-md);
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid var(--color-border-outline);
-    background: var(--color-bg-card-solid);
+    border: 1px solid var(--color-border-medium);
+    background: transparent;
     color: var(--color-text-primary);
     outline: none;
     @include transition(border-color);
@@ -171,6 +192,7 @@
   }
 
   &__result-title {
+    font-family: var(--font-editorial);
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
@@ -179,6 +201,7 @@
   }
 
   &__result-author {
+    font-family: var(--font-main);
     font-size: var(--text-xs);
     color: var(--color-text-secondary);
     margin: 0;

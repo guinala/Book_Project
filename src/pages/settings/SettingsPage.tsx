@@ -6,7 +6,7 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <h1 className="settings-page__title">Ajustes</h1>
+      <h2 className="settings-page__title">Ajustes</h2>
 
       <section className="settings-page__section">
         <p className="settings-page__section-title">Navegación</p>

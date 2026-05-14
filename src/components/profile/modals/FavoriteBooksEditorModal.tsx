@@ -136,7 +136,12 @@ export default function FavoriteBooksEditorModal({
                   alt={book.title}
                 />
               )}
-              <span className="fav-editor-modal__fav-title">{book.title}</span>
+              <div className="fav-editor-modal__fav-info">
+                <span className="fav-editor-modal__fav-title">{book.title}</span>
+                {book.authors?.[0] && (
+                  <span className="fav-editor-modal__fav-author">{book.authors[0]}</span>
+                )}
+              </div>
               <button
                 type="button"
                 className="fav-editor-modal__fav-remove"
