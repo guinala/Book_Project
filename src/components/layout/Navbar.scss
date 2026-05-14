@@ -99,6 +99,7 @@
     font-weight: var(--weight-semibold);
     color: var(--color-text-secondary);
     white-space: nowrap;
+    padding-block: 10px;
     transition: color var(--transition-fast);
 
     &:hover {
@@ -119,7 +120,7 @@
       &::after {
         content: '';
         position: absolute;
-        bottom: -4px;
+        bottom: 6px;
         left: 0;
         right: 0;
         height: 1px;
@@ -141,9 +142,9 @@
     justify-content: center;
     gap: 0;
     padding: 0 8px;
-    height: 36px;
-    min-width: 36px;
-    max-width: 36px;
+    height: 44px;
+    min-width: 44px;
+    max-width: 44px;
     background: transparent;
     border: 1px solid transparent;
     border-radius: var(--radius-pill);
@@ -157,8 +158,8 @@
                 border-color var(--transition-fast), color var(--transition-fast);
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       color: var(--color-text-secondary);
       flex-shrink: 0;
     }
@@ -176,6 +177,8 @@
     }
 
     &-text {
+      display: inline-flex;
+      align-items: center;
       overflow: hidden;
       opacity: 0;
       max-width: 0;
@@ -191,8 +194,8 @@
 
   &__btn-icon {
     @include flex-center;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background: transparent;
     border: 1px solid transparent;
     border-radius: var(--radius-pill);
@@ -202,8 +205,8 @@
     transition: border-color var(--transition-fast), color var(--transition-fast);
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
     }
 
     &:hover {
@@ -212,8 +215,8 @@
     }
 
     &--avatar {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
     }
   }
 
