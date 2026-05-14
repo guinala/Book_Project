@@ -32,10 +32,9 @@
     align-items: center;
     width: 100%;
     max-width: 480px;
-    border: 1px solid var(--color-border-outline);
+    border: 1.5px solid var(--color-border-medium);
     border-radius: var(--radius-lg);
-    background: var(--color-bg-card-solid);
-    box-shadow: var(--shadow-card);
+    background: var(--color-bg-page);
     transition: border-color var(--transition-fast);
     overflow: hidden;
 
