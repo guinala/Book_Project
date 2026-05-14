@@ -49,6 +49,7 @@ function computeDeltas(items: ActivityItem[], totalPages: number): EntryWithDelt
   return result.reverse();
 }
 
+
 function HistoryEntry({ item, totalPages }: { item: EntryWithDelta; totalPages: number }) {
   const hasPages = item.type === "progress" && typeof item.progress === "number";
 
@@ -71,7 +72,7 @@ function HistoryEntry({ item, totalPages }: { item: EntryWithDelta; totalPages: 
       )}
 
       {item.note && (
-        <blockquote className="history-entry__note">{item.note}</blockquote>
+        <p className="history-entry__note">{item.note}</p>
       )}
     </div>
   );

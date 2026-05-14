@@ -81,6 +81,9 @@ function StarRating({ rating, onChange }: StarRatingProps) {
           </span>
         );
       })}
+      {display > 0 && (
+        <span className="star-rating__value">{display} / 5</span>
+      )}
     </div>
   );
 }
@@ -296,11 +299,6 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                   </span>
                   <div className="progress-modal__rating-row">
                     <StarRating rating={rating} onChange={setRating} />
-                    {rating > 0 && (
-                      <span className="progress-modal__rating-value">
-                        {rating} / 5
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
@@ -367,6 +365,7 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
                       noteShaking ? "progress-modal__textarea--shaking" : "",
                     ].filter(Boolean).join(" ")}
                     value={note}
+                    maxLength={NOTE_MAX}
                     disabled={!pageChanged}
                     onChange={(e) => {
                       setNote(e.target.value);

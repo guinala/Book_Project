@@ -21,8 +21,8 @@
       "currentPage": "Current page",
       "of": "of",
       "finished": "Have you finished the book?",
-      "notes": "Notes",
-      "notesPlaceholder": "How did you find this reading session? Any notable quotes?",
+      "notes": "Quote",
+      "notesPlaceholder": "Add a quote from the book...",
       "abandon": "Mark as abandoned",
       "abandonConfirm": {
         "title": "Are you sure you want to remove this book from your library?",
