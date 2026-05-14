@@ -20,6 +20,7 @@ export type UserFullProfile = {
   followersCount: number;
   followingCount: number;
   birthDate?: string;
+  isPublic: boolean;
 };
 
 export type UserMinimal = {
