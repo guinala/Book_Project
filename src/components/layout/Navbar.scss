@@ -169,6 +169,10 @@
       padding-right: 14px;
       border-color: var(--color-text-primary);
       color: var(--color-text-primary);
+
+      svg {
+        color: var(--color-text-primary);
+      }
     }
 
     &-text {
