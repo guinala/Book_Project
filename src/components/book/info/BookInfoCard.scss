@@ -117,6 +117,10 @@
     letter-spacing: -0.02em;
     line-height: 1.15;
     margin: 0;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__author {
@@ -125,6 +129,10 @@
     color: var(--color-text-secondary);
     font-weight: var(--weight-regular);
     margin: 0;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__info-row {

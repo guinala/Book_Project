@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { useShelf } from "@/hooks/useShelf";
@@ -9,17 +9,32 @@ import { encodeKey } from "@/utils/bookPaths";
 import HistoryModal from "@/components/shelf/modals/HistoryModal";
 import { ChevronRight } from "lucide-react";
 
+const STORAGE_KEY = "currentReadingBookKey";
+
 function CurrentReadingCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { shelfByStatus, loading, getEntry } = useShelf();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedKey, setSelectedKey] = useState<string | null>(
+    () => localStorage.getItem(STORAGE_KEY)
+  );
 
   const readingBooks = shelfByStatus.reading;
-  const index = Math.min(currentIndex, Math.max(0, readingBooks.length - 1));
+
+  const savedIndex = selectedKey
+    ? readingBooks.findIndex((b) => b.key === selectedKey)
+    : -1;
+  const index = savedIndex >= 0 ? savedIndex : 0;
   const book = readingBooks[index] ?? null;
+
+  useEffect(() => {
+    if (book && book.key !== selectedKey) {
+      setSelectedKey(book.key);
+      localStorage.setItem(STORAGE_KEY, book.key);
+    }
+  }, [book, selectedKey]);
   const entry = book ? getEntry(book.key) : null;
 
   if (loading) {
@@ -96,7 +111,12 @@ function CurrentReadingCard() {
         {readingBooks.length > 1 && (
           <button
             className="reading-card__chevron"
-            onClick={() => setCurrentIndex((i) => (i + 1) % readingBooks.length)}
+            onClick={() => {
+              const nextIndex = (index + 1) % readingBooks.length;
+              const nextKey = readingBooks[nextIndex].key;
+              setSelectedKey(nextKey);
+              localStorage.setItem(STORAGE_KEY, nextKey);
+            }}
             aria-label={t("myLibrary.nextBook")}
           >
             <ChevronRight />
