@@ -8,12 +8,14 @@ import { uploadProfilePhoto, uploadBannerImage } from "@/services/firebase/fireb
 import type { UserFullProfile } from "@/types/UserProfile";
 import { Upload } from "lucide-react";
 import "./EditProfilePage.scss";
+import { FirebaseError } from "firebase/app";
 
 type EditProfileForm = {
   name: string;
   surname: string;
   username: string;
   bio: string;
+  isPublic: boolean;
 };
 
 export default function EditProfilePage() {
@@ -33,6 +35,7 @@ export default function EditProfilePage() {
 
   const BIO_MAX = 300;
   const bioValue = watch("bio") ?? "";
+  const isPublicProfile = watch("isPublic");
   const bioOverLimit = bioValue.length > BIO_MAX;
 
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -70,6 +73,7 @@ export default function EditProfilePage() {
             surname: profile.surname,
             username: profile.username,
             bio: profile.bio,
+            isPublic: profile.isPublic ?? true,
           });
           if (profile.profilePhotoUrl) setPhotoPreview(profile.profilePhotoUrl);
           if (profile.bannerImageUrl) setBannerPreview(profile.bannerImageUrl);
@@ -108,36 +112,38 @@ export default function EditProfilePage() {
     setSaving(true);
     setSaveError(null);
 
-    const timeout = new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error("La subida tardó demasiado. Verifica que Firebase Storage esté habilitado en tu proyecto de Firebase Console.")),
-        15_000
-      )
-    );
-
     try {
-      const updates: Partial<Omit<UserFullProfile, "uid">> = {
+      const updates: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate">> = {
         name: data.name,
         surname: data.surname,
         username: data.username,
         bio: data.bio,
+        isPublic: data.isPublic,
       };
 
-      const doSave = async () => {
-        if (photoFile) {
-          updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
-        }
-        if (bannerFile) {
-          updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
-        }
-        await updateUserProfile(user.uid, updates);
-      };
+      if (photoFile) {
+        updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
+      }
 
-      await Promise.race([doSave(), timeout]);
+      if (bannerFile) {
+        updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
+      }
+
+      await updateUserProfile(user.uid, updates);
+
       navigate("/profile");
     } catch (err) {
       console.error("[EditProfilePage] save failed:", err);
-      setSaveError("Error inesperado, inténtalo de nuevo más tarde.");
+
+      if (err instanceof FirebaseError) {
+        setSaveError(err.code);
+      } 
+      else if (err instanceof Error) {
+        setSaveError(err.message);
+      } 
+      else {
+        setSaveError("Error desconocido");
+      }
     } finally {
       setSaving(false);
     }
@@ -280,6 +286,20 @@ export default function EditProfilePage() {
               <span className={`edit-profile__bio-count${bioOverLimit ? " edit-profile__bio-count--over" : ""}`}>
                 {bioValue.length} / {BIO_MAX} caracteres
               </span>
+            </div>
+          </div>
+          <div className="edit-profile__field">
+            <span className="edit-profile__label">Privacidad del perfil</span>
+            <div className="edit-profile__privacy">
+              <label className="edit-profile__switch">
+                <input type="checkbox" {...register("isPublic")} />
+                <span className="edit-profile__switch-track" />
+              </label>
+              <p className="edit-profile__privacy-text">
+                {isPublicProfile
+                  ? "Cualquiera puede ver tu actividad y estantería"
+                  : "Solo tus seguidores podrán ver tu estantería y actividad"}
+              </p>
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-// src/hooks/useProfile.ts
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "./useAuth";
@@ -21,6 +20,7 @@ const EMPTY_SHELF: Record<ShelfStatus, Book[]> = {
   finished: [],
   didNotFinish: [],
 };
+const EMPTY_ACTIVITY: ActivityItem[] = [];
 
 function entriesToShelf(
   entries: { book: Book; status: ShelfStatus }[],
@@ -51,17 +51,25 @@ export function useProfile(userId: string) {
   const isOwnProfile = !!user && user.uid === userId;
 
   const [profile, setProfile] = useState<UserFullProfile | null>(null);
-  const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [activity, setActivity] = useState<ActivityItem[]>(EMPTY_ACTIVITY);
   const [publicShelf, setPublicShelf] = useState<Record<ShelfStatus, Book[]>>(EMPTY_SHELF);
   const [isFollowingState, setIsFollowingState] = useState(false);
   const [loading, setLoading] = useState(() => !!userId);
+  const [bodyLoading, setBodyLoading] = useState(false);
+
   const [prevUserId, setPrevUserId] = useState(userId);
   if (userId !== prevUserId) {
     setPrevUserId(userId);
     setLoading(!!userId);
+    setProfile(null);
+    setActivity(EMPTY_ACTIVITY);
     setPublicShelf(EMPTY_SHELF);
+    setIsFollowingState(false);
   }
 
+  const canViewFull = isOwnProfile || (profile?.isPublic !== false) || isFollowingState;
+
+  // Fase 1: perfil + estado de follow
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
@@ -69,16 +77,7 @@ export function useProfile(userId: string) {
 
     const fetches: Promise<void>[] = [
       getUserProfile(userId).then((p) => { if (!cancelled) setProfile(p); }),
-      getActivity(userId, 10).then((a) => { if (!cancelled) setActivity(a); }),
     ];
-
-    if (!isOwn) {
-      fetches.push(
-        getShelf(userId).then((entries) => {
-          if (!cancelled) setPublicShelf(entriesToShelf(entries ?? [], lang));
-        })
-      );
-    }
 
     if (user && !isOwn) {
       fetches.push(
@@ -90,10 +89,60 @@ export function useProfile(userId: string) {
 
     Promise.all(fetches).finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [userId, user, lang]);
+  }, [userId, user]);
+
+  // Fase 2: shelf + activity (solo cuando canViewFull)
+  useEffect(() => {
+    if (!userId || loading) return;
+    if (!canViewFull) return;
+    let cancelled = false;
+    // setBodyLoading(true);
+
+    // const fetches: Promise<void>[] = [
+    //   getActivity(userId, 10).then((a) => { if (!cancelled) setActivity(a); }),
+    // ];
+    // if (!isOwnProfile) {
+    //   fetches.push(
+    //     getShelf(userId).then((entries) => {
+    //       if (!cancelled) setPublicShelf(entriesToShelf(entries ?? [], lang));
+    //     })
+    //   );
+    // }
+
+    // Promise.all(fetches).finally(() => { if (!cancelled) setBodyLoading(false); });
+    // return () => { cancelled = true; };
+
+    const load = async () => {
+      setBodyLoading(true);
+      try {
+        const fetches: Promise<void>[] = [
+          getActivity(userId, 10).then((a) => {if (!cancelled) { 
+            setActivity(a); 
+          }})
+        ];
+
+        if (!isOwnProfile) {
+          fetches.push(
+            getShelf(userId).then((entries) => {
+              if (!cancelled) {
+                setPublicShelf(entriesToShelf(entries ?? [], lang));
+              }
+            }));
+        }
+        await Promise.all(fetches);
+      } finally {
+        if (!cancelled) {
+          setBodyLoading(false);
+        }
+      }
+    };
+
+    load();
+    return () => { cancelled = true; };
+  }, [userId, isOwnProfile, canViewFull, loading, lang]);
 
   const shelf = isOwnProfile ? shelfByStatus : publicShelf;
-  const shelfLoading = isOwnProfile ? ownShelfLoading : loading;
+  const shelfLoading = isOwnProfile ? ownShelfLoading : bodyLoading;
 
   const follow = useCallback(async () => {
     if (!user) return;
@@ -112,10 +161,14 @@ export function useProfile(userId: string) {
       await unfollowUser(user.uid, userId);
       setIsFollowingState(false);
       setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
+      if (profile && profile.isPublic === false) {
+        setPublicShelf(EMPTY_SHELF);
+        setActivity(EMPTY_ACTIVITY);
+      }
     } catch {
       console.error("[useProfile] unfollow failed");
     }
-  }, [user, userId]);
+  }, [user, userId, profile]);
 
   return {
     profile,
@@ -125,6 +178,7 @@ export function useProfile(userId: string) {
     isOwnProfile,
     isFollowing: isFollowingState,
     loading,
+    canViewFull,
     follow,
     unfollow,
   };

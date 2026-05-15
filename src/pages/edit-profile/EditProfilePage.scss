@@ -285,4 +285,63 @@
       &:disabled { opacity: 0.6; cursor: default; }
     }
   }
+
+  &__privacy {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  &__switch {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    cursor: pointer;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &__switch-track {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    background: var(--color-border-medium);
+    border-radius: var(--radius-pill);
+    @include transition(background);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: var(--color-bg-card-solid);
+      border-radius: 50%;
+      @include transition(transform);
+    }
+
+    input:checked ~ & {
+      background: var(--color-brand-primary);
+
+      &::before {
+        transform: translateX(18px);
+      }
+    }
+
+    input:focus-visible ~ & {
+      box-shadow: 0 0 0 3px var(--color-brand-alpha-subtle);
+    }
+  }
+
+  &__privacy-text {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
 }

@@ -18,6 +18,7 @@ import listCover3 from "@/assets/covers/shelf-3.jpg";
 import listCover4 from "@/assets/covers/shelf-4.jpg";
 import listCover5 from "@/assets/covers/shelf-5.jpg";
 import "./ProfilePage.scss";
+import LockedProfileNotice from "@/components/profile/sections/LockedProfileNotice";
 
 const READING_LISTS: ReadingList[] = [
   { id: "recommended", nameKey: "myLibrary.lists.recommended", count: 12, coverUrls: [listCover1, listCover3, listCover2, listCover5] },
@@ -40,6 +41,7 @@ export default function ProfilePage() {
     isOwnProfile,
     isFollowing,
     loading,
+    canViewFull,
     follow,
     unfollow,
   } = useProfile(resolvedUserId);
@@ -87,7 +89,7 @@ export default function ProfilePage() {
         onEditClick={() => navigate("/profile/edit")}
       />
 
-      <FavoriteBooksSection
+      {/* <FavoriteBooksSection
         favorites={localFavorites}
         isOwnProfile={isOwnProfile}
         onEditClick={() => setShowFavEditor(true)}
@@ -103,7 +105,31 @@ export default function ProfilePage() {
       <div className="profile-page__bottom-row">
         <ActivitySection activity={activity} />
         <ListsSection lists={READING_LISTS} />
-      </div>
+      </div> */}
+      {canViewFull ? (
+        <>
+          <FavoriteBooksSection
+            favorites={localFavorites}
+            isOwnProfile={isOwnProfile}
+            onEditClick={() => setShowFavEditor(true)}
+          />
+
+          <ShelfSection
+            books={shelf}
+            loading={shelfLoading}
+            readOnly={!isOwnProfile}
+            onSeeAll={isOwnProfile ? () => navigate("/my-library/shelf") : undefined}
+          />
+
+          <div className="profile-page__bottom-row">
+            <ActivitySection activity={activity} />
+            <ListsSection lists={READING_LISTS} />
+          </div>
+        </>
+      ) : (
+        <LockedProfileNotice profileName={profile.name} />
+      )}
+
 
       {followModal && (
         <FollowersModal
