@@ -32,6 +32,11 @@
         "bio": "Bio",
         "bioHint": "(max. 300 characters)"
       }
+    },
+    "share": {
+      "ariaLabel": "Share profile",
+      "copied": "Link copied",
+      "shareText": "Check out {{name}}'s profile"
     }
   }
 }

@@ -88,7 +88,6 @@ export default function ProfilePage() {
         onFollowingClick={() => setFollowModal("following")}
         onEditClick={() => navigate("/profile/edit")}
       />
-
       {/* <FavoriteBooksSection
         favorites={localFavorites}
         isOwnProfile={isOwnProfile}

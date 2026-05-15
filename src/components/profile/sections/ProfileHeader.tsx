@@ -1,4 +1,5 @@
 // src/components/ProfileHeader/ProfileHeader.tsx
+import ShareProfileButton from "../ShareProfileButton";
 import "./ProfileHeader.scss";
 import type { UserFullProfile } from "@/types/UserProfile";
 
@@ -112,6 +113,10 @@ export default function ProfileHeader({
           </div>
 
           <div className="profile-header__actions">
+            <ShareProfileButton
+              username={profile.username}
+              name={displayName}
+            />
             {isOwnProfile ? (
               <button
                 type="button"
