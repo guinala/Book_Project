@@ -115,7 +115,7 @@ export async function getUserMinimal(uid: string): Promise<UserMinimal | null> {
 
 export async function updateUserProfile(
   uid: string,
-  data: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate">>
+  data: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate" | "username">>
 ): Promise<void> {
   await updateDoc(doc(db, "Users", uid), data);
 }

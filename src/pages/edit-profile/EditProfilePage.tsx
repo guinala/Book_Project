@@ -9,6 +9,7 @@ import type { UserFullProfile } from "@/types/UserProfile";
 import { Upload } from "lucide-react";
 import "./EditProfilePage.scss";
 import { FirebaseError } from "firebase/app";
+import { checkUsernameAvailable, isValidUsername, normalizeUsername, setUsername } from "@/services/firebase/firebaseUsernames";
 
 type EditProfileForm = {
   name: string;
@@ -32,9 +33,12 @@ export default function EditProfilePage() {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [bioSaveBlocked, setBioSaveBlocked] = useState(false);
   const [bioShaking, setBioShaking] = useState(false);
+  const [originalUsername, setOriginalUsername] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "taken" | "available">("idle");
 
   const BIO_MAX = 300;
   const bioValue = watch("bio") ?? "";
+  const usernameValue = watch("username") ?? "";
   const isPublicProfile = watch("isPublic");
   const bioOverLimit = bioValue.length > BIO_MAX;
 
@@ -60,6 +64,42 @@ export default function EditProfilePage() {
   }, []);
 
   useEffect(() => {
+    if (!user) return;
+
+    const normalized = normalizeUsername(usernameValue);
+
+    // Vacío o sin cambios respecto al original → ni "disponible" ni "tomado"
+    if (normalized === "" || normalized === normalizeUsername(originalUsername)) {
+      setUsernameStatus("idle");
+      return;
+    }
+
+    // Regex inválido → react-hook-form ya muestra el error, no duplicamos
+    if (!isValidUsername(normalized)) {
+      setUsernameStatus("idle");
+      return;
+    }
+
+    setUsernameStatus("checking");
+    let cancelled = false;
+    const handle = setTimeout(() => {
+      void (async () => {
+        try {
+          const available = await checkUsernameAvailable(normalized, user.uid);
+          if (!cancelled) setUsernameStatus(available ? "available" : "taken");
+        } catch {
+          if (!cancelled) setUsernameStatus("idle");
+        }
+      })();
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
+  }, [usernameValue, user, originalUsername]);
+
+  useEffect(() => {
     if (bioSaveBlocked && !bioOverLimit) setBioSaveBlocked(false);
   }, [bioValue, bioSaveBlocked, bioOverLimit]);
 
@@ -75,6 +115,7 @@ export default function EditProfilePage() {
             bio: profile.bio,
             isPublic: profile.isPublic ?? true,
           });
+          setOriginalUsername(profile.username ?? "");
           if (profile.profilePhotoUrl) setPhotoPreview(profile.profilePhotoUrl);
           if (profile.bannerImageUrl) setBannerPreview(profile.bannerImageUrl);
         }
@@ -127,6 +168,20 @@ export default function EditProfilePage() {
 
       if (bannerFile) {
         updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
+      }
+
+      const normalizedNew = normalizeUsername(data.username);
+      const normalizedOld = normalizeUsername(originalUsername);
+      if (normalizedNew !== normalizedOld && normalizedNew !== "") {
+        try {
+          await setUsername(user.uid, normalizedNew, normalizedOld || undefined);
+        } catch (err) {
+          if (err instanceof Error && err.message === "USERNAME_TAKEN") {
+            setSaveError("Ese nombre de usuario ya está en uso.");
+            return;
+          }
+          throw err;
+        }
       }
 
       await updateUserProfile(user.uid, updates);
@@ -263,6 +318,15 @@ export default function EditProfilePage() {
             </div>
             {errors.username && (
               <p className="edit-profile__error">{errors.username.message}</p>
+            )}
+            {usernameStatus === "checking" && (
+              <p className="edit-profile__hint">Comprobando disponibilidad...</p>
+            )}
+            {usernameStatus === "taken" && (
+              <p className="edit-profile__error">Este nombre ya está en uso</p>
+            )}
+            {usernameStatus === "available" && (
+              <p className="edit-profile__success">Disponible</p>
             )}
           </div>
 

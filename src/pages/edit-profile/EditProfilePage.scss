@@ -238,6 +238,18 @@
     }
   }
 
+  &__hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+
+  &__success {
+    font-size: var(--text-xs);
+    color: var(--color-success);
+    margin: 0;
+  }
+
   &__error {
     font-size: var(--text-xs);
     color: var(--color-error);
