@@ -59,7 +59,7 @@ export const ROUTES = [
         element: <ProfilePage />,
       },
       {
-        path: "/u/:username",
+        path: "u/:username",
         element: <ProfilePage />,
       },
     ],

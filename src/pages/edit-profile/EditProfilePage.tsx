@@ -154,10 +154,9 @@ export default function EditProfilePage() {
     setSaveError(null);
 
     try {
-      const updates: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate">> = {
+      const updates: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate" | "username">> = {
         name: data.name,
         surname: data.surname,
-        username: data.username,
         bio: data.bio,
         isPublic: data.isPublic,
       };

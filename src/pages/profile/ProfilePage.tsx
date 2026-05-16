@@ -1,5 +1,5 @@
 // src/pages/ProfilePage/ProfilePage.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -19,6 +19,7 @@ import listCover4 from "@/assets/covers/shelf-4.jpg";
 import listCover5 from "@/assets/covers/shelf-5.jpg";
 import "./ProfilePage.scss";
 import LockedProfileNotice from "@/components/profile/sections/LockedProfileNotice";
+import { lookupUidByUsername } from "@/services/firebase/firebaseUsernames";
 
 const READING_LISTS: ReadingList[] = [
   { id: "recommended", nameKey: "myLibrary.lists.recommended", count: 12, coverUrls: [listCover1, listCover3, listCover2, listCover5] },
@@ -27,11 +28,15 @@ const READING_LISTS: ReadingList[] = [
 ];
 
 export default function ProfilePage() {
-  const { userId: paramUserId } = useParams<{ userId: string }>();
+  const { userId: paramUserId, username: paramUsername } = useParams<{
+    userId?: string;
+    username?: string;
+  }>();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const resolvedUserId = paramUserId ?? user?.uid ?? "";
+  const [resolvedUserId, setResolvedUserId] = useState<string | null>(null);
+  const [resolveState, setResolveState] = useState<"loading" | "done" | "notfound">("loading");
 
   const {
     profile,
@@ -44,7 +49,7 @@ export default function ProfilePage() {
     canViewFull,
     follow,
     unfollow,
-  } = useProfile(resolvedUserId);
+  } = useProfile(resolvedUserId ?? "");
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
@@ -58,6 +63,62 @@ export default function ProfilePage() {
   }
 
   const handleFavSave = (updated: FavoriteBook[]) => setLocalFavorites(updated);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const resolve = async () => {
+      // Caso 1: uid directo en la URL
+      if (paramUserId) {
+        setResolvedUserId(paramUserId);
+        setResolveState("done");
+        return;
+      }
+      // Caso 2: username → lookup asíncrono
+      if (paramUsername) {
+        setResolveState("loading");
+        const uid = await lookupUidByUsername(paramUsername);
+        if (cancelled) return;
+        if (uid) {
+          setResolvedUserId(uid);
+          setResolveState("done");
+        } else {
+          setResolveState("notfound");
+        }
+        return;
+      }
+      // Caso 3: sin params → perfil propio
+      if (user?.uid) {
+        setResolvedUserId(user.uid);
+        setResolveState("done");
+        return;
+      }
+      // Sin sesión y sin params
+      setResolveState("notfound");
+    };
+
+    void resolve();
+    return () => { cancelled = true; };
+  }, [paramUserId, paramUsername, user]);
+
+  if (resolveState === "loading") {
+    return (
+      <div className="profile-page profile-page--loading">
+        <p>Cargando perfil...</p>
+      </div>
+    );
+  }
+
+  // notfound, o resuelto sin uid: en ambos casos no hay perfil que mostrar.
+  // Este guard ademas estrecha resolvedUserId de `string | null` a `string`
+  // para el resto del componente, asi los modales no necesitan aserciones.
+  if (resolveState === "notfound" || !resolvedUserId) {
+    return (
+      <div className="profile-page profile-page--not-found">
+        <p>Perfil no encontrado</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -88,23 +149,7 @@ export default function ProfilePage() {
         onFollowingClick={() => setFollowModal("following")}
         onEditClick={() => navigate("/profile/edit")}
       />
-      {/* <FavoriteBooksSection
-        favorites={localFavorites}
-        isOwnProfile={isOwnProfile}
-        onEditClick={() => setShowFavEditor(true)}
-      />
 
-      <ShelfSection
-        books={shelf}
-        loading={shelfLoading}
-        readOnly={!isOwnProfile}
-        onSeeAll={isOwnProfile ? () => navigate("/my-library/shelf") : undefined}
-      />
-
-      <div className="profile-page__bottom-row">
-        <ActivitySection activity={activity} />
-        <ListsSection lists={READING_LISTS} />
-      </div> */}
       {canViewFull ? (
         <>
           <FavoriteBooksSection
@@ -128,7 +173,6 @@ export default function ProfilePage() {
       ) : (
         <LockedProfileNotice profileName={profile.name} />
       )}
-
 
       {followModal && (
         <FollowersModal
