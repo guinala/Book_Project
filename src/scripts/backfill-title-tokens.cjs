@@ -7,6 +7,8 @@ const serviceAccount = require("../../serviceAccountKey.json");
 const {
   buildTitleTokensMap,
   isTitleTokensUpToDate,
+  buildAuthorTokens,
+  isAuthorTokensUpToDate,
 } = require("../utils/titleSearch.ts");
 
 const DRY_RUN = process.argv.includes("--dry-run");
@@ -39,20 +41,29 @@ async function main() {
     for (const docSnap of snap.docs) {
       scanned++;
       const data = docSnap.data();
-      const expected = buildTitleTokensMap(data.titles, data.title, data.langs);
+      const expectedTitle = buildTitleTokensMap(data.titles, data.title, data.langs);
+      const expectedAuthor = buildAuthorTokens(data.authors ?? []);
 
-      if (Object.keys(expected).length === 0) {
+      const titleEmpty = Object.keys(expectedTitle).length === 0;
+      const authorEmpty = expectedAuthor.length === 0;
+      if (titleEmpty && authorEmpty) {
         skipped++;
         continue;
       }
-      if (isTitleTokensUpToDate(data.titleTokens, expected)) {
+
+      const titleUpToDate = isTitleTokensUpToDate(data.titleTokens, expectedTitle);
+      const authorUpToDate = isAuthorTokensUpToDate(data.authorTokens, expectedAuthor);
+      if (titleUpToDate && authorUpToDate) {
         skipped++;
         continue;
       }
 
       updated++;
       if (!DRY_RUN) {
-        batch.update(docSnap.ref, { titleTokens: expected });
+        batch.update(docSnap.ref, {
+          titleTokens: expectedTitle,
+          authorTokens: expectedAuthor,
+        });
         batchWrites++;
       }
     }
@@ -74,4 +85,4 @@ main()
   .catch((e) => {
     console.error(e);
     process.exit(1);
-});
+  });

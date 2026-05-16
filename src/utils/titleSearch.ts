@@ -1,5 +1,14 @@
 const DEFAULT_MIN_LENGTH = 2;
 
+const STOPWORDS = new Set([
+  // español
+  "el", "la", "los", "las", "un", "una", "unos", "unas", "de", "del",
+  "y", "e", "o", "u", "a", "en", "con", "por", "para", "al", "lo",
+  "su", "sus", "se", "que",
+  // inglés
+  "the", "an", "of", "and", "or", "to", "in", "on", "for", "with", "at", "by",
+]);
+
 export function normalizeTitleForSearch(title: string): string {
   return title
     .normalize("NFD")
@@ -13,7 +22,7 @@ export function buildTitleTokens(
   options?: { minLength?: number; stopWords?: Set<string> }
 ): string[] {
   const minLength = options?.minLength ?? DEFAULT_MIN_LENGTH;
-  const stopWords = options?.stopWords;
+  const stopWords = options?.stopWords ?? STOPWORDS;
   const words = normalizeTitleForSearch(title).split(/\s+/).filter(Boolean);
   const tokens: string[] = [];
   for (const word of words) {
@@ -77,3 +86,25 @@ export function isTitleTokensUpToDate(
   }
   return true;
 }
+
+// Authors
+export function buildAuthorTokens(authors: string[]): string[] {
+  const tokens = new Set<string>();
+  for (const name of authors ?? []) {
+    for (const token of buildTitleTokens(name)) {
+      tokens.add(token);
+    }
+  }
+  return [...tokens];
+}
+
+export function isAuthorTokensUpToDate(
+  current: string[] | undefined,
+  expected: string[]
+): boolean {
+  if (!current) return expected.length === 0;
+  if (current.length !== expected.length) return false;
+  const set = new Set(current);
+  return expected.every((t) => set.has(t));
+}
+

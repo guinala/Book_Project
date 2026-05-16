@@ -2,7 +2,8 @@ import type { Book } from "@/types/Book";
 import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "./firebaseInit";
 import { fetchWorkEditionByLang, searchBooks } from "@/services/api/openLibraryApi";
-import { buildTitleTokens, normalizeTitleForSearch } from "@/utils/titleSearch";
+import { buildAuthorTokens, buildTitleTokens } from "@/utils/titleSearch";
+import type { SearchFilter } from "@/types/Search";
 
 const BOOKS_COLLECTION = "Books";
 
@@ -61,6 +62,7 @@ export async function saveBooksToDB(
       batch.set(ref, {
         key: book.key,
         authors: book.authors,
+        authorTokens: buildAuthorTokens(book.authors ?? []),
         first_publish_year: book.first_publish_year,
         cover_id: book.cover_id,
         cover_url: book.cover_url ?? null,
@@ -393,32 +395,67 @@ export async function incrementBookAddCount(bookKey: string): Promise<void> {
   await setDoc(ref, { addCount: increment(1) }, { merge: true });
 }
 
+// export async function searchBooksFromDB(
+//   queryText: string,
+//   lang: string,
+//   maxResults = 8
+// ): Promise<Book[]> {
+//   const words = normalizeTitleForSearch(queryText)
+//     .split(/\s+/)
+//     .filter(Boolean);
+//   if (words.length === 0) return [];
+
+//   const collectionRef = collection(db, BOOKS_COLLECTION);
+//   const tokenField = `titleTokens.${lang}`;
+//   const constraints =
+//     words.length === 1
+//       ? [
+//           where(tokenField, "array-contains", words[0]),
+//           limit(maxResults),
+//         ]
+//       : [
+//           where(tokenField, "array-contains-any", words.slice(0, 10)),
+//           limit(maxResults),
+//         ];
+
+//   const snap = await getDocs(query(collectionRef, ...constraints));
+//   return snap.docs.map((d) => mapBookDoc(d.data(), lang));
+// }
 export async function searchBooksFromDB(
   queryText: string,
   lang: string,
   maxResults = 8
 ): Promise<Book[]> {
-  const words = normalizeTitleForSearch(queryText)
-    .split(/\s+/)
-    .filter(Boolean);
+  // misma tokenización que los títulos: normaliza, minLength, stopwords
+  const words = buildTitleTokens(queryText);
   if (words.length === 0) return [];
 
   const collectionRef = collection(db, BOOKS_COLLECTION);
   const tokenField = `titleTokens.${lang}`;
+  const FETCH_LIMIT = 40; // traer de más para poder rankear en cliente
+
   const constraints =
     words.length === 1
-      ? [
-          where(tokenField, "array-contains", words[0]),
-          limit(maxResults),
-        ]
-      : [
-          where(tokenField, "array-contains-any", words.slice(0, 10)),
-          limit(maxResults),
-        ];
+      ? [where(tokenField, "array-contains", words[0]), limit(FETCH_LIMIT)]
+      : [where(tokenField, "array-contains-any", words.slice(0, 10)), limit(FETCH_LIMIT)];
 
   const snap = await getDocs(query(collectionRef, ...constraints));
-  return snap.docs.map((d) => mapBookDoc(d.data(), lang));
+
+  const scored = snap.docs.map((d) => {
+    const data = d.data();
+    const tokens: string[] = data.titleTokens?.[lang] ?? [];
+    let score = 0;
+    for (const w of words) {
+      if (tokens.includes(w)) score++;
+    }
+    return { book: mapBookDoc(data, lang), score };
+  });
+
+  // los que casan más palabras del query, primero
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, maxResults).map((s) => s.book);
 }
+
 
 export async function searchBooksWithFallback(
   queryText: string,
@@ -426,6 +463,8 @@ export async function searchBooksWithFallback(
   maxResults = 8,
   signal?: AbortSignal
 ): Promise<Book[]> {
+  // Query sin palabras con significado (vacío o solo stopwords) → nada que buscar
+  if (buildTitleTokens(queryText).length === 0) return [];
   const fromDb = await searchBooksFromDB(queryText, lang, maxResults);
 
   // 3 o más resultados en BBDD → cubierta, no se consulta la API
@@ -436,12 +475,26 @@ export async function searchBooksWithFallback(
   const remaining = maxResults - fromDb.length;
   const effectiveSignal = signal ?? new AbortController().signal;
 
-  const { books: fromApi } = await searchBooks(
-    { q: queryText },
-    remaining + dbKeys.size, // pedir de más por si hay solapamiento con BBDD
-    lang,
-    effectiveSignal
-  );
+  // const { books: fromApi } = await searchBooks(
+  //   { q: queryText },
+  //   remaining + dbKeys.size, // pedir de más por si hay solapamiento con BBDD
+  //   lang,
+  //   effectiveSignal
+  // );
+  let fromApi: Book[] = [];
+  try {
+    const res = await searchBooks(
+      { q: queryText },
+      remaining + dbKeys.size,
+      lang,
+      effectiveSignal
+    );
+    fromApi = res.books;
+  } catch {
+    // OL puede fallar: 422 por query corta, rate limit, red caída...
+    // No reventamos la búsqueda — degradamos a lo que haya en BBDD.
+    return fromDb;
+  }
 
   const apiUnique = fromApi.filter((b) => !dbKeys.has(b.key));
   const toShow = apiUnique.slice(0, remaining);
@@ -454,3 +507,73 @@ export async function searchBooksWithFallback(
 
   return [...fromDb, ...toShow].slice(0, maxResults);
 }
+
+export async function searchBooksByAuthorFromDB(
+  queryText: string,
+  lang: string,
+  maxResults = 20
+): Promise<Book[]> {
+  const words = buildTitleTokens(queryText);
+  if (words.length === 0) return [];
+
+  const collectionRef = collection(db, BOOKS_COLLECTION);
+  const FETCH_LIMIT = 60;
+
+  const constraints =
+    words.length === 1
+      ? [where("authorTokens", "array-contains", words[0]), limit(FETCH_LIMIT)]
+      : [where("authorTokens", "array-contains-any", words.slice(0, 10)), limit(FETCH_LIMIT)];
+
+  const snap = await getDocs(query(collectionRef, ...constraints));
+
+  const scored = snap.docs.map((d) => {
+    const data = d.data();
+    const tokens: string[] = data.authorTokens ?? [];
+    let score = 0;
+    for (const w of words) {
+      if (tokens.includes(w)) score++;
+    }
+    return { book: mapBookDoc(data, lang), score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, maxResults).map((s) => s.book);
+}
+
+export async function searchBooksByIsbnFromDB(
+  isbnQuery: string,
+  lang: string,
+  maxResults = 20
+): Promise<Book[]> {
+  const isbn = isbnQuery.replace(/-/g, "").trim();
+  if (isbn.length === 0) return [];
+
+  const snap = await getDocs(
+    query(
+      collection(db, BOOKS_COLLECTION),
+      where("isbn", "==", isbn),
+      limit(maxResults)
+    )
+  );
+  return snap.docs.map((d) => mapBookDoc(d.data(), lang));
+}
+
+export async function searchBooksInDB(
+  queryText: string,
+  filter: SearchFilter,
+  lang: string,
+  maxResults = 20
+): Promise<Book[]> {
+  switch (filter) {
+    case "autor":
+      return searchBooksByAuthorFromDB(queryText, lang, maxResults);
+    case "isbn":
+      return searchBooksByIsbnFromDB(queryText, lang, maxResults);
+    case "titulo":
+    case "todo":
+    default:
+      return searchBooksFromDB(queryText, lang, maxResults);
+  }
+}
+
+

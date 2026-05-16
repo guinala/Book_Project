@@ -43,6 +43,7 @@ export default function FavoriteBooksEditorModal({
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
+      setSearching(false);
       return;
     }
 
@@ -149,7 +150,7 @@ export default function FavoriteBooksEditorModal({
               type="text"
               placeholder={t("profile.favorites.searchPlaceholder")}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); setSearching(true); }}
             />
             {searching && (
               <p className="fav-editor-modal__searching">{t("profile.favorites.searching")}</p>
