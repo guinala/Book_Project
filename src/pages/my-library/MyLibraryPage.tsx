@@ -48,7 +48,7 @@ function MyLibraryPage() {
     <section className="my-library">
       {shelfByStatus.reading.length > 0 && (
         <div className="my-library__reading-section">
-          <h3 className="my-library__section-title">{t("myLibrary.heading")}</h3>
+          <h2 className="my-library__section-title">{t("myLibrary.heading")}</h2>
           <CurrentReadingCard />
         </div>
       )}

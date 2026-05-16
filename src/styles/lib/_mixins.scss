@@ -47,7 +47,7 @@
 @mixin full-btn-primary {
   @include primary-button;
   padding: var(--space-3);
-  font-size: var(--text-base);
+  font-size: var(--text-md);
   border-radius: var(--radius-sm);
   border: none;
   width: 100%;

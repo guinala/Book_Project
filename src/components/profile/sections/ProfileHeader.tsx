@@ -73,7 +73,7 @@ export default function ProfileHeader({
           </div>
 
           <div className="profile-header__identity">
-            <h1 className="profile-header__name">{displayName}</h1>
+            <h2 className="profile-header__name">{displayName}</h2>
             {profile.username && (
               <p className="profile-header__handle">@{profile.username}</p>
             )}

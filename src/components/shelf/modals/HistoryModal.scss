@@ -5,6 +5,7 @@
 
   &__panel {
     @include modal-panel(900px);
+    background: var(--color-bg-page);
     max-height: 90vh;
   }
 
@@ -107,7 +108,7 @@
   }
 
   &__event {
-    font-size: var(--text-base);
+    font-size: var(--text-md);
     font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
   }
@@ -125,7 +126,7 @@
   }
 
   &__pages-progress {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     font-weight: var(--weight-semibold);
     color: var(--color-text-secondary);
   }
@@ -143,11 +144,10 @@
     margin: 0;
     padding: var(--space-3) var(--space-4);
     background: var(--color-neutral-alpha-subtle);
-    border-left: 3px solid var(--color-border-medium);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    border-radius: var(--radius-md);
+    font-family: var(--font-editorial);
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
-    font-style: italic;
-    line-height: 1.55;
+    line-height: 1.6;
   }
 }

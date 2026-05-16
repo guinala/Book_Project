@@ -49,7 +49,7 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
 
   return (
     <section className="shelf-section">
-      <h3 className="shelf-section__title">{t("myLibrary.shelfTitle")}</h3>
+      <h2 className="shelf-section__title">{t("myLibrary.shelfTitle")}</h2>
 
       <div className="shelf-section__sub-header">
         <div className="shelf-section__filter-tabs">

@@ -1,5 +1,5 @@
 import type { Book } from "@/types/Book";
-import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, orderBy, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "./firebaseInit";
 import { fetchWorkEditionByLang, searchBooks } from "@/services/api/openLibraryApi";
 import { buildAuthorTokens, buildTitleTokens } from "@/utils/titleSearch";
@@ -106,6 +106,7 @@ export async function getAuthorBooksFromDB(
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("authorKeys", "array-contains", authorKey),
+    orderBy("rating", "desc"),
     limit(10)
   );
   const books = await getDocs(q);
@@ -263,11 +264,14 @@ export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]>
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
+    where("addCount", ">", 0),
+    orderBy("addCount", "desc"),
     limit(100),
   );
   const snap = await getDocs(q);
+
+  // Antes en el return habia .sort((a, b) => (b.data().addCount ?? 0) - (a.data().addCount ?? 0))
   return snap.docs
-    .sort((a, b) => (b.data().addCount ?? 0) - (a.data().addCount ?? 0))
     .slice(0, count)
     .map(d => mapBookDoc(d.data(), lang));
 }
@@ -277,13 +281,15 @@ export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]>
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
     where("rating", ">=", 3.5),
+    orderBy("rating", "desc"),
     limit(60),
   );
   const snap = await getDocs(q);
+
+  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => (b.ratingCount ?? 0) >= 10)
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, count);
 }
 
@@ -292,12 +298,14 @@ export async function getBooksByGenre(genre: string, lang: string, count = 6): P
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
     where("genre", "==", genre),
+    orderBy("rating", "desc"),
     limit(count + 20),
   );
   const snap = await getDocs(q);
+
+  //Antes en el return habia .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, count);
 }
 
@@ -305,13 +313,15 @@ export async function getNewReleaseBooks(year: number, lang: string, count = 6):
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
+    orderBy("first_publish_year", "desc"), 
+    orderBy("rating", "desc"),
     limit(150),
   );
   const snap = await getDocs(q);
+  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => (b.first_publish_year ?? 0) >= year && (b.rating ?? 0) >= 3)
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, count);
 }
 
@@ -320,13 +330,14 @@ export async function getQuickAndGoodBooks(lang: string, count = 6): Promise<Boo
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
     where("rating", ">=", 4),
+    orderBy("rating", "desc"),
     limit(80),
   );
   const snap = await getDocs(q);
+  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => b.pages !== undefined && b.pages > 0 && b.pages < 300)
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, count);
 }
 
@@ -341,13 +352,14 @@ export async function getAuthorNewReleases(
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("authorKeys", "array-contains-any", keys),
+    orderBy("first_publish_year", "desc"),
     limit(100),
   );
   const snap = await getDocs(q);
+  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
-    .filter(b => (b.first_publish_year ?? 0) >= year)
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .filter(b => (b.first_publish_year ?? 0) >= year - 2)
     .slice(0, count);
 }
 
@@ -361,13 +373,14 @@ export async function getGenreNewReleases(
     collection(db, BOOKS_COLLECTION),
     where("genre", "==", genre),
     where("langs", "array-contains", lang),
+    orderBy("first_publish_year", "desc"),
     limit(count + 30),
   );
   const snap = await getDocs(q);
+  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
-    .filter(b => (b.first_publish_year ?? 0) >= year)
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .filter(b => (b.first_publish_year ?? 0) >= year - 2)
     .slice(0, count);
 }
 
@@ -381,6 +394,7 @@ export async function getRecommendationsByGenre(
     collection(db, BOOKS_COLLECTION),
     where("genre", "==", genre),
     where("langs", "array-contains", lang),
+    orderBy("rating", "desc"),
     limit(count + 10),
   );
   const snap = await getDocs(q);

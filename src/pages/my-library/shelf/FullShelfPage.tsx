@@ -2,37 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
-import { getCoverUrl } from "@/utils/coverImage";
-import { encodeKey } from "@/utils/bookPaths";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { Search, Filter, X, ChevronLeft } from "lucide-react";
+import BookTile from "@/components/shelf/cards/BookTile";
 import "./FullShelfPage.scss";
 
 const SHELF_STATUSES: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 const SKELETON_COUNT = 14;
-
-function BookTile({ book }: { book: Book }) {
-  const navigate = useNavigate();
-  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : null);
-
-  return (
-    <div
-      className="full-shelf__book"
-      onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })}
-    >
-      <div className="full-shelf__cover-wrap">
-        {coverSrc ? (
-          <img className="full-shelf__cover" src={coverSrc} alt={book.title} loading="lazy" />
-        ) : (
-          <div className="full-shelf__cover-placeholder" />
-        )}
-      </div>
-      <p className="full-shelf__title">{book.title}</p>
-      <p className="full-shelf__author">{book.authors.join(", ")}</p>
-    </div>
-  );
-}
 
 export default function FullShelfPage() {
   const { t } = useTranslation();
@@ -72,7 +49,7 @@ export default function FullShelfPage() {
           <ChevronLeft aria-hidden="true" />
           {t("explore.backBtn")}
         </button>
-        <h1 className="full-shelf__page-title">{t("myLibrary.shelfTitle")}</h1>
+        <h2 className="full-shelf__page-title">{t("myLibrary.shelfTitle")}</h2>
       </div>
 
       <div className="full-shelf__tools">

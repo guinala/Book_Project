@@ -7,17 +7,16 @@
 
   &__title {
     font-size: var(--text-2xl);
-    font-weight: var(--weight-extrabold);
+    font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
     margin: 0;
   }
 
   &__card {
-    background: var(--color-bg-card);
-    border: 1.5px solid var(--color-accent);
+    background: transparent;
+    border: 1px solid var(--color-border-outline);
     border-radius: var(--radius-lg);
-    backdrop-filter: blur(8px);
     box-shadow: var(--shadow-card);
     position: relative;
     padding: 90px 20px 24px 20px;

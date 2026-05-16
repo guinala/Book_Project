@@ -8,7 +8,7 @@ import "./BookCard.scss";
 import { useShelf } from "@/hooks/useShelf";
 import { useAuth } from "@/hooks/useAuth";
 import { encodeKey } from "@/utils/bookPaths";
-import { BookOpen, Bookmark, Plus, Check, Star } from "lucide-react";
+import { BookOpen, Bookmark, Plus, Star } from "lucide-react";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -115,7 +115,7 @@ export default function BookCard({ book, rank }: BookCardProps) {
                   className={`book-card__dropdown-item${saved === opt ? " book-card__dropdown-item--active" : ""}`}
                   onClick={(e) => handleSelect(e, opt)}
                 >
-                  {saved === opt && <Check size={16} />}
+                  {saved === opt && <Bookmark size={16} />}
                   {t(`myLibrary.shelf.${opt}`)}
                 </button>
               </li>

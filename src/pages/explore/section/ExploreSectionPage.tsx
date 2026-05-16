@@ -20,6 +20,7 @@ const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
   "new-releases-for-you": "explore.sections.newReleasesForYou",
   "waiting": "explore.sections.waiting",
   "more-author": "explore.sections.moreAuthor",
+  "top-genre": "explore.sections.topGenre",
 };
 
 const SECTION_FALLBACK_KEYS: Partial<Record<ExploreSectionType, string>> = {
@@ -95,7 +96,7 @@ export default function ExploreSectionPage() {
           <ChevronLeft aria-hidden="true" />
           {t("explore.backBtn")}
         </button>
-        <h1 className="section-page__title">{renderTitle(title, titleHighlight)}</h1>
+        <h2 className="section-page__title">{renderTitle(title, titleHighlight)}</h2>
       </div>
 
       {loading && <ExploreGridSkeleton />}

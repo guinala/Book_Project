@@ -8,7 +8,7 @@ import "./BookInfoCard.scss";
 import { useShelf } from "@/hooks/useShelf";
 import { useAuth } from "@/hooks/useAuth";
 import { genreToI18nKey } from "@/utils/genreUtils";
-import { Share2, Check, ChevronRight, ChevronDown } from "lucide-react";
+import { Share2, Bookmark, ChevronRight, ChevronDown } from "lucide-react";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -113,7 +113,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
           <span className="book-info-card__genre">
             {book.genre ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre }) : ""}
           </span>
-          <h1 className="book-info-card__title">{book.title}</h1>
+          <h2 className="book-info-card__title">{book.title}</h2>
           <p className="book-info-card__author">{book.author}</p>
 
           <div className="book-info-card__info-row">
@@ -182,7 +182,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
                 onClick={handleSaveBtnClick}
               >
                 {saved && !shelfOpen && (
-                  <Check className="book-info-card__save-check" />
+                  <Bookmark className="book-info-card__save-check" />
                 )}
                 {saved ? t(`myLibrary.shelf.${saved}`) : t("bookDetail.saveBook")}
                 <ChevronRight className="book-info-card__save-chevron" />
@@ -201,7 +201,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
                           .join(" ")}
                         onClick={() => handleShelfSelect(opt)}
                       >
-                        {saved === opt && <Check size={16} />}
+                        {saved === opt && <Bookmark size={16} />}
                         {t(`myLibrary.shelf.${opt}`)}
                       </button>
                     </li>

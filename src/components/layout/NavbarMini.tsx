@@ -38,9 +38,9 @@ export default function NavbarMini({ visible }: NavbarMiniProps) {
           key={path}
           className={`navbar-mini__item${active === path ? " navbar-mini__item--active" : ""}`}
           onClick={() => navigate(path)}
+          aria-label={t(labelKey)}
         >
           {icon}
-          <span className="navbar-mini__label">{t(labelKey)}</span>
         </button>
       ))}
     </nav>

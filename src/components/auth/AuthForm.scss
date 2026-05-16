@@ -3,20 +3,15 @@
 .auth {
   @include page-centered;
   min-height: 100vh;
-  background: var(--color-bg-page);
   padding-bottom: 30vh;
 
   &__box {
-    border-radius: var(--radius-lg);
     padding: var(--space-7) var(--space-5) var(--space-4);
     width: 100%;
     max-width: 400px;
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
-    background: var(--color-bg-card-solid);
-    box-shadow: var(--shadow-card);
-    border: 1px solid var(--color-border-subtle);
 
     @include from($bp-md) {
       padding: var(--space-10) var(--space-9) var(--space-6);
@@ -24,28 +19,12 @@
     }
   }
 
-  &__logo {
-    @include flex-center;
-    gap: var(--space-2);
-    text-decoration: none;
-    margin-bottom: var(--space-1);
-  }
-
-  &__logo-icon {
-    @include flex-center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
-    font-size: var(--text-lg);
-    background: var(--color-brand-alpha-medium);
-    color: var(--color-brand-primary);
-  }
-
-  &__logo-text {
-    font-size: var(--text-2xl);
-    font-weight: var(--weight-semibold);
-    letter-spacing: 0.01em;
+  &__brand {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: -0.02em;
     color: var(--color-text-primary);
+    text-align: center;
   }
 
   &__title {
@@ -54,11 +33,19 @@
     text-align: center;
     margin: 0 0 var(--space-2);
     letter-spacing: 0.01em;
-    color: var(--color-text-primary);
+    color: var(--color-text-secondary);
 
     @include from($bp-md) {
       margin-bottom: var(--space-4);
     }
+  }
+
+  &__description {
+    font-size: var(--text-md);
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin: 0;
+    line-height: 1.6;
   }
 
   &__form {
@@ -157,23 +144,23 @@
 
   &__btn-primary {
     @include full-btn-primary;
-    background: var(--color-brand-primary);
-    color: var(--color-text-on-brand);
+    background: var(--color-text-primary);
+    color: var(--color-btn-primary-fg);
     transition: background var(--transition-fast);
 
     &:hover:not(:disabled) {
-      background: var(--color-brand-dark);
+      background: var(--color-btn-primary-hover);
     }
 
     &:disabled {
-      opacity: 0.6;
+      opacity: 0.4;
       cursor: not-allowed;
     }
   }
 
   &__btn-secondary {
     @include full-btn-primary;
-    background: var(--color-surface-secondary);
+    background: var(--color-bg-secondary);
     color: var(--color-text-primary);
     border: 1px solid var(--color-border-medium);
     transition: background var(--transition-fast);
@@ -372,7 +359,7 @@
   }
 
   &__user-email {
-    font-size: var(--text-base);
+    font-size: var(--text-md);
     margin: 0;
     color: var(--color-text-primary);
   }
@@ -385,7 +372,7 @@
 
   &__loading {
     text-align: center;
-    font-size: var(--text-base);
+    font-size: var(--text-md);
     color: var(--color-text-secondary);
   }
 

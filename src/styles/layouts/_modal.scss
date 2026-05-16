@@ -13,7 +13,7 @@
 @mixin modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(44, 36, 32, 0.45);
+  background: var(--color-overlay);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 1000;
@@ -64,10 +64,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition:
-    background var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), color var(--transition-fast);
 
   svg {
     width: 14px;
@@ -75,9 +72,8 @@
   }
 
   &:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    background: var(--color-brand-alpha-subtle);
+    border-color: var(--color-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -93,9 +89,12 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-3);
+  width: 172px;
   min-width: 148px;
+  max-width: 172px;
   padding-right: var(--space-6);
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 @mixin modal-book-info {
@@ -112,7 +111,7 @@
   height: 210px;
   border-radius: var(--radius-md);
   object-fit: cover;
-  box-shadow: 0 4px 16px rgba(44, 36, 32, 0.20), 0 1px 4px rgba(44, 36, 32, 0.10);
+  box-shadow: var(--shadow-cover);
   flex-shrink: 0;
   align-self: center;
 
@@ -122,6 +121,7 @@
 }
 
 @mixin modal-book-title {
+  font-family: var(--font-editorial);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
@@ -133,6 +133,7 @@
 }
 
 @mixin modal-book-author {
+  font-family: var(--font-main);
   font-size: var(--text-xs);
   color: var(--color-text-secondary);
   font-style: italic;
@@ -147,6 +148,8 @@
   background: var(--color-border-subtle);
   align-self: stretch;
   flex-shrink: 0;
+  margin-top: calc(-1 * var(--space-6));
+  margin-bottom: calc(-1 * var(--space-6));
 }
 
 @mixin modal-right {

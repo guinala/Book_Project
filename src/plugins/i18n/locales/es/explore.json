@@ -12,7 +12,7 @@
     "sectionError": "No se pudo cargar esta sección",
     "sections": {
       "trending": "Tendencias esta semana",
-      "trendingFallback": "Populares en Trama",
+      "trendingFallback": "Populares esta semana",
       "topRated": "Mejor valorados",
       "fiction": "Ficción",
       "nonFiction": "No ficción",
@@ -23,7 +23,8 @@
       "moreGenre": "Más de {{genre}}",
       "newReleasesForYou": "Nuevos lanzamientos para ti",
       "waiting": "Fantásticas tramas te esperan",
-      "moreAuthor": "Más de {{author}}"
+      "moreAuthor": "Más de {{author}}",
+      "topGenre": "Mejores libros de {{genre}}"
     },
     "banner": {
       "title": "Descubre libros para ti",

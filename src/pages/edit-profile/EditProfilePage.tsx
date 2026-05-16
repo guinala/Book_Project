@@ -213,7 +213,7 @@ export default function EditProfilePage() {
 
   return (
     <section className="edit-profile">
-      <h1 className="edit-profile__title">Editar perfil</h1>
+      <h2 className="edit-profile__title">Editar perfil</h2>
 
       <form className="edit-profile__form" onSubmit={handleSubmit(onSubmit)}>
 

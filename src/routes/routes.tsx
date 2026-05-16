@@ -9,6 +9,7 @@ import BookDetailPage from "@/pages/book-detail/BookDetailPage";
 import CommunityPage from "@/pages/community/CommunityPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import EditProfilePage from "@/pages/edit-profile/EditProfilePage";
+import SettingsPage from "@/pages/settings/SettingsPage";
 import AuthRoute from "@/routes/AuthRoute";
 
 export const ROUTES = [
@@ -61,6 +62,14 @@ export const ROUTES = [
       {
         path: "u/:username",
         element: <ProfilePage />,
+      },
+      {
+        path: "settings",
+        element: (
+          <AuthRoute requireAuth>
+            <SettingsPage />
+          </AuthRoute>
+        ),
       },
     ],
   },

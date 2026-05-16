@@ -12,10 +12,9 @@
 }
 
 .book-info-card {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border-medium);
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-border-outline);
   border-radius: var(--radius-xl);
-  backdrop-filter: blur(8px);
   box-shadow: var(--shadow-card);
   position: relative;
   z-index: 1;
@@ -40,7 +39,6 @@
     align-self: auto;
     border-radius: var(--radius-md);
     overflow: hidden;
-    cursor: pointer;
     box-shadow: var(--shadow-cover);
 
     @include from($bp-md) {
@@ -56,39 +54,6 @@
     object-fit: cover;
     display: block;
     border-radius: var(--radius-md);
-    transition: transform var(--transition-base);
-  }
-
-  &__cover-wrap:hover &__cover {
-    transform: scale(1.03);
-  }
-
-  &__cover-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 30%,
-      rgba(232, 107, 48, 0.75) 100%
-    );
-    opacity: 0;
-    transition: opacity var(--transition-base);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 20px;
-    border-radius: var(--radius-md);
-  }
-
-  &__cover-wrap:hover &__cover-overlay {
-    opacity: 1;
-  }
-
-  &__cover-overlay-text {
-    font-size: var(--text-sm);
-    font-weight: var(--weight-bold);
-    color: var(--color-text-on-brand);
-    letter-spacing: 0.04em;
   }
 
   &__share-btn {
@@ -99,16 +64,15 @@
     height: 42px;
     border-radius: var(--radius-pill);
     border: 1.5px solid var(--color-border-medium);
-    background: var(--color-bg-card-solid);
+    background: var(--color-bg-page);
     color: var(--color-text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition:
-      background var(--transition-fast),
-      color var(--transition-fast),
       border-color var(--transition-fast),
+      color var(--transition-fast),
       transform 100ms;
 
     svg {
@@ -117,9 +81,8 @@
     }
 
     &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
-      background: var(--color-brand-alpha-subtle);
+      border-color: var(--color-text-primary);
+      color: var(--color-text-primary);
     }
 
     &:active {
@@ -147,19 +110,29 @@
   }
 
   &__title {
+    font-family: var(--font-editorial);
     font-size: var(--text-xl);
     font-weight: var(--weight-bold);
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
     line-height: 1.15;
     margin: 0;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__author {
+    font-family: var(--font-main);
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
     font-weight: var(--weight-regular);
     margin: 0;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__info-row {
@@ -225,7 +198,7 @@
   }
 
   &__synopsis {
-    background: var(--color-bg-card);
+    background: var(--color-bg-page);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-md);
     padding: 10px 14px 0;
@@ -249,9 +222,8 @@
     height: 68px;
     background: linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0) 0%,
-      var(--color-bg-synopsis) 45%,
-      rgba(250, 238, 228, 0.97) 100%
+      transparent 0%,
+      var(--color-bg-page) 65%
     );
     display: flex;
     align-items: flex-end;
@@ -301,13 +273,13 @@
     justify-content: center;
     gap: var(--space-1);
     padding: 9px 20px;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-sm);
     border: 2px solid transparent;
-    background: var(--color-accent);
+    background: var(--color-text-primary);
     font-family: var(--font-main);
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
-    color: var(--color-text-on-brand);
+    color: var(--color-btn-primary-fg);
     cursor: pointer;
     transition:
       background var(--transition-fast),
@@ -316,7 +288,7 @@
       border-color var(--transition-fast);
 
     &:hover {
-      background: var(--color-accent-dark);
+      background: var(--color-btn-primary-hover);
     }
     &:active {
       transform: scale(0.97);
@@ -324,11 +296,12 @@
 
     &--saved {
       background: transparent;
-      border-color: var(--color-accent);
-      color: var(--color-accent);
+      border-color: var(--color-border-medium);
+      color: var(--color-text-primary);
 
       &:hover {
-        background: var(--color-brand-alpha-subtle);
+        background: transparent;
+        border-color: var(--color-text-primary);
       }
     }
   }
@@ -362,8 +335,8 @@
     left: auto;
     right: 0;
     background: var(--color-bg-page);
-    border: 1px solid var(--color-accent);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card-hover);
     padding: var(--space-2);
     min-width: 180px;
@@ -387,48 +360,32 @@
     align-items: center;
     gap: var(--space-2);
     width: 100%;
-    padding: var(--space-2) 14px;
-    border: 1.5px solid var(--color-border-subtle);
-    border-radius: var(--radius-sm);
+    padding: 10px var(--space-3);
+    border: none;
+    border-radius: var(--radius-md);
     background: transparent;
     font-family: var(--font-main);
     font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-medium);
     color: var(--color-text-primary);
     cursor: pointer;
     text-align: left;
-    transition:
-      border-color var(--transition-fast),
-      color var(--transition-fast),
-      background var(--transition-fast);
+    transition: background var(--transition-fast);
 
     svg {
-      width: 12px;
-      height: 12px;
-      color: var(--color-accent);
+      width: 14px;
+      height: 14px;
+      color: var(--color-text-primary);
       flex-shrink: 0;
     }
 
     &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
+      background: var(--color-neutral-alpha-muted);
     }
 
     &--active {
-      background: var(--color-accent);
-      border-color: transparent;
-      color: var(--color-text-on-brand);
-      font-weight: var(--weight-bold);
-
-      svg {
-        color: var(--color-text-on-brand);
-      }
-
-      &:hover {
-        background: var(--color-accent-dark);
-        border-color: transparent;
-        color: var(--color-text-on-brand);
-      }
+      font-weight: var(--weight-semibold);
+      background: var(--color-neutral-alpha-muted);
     }
   }
 

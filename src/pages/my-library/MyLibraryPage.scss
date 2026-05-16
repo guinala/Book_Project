@@ -2,14 +2,14 @@
 
 .my-library {
   @include container;
-  padding-top: 0;
+  padding-top: var(--space-6);
   padding-bottom: var(--space-10);
   display: flex;
   flex-direction: column;
   gap: var(--space-10);
 
   @include from($bp-md) {
-    padding-top: 0;
+    padding-top: var(--space-10);
     padding-bottom: var(--space-16);
     gap: var(--space-14);
   }
@@ -25,7 +25,7 @@
     width: 100%;
     max-width: 860px;
     font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-semibold);
     margin: 0;
     letter-spacing: -0.01em;
 

@@ -38,7 +38,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
 
       <div className={inputRowClass}>
         <span className="searchbar__icon" aria-hidden="true">
-          <Search size={18} aria-hidden="true" />
+          <Search size={14} aria-hidden="true" />
         </span>
 
         <div className="searchbar__divider" />
@@ -66,7 +66,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
             }}
             aria-label={t("search.clearLabel")}
           >
-            <X size={14} aria-hidden="true" />
+            <X size={18} aria-hidden="true" />
           </button>
         )}
       </div>

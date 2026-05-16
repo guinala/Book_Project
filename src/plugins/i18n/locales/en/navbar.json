@@ -5,7 +5,8 @@
     "login": "Sign In",
     "logout": "Sign Out",
     "notifications": "Notifications",
-    "profile": "Profile"
+    "profile": "Profile",
+    "search": "Search books, authors..."
   },
   "nav": {
     "myLibrary": "My Library",

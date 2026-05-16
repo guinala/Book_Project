@@ -12,7 +12,7 @@
     "sectionError": "Could not load this section",
     "sections": {
       "trending": "Trending this week",
-      "trendingFallback": "Popular on Trama",
+      "trendingFallback": "Popular this week",
       "topRated": "Top rated",
       "fiction": "Fiction",
       "nonFiction": "Non-fiction",
@@ -23,7 +23,8 @@
       "moreGenre": "More {{genre}}",
       "newReleasesForYou": "New releases for you",
       "waiting": "Fantastic stories await you",
-      "moreAuthor": "More by {{author}}"
+      "moreAuthor": "More by {{author}}",
+      "topGenre": "Top Books of {{genre}}"
     },
     "banner": {
       "title": "Discover books for you",

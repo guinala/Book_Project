@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { ChevronRight } from "lucide-react";
 import "./ListCard.scss";
 
 export type ReadingList = {
@@ -33,10 +32,6 @@ export default function ListCard({ list }: ListCardProps) {
           {t("myLibrary.listsCount", { count: list.count })}
         </p>
       </div>
-
-      <span className="list-card__chevron">
-        <ChevronRight size={16} aria-hidden="true" />
-      </span>
     </article>
   );
 }

@@ -15,7 +15,7 @@
 
   &__title {
     font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-semibold);
     margin: 0;
     letter-spacing: -0.01em;
   }
@@ -41,65 +41,45 @@
     }
   }
 
-  &__card {
-    background: var(--color-bg-card-solid);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--color-border-medium);
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
-  }
-
-  &__divider {
-    height: 1px;
-    background: var(--color-border-subtle);
-    margin: 0 var(--space-4);
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
   }
 
   &__create {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: var(--space-3);
     padding: var(--space-4);
-    width: 100%;
-    background: none;
-    border: none;
+    background: var(--color-bg-card-solid);
+    border: 1.5px dashed var(--color-border-medium);
+    border-radius: var(--radius-xl);
     cursor: pointer;
-    text-align: left;
     color: var(--color-text-secondary);
-    transition: background var(--transition-fast);
+    transition: border-color var(--transition-fast), color var(--transition-fast);
 
     &:hover {
-      background: var(--color-bg-section);
-
-      .lists-section__create-icon {
-        border-color: var(--color-accent);
-        color: var(--color-accent);
-      }
-
-      .lists-section__create-text {
-        color: var(--color-text-primary);
-      }
+      border-color: var(--color-text-primary);
+      color: var(--color-text-primary);
     }
   }
 
   &__create-icon {
-    width: 62px;
-    height: 62px;
+    width: 40px;
+    height: 40px;
     border-radius: var(--radius-sm);
-    border: 1.5px dashed var(--color-border-medium);
+    border: 1.5px dashed currentColor;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition:
-      border-color var(--transition-fast),
-      color var(--transition-fast);
   }
 
   &__create-text {
-    flex: 1;
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
-    transition: color var(--transition-fast);
   }
 }
