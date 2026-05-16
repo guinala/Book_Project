@@ -16,7 +16,6 @@ export type UserFullProfile = {
   bio: string;
   profilePhotoUrl: string;
   bannerImageUrl: string;
-  favoriteBooks: FavoriteBook[];
   followersCount: number;
   followingCount: number;
   birthDate?: string;

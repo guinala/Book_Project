@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db, auth } from "./firebaseInit";
-import type { UserFullProfile, UserMinimal } from "@/types/UserProfile";
+import type { FavoriteBook, UserFullProfile, UserMinimal } from "@/types/UserProfile";
 
 export type UserProfileData = {
   email?: string;
@@ -39,7 +39,6 @@ export async function createUserProfile(
     isPublic: true,
     followersCount: 0,
     followingCount: 0,
-    favoriteBooks: [],
     createdAt: new Date().toISOString(),
   }, { merge: true });
   if (email !== undefined || birthDate !== undefined) {
@@ -94,7 +93,6 @@ export async function getUserProfile(uid: string): Promise<UserFullProfile | nul
     bio: d.bio ?? "",
     profilePhotoUrl: d.profilePhotoUrl ?? "",
     bannerImageUrl: d.bannerImageUrl ?? "",
-    favoriteBooks: d.favoriteBooks ?? [],
     followersCount: d.followersCount ?? 0,
     followingCount: d.followingCount ?? 0,
     isPublic: d.isPublic ?? true,
@@ -119,3 +117,17 @@ export async function updateUserProfile(
 ): Promise<void> {
   await updateDoc(doc(db, "Users", uid), data);
 }
+
+export async function getFavorites(uid: string): Promise<FavoriteBook[]> {
+  const snap = await getDoc(doc(db, "Users", uid, "favorites", "list"));
+  if (!snap.exists()) return [];
+  return (snap.data().books as FavoriteBook[]) ?? [];
+}
+
+export async function saveFavorites(
+  uid: string,
+  books: FavoriteBook[]
+): Promise<void> {
+  await setDoc(doc(db, "Users", uid, "favorites", "list"), { books });
+}
+

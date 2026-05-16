@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
-import { getUserProfile } from "@/services/firebase/firebaseUsers";
+import { getFavorites, getUserProfile } from "@/services/firebase/firebaseUsers";
 import {
   checkIsFollowing,
   followUser,
@@ -10,7 +10,7 @@ import {
 } from "@/services/firebase/firebaseFollows";
 import { getActivity } from "@/services/firebase/firebaseActivity";
 import { getShelf } from "@/services/firebase/firebaseLibrary";
-import type { UserFullProfile, ActivityItem } from "@/types/UserProfile";
+import type { UserFullProfile, ActivityItem, FavoriteBook } from "@/types/UserProfile";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 
@@ -21,6 +21,7 @@ const EMPTY_SHELF: Record<ShelfStatus, Book[]> = {
   didNotFinish: [],
 };
 const EMPTY_ACTIVITY: ActivityItem[] = [];
+const EMPTY_FAVORITES: FavoriteBook[] = [];
 
 function entriesToShelf(
   entries: { book: Book; status: ShelfStatus }[],
@@ -53,6 +54,7 @@ export function useProfile(userId: string) {
   const [profile, setProfile] = useState<UserFullProfile | null>(null);
   const [activity, setActivity] = useState<ActivityItem[]>(EMPTY_ACTIVITY);
   const [publicShelf, setPublicShelf] = useState<Record<ShelfStatus, Book[]>>(EMPTY_SHELF);
+  const [favorites, setFavorites] = useState<FavoriteBook[]>(EMPTY_FAVORITES);
   const [isFollowingState, setIsFollowingState] = useState(false);
   const [loading, setLoading] = useState(() => !!userId);
   const [bodyLoading, setBodyLoading] = useState(false);
@@ -64,6 +66,7 @@ export function useProfile(userId: string) {
     setProfile(null);
     setActivity(EMPTY_ACTIVITY);
     setPublicShelf(EMPTY_SHELF);
+    setFavorites(EMPTY_FAVORITES);
     setIsFollowingState(false);
   }
 
@@ -118,7 +121,8 @@ export function useProfile(userId: string) {
         const fetches: Promise<void>[] = [
           getActivity(userId, 10).then((a) => {if (!cancelled) { 
             setActivity(a); 
-          }})
+          }}),
+          getFavorites(userId).then((f) => { if (!cancelled) setFavorites(f); }),
         ];
 
         if (!isOwnProfile) {
@@ -175,6 +179,7 @@ export function useProfile(userId: string) {
     shelf,
     shelfLoading,
     activity,
+    favorites,
     isOwnProfile,
     isFollowing: isFollowingState,
     loading,

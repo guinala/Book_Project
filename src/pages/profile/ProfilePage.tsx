@@ -43,6 +43,7 @@ export default function ProfilePage() {
     shelf,
     shelfLoading,
     activity,
+    favorites,
     isOwnProfile,
     isFollowing,
     loading,
@@ -53,13 +54,12 @@ export default function ProfilePage() {
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
-  const [localFavorites, setLocalFavorites] = useState<FavoriteBook[]>(
-    profile?.favoriteBooks ?? []
-  );
-  const [prevProfile, setPrevProfile] = useState(profile);
-  if (profile !== prevProfile) {
-    setPrevProfile(profile);
-    setLocalFavorites(profile?.favoriteBooks ?? []);
+  const [localFavorites, setLocalFavorites] = useState<FavoriteBook[]>(favorites);
+  const [prevFavorites, setPrevFavorites] = useState(favorites);
+
+  if (favorites !== prevFavorites) {
+    setPrevFavorites(favorites);
+    setLocalFavorites(favorites);
   }
 
   const handleFavSave = (updated: FavoriteBook[]) => setLocalFavorites(updated);

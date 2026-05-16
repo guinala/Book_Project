@@ -1,7 +1,8 @@
 import type { Book } from "@/types/Book";
 import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "./firebaseInit";
-import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
+import { fetchWorkEditionByLang, searchBooks } from "@/services/api/openLibraryApi";
+import { buildTitleTokens, normalizeTitleForSearch } from "@/utils/titleSearch";
 
 const BOOKS_COLLECTION = "Books";
 
@@ -183,6 +184,7 @@ export async function updateBookTitleToDB(
   const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
   const update: Record<string, unknown> = {
     [`titles.${lang}`]: title,
+    [`titleTokens.${lang}`]: buildTitleTokens(title),
     langs: arrayUnion(lang),
   };
   if (isbn) update[`isbns.${lang}`] = isbn;
@@ -389,4 +391,66 @@ export async function getRecommendationsByGenre(
 export async function incrementBookAddCount(bookKey: string): Promise<void> {
   const ref = doc(db, BOOKS_COLLECTION, encodeKey(bookKey));
   await setDoc(ref, { addCount: increment(1) }, { merge: true });
+}
+
+export async function searchBooksFromDB(
+  queryText: string,
+  lang: string,
+  maxResults = 8
+): Promise<Book[]> {
+  const words = normalizeTitleForSearch(queryText)
+    .split(/\s+/)
+    .filter(Boolean);
+  if (words.length === 0) return [];
+
+  const collectionRef = collection(db, BOOKS_COLLECTION);
+  const tokenField = `titleTokens.${lang}`;
+  const constraints =
+    words.length === 1
+      ? [
+          where(tokenField, "array-contains", words[0]),
+          limit(maxResults),
+        ]
+      : [
+          where(tokenField, "array-contains-any", words.slice(0, 10)),
+          limit(maxResults),
+        ];
+
+  const snap = await getDocs(query(collectionRef, ...constraints));
+  return snap.docs.map((d) => mapBookDoc(d.data(), lang));
+}
+
+export async function searchBooksWithFallback(
+  queryText: string,
+  lang: string,
+  maxResults = 8,
+  signal?: AbortSignal
+): Promise<Book[]> {
+  const fromDb = await searchBooksFromDB(queryText, lang, maxResults);
+
+  // 3 o más resultados en BBDD → cubierta, no se consulta la API
+  if (fromDb.length > 2) return fromDb;
+
+  // BBDD con 2 o menos → ampliar con Open Library
+  const dbKeys = new Set(fromDb.map((b) => b.key));
+  const remaining = maxResults - fromDb.length;
+  const effectiveSignal = signal ?? new AbortController().signal;
+
+  const { books: fromApi } = await searchBooks(
+    { q: queryText },
+    remaining + dbKeys.size, // pedir de más por si hay solapamiento con BBDD
+    lang,
+    effectiveSignal
+  );
+
+  const apiUnique = fromApi.filter((b) => !dbKeys.has(b.key));
+  const toShow = apiUnique.slice(0, remaining);
+  if (toShow.length === 0) return fromDb;
+
+  // Persistir en Books: merge sobre existentes, crea los nuevos.
+  // Re-guardar regenera titleTokens, así que también arregla libros
+  // que estaban en BBDD pero con tokens obsoletos.
+  await saveBooksToDB(toShow, lang).catch(() => {});
+
+  return [...fromDb, ...toShow].slice(0, maxResults);
 }

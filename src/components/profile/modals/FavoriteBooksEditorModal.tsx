@@ -1,11 +1,12 @@
 // src/components/FavoriteBooksEditorModal/FavoriteBooksEditorModal.tsx
-import { useEffect, useRef, useState } from "react";
-import { searchBooks } from "@/services/api/openLibraryApi";
-import { updateUserProfile } from "@/services/firebase/firebaseUsers";
+import { useEffect, useState } from "react";
+import { saveFavorites } from "@/services/firebase/firebaseUsers";
 import type { FavoriteBook } from "@/types/UserProfile";
 import type { Book } from "@/types/Book";
 import { X } from "lucide-react";
 import "./FavoriteBooksEditorModal.scss";
+import { useTranslation } from "react-i18next";
+import { searchBooksWithFallback } from "@/services/firebase/firebaseBooks";
 
 const MAX_FAVORITES = 5;
 
@@ -28,7 +29,8 @@ export default function FavoriteBooksEditorModal({
   const [searching, setSearching] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language.split("-")[0];
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -44,33 +46,24 @@ export default function FavoriteBooksEditorModal({
       return;
     }
 
-    const timer = setTimeout(async () => {
-      abortRef.current?.abort();
-      abortRef.current = new AbortController();
+    let cancelled = false;
+
+    const timer = setTimeout(() => {
       setSearching(true);
-      try {
-        const { books } = await searchBooks(
-          { q: query },
-          8,
-          "es",
-          abortRef.current.signal
-        );
-        setResults(books);
-      } catch {
-        // aborted or error — ignore
-      } finally {
-        setSearching(false);
-      }
+      searchBooksWithFallback(query, lang, 8)
+        .then((books) => {
+          if (!cancelled) { setResults(books); setSearching(false); }
+        })
+        .catch(() => {
+          if (!cancelled) { setResults([]); setSearching(false); }
+        });
     }, 400);
 
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  useEffect(() => {
-    return () => {
-      abortRef.current?.abort();
+    return () => { 
+      cancelled = true;
+      clearTimeout(timer);
     };
-  }, []);
+  }, [query, lang]);
 
   const addFavorite = (book: Book) => {
     if (favorites.length >= MAX_FAVORITES) return;
@@ -96,11 +89,11 @@ export default function FavoriteBooksEditorModal({
     setSaving(true);
     setSaveError(null);
     try {
-      await updateUserProfile(userId, { favoriteBooks: favorites });
+      await saveFavorites(userId, favorites);
       onSave(favorites);
       onClose();
     } catch {
-      setSaveError("No se pudo guardar. Comprueba tu conexion e intenta de nuevo.");
+      setSaveError(t("profile.favorites.saveError"));
     } finally {
       setSaving(false);
     }
@@ -111,19 +104,19 @@ export default function FavoriteBooksEditorModal({
       <div className="fav-editor-modal__backdrop" onClick={onClose} />
       <div className="fav-editor-modal__box">
         <div className="fav-editor-modal__header">
-          <h2 className="fav-editor-modal__title">Editar libros favoritos</h2>
+          <h2 className="fav-editor-modal__title">{t("profile.favorites.modalTitle")}</h2>
           <button
             type="button"
             className="fav-editor-modal__close"
             onClick={onClose}
-            aria-label="Cerrar"
+            aria-label={t("profile.favorites.closeAria")}
           >
             <X size={20} aria-hidden="true" />
           </button>
         </div>
 
         <p className="fav-editor-modal__hint">
-          {favorites.length}/{MAX_FAVORITES} libros seleccionados
+          {t("profile.favorites.hint", { selected: favorites.length, max: MAX_FAVORITES })}
         </p>
 
         <div className="fav-editor-modal__current">
@@ -141,7 +134,7 @@ export default function FavoriteBooksEditorModal({
                 type="button"
                 className="fav-editor-modal__fav-remove"
                 onClick={() => removeFavorite(book.key)}
-                aria-label={`Eliminar ${book.title}`}
+                aria-label={t("profile.favorites.removeAria", { title: book.title })}
               >
                 <X size={16} aria-hidden="true" />
               </button>
@@ -154,13 +147,20 @@ export default function FavoriteBooksEditorModal({
             <input
               className="fav-editor-modal__search"
               type="text"
-              placeholder="Buscar libro..."
+              placeholder={t("profile.favorites.searchPlaceholder")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
             {searching && (
-              <p className="fav-editor-modal__searching">Buscando...</p>
+              <p className="fav-editor-modal__searching">{t("profile.favorites.searching")}</p>
             )}
+            
+            {!searching && query.trim() && results.length === 0 && (
+              <p className="fav-editor-modal__no-results">
+                {t("profile.favorites.noResults")}
+              </p>
+            )}
+
             {results.length > 0 && (
               <ul className="fav-editor-modal__results">
                 {results.map((book) => (
@@ -205,7 +205,7 @@ export default function FavoriteBooksEditorModal({
               className="fav-editor-modal__btn fav-editor-modal__btn--cancel"
               onClick={onClose}
             >
-              Cancelar
+              {t("profile.favorites.cancel")}
             </button>
             <button
               type="button"
@@ -213,7 +213,7 @@ export default function FavoriteBooksEditorModal({
               onClick={handleSave}
               disabled={saving}
             >
-              {saving ? "Guardando..." : "Guardar"}
+              {saving ? t("profile.favorites.saving") : t("profile.favorites.save")}
             </button>
           </div>
         </div>
