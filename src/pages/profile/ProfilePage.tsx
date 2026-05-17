@@ -68,13 +68,15 @@ export default function ProfilePage() {
     let cancelled = false;
 
     const resolve = async () => {
-      // Caso 1: uid directo en la URL
+
+      // uid en URL
       if (paramUserId) {
         setResolvedUserId(paramUserId);
         setResolveState("done");
         return;
       }
-      // Caso 2: username → lookup asíncrono
+
+      // Username
       if (paramUsername) {
         setResolveState("loading");
         const uid = await lookupUidByUsername(paramUsername);
@@ -87,13 +89,14 @@ export default function ProfilePage() {
         }
         return;
       }
-      // Caso 3: sin params → perfil propio
+
+      // Perfil propio
       if (user?.uid) {
         setResolvedUserId(user.uid);
         setResolveState("done");
         return;
       }
-      // Sin sesión y sin params
+
       setResolveState("notfound");
     };
 
@@ -109,9 +112,6 @@ export default function ProfilePage() {
     );
   }
 
-  // notfound, o resuelto sin uid: en ambos casos no hay perfil que mostrar.
-  // Este guard ademas estrecha resolvedUserId de `string | null` a `string`
-  // para el resto del componente, asi los modales no necesitan aserciones.
   if (resolveState === "notfound" || !resolvedUserId) {
     return (
       <div className="profile-page profile-page--not-found">

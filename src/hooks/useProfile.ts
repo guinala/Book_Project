@@ -72,7 +72,7 @@ export function useProfile(userId: string) {
 
   const canViewFull = isOwnProfile || (profile?.isPublic !== false) || isFollowingState;
 
-  // Fase 1: perfil + estado de follow
+  // perfil + estado de follow
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
@@ -94,7 +94,7 @@ export function useProfile(userId: string) {
     return () => { cancelled = true; };
   }, [userId, user]);
 
-  // Fase 2: shelf + activity (solo cuando canViewFull)
+  // shelf + activity (solo cuando canViewFull)
   useEffect(() => {
     if (!userId || loading) return;
     if (!canViewFull) return;

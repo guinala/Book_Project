@@ -12,7 +12,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error("ErrorBoundary caught:", error, info);
-    // aquí iría vuestro envío a Sentry / un endpoint de logging
+    // aquí iría envío a Sentry / un endpoint de logging
   }
 
   render() {

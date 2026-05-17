@@ -8,7 +8,7 @@
   flex-direction: column;
   gap: var(--space-5);
 
-  // ── Header ──────────────────────────────────────────
+  // Header 
   &__header {
     display: flex;
     flex-direction: column;
@@ -42,7 +42,7 @@
     margin: 0;
   }
 
-  // ── Tools bar ───────────────────────────────────────
+  // Tools bar
   &__tools {
     display: flex;
     align-items: center;
@@ -217,7 +217,7 @@
     }
   }
 
-  // ── Results header ───────────────────────────────────
+  // Results header 
   &__results-header {
     display: flex;
     align-items: center;
@@ -245,7 +245,7 @@
     &:hover { color: var(--color-text-primary); }
   }
 
-  // ── Books grid ───────────────────────────────────────
+  // Books grid
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, 148px);
@@ -292,7 +292,7 @@
     object-fit: contain;
   }
 
-  // ── Skeleton ─────────────────────────────────────────
+  // Skeleton 
   &__book-skeleton {
     display: flex;
     flex-direction: column;

@@ -33,12 +33,7 @@ export function buildTitleTokens(
   return [...new Set(tokens)];
 }
 
-/**
- * Construye el mapa titleTokens por idioma.
- * - Para cada idioma presente en `titles`, tokeniza ese título.
- * - Si solo existe el `title` plano legacy, lo asigna a los idiomas de `langs`
- *   (o "es" como último recurso) que no tengan ya tokens.
- */
+// Se construye un map por cada idioma
 export function buildTitleTokensMap(
   titles: Record<string, string> | undefined,
   legacyTitle?: string,
@@ -64,7 +59,6 @@ export function buildTitleTokensMap(
   return result;
 }
 
-/** True si `current` ya coincide con `expected` (comparación por conjunto, orden irrelevante). */
 export function isTitleTokensUpToDate(
   current: Record<string, string[]> | undefined,
   expected: Record<string, string[]>

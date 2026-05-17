@@ -31,7 +31,7 @@ export async function addToShelf(
     addedAt: new Date().toISOString(),
   }, { merge: true });
 
-  // Escribir titles/isbns con dot-notation para mantener otros idiomas
+  // Escribir titles/isbns con estilo dot-notation para mantener otros idiomas
   if (titles && Object.keys(titles).length > 0) {
     const langUpdates: Record<string, string> = {};
     for (const [lang, t] of Object.entries(titles)) {

@@ -99,7 +99,7 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     return books;
   }
 
-  // ── 1. Trending ──────────────────────────────────────────────────────────────
+  // Trending
   const trendingRaw = await getTrendingBooks(lang, N + 10);
   const trendingBooks = trendingRaw.filter(b => !seenKeys.has(b.key)).slice(0, N);
   if (trendingBooks.length > 0) {
@@ -110,7 +110,7 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     entries.push({ id: "trending", type: "trending", books: claim(fallback), isFallback: true });
   }
 
-  // ── Helper: because-reading ──────────────────────────────────────────────────
+  // because-reading
   async function addBecauseReading(book: Book, index: number) {
     if (!book.genre) return;
     const raw = await getRecommendationsByGenre(book.genre, lang, book.key, N + 20);
@@ -127,10 +127,10 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     });
   }
 
-  // ── 2. Because-reading (libro 0) ─────────────────────────────────────────────
+  // Because-reading (libro 0) 
   if (referenceBooks[0]) await addBecauseReading(referenceBooks[0], 0);
 
-  // ── 3. More-genre (popularidad: addCount) ─────────────────────────────────────
+  // More-genre (popularidad -> addCount) 
   if (favoriteGenre) {
     const raw = await getBooksByGenre(favoriteGenre, lang, N + 20);
     const books = raw.filter(b => !seenKeys.has(b.key)).slice(0, N);
@@ -146,10 +146,10 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     }
   }
 
-  // ── 4. Because-reading (libro 1) ─────────────────────────────────────────────
+  // Because-reading (libro 1) 
   if (referenceBooks[1]) await addBecauseReading(referenceBooks[1], 1);
 
-  // ── 5. Top-genre (mejor valorados ≥ 4.3) ────────────────────────────────────
+  // Top-genre (mejor valorados ≥ 4.3)
   if (favoriteGenre) {
     const raw = await getRecommendationsByGenre(favoriteGenre, lang, "", N + 20);
     const books = raw.filter(b => (b.rating ?? 0) >= 4.3 && !seenKeys.has(b.key)).slice(0, N);
@@ -165,7 +165,7 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     }
   }
 
-  // ── 6. New releases for you ──────────────────────────────────────────────────
+  // New releases 
   const [byAuthor, byGenre] = await Promise.all([
     userAuthorKeys.length
       ? getAuthorNewReleases(userAuthorKeys, year, lang, N + 10)
@@ -191,10 +191,10 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     }
   }
 
-  // ── 7. Because-reading (libro 2) ─────────────────────────────────────────────
+  // Because-reading (libro 2) 
   if (referenceBooks[2]) await addBecauseReading(referenceBooks[2], 2);
 
-  // ── 8. Waiting ───────────────────────────────────────────────────────────────
+  // Waiting 
   if (wantToReadBooks.length > 0) {
     entries.push({
       id: "waiting",
@@ -204,12 +204,12 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     });
   }
 
-  // ── 9. Because-reading (libros 3+) ───────────────────────────────────────────
+  // Because-reading (libros 3+)
   for (let i = 3; i < referenceBooks.length; i++) {
     await addBecauseReading(referenceBooks[i], i);
   }
 
-  // ── 10. More-author ──────────────────────────────────────────────────────────
+  // More-author 
   if (favoriteAuthorKey) {
     const raw = await getAuthorBooksFromDB(favoriteAuthorKey, "", lang);
     const books = raw.filter(b => !seenKeys.has(b.key)).slice(0, N);

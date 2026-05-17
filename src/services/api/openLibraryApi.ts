@@ -300,7 +300,7 @@ export async function fetchWorkEditionByLang(
   workKey: string,
   lang: string
 ): Promise<{ title: string; isbn?: string } | null> {
-  const langPath = `/languages/${getLangIso3Letters(lang)}`;  // reutiliza helper existente
+  const langPath = `/languages/${getLangIso3Letters(lang)}`;  
 
   try {
     const { data } = await openLibraryClient.get<WorkEditionsResponse>(

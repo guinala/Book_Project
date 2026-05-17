@@ -11,7 +11,7 @@ const BOOKS_COLLECTION = "Books";
 type SynopsisField = string | Record<string, string>;
 
 function encodeKey(workKey: string): string {
-  // Ejemplo: "/works/OL123W" => "OL123W"
+  // "/works/OL123W" => "OL123W"
   return workKey.split("/").at(-1) ?? workKey;
 }
 
@@ -210,7 +210,7 @@ export async function getRecommendationsFromDB(
     collection(db, BOOKS_COLLECTION),
     where("genre", "==", genre),
     where("langs", "array-contains", lang),
-    limit(minCount + 1) //En el filtrado se excliye el libro actual, +1 para compensar
+    limit(minCount + 1) // En el filtrado se excliye el libro actual, +1 para compensar
   );
 
   const doc = await getDocs(q);
@@ -244,8 +244,7 @@ export async function getRecommendationsFromDB(
   return books;
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
+// Helpers
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapBookDoc(data: Record<string, any>, lang: string): Book {
   return {
@@ -269,8 +268,7 @@ function mapBookDoc(data: Record<string, any>, lang: string): Book {
   };
 }
 
-// ── Queries para secciones de Explore ────────────────────────────────────────
-
+// Queries para Explore
 export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -451,13 +449,13 @@ export async function searchBooksFromDB(
   lang: string,
   maxResults = 8
 ): Promise<Book[]> {
-  // misma tokenización que los títulos: normaliza, minLength, stopwords
+
   const words = buildTitleTokens(queryText);
   if (words.length === 0) return [];
 
   const collectionRef = collection(db, BOOKS_COLLECTION);
   const tokenField = `titleTokens.${lang}`;
-  const FETCH_LIMIT = 40; // traer de más para poder rankear en cliente
+  const FETCH_LIMIT = 40; 
 
   const constraints =
     words.length === 1
@@ -476,7 +474,7 @@ export async function searchBooksFromDB(
     return { book: mapBookDoc(data, lang), score };
   });
 
-  // los que casan más palabras del query, primero
+  // Primero los que reúnen más coincidencias
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, maxResults).map((s) => s.book);
 }
@@ -488,14 +486,13 @@ export async function searchBooksWithFallback(
   maxResults = 8,
   signal?: AbortSignal
 ): Promise<Book[]> {
-  // Query sin palabras con significado (vacío o solo stopwords) → nada que buscar
-  if (buildTitleTokens(queryText).length === 0) return [];
+
+  if (buildTitleTokens(queryText).length === 0) return []; // Solo stopwords o palabras vacías
   const fromDb = await searchBooksFromDB(queryText, lang, maxResults);
 
-  // 3 o más resultados en BBDD → cubierta, no se consulta la API
   if (fromDb.length > 2) return fromDb;
 
-  // BBDD con 2 o menos → ampliar con Open Library
+  // <= 2 -> OpenLibrary
   const dbKeys = new Set(fromDb.map((b) => b.key));
   const remaining = maxResults - fromDb.length;
   const effectiveSignal = signal ?? new AbortController().signal;
@@ -516,8 +513,6 @@ export async function searchBooksWithFallback(
     );
     fromApi = res.books;
   } catch {
-    // OL puede fallar: 422 por query corta, rate limit, red caída...
-    // No reventamos la búsqueda — degradamos a lo que haya en BBDD.
     return fromDb;
   }
 
@@ -525,9 +520,6 @@ export async function searchBooksWithFallback(
   const toShow = apiUnique.slice(0, remaining);
   if (toShow.length === 0) return fromDb;
 
-  // Persistir en Books: merge sobre existentes, crea los nuevos.
-  // Re-guardar regenera titleTokens, así que también arregla libros
-  // que estaban en BBDD pero con tokens obsoletos.
   await saveBooksToDB(toShow, lang).catch(() => {});
 
   return [...fromDb, ...toShow].slice(0, maxResults);
