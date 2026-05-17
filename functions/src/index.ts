@@ -1,43 +1,17 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-import {setGlobalOptions} from "firebase-functions";
-import {onRequest} from "firebase-functions/https";
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-// import { onRequest } from "firebase-functions/v2/https";
+import { setGlobalOptions } from "firebase-functions";
+import { onRequest } from "firebase-functions/https";
 import axios from "axios";
 import * as cheerio from "cheerio";
+
+// Límite de contenedores concurrentes (control de coste).
+setGlobalOptions({ maxInstances: 10 });
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
   "AppleWebKit/537.36 (KHTML, like Gecko) " +
   "Chrome/120.0.0.0 Safari/537.36";
+
+type Candidate = { url: string; title: string; author: string };
 
 function slugify(text: string): string {
   return text
@@ -80,6 +54,63 @@ function cleanText(text: string): string {
     .trim();
 }
 
+// Normaliza para comparar: sin acentos, minúsculas, solo alfanumérico.
+function norm(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokens(s: string): string[] {
+  return norm(s).split(" ").filter((w) => w.length >= 3);
+}
+
+// Lee TODOS los libros de la página de resultados completa, con su autor.
+function collectCandidates(html: string): Candidate[] {
+  const $ = cheerio.load(html);
+  const out: Candidate[] = [];
+  $(".datalist--img li").each((_, li) => {
+    const $li = $(li);
+    const $book = $li.find('a[href*="/libro/"]').first();
+    const href = $book.attr("href");
+    if (!href) return;
+    out.push({
+      url: absoluteLecturaliaUrl(href),
+      title: cleanText($book.text()),
+      author: cleanText($li.find('a[href*="/autor/"]').first().text()),
+    });
+  });
+  return out;
+}
+
+// Puntúa un candidato: parecido de título + el autor como desempate fuerte.
+function scoreCandidate(
+  c: Candidate,
+  reqTitle: string,
+  reqAuthor: string
+): number {
+  const candTitle = tokens(c.title);
+  const reqTitleTokens = tokens(reqTitle);
+  const overlap = reqTitleTokens.length
+    ? reqTitleTokens.filter((w) => candTitle.includes(w)).length /
+      reqTitleTokens.length
+    : 0;
+
+  let score = norm(c.title) === norm(reqTitle) ? 1 : overlap;
+
+  if (reqAuthor) {
+    const candAuthor = tokens(c.author);
+    const authorMatch = tokens(reqAuthor).some((w) => candAuthor.includes(w));
+    score += authorMatch ? 1 : -0.5;
+  }
+
+  return score;
+}
+
 function extractSynopsis(html: string): string {
   const $ = cheerio.load(html);
 
@@ -92,42 +123,37 @@ function extractSynopsis(html: string): string {
 
   if (!heading.length) return "";
 
+  // La sinopsis son los <p> hermanos del encabezado. Los anuncios
+  // (div.promo) y el bloque de premios/participantes van en <div>, no en <p>.
   const paragraphs: string[] = [];
-  let buffer = "";
+  let started = false;
 
-  let node = heading[0].nextSibling;
-
-  while (node) {
-    if (node.type === "tag") {
-      const el = $(node);
-      const tag = node.tagName?.toLowerCase();
-
-      if (["h1", "h2", "h3", "h4"].includes(tag)) break;
-
-      if (tag === "br") {
-        const text = cleanText(buffer);
-        if (text) paragraphs.push(text);
-        buffer = "";
-      } else if (!el.hasClass("promo")) {
-        const text = cleanText(el.text());
-        if (text) paragraphs.push(text);
-      }
+  heading.parent().children().each((_, el) => {
+    if (el === heading[0]) {
+      started = true;
+      return;
     }
+    if (!started) return;
 
-    if (node.type === "text") {
-      buffer += ` ${node.data}`;
+    const tag = (el.tagName || "").toLowerCase();
+    if (["h1", "h2", "h3", "h4"].includes(tag)) {
+      started = false; // siguiente encabezado → fin de la sinopsis
+      return;
     }
+    if (tag !== "p") return; // ignora div.promo y el div de premios/participantes
 
-    node = node.nextSibling;
-  }
+    const $el = $(el);
+    if ($el.hasClass("promo") || $el.hasClass("participate")) return;
 
-  const last = cleanText(buffer);
-  if (last) paragraphs.push(last);
+    const text = cleanText($el.text());
+    if (!text) return;
+    // Corte defensivo: pie de ficha en cualquiera de sus dos redacciones.
+    if (/han? participado en esta ficha/i.test(text)) return;
 
-  return [...new Set(paragraphs)]
-    .filter((p) => !p.includes("Ha participado en esta ficha"))
-    .join("\n\n")
-    .trim();
+    paragraphs.push(text);
+  });
+
+  return [...new Set(paragraphs)].join("\n\n").trim();
 }
 
 export const scrapeSynopsis = onRequest(
@@ -146,45 +172,43 @@ export const scrapeSynopsis = onRequest(
       return;
     }
 
-    const queries = author ? [title, `${title} ${author}`] : [title];
+    // /libros/s/{slug} lista TODOS los libros que coinciden con el término,
+    // cada uno con su autor. Se busca solo por título — añadir el autor a la
+    // query la rompe. Si el título completo no da nada, se reintenta sin el
+    // subtítulo (lo que va tras ":").
+    const queries = [title];
+    const colon = title.indexOf(":");
+    if (colon > 0) queries.push(title.slice(0, colon).trim());
 
+    let candidates: Candidate[] = [];
     for (const query of queries) {
-      const slug = slugify(query);
-      const searchUrl = `https://www.lecturalia.com/s/${slug}`;
-      const searchHtml = await fetchHtml(searchUrl);
+      const html = await fetchHtml(
+        `https://www.lecturalia.com/libros/s/${slugify(query)}`
+      );
+      if (html) candidates = collectCandidates(html);
+      if (candidates.length) break;
+    }
 
-      if (!searchHtml) continue;
+    // Ordenar por parecido de título + autor (el autor desempata).
+    const ranked = candidates
+      .map((c) => ({ c, score: scoreCandidate(c, title, author) }))
+      .filter((x) => x.score > 0.4)
+      .sort((a, b) => b.score - a.score);
 
-      const $s = cheerio.load(searchHtml);
-      const href = $s('a[href*="/libro/"]').first().attr("href");
-
-      if (!href) continue;
-
-      const bookUrl = absoluteLecturaliaUrl(href);
-      const bookHtml = await fetchHtml(bookUrl);
-
+    // Probar los mejores candidatos hasta dar con una sinopsis.
+    for (const { c } of ranked.slice(0, 3)) {
+      const bookHtml = await fetchHtml(c.url);
       if (!bookHtml) continue;
-
       const synopsis = extractSynopsis(bookHtml);
-
       if (synopsis) {
-        res.json({
-          synopsis,
-          source: "lecturalia",
-          bookUrl,
-        });
+        res.json({ synopsis, source: "lecturalia", bookUrl: c.url });
         return;
       }
     }
 
-    res.json({
-      synopsis: "",
-      source: "lecturalia",
-    });
+    res.json({ synopsis: "", source: "lecturalia" });
   }
 );
 
 // Sistema de follow (callable functions).
 export * from "./follows";
-
-

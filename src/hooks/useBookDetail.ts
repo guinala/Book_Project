@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 // import { extractSynopsis, getWork } from "@/services/api/openLibraryApi";  
 import { getCoverUrl } from "@/utils/coverImage";
-import { getSynopsisFromDB, saveSynopsisToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
+import { getBookFromDB, getSynopsisFromDB, saveSynopsisToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { logger } from "@/utils/logger";
 import { toWorkKey } from "@/utils/bookPaths";
 import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
@@ -88,13 +88,16 @@ export function useBookDetail(id: string): {
 
     const load = async () => {
       // Firestore
+      const dbBook = await getBookFromDB(workKey, lang);
       const cached = await getSynopsisFromDB(workKey, lang);
       const synopsis = cached !== null && cached.trim().length > 0
         ? cached
         : await (async () => {
             // Obtener de Google Books
-            let langIsbn = bookFromState?.isbns?.[lang];
-            let langTitle = bookFromState?.titles?.[lang];
+            // let langIsbn = bookFromState?.isbns?.[lang];
+            // let langTitle = bookFromState?.titles?.[lang];
+            let langIsbn = dbBook?.isbns?.[lang] ?? bookFromState?.isbns?.[lang];
+            let langTitle = dbBook?.titles?.[lang] ?? bookFromState?.titles?.[lang];
 
             if (!langIsbn || !langTitle) {
               const edition = await fetchWorkEditionByLang(workKey, lang);
@@ -114,8 +117,8 @@ export function useBookDetail(id: string): {
             // );
             const fetched = await fetchSynopsisRace({
               title: langTitle ?? workKey,
-              isbn: langIsbn ?? bookFromState?.isbn,
-              author: bookFromState?.authors?.[0],
+              isbn: langIsbn ?? dbBook?.isbn ?? bookFromState?.isbn,
+              author: dbBook?.authors?.[0] ?? bookFromState?.authors?.[0],
               lang,
               signal: controller.signal,
               workKey,   
@@ -131,17 +134,28 @@ export function useBookDetail(id: string): {
 
       setBook({
         key: workKey,
-        cover_url: bookFromState?.cover_url ?? (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
-        genre: bookFromState?.genre ?? '',
-        genre2: bookFromState?.genre2,
-        title: bookFromState?.titles?.[lang] ?? bookFromState?.title ?? '',
-        author: bookFromState?.authors?.[0] ?? '',
-        authorKey: bookFromState?.authorKeys?.[0],
-        rating: bookFromState?.rating ?? 0,
-        reviewCount: bookFromState?.ratingCount ?? 0,
-        pages: bookFromState?.pages ?? 0,
-        year: bookFromState?.first_publish_year ?? 0,
-        isbn: bookFromState?.isbns?.[lang] ?? bookFromState?.isbn ?? '',
+        cover_url:
+          dbBook?.cover_url ??
+          bookFromState?.cover_url ??
+          (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
+        genre: dbBook?.genre ?? bookFromState?.genre ?? '',
+        genre2: dbBook?.genre2 ?? bookFromState?.genre2,
+        title:
+          dbBook?.title ??
+          bookFromState?.titles?.[lang] ??
+          bookFromState?.title ??
+          '',
+        author: dbBook?.authors?.[0] ?? bookFromState?.authors?.[0] ?? '',
+        authorKey: dbBook?.authorKeys?.[0] ?? bookFromState?.authorKeys?.[0],
+        rating: dbBook?.rating ?? bookFromState?.rating ?? 0,
+        reviewCount: dbBook?.ratingCount ?? bookFromState?.ratingCount ?? 0,
+        pages: dbBook?.pages ?? bookFromState?.pages ?? 0,
+        year: dbBook?.first_publish_year ?? bookFromState?.first_publish_year ?? 0,
+        isbn:
+          dbBook?.isbn ??
+          bookFromState?.isbns?.[lang] ??
+          bookFromState?.isbn ??
+          '',
         synopsis,
         reviews: FALLBACK_REVIEWS,
         authorInfo: { name: '', photoUrl: '', bio: '', books: [] },
@@ -153,8 +167,8 @@ export function useBookDetail(id: string): {
       getSynopsisFromDB(workKey, otherLang).then(async otherCached => {
         if (otherCached && otherCached.trim().length > 0) return;
         // Resolver título/isbn del otro idioma si faltan
-        let otherTitle = bookFromState?.titles?.[otherLang];
-        let otherIsbn = bookFromState?.isbns?.[otherLang];
+        let otherTitle = dbBook?.titles?.[otherLang] ?? bookFromState?.titles?.[otherLang];
+        let otherIsbn = dbBook?.isbns?.[otherLang] ?? bookFromState?.isbns?.[otherLang];
         if (!otherTitle || !otherIsbn) {
           const edition = await fetchWorkEditionByLang(workKey, otherLang);
           if (edition?.title) {
@@ -169,7 +183,7 @@ export function useBookDetail(id: string): {
         const otherSynopsis = await fetchSynopsisRace({
           title: otherTitle,
           isbn: otherIsbn,
-          author: bookFromState?.authors?.[0],
+          author: dbBook?.authors?.[0] ?? bookFromState?.authors?.[0],
           lang: otherLang,
           signal: controller.signal,
           workKey
