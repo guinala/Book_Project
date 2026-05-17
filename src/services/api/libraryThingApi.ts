@@ -22,7 +22,7 @@ function parseCKResponse(xml: string): LTWorkCK | null {
 }
 
 function pickSynopsis(ck: LTWorkCK, lang: string): string {
-  const langIso = getLangIso3Letters(lang); // 'es' → 'spa', 'en' → 'eng'
+  const langIso = getLangIso3Letters(lang); 
 
   for (const fieldName of SYNOPSIS_FIELDS) {
     const field = ck.fields.find(f => f.name === fieldName);

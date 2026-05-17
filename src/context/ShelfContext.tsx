@@ -62,7 +62,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
         const result = await fetchWorkEditionByLang(book.key, lang);
         if (!result) return null;
 
-        // Actualizar colección de libros y lirbos añadidos a estantería
+        // Actualizar colección de libros y los añadidos a estantería
         updateBookTitleToDB(book.key, result.title, lang, result.isbn)
           .catch(err => console.warn('[ShelfEnrich] Books update failed:', err));
         updateShelfBookTitleToDB(uid, book.key, result.title, lang, result.isbn)

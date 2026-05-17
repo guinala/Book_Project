@@ -11,7 +11,7 @@ const BOOKS_COLLECTION = "Books";
 type SynopsisField = string | Record<string, string>;
 
 function encodeKey(workKey: string): string {
-  // Ejemplo: "/works/OL123W" => "OL123W"
+  // "/works/OL123W" => "OL123W"
   return workKey.split("/").at(-1) ?? workKey;
 }
 
@@ -28,26 +28,27 @@ export async function getExploreBooksFromDB(
   const books = await getDocs(q);
   if (books.size < minCount) return null;
 
-  return books.docs.map((d) => {
-    const data = d.data();
-    return {
-      key: data.key,
-      title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-      titles: data.titles ?? {},
-      authors: data.authors,
-      authorKeys: data.authorKeys ?? undefined,
-      first_publish_year: data.first_publish_year,
-      cover_id: data.cover_id,
-      cover_url: data.cover_url ?? undefined,
-      edition_count: data.edition_count,
-      genre: data.genre ?? undefined,
-      rating: data.rating ?? undefined,
-      ratingCount: data.ratingCount ?? undefined,
-      isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-      isbns: data.isbns ?? undefined,
-      pages: data.pages ?? undefined,
-    } as Book;
-  });
+  // return books.docs.map((d) => {
+  //   const data = d.data();
+  //   return {
+  //     key: data.key,
+  //     title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
+  //     titles: data.titles ?? {},
+  //     authors: data.authors,
+  //     authorKeys: data.authorKeys ?? undefined,
+  //     first_publish_year: data.first_publish_year,
+  //     cover_id: data.cover_id,
+  //     cover_url: data.cover_url ?? undefined,
+  //     edition_count: data.edition_count,
+  //     genre: data.genre ?? undefined,
+  //     rating: data.rating ?? undefined,
+  //     ratingCount: data.ratingCount ?? undefined,
+  //     isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
+  //     isbns: data.isbns ?? undefined,
+  //     pages: data.pages ?? undefined,
+  //   } as Book;
+  // });
+  return books.docs.map((d) => mapBookDoc(d.data(), lang));
 }
 
 export async function saveBooksToDB(
@@ -68,6 +69,8 @@ export async function saveBooksToDB(
         cover_url: book.cover_url ?? null,
         edition_count: book.edition_count,
         genre: book.genre ?? null,
+        genre2: book.genre2 ?? null,
+        topics: book.topics ?? [],
         rating: book.rating ?? null,
         ratingCount: book.ratingCount ?? null,
         isbn: book.isbn ?? null,
@@ -110,28 +113,31 @@ export async function getAuthorBooksFromDB(
     limit(10)
   );
   const books = await getDocs(q);
+  // return books.docs
+  //   .map(d => {
+  //     const data = d.data();
+  //     return {
+  //       key: data.key,
+  //       title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
+  //       authors: data.authors,
+  //       authorKeys: data.authorKeys ?? undefined,
+  //       first_publish_year: data.first_publish_year,
+  //       cover_id: data.cover_id,
+  //       cover_url: data.cover_url ?? undefined,
+  //       edition_count: data.edition_count,
+  //       genre: data.genre ?? undefined,
+  //       rating: data.rating ?? undefined,
+  //       ratingCount: data.ratingCount ?? undefined,
+  //       isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
+  //       pages: data.pages ?? undefined,
+  //       titles: data.titles ?? {},
+  //       isbns: data.isbns ?? undefined,
+  //     } as Book;
+  //   })
+  //   .filter(b => b.title.toLowerCase() !== excludeTitle.toLowerCase());
   return books.docs
-    .map(d => {
-      const data = d.data();
-      return {
-        key: data.key,
-        title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-        authors: data.authors,
-        authorKeys: data.authorKeys ?? undefined,
-        first_publish_year: data.first_publish_year,
-        cover_id: data.cover_id,
-        cover_url: data.cover_url ?? undefined,
-        edition_count: data.edition_count,
-        genre: data.genre ?? undefined,
-        rating: data.rating ?? undefined,
-        ratingCount: data.ratingCount ?? undefined,
-        isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-        pages: data.pages ?? undefined,
-        titles: data.titles ?? {},
-        isbns: data.isbns ?? undefined,
-      } as Book;
-    })
-    .filter(b => b.title.toLowerCase() !== excludeTitle.toLowerCase());
+  .map((d) => mapBookDoc(d.data(), lang))
+  .filter((b) => b.title.toLowerCase() !== excludeTitle.toLowerCase());
 }
 
 
@@ -204,39 +210,41 @@ export async function getRecommendationsFromDB(
     collection(db, BOOKS_COLLECTION),
     where("genre", "==", genre),
     where("langs", "array-contains", lang),
-    limit(minCount + 1) //En el filtrado se excliye el libro actual, +1 para compensar
+    limit(minCount + 1) // En el filtrado se excliye el libro actual, +1 para compensar
   );
 
   const doc = await getDocs(q);
+  // const books = doc.docs
+  //   .map((d) => {
+  //     const data = d.data();
+  //     return {
+  //       key: data.key,
+  //       title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
+  //       titles: data.titles ?? {},
+  //       authors: data.authors,
+  //       authorKeys: data.authorKeys ?? undefined,
+  //       first_publish_year: data.first_publish_year,
+  //       cover_id: data.cover_id,
+  //       cover_url: data.cover_url ?? undefined,
+  //       edition_count: data.edition_count,
+  //       genre: data.genre ?? undefined,
+  //       rating: data.rating ?? undefined,
+  //       ratingCount: data.ratingCount ?? undefined,
+  //       isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
+  //       isbns: data.isbns ?? undefined,
+  //       pages: data.pages ?? undefined,
+  //     } as Book;
+  //   })
+  //   .filter((b) => b.key !== excludeKey);
   const books = doc.docs
-    .map((d) => {
-      const data = d.data();
-      return {
-        key: data.key,
-        title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-        titles: data.titles ?? {},
-        authors: data.authors,
-        authorKeys: data.authorKeys ?? undefined,
-        first_publish_year: data.first_publish_year,
-        cover_id: data.cover_id,
-        cover_url: data.cover_url ?? undefined,
-        edition_count: data.edition_count,
-        genre: data.genre ?? undefined,
-        rating: data.rating ?? undefined,
-        ratingCount: data.ratingCount ?? undefined,
-        isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-        isbns: data.isbns ?? undefined,
-        pages: data.pages ?? undefined,
-      } as Book;
-    })
-    .filter((b) => b.key !== excludeKey);
+  .map((d) => mapBookDoc(d.data(), lang))
+  .filter((b) => b.key !== excludeKey);
 
   if (books.length < minCount) return null;
   return books;
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
+// Helpers
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapBookDoc(data: Record<string, any>, lang: string): Book {
   return {
@@ -250,6 +258,8 @@ function mapBookDoc(data: Record<string, any>, lang: string): Book {
     cover_url: data.cover_url ?? undefined,
     edition_count: data.edition_count,
     genre: data.genre ?? undefined,
+    genre2: data.genre2 ?? undefined,
+    topics: data.topics ?? undefined,
     rating: data.rating ?? undefined,
     ratingCount: data.ratingCount ?? undefined,
     isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
@@ -258,8 +268,7 @@ function mapBookDoc(data: Record<string, any>, lang: string): Book {
   };
 }
 
-// ── Queries para secciones de Explore ────────────────────────────────────────
-
+// Queries para Explore
 export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -440,13 +449,13 @@ export async function searchBooksFromDB(
   lang: string,
   maxResults = 8
 ): Promise<Book[]> {
-  // misma tokenización que los títulos: normaliza, minLength, stopwords
+
   const words = buildTitleTokens(queryText);
   if (words.length === 0) return [];
 
   const collectionRef = collection(db, BOOKS_COLLECTION);
   const tokenField = `titleTokens.${lang}`;
-  const FETCH_LIMIT = 40; // traer de más para poder rankear en cliente
+  const FETCH_LIMIT = 40; 
 
   const constraints =
     words.length === 1
@@ -465,7 +474,7 @@ export async function searchBooksFromDB(
     return { book: mapBookDoc(data, lang), score };
   });
 
-  // los que casan más palabras del query, primero
+  // Primero los que reúnen más coincidencias
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, maxResults).map((s) => s.book);
 }
@@ -477,14 +486,13 @@ export async function searchBooksWithFallback(
   maxResults = 8,
   signal?: AbortSignal
 ): Promise<Book[]> {
-  // Query sin palabras con significado (vacío o solo stopwords) → nada que buscar
-  if (buildTitleTokens(queryText).length === 0) return [];
+
+  if (buildTitleTokens(queryText).length === 0) return []; // Solo stopwords o palabras vacías
   const fromDb = await searchBooksFromDB(queryText, lang, maxResults);
 
-  // 3 o más resultados en BBDD → cubierta, no se consulta la API
   if (fromDb.length > 2) return fromDb;
 
-  // BBDD con 2 o menos → ampliar con Open Library
+  // <= 2 -> OpenLibrary
   const dbKeys = new Set(fromDb.map((b) => b.key));
   const remaining = maxResults - fromDb.length;
   const effectiveSignal = signal ?? new AbortController().signal;
@@ -505,8 +513,6 @@ export async function searchBooksWithFallback(
     );
     fromApi = res.books;
   } catch {
-    // OL puede fallar: 422 por query corta, rate limit, red caída...
-    // No reventamos la búsqueda — degradamos a lo que haya en BBDD.
     return fromDb;
   }
 
@@ -514,9 +520,6 @@ export async function searchBooksWithFallback(
   const toShow = apiUnique.slice(0, remaining);
   if (toShow.length === 0) return fromDb;
 
-  // Persistir en Books: merge sobre existentes, crea los nuevos.
-  // Re-guardar regenera titleTokens, así que también arregla libros
-  // que estaban en BBDD pero con tokens obsoletos.
   await saveBooksToDB(toShow, lang).catch(() => {});
 
   return [...fromDb, ...toShow].slice(0, maxResults);

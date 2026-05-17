@@ -1,29 +1,23 @@
-// src/components/ActivityItem/ActivityItem.tsx
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { ActivityItem as ActivityItemType } from "@/types/UserProfile";
 import StarRating from "@/components/common/StarRating";
 import "./ActivityItem.scss";
 import { encodeKey } from "@/utils/bookPaths";
 
-const EVENT_LABELS: Record<string, string> = {
-  reading_started: "Empezó a leer",
-  book_finished: "Terminó de leer",
-  progress: "Actualizó su progreso",
-  review: "Escribió una reseña",
-  list_created: "Creó una lista",
-  watchlist_add: "Añadió a su lista",
-  book_rated: "Calificó un libro"
-};
-
-function timeAgo(timestamp: { toDate: () => Date }): string {
+function timeAgo(timestamp: { toDate: () => Date }, t: TFunction): string {
   const now = Date.now();
   const then = timestamp.toDate().getTime();
   const diff = Math.floor((now - then) / 1000);
-  if (diff <= 0) return "hace unos segundos";
-  if (diff < 60) return "hace unos segundos";
-  if (diff < 3600) return `hace ${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`;
-  return `hace ${Math.floor(diff / 86400)}d`;
+  if (diff < 60) return t("profile.activity.time.secondsAgo");
+  if (diff < 3600) {
+    return t("profile.activity.time.minutesAgo", { value: Math.floor(diff / 60) });
+  }
+  if (diff < 86400) {
+    return t("profile.activity.time.hoursAgo", { value: Math.floor(diff / 3600) });
+  }
+  return t("profile.activity.time.daysAgo", { value: Math.floor(diff / 86400) });
 }
 
 type ActivityItemProps = {
@@ -31,6 +25,7 @@ type ActivityItemProps = {
 };
 
 export default function ActivityItem({ item }: ActivityItemProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCoverClick = item.bookId
@@ -58,9 +53,11 @@ export default function ActivityItem({ item }: ActivityItemProps) {
       <div className="activity-item__info">
         <div className="activity-item__header">
           <span className="activity-item__event">
-            {EVENT_LABELS[item.type] ?? item.type}
+            {t(`profile.activity.events.${item.type}`, { defaultValue: item.type })}
           </span>
-          <span className="activity-item__time">{timeAgo(item.createdAt)}</span>
+          <span className="activity-item__time">
+            {timeAgo(item.createdAt, t)}
+          </span>
         </div>
 
         {item.bookTitle && (

@@ -27,7 +27,7 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
 
   const categoryBooks = books[activeFilter];
 
-  // +1 slot for the add-book card so it always occupies its own fixed position
+  // Slot extra (+1) para que la card de añadir libro siempre tenga una posición fija
   const totalPages = Math.ceil((categoryBooks.length + (readOnly ? 0 : 1)) / PAGE_SIZE);
   const isLastPage = page === totalPages - 1;
 

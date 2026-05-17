@@ -48,7 +48,7 @@ export function useExploreSection(
     } finally {
       setLoading(false);
     }
-  // params es un objeto nuevo en cada render; desestructuramos las deps relevantes
+  // Como params es un objeto nuevo en cada render, se desestructuran las deps relevantes
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     disabled,

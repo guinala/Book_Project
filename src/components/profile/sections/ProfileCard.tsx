@@ -1,4 +1,4 @@
-// src/components/ProfileCard/ProfileCard.tsx
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { UserMinimal } from "@/types/UserProfile";
 import "./ProfileCard.scss";
@@ -9,8 +9,10 @@ type ProfileCardProps = {
 };
 
 export default function ProfileCard({ user, onClose }: ProfileCardProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const displayName = user.name || user.username || "Usuario";
+  const displayName =
+    user.name || user.username || t("profile.userFallback");
 
   const handleClick = () => {
     onClose?.();

@@ -21,7 +21,7 @@
     z-index: 50;
   }
 
-  // ── Cover ────────────────────────────────────────────────
+  // Cover 
   &__cover-wrapper {
     position: relative;
     width: 100%;
@@ -72,7 +72,7 @@
     font-family: var(--font-main);
   }
 
-  // ── Save button + dropdown ───────────────────────────────
+  // Save button + dropdown 
   &__save-wrapper {
     position: absolute;
     top: var(--space-4);
@@ -197,7 +197,7 @@
   }
 
 
-  // ── Info ─────────────────────────────────────────────────
+  // Info 
   &__info {
     display: flex;
     flex-direction: column;

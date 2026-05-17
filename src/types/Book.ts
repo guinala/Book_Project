@@ -9,6 +9,8 @@ export type Book = {
   cover_url?: string;
   edition_count: number;
   genre?: string;
+  genre2?: string;
+  topics?: string[];
   rating?: number;       
   ratingCount?: number;
   isbn?: string;

@@ -184,3 +184,7 @@ export const scrapeSynopsis = onRequest(
   }
 );
 
+// Sistema de follow (callable functions).
+export * from "./follows";
+
+

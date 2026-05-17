@@ -1,4 +1,4 @@
-// src/components/ProfileHeader/ProfileHeader.tsx
+import { useTranslation } from "react-i18next";
 import ShareProfileButton from "../ShareProfileButton";
 import "./ProfileHeader.scss";
 import type { UserFullProfile } from "@/types/UserProfile";
@@ -7,26 +7,48 @@ type ProfileHeaderProps = {
   profile: UserFullProfile;
   isOwnProfile: boolean;
   isFollowing: boolean;
+  hasPendingRequest: boolean;
   booksReadCount: number;
   onFollow: () => void;
   onUnfollow: () => void;
+  onCancelRequest: () => void;
   onFollowersClick: () => void;
   onFollowingClick: () => void;
   onEditClick: () => void;
+  onRequestsClick: () => void;
 };
 
 export default function ProfileHeader({
   profile,
   isOwnProfile,
   isFollowing,
+  hasPendingRequest,
   booksReadCount,
   onFollow,
   onUnfollow,
+  onCancelRequest,
   onFollowersClick,
   onFollowingClick,
   onEditClick,
+  onRequestsClick
 }: ProfileHeaderProps) {
+  const { t } = useTranslation();
   const displayName = `${profile.name} ${profile.surname}`.trim() || profile.email;
+
+  // Siguiendo / solicitado / sin relacion
+  let followLabel = t("profile.header.follow");
+  let followModifierClass = "profile-header__btn--follow";
+  let followHandler = onFollow;
+
+  if (isFollowing) {
+    followLabel = t("profile.header.followingState");
+    followModifierClass = "profile-header__btn--following";
+    followHandler = onUnfollow;
+  } else if (hasPendingRequest) {
+    followLabel = t("profile.header.requested");
+    followModifierClass = "profile-header__btn--pending";
+    followHandler = onCancelRequest;
+  }
 
   return (
     <div className="profile-header">
@@ -41,7 +63,7 @@ export default function ProfileHeader({
       >
         {isOwnProfile && (
           <div className="profile-header__banner-overlay">
-            <span>Cambiar portada</span>
+            <span>{t("profile.header.changeCover")}</span>
           </div>
         )}
       </div>
@@ -66,7 +88,7 @@ export default function ProfileHeader({
               )}
               {isOwnProfile && (
                 <div className="profile-header__avatar-overlay">
-                  <span>Editar</span>
+                  <span>{t("profile.header.editPhoto")}</span>
                 </div>
               )}
             </div>
@@ -85,7 +107,9 @@ export default function ProfileHeader({
               className="profile-header__stat"
               onClick={onFollowersClick}
             >
-              <span className="profile-header__stat-label">Seguidores</span>
+              <span className="profile-header__stat-label">
+                {t("profile.header.followers")}
+              </span>
               <span className="profile-header__stat-value">
                 {profile.followersCount}
               </span>
@@ -98,7 +122,9 @@ export default function ProfileHeader({
               className="profile-header__stat"
               onClick={onFollowingClick}
             >
-              <span className="profile-header__stat-label">Seguidos</span>
+              <span className="profile-header__stat-label">
+                {t("profile.header.following")}
+              </span>
               <span className="profile-header__stat-value">
                 {profile.followingCount}
               </span>
@@ -107,7 +133,9 @@ export default function ProfileHeader({
             <div className="profile-header__stat-divider" aria-hidden="true" />
 
             <div className="profile-header__stat">
-              <span className="profile-header__stat-label">Libros acabados</span>
+              <span className="profile-header__stat-label">
+                {t("profile.header.booksRead")}
+              </span>
               <span className="profile-header__stat-value">{booksReadCount}</span>
             </div>
           </div>
@@ -118,24 +146,29 @@ export default function ProfileHeader({
               name={displayName}
             />
             {isOwnProfile ? (
-              <button
-                type="button"
-                className="profile-header__btn profile-header__btn--edit"
-                onClick={onEditClick}
-              >
-                Editar perfil
-              </button>
+              <>
+                {profile.isPublic === false && (
+                  <button
+                    type="button"
+                    className="profile-header__btn profile-header__btn--edit"
+                    onClick={onRequestsClick}
+                  >{t("profile.header.requests")}</button>
+                )}
+                <button
+                  type="button"
+                  className="profile-header__btn profile-header__btn--edit"
+                  onClick={onEditClick}
+                >
+                  {t("profile.header.editProfile")}
+                </button>
+              </>
             ) : (
               <button
                 type="button"
-                className={`profile-header__btn ${
-                  isFollowing
-                    ? "profile-header__btn--following"
-                    : "profile-header__btn--follow"
-                }`}
-                onClick={isFollowing ? onUnfollow : onFollow}
+                className={`profile-header__btn ${followModifierClass}`}
+                onClick={followHandler}
               >
-                {isFollowing ? "Siguiendo" : "Seguir"}
+                {followLabel}
               </button>
             )}
           </div>

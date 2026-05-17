@@ -39,7 +39,7 @@ export default function ShareProfileButton({
       await navigator.clipboard.writeText(url);
       setToastVisible(true);
     } catch {
-      /*si*/
+      /* Error */
     }
   }, [username, name, t]);
 

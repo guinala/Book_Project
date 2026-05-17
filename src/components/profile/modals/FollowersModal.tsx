@@ -1,5 +1,5 @@
-// src/components/FollowersModal/FollowersModal.tsx
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getFollowers, getFollowing } from "@/services/firebase/firebaseFollows";
 import type { UserMinimal } from "@/types/UserProfile";
 import ProfileCard from "@/components/profile/sections/ProfileCard";
@@ -17,6 +17,7 @@ export default function FollowersModal({
   mode,
   onClose,
 }: FollowersModalProps) {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<UserMinimal[]>([]);
   const [loading, setLoading] = useState(true);
   const [prevDeps, setPrevDeps] = useState({ userId, mode });
@@ -49,13 +50,15 @@ export default function FollowersModal({
       <div className="followers-modal__box">
         <div className="followers-modal__header">
           <h2 className="followers-modal__title">
-            {mode === "followers" ? "Seguidores" : "Seguidos"}
+            {mode === "followers"
+              ? t("profile.followList.followersTitle")
+              : t("profile.followList.followingTitle")}
           </h2>
           <button
             type="button"
             className="followers-modal__close"
             onClick={onClose}
-            aria-label="Cerrar"
+            aria-label={t("profile.followList.closeAria")}
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -63,13 +66,15 @@ export default function FollowersModal({
 
         <div className="followers-modal__list">
           {loading && (
-            <p className="followers-modal__loading">Cargando...</p>
+            <p className="followers-modal__loading">
+              {t("profile.followList.loading")}
+            </p>
           )}
           {!loading && users.length === 0 && (
             <p className="followers-modal__empty">
               {mode === "followers"
-                ? "Aún no tienes seguidores"
-                : "Aún no sigues a nadie"}
+                ? t("profile.followList.emptyFollowers")
+                : t("profile.followList.emptyFollowing")}
           </p>
           )}
           {!loading &&

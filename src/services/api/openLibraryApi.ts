@@ -3,7 +3,7 @@ import type { Book } from "@/types/Book";
 import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryWork, WikiSummary, WorkEditionsResponse } from "@/types/OpenLibrary";
 import { openLibraryClient } from "@/services/api/apiConnections";
 import { getLangIso3Letters } from "@/utils/langConversion";
-import { detectGenre } from "@/utils/genreUtils";
+import { genreFieldsFromSubjects } from "@/utils/genreUtils";
 import { getCoverUrl } from "@/utils/coverImage";
 
 const FANTASY_FIELDS = [
@@ -68,7 +68,7 @@ export async function fetchFantasyBooks(
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
-      genre: detectGenre(doc.subject),
+      ...genreFieldsFromSubjects(doc.subject),
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
@@ -109,7 +109,7 @@ export async function searchBooks(
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
-      genre: detectGenre(doc.subject),
+      ...genreFieldsFromSubjects(doc.subject),
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
@@ -155,7 +155,7 @@ export async function fetchBookByTitle(
     cover_id,
     cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
     edition_count: doc.edition_count ?? 0,
-    genre: detectGenre(doc.subject),
+    ...genreFieldsFromSubjects(doc.subject),
     rating: doc.ratings_average,
     ratingCount: doc.ratings_count,
   };
@@ -225,7 +225,7 @@ export async function fetchAuthorBooks(
       first_publish_year: doc.first_publish_year ?? 0,
       cover_id,
       cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
-      genre: detectGenre(doc.subject),
+      ...genreFieldsFromSubjects(doc.subject),
       edition_count: doc.edition_count ?? 0,
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
@@ -265,6 +265,7 @@ export async function fetchBooksByGenre(
       cover_id: bestEdition?.cover_i ?? doc.cover_i ?? null,
       edition_count: doc.edition_count ?? 0,
       genre,
+      topics: doc.subject ?? [],
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
@@ -299,7 +300,7 @@ export async function fetchWorkEditionByLang(
   workKey: string,
   lang: string
 ): Promise<{ title: string; isbn?: string } | null> {
-  const langPath = `/languages/${getLangIso3Letters(lang)}`;  // reutiliza helper existente
+  const langPath = `/languages/${getLangIso3Letters(lang)}`;  
 
   try {
     const { data } = await openLibraryClient.get<WorkEditionsResponse>(

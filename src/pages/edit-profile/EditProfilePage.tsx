@@ -68,13 +68,11 @@ export default function EditProfilePage() {
 
     const normalized = normalizeUsername(usernameValue);
 
-    // Vacío o sin cambios respecto al original → ni "disponible" ni "tomado"
     if (normalized === "" || normalized === normalizeUsername(originalUsername)) {
       setUsernameStatus("idle");
       return;
     }
 
-    // Regex inválido → react-hook-form ya muestra el error, no duplicamos
     if (!isValidUsername(normalized)) {
       setUsernameStatus("idle");
       return;
@@ -217,7 +215,6 @@ export default function EditProfilePage() {
 
       <form className="edit-profile__form" onSubmit={handleSubmit(onSubmit)}>
 
-        {/* Banner */}
         <div className="edit-profile__field">
           <span className="edit-profile__label">Foto de portada</span>
           <div className="edit-profile__banner-upload">
@@ -244,7 +241,6 @@ export default function EditProfilePage() {
           </div>
         </div>
 
-        {/* Avatar */}
         <div className="edit-profile__field">
           <span className="edit-profile__label">Foto de perfil</span>
           <div className="edit-profile__photo-upload">
@@ -272,7 +268,6 @@ export default function EditProfilePage() {
           </div>
         </div>
 
-        {/* Fields */}
         <div className="edit-profile__fields">
           <div className="edit-profile__row">
             <div className="edit-profile__field">
