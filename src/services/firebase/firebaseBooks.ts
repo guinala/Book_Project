@@ -593,4 +593,13 @@ export async function searchBooksInDB(
   }
 }
 
+export async function getBookFromDB(
+  workKey: string,
+  lang: string
+): Promise<Book | null> {
+  const refDoc = doc(db, BOOKS_COLLECTION, encodeKey(workKey));
+  const document = await getDoc(refDoc);
+  if (!document.exists()) return null;
+  return mapBookDoc(document.data(), lang);
+}
 
