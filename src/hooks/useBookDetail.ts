@@ -133,6 +133,7 @@ export function useBookDetail(id: string): {
         key: workKey,
         cover_url: bookFromState?.cover_url ?? (bookFromState?.cover_id ? getCoverUrl(bookFromState.cover_id) : ''),
         genre: bookFromState?.genre ?? '',
+        genre2: bookFromState?.genre2,
         title: bookFromState?.titles?.[lang] ?? bookFromState?.title ?? '',
         author: bookFromState?.authors?.[0] ?? '',
         authorKey: bookFromState?.authorKeys?.[0],

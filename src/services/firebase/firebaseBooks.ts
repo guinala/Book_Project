@@ -28,26 +28,27 @@ export async function getExploreBooksFromDB(
   const books = await getDocs(q);
   if (books.size < minCount) return null;
 
-  return books.docs.map((d) => {
-    const data = d.data();
-    return {
-      key: data.key,
-      title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-      titles: data.titles ?? {},
-      authors: data.authors,
-      authorKeys: data.authorKeys ?? undefined,
-      first_publish_year: data.first_publish_year,
-      cover_id: data.cover_id,
-      cover_url: data.cover_url ?? undefined,
-      edition_count: data.edition_count,
-      genre: data.genre ?? undefined,
-      rating: data.rating ?? undefined,
-      ratingCount: data.ratingCount ?? undefined,
-      isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-      isbns: data.isbns ?? undefined,
-      pages: data.pages ?? undefined,
-    } as Book;
-  });
+  // return books.docs.map((d) => {
+  //   const data = d.data();
+  //   return {
+  //     key: data.key,
+  //     title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
+  //     titles: data.titles ?? {},
+  //     authors: data.authors,
+  //     authorKeys: data.authorKeys ?? undefined,
+  //     first_publish_year: data.first_publish_year,
+  //     cover_id: data.cover_id,
+  //     cover_url: data.cover_url ?? undefined,
+  //     edition_count: data.edition_count,
+  //     genre: data.genre ?? undefined,
+  //     rating: data.rating ?? undefined,
+  //     ratingCount: data.ratingCount ?? undefined,
+  //     isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
+  //     isbns: data.isbns ?? undefined,
+  //     pages: data.pages ?? undefined,
+  //   } as Book;
+  // });
+  return books.docs.map((d) => mapBookDoc(d.data(), lang));
 }
 
 export async function saveBooksToDB(
@@ -68,6 +69,8 @@ export async function saveBooksToDB(
         cover_url: book.cover_url ?? null,
         edition_count: book.edition_count,
         genre: book.genre ?? null,
+        genre2: book.genre2 ?? null,
+        topics: book.topics ?? [],
         rating: book.rating ?? null,
         ratingCount: book.ratingCount ?? null,
         isbn: book.isbn ?? null,
@@ -110,28 +113,31 @@ export async function getAuthorBooksFromDB(
     limit(10)
   );
   const books = await getDocs(q);
+  // return books.docs
+  //   .map(d => {
+  //     const data = d.data();
+  //     return {
+  //       key: data.key,
+  //       title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
+  //       authors: data.authors,
+  //       authorKeys: data.authorKeys ?? undefined,
+  //       first_publish_year: data.first_publish_year,
+  //       cover_id: data.cover_id,
+  //       cover_url: data.cover_url ?? undefined,
+  //       edition_count: data.edition_count,
+  //       genre: data.genre ?? undefined,
+  //       rating: data.rating ?? undefined,
+  //       ratingCount: data.ratingCount ?? undefined,
+  //       isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
+  //       pages: data.pages ?? undefined,
+  //       titles: data.titles ?? {},
+  //       isbns: data.isbns ?? undefined,
+  //     } as Book;
+  //   })
+  //   .filter(b => b.title.toLowerCase() !== excludeTitle.toLowerCase());
   return books.docs
-    .map(d => {
-      const data = d.data();
-      return {
-        key: data.key,
-        title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-        authors: data.authors,
-        authorKeys: data.authorKeys ?? undefined,
-        first_publish_year: data.first_publish_year,
-        cover_id: data.cover_id,
-        cover_url: data.cover_url ?? undefined,
-        edition_count: data.edition_count,
-        genre: data.genre ?? undefined,
-        rating: data.rating ?? undefined,
-        ratingCount: data.ratingCount ?? undefined,
-        isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-        pages: data.pages ?? undefined,
-        titles: data.titles ?? {},
-        isbns: data.isbns ?? undefined,
-      } as Book;
-    })
-    .filter(b => b.title.toLowerCase() !== excludeTitle.toLowerCase());
+  .map((d) => mapBookDoc(d.data(), lang))
+  .filter((b) => b.title.toLowerCase() !== excludeTitle.toLowerCase());
 }
 
 
@@ -208,28 +214,31 @@ export async function getRecommendationsFromDB(
   );
 
   const doc = await getDocs(q);
+  // const books = doc.docs
+  //   .map((d) => {
+  //     const data = d.data();
+  //     return {
+  //       key: data.key,
+  //       title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
+  //       titles: data.titles ?? {},
+  //       authors: data.authors,
+  //       authorKeys: data.authorKeys ?? undefined,
+  //       first_publish_year: data.first_publish_year,
+  //       cover_id: data.cover_id,
+  //       cover_url: data.cover_url ?? undefined,
+  //       edition_count: data.edition_count,
+  //       genre: data.genre ?? undefined,
+  //       rating: data.rating ?? undefined,
+  //       ratingCount: data.ratingCount ?? undefined,
+  //       isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
+  //       isbns: data.isbns ?? undefined,
+  //       pages: data.pages ?? undefined,
+  //     } as Book;
+  //   })
+  //   .filter((b) => b.key !== excludeKey);
   const books = doc.docs
-    .map((d) => {
-      const data = d.data();
-      return {
-        key: data.key,
-        title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-        titles: data.titles ?? {},
-        authors: data.authors,
-        authorKeys: data.authorKeys ?? undefined,
-        first_publish_year: data.first_publish_year,
-        cover_id: data.cover_id,
-        cover_url: data.cover_url ?? undefined,
-        edition_count: data.edition_count,
-        genre: data.genre ?? undefined,
-        rating: data.rating ?? undefined,
-        ratingCount: data.ratingCount ?? undefined,
-        isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-        isbns: data.isbns ?? undefined,
-        pages: data.pages ?? undefined,
-      } as Book;
-    })
-    .filter((b) => b.key !== excludeKey);
+  .map((d) => mapBookDoc(d.data(), lang))
+  .filter((b) => b.key !== excludeKey);
 
   if (books.length < minCount) return null;
   return books;
@@ -250,6 +259,8 @@ function mapBookDoc(data: Record<string, any>, lang: string): Book {
     cover_url: data.cover_url ?? undefined,
     edition_count: data.edition_count,
     genre: data.genre ?? undefined,
+    genre2: data.genre2 ?? undefined,
+    topics: data.topics ?? undefined,
     rating: data.rating ?? undefined,
     ratingCount: data.ratingCount ?? undefined,
     isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,

@@ -111,8 +111,12 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
 
         <div className="book-info-card__details">
           <span className="book-info-card__genre">
-            {book.genre ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre }) : ""}
+            {[book.genre, book.genre2]
+              .filter((g): g is string => !!g)
+              .map((g) => t(`book.genres.${genreToI18nKey(g)}`, { defaultValue: g }))
+              .join(" | ")}
           </span>
+
           <h2 className="book-info-card__title">{book.title}</h2>
           <p className="book-info-card__author">{book.author}</p>
 
