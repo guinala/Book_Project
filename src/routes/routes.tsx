@@ -60,6 +60,10 @@ export const ROUTES = [
         element: <ProfilePage />,
       },
       {
+        path: "u/:username",
+        element: <ProfilePage />,
+      },
+      {
         path: "settings",
         element: (
           <AuthRoute requireAuth>

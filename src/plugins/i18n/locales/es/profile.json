@@ -32,6 +32,28 @@
         "bio": "Bio",
         "bioHint": "(máx. 300 caracteres)"
       }
+    },
+    "share": {
+      "ariaLabel": "Compartir perfil",
+      "copied": "Enlace copiado",
+      "shareText": "Mira el perfil de {{name}}"
+    },
+    "favorites": {
+      "modalTitle": "Editar libros favoritos",
+      "hint": "{{selected}}/{{max}} libros seleccionados",
+      "searchPlaceholder": "Buscar libro...",
+      "searching": "Buscando...",
+      "noResults": "No hay libros en el catálogo con esa búsqueda. Prueba otra palabra o búscalos antes en Explorar.",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "saveError": "No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.",
+      "closeAria": "Cerrar",
+      "removeAria": "Eliminar {{title}}",
+      "sectionTitle": "Libros favoritos",
+      "edit": "Editar",
+      "emptyOwn": "Añade hasta 5 libros favoritos pulsando \"Editar\"",
+      "emptyOther": "Sin libros favoritos aún"
     }
   }
 }

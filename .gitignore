@@ -1,5 +1,6 @@
 #API
 .env.local
+serviceAccountKey.json
 
 # Logs
 logs

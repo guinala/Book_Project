@@ -8,12 +8,15 @@ import { uploadProfilePhoto, uploadBannerImage } from "@/services/firebase/fireb
 import type { UserFullProfile } from "@/types/UserProfile";
 import { Upload } from "lucide-react";
 import "./EditProfilePage.scss";
+import { FirebaseError } from "firebase/app";
+import { checkUsernameAvailable, isValidUsername, normalizeUsername, setUsername } from "@/services/firebase/firebaseUsernames";
 
 type EditProfileForm = {
   name: string;
   surname: string;
   username: string;
   bio: string;
+  isPublic: boolean;
 };
 
 export default function EditProfilePage() {
@@ -30,9 +33,13 @@ export default function EditProfilePage() {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [bioSaveBlocked, setBioSaveBlocked] = useState(false);
   const [bioShaking, setBioShaking] = useState(false);
+  const [originalUsername, setOriginalUsername] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "taken" | "available">("idle");
 
   const BIO_MAX = 300;
   const bioValue = watch("bio") ?? "";
+  const usernameValue = watch("username") ?? "";
+  const isPublicProfile = watch("isPublic");
   const bioOverLimit = bioValue.length > BIO_MAX;
 
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -57,6 +64,42 @@ export default function EditProfilePage() {
   }, []);
 
   useEffect(() => {
+    if (!user) return;
+
+    const normalized = normalizeUsername(usernameValue);
+
+    // Vacío o sin cambios respecto al original → ni "disponible" ni "tomado"
+    if (normalized === "" || normalized === normalizeUsername(originalUsername)) {
+      setUsernameStatus("idle");
+      return;
+    }
+
+    // Regex inválido → react-hook-form ya muestra el error, no duplicamos
+    if (!isValidUsername(normalized)) {
+      setUsernameStatus("idle");
+      return;
+    }
+
+    setUsernameStatus("checking");
+    let cancelled = false;
+    const handle = setTimeout(() => {
+      void (async () => {
+        try {
+          const available = await checkUsernameAvailable(normalized, user.uid);
+          if (!cancelled) setUsernameStatus(available ? "available" : "taken");
+        } catch {
+          if (!cancelled) setUsernameStatus("idle");
+        }
+      })();
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
+  }, [usernameValue, user, originalUsername]);
+
+  useEffect(() => {
     if (bioSaveBlocked && !bioOverLimit) setBioSaveBlocked(false);
   }, [bioValue, bioSaveBlocked, bioOverLimit]);
 
@@ -70,7 +113,9 @@ export default function EditProfilePage() {
             surname: profile.surname,
             username: profile.username,
             bio: profile.bio,
+            isPublic: profile.isPublic ?? true,
           });
+          setOriginalUsername(profile.username ?? "");
           if (profile.profilePhotoUrl) setPhotoPreview(profile.profilePhotoUrl);
           if (profile.bannerImageUrl) setBannerPreview(profile.bannerImageUrl);
         }
@@ -108,36 +153,51 @@ export default function EditProfilePage() {
     setSaving(true);
     setSaveError(null);
 
-    const timeout = new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error("La subida tardó demasiado. Verifica que Firebase Storage esté habilitado en tu proyecto de Firebase Console.")),
-        15_000
-      )
-    );
-
     try {
-      const updates: Partial<Omit<UserFullProfile, "uid">> = {
+      const updates: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate" | "username">> = {
         name: data.name,
         surname: data.surname,
-        username: data.username,
         bio: data.bio,
+        isPublic: data.isPublic,
       };
 
-      const doSave = async () => {
-        if (photoFile) {
-          updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
-        }
-        if (bannerFile) {
-          updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
-        }
-        await updateUserProfile(user.uid, updates);
-      };
+      if (photoFile) {
+        updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
+      }
 
-      await Promise.race([doSave(), timeout]);
+      if (bannerFile) {
+        updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
+      }
+
+      const normalizedNew = normalizeUsername(data.username);
+      const normalizedOld = normalizeUsername(originalUsername);
+      if (normalizedNew !== normalizedOld && normalizedNew !== "") {
+        try {
+          await setUsername(user.uid, normalizedNew, normalizedOld || undefined);
+        } catch (err) {
+          if (err instanceof Error && err.message === "USERNAME_TAKEN") {
+            setSaveError("Ese nombre de usuario ya está en uso.");
+            return;
+          }
+          throw err;
+        }
+      }
+
+      await updateUserProfile(user.uid, updates);
+
       navigate("/profile");
     } catch (err) {
       console.error("[EditProfilePage] save failed:", err);
-      setSaveError("Error inesperado, inténtalo de nuevo más tarde.");
+
+      if (err instanceof FirebaseError) {
+        setSaveError(err.code);
+      } 
+      else if (err instanceof Error) {
+        setSaveError(err.message);
+      } 
+      else {
+        setSaveError("Error desconocido");
+      }
     } finally {
       setSaving(false);
     }
@@ -258,6 +318,15 @@ export default function EditProfilePage() {
             {errors.username && (
               <p className="edit-profile__error">{errors.username.message}</p>
             )}
+            {usernameStatus === "checking" && (
+              <p className="edit-profile__hint">Comprobando disponibilidad...</p>
+            )}
+            {usernameStatus === "taken" && (
+              <p className="edit-profile__error">Este nombre ya está en uso</p>
+            )}
+            {usernameStatus === "available" && (
+              <p className="edit-profile__success">Disponible</p>
+            )}
           </div>
 
           <div className="edit-profile__field">
@@ -280,6 +349,20 @@ export default function EditProfilePage() {
               <span className={`edit-profile__bio-count${bioOverLimit ? " edit-profile__bio-count--over" : ""}`}>
                 {bioValue.length} / {BIO_MAX} caracteres
               </span>
+            </div>
+          </div>
+          <div className="edit-profile__field">
+            <span className="edit-profile__label">Privacidad del perfil</span>
+            <div className="edit-profile__privacy">
+              <label className="edit-profile__switch">
+                <input type="checkbox" {...register("isPublic")} />
+                <span className="edit-profile__switch-track" />
+              </label>
+              <p className="edit-profile__privacy-text">
+                {isPublicProfile
+                  ? "Cualquiera puede ver tu actividad y estantería"
+                  : "Solo tus seguidores podrán ver tu estantería y actividad"}
+              </p>
             </div>
           </div>
         </div>

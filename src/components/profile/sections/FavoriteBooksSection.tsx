@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import "./FavoriteBooksSection.scss";
 import type { FavoriteBook } from "@/types/UserProfile";
 import { encodeKey } from "@/utils/bookPaths";
+import { useTranslation } from "react-i18next";
 
 type FavoriteBooksSectionProps = {
   favorites: FavoriteBook[];
@@ -16,19 +17,20 @@ export default function FavoriteBooksSection({
   onEditClick,
 }: FavoriteBooksSectionProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="favorite-books">
       <div className="favorite-books__header">
-        <h2 className="favorite-books__title">Libros favoritos</h2>
+        <h2 className="favorite-books__title">{t("profile.favorites.sectionTitle")}</h2>
         {isOwnProfile && (
           <button
             type="button"
             className="favorite-books__edit-btn"
             onClick={onEditClick}
-            aria-label="Editar libros favoritos"
+            aria-label={t("profile.favorites.modalTitle")}
           >
-            Editar
+            {t("profile.favorites.edit")}
           </button>
         )}
       </div>
@@ -36,11 +38,11 @@ export default function FavoriteBooksSection({
       <div className="favorite-books__card">
         {favorites.length === 0 && isOwnProfile && (
           <p className="favorite-books__empty">
-            Añade hasta 5 libros favoritos pulsando "Editar"
+            {t("profile.favorites.emptyOwn")}
           </p>
         )}
         {favorites.length === 0 && !isOwnProfile && (
-          <p className="favorite-books__empty">Sin libros favoritos aún</p>
+          <p className="favorite-books__empty">{t("profile.favorites.emptyOther")}</p>
         )}
         {favorites.map((book, idx) => (
           <div key={book.key} className="favorite-books__item">

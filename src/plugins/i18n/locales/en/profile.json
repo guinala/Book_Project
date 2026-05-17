@@ -32,6 +32,28 @@
         "bio": "Bio",
         "bioHint": "(max. 300 characters)"
       }
+    },
+    "share": {
+      "ariaLabel": "Share profile",
+      "copied": "Link copied",
+      "shareText": "Check out {{name}}'s profile"
+    },
+    "favorites": {
+      "modalTitle": "Edit favorite books",
+      "hint": "{{selected}}/{{max}} books selected",
+      "searchPlaceholder": "Search book...",
+      "searching": "Searching...",
+      "noResults": "No books in the catalog match that search. Try another word or look them up in Explore first.",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "saveError": "Could not save. Check your connection and try again.",
+      "closeAria": "Close",
+      "removeAria": "Remove {{title}}",
+      "sectionTitle": "Favorite books",
+      "edit": "Edit",
+      "emptyOwn": "Add up to 5 favorite books by clicking \"Edit\"",
+      "emptyOther": "No favorite books yet"
     }
   }
 }
