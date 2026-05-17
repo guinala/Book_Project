@@ -111,7 +111,7 @@ const BOOK_DETAIL_MAP: Record<string, BookDetail> = {
 };
 
 
-//Aquí se debería utilizar firebase, por ahora el contenido obtenido es estático
+// Contenido estático, la idea es utilizar Firestore
 export function getBookDetailById(id: string): BookDetail {
   return BOOK_DETAIL_MAP[id] ?? NOMBRE_DEL_VIENTO;
 }

@@ -4,8 +4,11 @@ import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
 import { getFavorites, getUserProfile } from "@/services/firebase/firebaseUsers";
 import {
+  cancelFollowRequest,
+  checkHasPendingRequest,
   checkIsFollowing,
   followUser,
+  sendFollowRequest,
   unfollowUser,
 } from "@/services/firebase/firebaseFollows";
 import { getActivity } from "@/services/firebase/firebaseActivity";
@@ -55,6 +58,7 @@ export function useProfile(userId: string) {
   const [activity, setActivity] = useState<ActivityItem[]>(EMPTY_ACTIVITY);
   const [publicShelf, setPublicShelf] = useState<Record<ShelfStatus, Book[]>>(EMPTY_SHELF);
   const [favorites, setFavorites] = useState<FavoriteBook[]>(EMPTY_FAVORITES);
+  const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [isFollowingState, setIsFollowingState] = useState(false);
   const [loading, setLoading] = useState(() => !!userId);
   const [bodyLoading, setBodyLoading] = useState(false);
@@ -68,6 +72,7 @@ export function useProfile(userId: string) {
     setPublicShelf(EMPTY_SHELF);
     setFavorites(EMPTY_FAVORITES);
     setIsFollowingState(false);
+    setHasPendingRequest(false);
   }
 
   const canViewFull = isOwnProfile || (profile?.isPublic !== false) || isFollowingState;
@@ -82,10 +87,20 @@ export function useProfile(userId: string) {
       getUserProfile(userId).then((p) => { if (!cancelled) setProfile(p); }),
     ];
 
+    // if (user && !isOwn) {
+    //   fetches.push(
+    //     checkIsFollowing(user.uid, userId).then((f) => {
+    //       if (!cancelled) setIsFollowingState(f);
+    //     })
+    //   );
+    // }
     if (user && !isOwn) {
       fetches.push(
         checkIsFollowing(user.uid, userId).then((f) => {
           if (!cancelled) setIsFollowingState(f);
+        }),
+        checkHasPendingRequest(userId).then((p) => {
+          if (!cancelled) setHasPendingRequest(p);
         })
       );
     }
@@ -148,21 +163,41 @@ export function useProfile(userId: string) {
   const shelf = isOwnProfile ? shelfByStatus : publicShelf;
   const shelfLoading = isOwnProfile ? ownShelfLoading : bodyLoading;
 
+  // const follow = useCallback(async () => {
+  //   if (!user) return;
+  //   try {
+  //     await followUser(user.uid, userId);
+  //     setIsFollowingState(true);
+  //     setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
+  //   } catch {
+  //     console.error("[useProfile] follow failed");
+  //   }
+  // }, [user, userId]);
   const follow = useCallback(async () => {
-    if (!user) return;
+    if (!user || !profile) {
+      return;
+    }
     try {
-      await followUser(user.uid, userId);
-      setIsFollowingState(true);
-      setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
+      if (profile.isPublic === false) {
+        //Privado -> se manda solicitud
+        await sendFollowRequest(userId);
+        setHasPendingRequest(true);
+      } else {
+        await followUser(userId);
+        setIsFollowingState(true);
+        setProfile((p) => 
+          p ? {...p, followersCount: p.followersCount + 1 } : p
+        );
+      }
     } catch {
       console.error("[useProfile] follow failed");
     }
-  }, [user, userId]);
+  }, [user, userId, profile]);
 
   const unfollow = useCallback(async () => {
     if (!user) return;
     try {
-      await unfollowUser(user.uid, userId);
+      await unfollowUser(userId);
       setIsFollowingState(false);
       setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
       if (profile && profile.isPublic === false) {
@@ -174,6 +209,16 @@ export function useProfile(userId: string) {
     }
   }, [user, userId, profile]);
 
+  const cancelRequest = useCallback(async () => {
+    if (!user) return;
+    try {
+      await cancelFollowRequest(userId);
+      setHasPendingRequest(false);
+    } catch {
+      console.error("[useProfile] cancelRequest failed");
+    }
+  }, [user, userId]);
+
   return {
     profile,
     shelf,
@@ -182,9 +227,11 @@ export function useProfile(userId: string) {
     favorites,
     isOwnProfile,
     isFollowing: isFollowingState,
+    hasPendingRequest,
     loading,
     canViewFull,
     follow,
     unfollow,
+    cancelRequest,
   };
 }

@@ -238,6 +238,17 @@
         color: var(--color-error);
       }
     }
+
+    &--pending {
+      background: var(--color-bg-card-solid);
+      border: 1px dashed var(--color-border-medium);
+      color: var(--color-text-secondary);
+
+      &:hover {
+        border-color: var(--color-error-border);
+        color: var(--color-error);
+      }
+    }
   }
 
   &__bio {

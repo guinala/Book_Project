@@ -29,6 +29,14 @@ export type UserMinimal = {
   profilePhotoUrl: string;
 };
 
+export type FollowRequest = {
+  requesterUid: string;
+  createdAt: Timestamp;
+  requesterName: string;
+  requesterUsername: string;
+  requesterPhotoUrl: string;
+};
+
 export type ActivityType =
   | "progress"
   | "review"

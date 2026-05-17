@@ -1,0 +1,191 @@
+@use '../../../styles/lib' as *;
+
+.follow-requests-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(44, 36, 32, 0.45);
+    backdrop-filter: blur(4px);
+  }
+
+  &__box {
+    position: relative;
+    background: var(--color-bg-card-solid);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-modal);
+    width: 100%;
+    max-width: 400px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  &__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__close {
+    background: transparent;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    padding: var(--space-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+
+    &:hover {
+      border-color: var(--color-text-primary);
+      color: var(--color-text-primary);
+    }
+  }
+
+  &__list {
+    overflow-y: auto;
+    padding: var(--space-3) var(--space-2);
+    flex: 1;
+  }
+
+  &__loading,
+  &__empty {
+    text-align: center;
+    font-size: var(--text-md);
+    color: var(--color-text-tertiary);
+    padding: var(--space-8) 0;
+    margin: 0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: left;
+    padding: var(--space-1);
+    @include transition(background);
+
+    &:hover { background: var(--color-bg-section); }
+  }
+
+  &__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &:not(&--placeholder) {
+      object-fit: cover;
+    }
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-brand-light);
+      color: var(--color-brand-primary);
+      font-size: var(--text-lg);
+      font-weight: var(--weight-bold);
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__handle {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    @include transition(all);
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &--accept {
+      background: var(--color-accent);
+      border: none;
+      color: var(--color-text-on-brand);
+
+      &:hover:not(:disabled) { background: var(--color-accent-dark); }
+    }
+
+    &--reject {
+      background: transparent;
+      border: 1px solid var(--color-border-medium);
+      color: var(--color-text-secondary);
+
+      &:hover:not(:disabled) {
+        border-color: var(--color-error-border);
+        color: var(--color-error);
+      }
+    }
+  }
+}

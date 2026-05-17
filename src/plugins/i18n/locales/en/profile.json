@@ -54,6 +54,65 @@
       "edit": "Edit",
       "emptyOwn": "Add up to 5 favorite books by clicking \"Edit\"",
       "emptyOther": "No favorite books yet"
+    },
+    "userFallback": "User",
+    "header": {
+      "followers": "Followers",
+      "following": "Following",
+      "booksRead": "Books read",
+      "changeCover": "Change cover",
+      "editPhoto": "Edit",
+      "editProfile": "Edit profile",
+      "requests": "Requests",
+      "follow": "Follow",
+      "followingState": "Following",
+      "requested": "Requested"
+    },
+    "followList": {
+      "followersTitle": "Followers",
+      "followingTitle": "Following",
+      "loading": "Loading...",
+      "emptyFollowers": "No followers yet",
+      "emptyFollowing": "Not following anyone yet",
+      "closeAria": "Close"
+    },
+    "requests": {
+      "title": "Requests",
+      "loading": "Loading...",
+      "empty": "You have no pending requests",
+      "acceptAria": "Accept",
+      "rejectAria": "Reject",
+      "closeAria": "Close"
+    },
+    "locked": {
+      "title": "This profile is private",
+      "subtitle": "Follow {{name}} to see their activity and shelf"
+    },
+    "menu": {
+      "viewProfile": "View profile",
+      "settings": "Settings",
+      "darkTheme": "Dark theme",
+      "lightTheme": "Light theme",
+      "logout": "Log out"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "empty": "No recent activity",
+      "events": {
+        "reading_started": "Started reading",
+        "book_finished": "Finished reading",
+        "progress": "Updated their progress",
+        "review": "Wrote a review",
+        "list_created": "Created a list",
+        "watchlist_add": "Added to their list",
+        "book_rated": "Rated a book"
+      },
+      "time": {
+        "secondsAgo": "a few seconds ago",
+        "minutesAgo": "{{value}}m ago",
+        "hoursAgo": "{{value}}h ago",
+        "daysAgo": "{{value}}d ago"
+      }
     }
   }
 }

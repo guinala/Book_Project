@@ -1,5 +1,5 @@
-// src/pages/ProfilePage/ProfilePage.tsx
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -20,6 +20,7 @@ import listCover5 from "@/assets/covers/shelf-5.jpg";
 import "./ProfilePage.scss";
 import LockedProfileNotice from "@/components/profile/sections/LockedProfileNotice";
 import { lookupUidByUsername } from "@/services/firebase/firebaseUsernames";
+import FollowRequestsModal from "@/components/profile/modals/FollowRequestsModal";
 
 const READING_LISTS: ReadingList[] = [
   { id: "recommended", nameKey: "myLibrary.lists.recommended", count: 12, coverUrls: [listCover1, listCover3, listCover2, listCover5] },
@@ -34,6 +35,7 @@ export default function ProfilePage() {
   }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [resolvedUserId, setResolvedUserId] = useState<string | null>(null);
   const [resolveState, setResolveState] = useState<"loading" | "done" | "notfound">("loading");
@@ -48,14 +50,17 @@ export default function ProfilePage() {
     isFollowing,
     loading,
     canViewFull,
+    hasPendingRequest,
     follow,
     unfollow,
+    cancelRequest,
   } = useProfile(resolvedUserId ?? "");
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
   const [localFavorites, setLocalFavorites] = useState<FavoriteBook[]>(favorites);
   const [prevFavorites, setPrevFavorites] = useState(favorites);
+  const [showRequests, setShowRequests] = useState(false);
 
   if (favorites !== prevFavorites) {
     setPrevFavorites(favorites);
@@ -107,7 +112,7 @@ export default function ProfilePage() {
   if (resolveState === "loading") {
     return (
       <div className="profile-page profile-page--loading">
-        <p>Cargando perfil...</p>
+        <p>{t("profile.loading")}</p>
       </div>
     );
   }
@@ -115,7 +120,7 @@ export default function ProfilePage() {
   if (resolveState === "notfound" || !resolvedUserId) {
     return (
       <div className="profile-page profile-page--not-found">
-        <p>Perfil no encontrado</p>
+        <p>{t("profile.notFound")}</p>
       </div>
     );
   }
@@ -123,7 +128,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="profile-page profile-page--loading">
-        <p>Cargando perfil...</p>
+        <p>{t("profile.loading")}</p>
       </div>
     );
   }
@@ -131,7 +136,7 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="profile-page profile-page--not-found">
-        <p>Perfil no encontrado</p>
+        <p>{t("profile.notFound")}</p>
       </div>
     );
   }
@@ -142,12 +147,15 @@ export default function ProfilePage() {
         profile={profile}
         isOwnProfile={isOwnProfile}
         isFollowing={isFollowing}
+        hasPendingRequest={hasPendingRequest}
         booksReadCount={shelf.finished.length}
         onFollow={follow}
         onUnfollow={unfollow}
+        onCancelRequest={cancelRequest}
         onFollowersClick={() => setFollowModal("followers")}
         onFollowingClick={() => setFollowModal("following")}
         onEditClick={() => navigate("/profile/edit")}
+        onRequestsClick={() => setShowRequests(true)}
       />
 
       {canViewFull ? (
@@ -180,6 +188,10 @@ export default function ProfilePage() {
           mode={followModal}
           onClose={() => setFollowModal(null)}
         />
+      )}
+
+      {showRequests && (
+        <FollowRequestsModal onClose={() => setShowRequests(false)} />
       )}
 
       {showFavEditor && isOwnProfile && (

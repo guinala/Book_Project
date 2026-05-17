@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
@@ -10,6 +11,7 @@ interface ProfileMenuProps {
 }
 
 export default function ProfileMenu({ onClose }: ProfileMenuProps) {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const ref = useRef<HTMLDivElement>(null);
@@ -37,17 +39,19 @@ export default function ProfileMenu({ onClose }: ProfileMenuProps) {
         onClick={onClose}
       >
         <User />
-        Ver perfil
+        {t("profile.menu.viewProfile")}
       </Link>
 
       <Link className="profile-menu__item" to="/settings" onClick={onClose}>
         <Settings />
-        Ajustes
+        {t("profile.menu.settings")}
       </Link>
 
       <button className="profile-menu__item" type="button" onClick={toggleTheme}>
         {theme === "light" ? <Moon /> : <Sun />}
-        {theme === "light" ? "Tema oscuro" : "Tema claro"}
+        {theme === "light"
+          ? t("profile.menu.darkTheme")
+          : t("profile.menu.lightTheme")}
       </button>
 
       <div className="profile-menu__divider" />
@@ -58,7 +62,7 @@ export default function ProfileMenu({ onClose }: ProfileMenuProps) {
         onClick={() => { logout(); onClose(); }}
       >
         <LogOut />
-        Cerrar sesión
+        {t("profile.menu.logout")}
       </button>
     </div>
   );
