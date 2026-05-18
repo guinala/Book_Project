@@ -1,0 +1,105 @@
+@use "../../../styles/shared" as *;
+
+%shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-neutral-alpha-muted) 25%,
+    var(--color-border-subtle) 50%,
+    var(--color-neutral-alpha-muted) 75%
+  );
+  @include shimmer-bg;
+  border-radius: var(--radius-sm);
+}
+
+.author-section-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  &__title {
+    @extend %shimmer;
+    height: 28px;
+    width: 180px;
+  }
+
+  &__card {
+    background: transparent;
+    border: 1px solid var(--color-border-outline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    position: relative;
+    padding: 90px 20px 24px;
+    min-height: 130px;
+    margin-top: var(--space-12);
+
+    @include from($bp-md) {
+      padding: 20px var(--space-7) var(--space-7) 148px;
+      margin-top: var(--space-8);
+    }
+  }
+
+  &__photo {
+    @extend %shimmer;
+    position: absolute;
+    top: -44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 130px;
+    border-radius: var(--radius-pill);
+
+    @include from($bp-md) {
+      top: -32px;
+      left: -20px;
+      transform: none;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  &__name {
+    @extend %shimmer;
+    height: 26px;
+    width: 200px;
+  }
+
+  &__bio {
+    @extend %shimmer;
+    height: 90px;
+    border-radius: var(--radius-md);
+  }
+
+  &__books-row {
+    display: flex;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+    padding: var(--space-4) 0 var(--space-1);
+  }
+
+  &__book {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex: 0 0 145px;
+    min-width: 0;
+  }
+
+  &__book-cover {
+    @extend %shimmer;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radius-sm);
+  }
+
+  &__book-line {
+    @extend %shimmer;
+    height: 11px;
+
+    &--title { width: 85%; }
+    &--year  { width: 40%; }
+  }
+}

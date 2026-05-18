@@ -1,0 +1,29 @@
+.locked-profile-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-lg);
+
+  &__icon {
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-2);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    max-width: 320px;
+  }
+}

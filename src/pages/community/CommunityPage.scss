@@ -1,0 +1,26 @@
+@use '../../styles/lib' as *;
+
+.community-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 12px;
+  color: var(--color-text-secondary);
+  font-family: var(--font-ui);
+
+  &__icon {
+    opacity: 0.4;
+  }
+
+  &__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+  }
+
+  &__subtitle {
+    font-size: var(--text-sm);
+    opacity: 0.7;
+  }
+}

@@ -1,0 +1,44 @@
+import { useTranslation } from "react-i18next";
+import ListCard from "@/components/shelf/cards/ListCard";
+import type { ReadingList } from "@/components/shelf/cards/ListCard";
+import { ChevronRight, Plus } from "lucide-react";
+import "./ListsSection.scss";
+
+const MAX_LISTS = 3;
+
+type ListsSectionProps = {
+  lists: ReadingList[];
+};
+
+export default function ListsSection({ lists }: ListsSectionProps) {
+  const { t } = useTranslation();
+  const visibleLists = lists.slice(0, MAX_LISTS);
+
+  return (
+    <section className="lists-section">
+      <div className="lists-section__header">
+        <h2 className="lists-section__title">{t("myLibrary.listsTitle")}</h2>
+        <a href="#" className="lists-section__see-all">
+          {t("myLibrary.seeAll")} <ChevronRight size={14} aria-hidden="true" />
+        </a>
+      </div>
+
+      <div className="lists-section__grid">
+        {visibleLists.map((list) => (
+          <ListCard key={list.id} list={list} />
+        ))}
+
+        {visibleLists.length < MAX_LISTS && (
+          <button type="button" className="lists-section__create">
+            <div className="lists-section__create-icon">
+              <Plus size={18} aria-hidden="true" />
+            </div>
+            <span className="lists-section__create-text">
+              {t("myLibrary.createList")}
+            </span>
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}

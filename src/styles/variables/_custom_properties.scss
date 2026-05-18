@@ -1,61 +1,210 @@
 :root {
-  // Typography
-  --font-main:           'Manrope', sans-serif;
+  // ─── FUENTES ───────────────────────────────────────────
+  --font-main: "Manrope", sans-serif;
+  --font-editorial: "Libre Baskerville", Georgia, serif;
 
-  // Layout
-  --max-width:           1200px;
+  // ─── LAYOUT ────────────────────────────────────────────
+  --max-width: 1400px;
+  --navbar-height: 80px;
+  --navbar-padding: 30px;
+  --page-padding-x: 40px;
+  --page-padding-y: 48px;
+  --grid-cols: 3;
+  --cover-size: 174px;
+  --z-navbar: 100;
 
-  // Spacing
-  --padding-vertical:    15px;
-  --navbar-height:       64px;
+  // ─── ESCALA TIPOGRÁFICA ────────────────────────────────
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
 
-  // Border radius
-  --border-radius-sm:    4px;
-  --border-radius-md:    6px;
-  --border-radius-lg:    8px;
-  --border-radius-xl:    16px;
-  --border-radius-btn:   40px;
-  --border-radius-pill:  20px;
+  // ─── PESOS ─────────────────────────────────────────────
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
 
-  // Z-index
-  --z-navbar:            100;
+  // ─── COLORES DE MARCA ──────────────────────────────────
+  --color-brand-primary: #e86b30;
+  --color-brand-dark: #c9581f;
+  --color-brand-light: #f5e4d8;
+  --color-brand-muted: #e8a882;
+  --color-brand-deep: #a83d0a;
+  --color-brand-ember: #c44e12;
 
-  // Text colors
-  --color-text-primary:   #2c2420;
-  --color-text-secondary: #6b6360;
-  --color-text-tertiary:  #9e9895;
-  --color-text-subtle:    #a09a94;
+  // alias — los componentes existentes usan estos nombres                                                                                                                                                                       
+  --color-accent: var(--color-brand-primary);
+  --color-accent-dark: var(--color-brand-dark);
+  --color-accent-light: var(--color-brand-alpha-subtle);
 
-  // Brand colors
-  --color-accent:         #e86b30;
-  --color-accent-dark:    #d25a22;
-  --color-accent-light:   rgba(232, 107, 48, 0.13);
+  // Alpha brand
+  --color-brand-alpha-subtle: rgba(232, 107, 48, 0.06);
+  --color-brand-alpha-muted: rgba(232, 107, 48, 0.08);
+  --color-brand-alpha-medium: rgba(232, 107, 48, 0.12);
 
-  // Success (racha / stats)
-  --color-success:        #15803d;
-  --color-success-bg:     rgba(34, 197, 94, 0.12);
-  --color-success-border: rgba(34, 197, 94, 0.45);
+  // Alpha neutral
+  --color-neutral-alpha-light: rgba(0, 0, 0, 0.03);
+  --color-neutral-alpha-subtle: rgba(0, 0, 0, 0.05);
+  --color-neutral-alpha-muted: rgba(0, 0, 0, 0.07);
+  --color-neutral-alpha-medium: rgba(0, 0, 0, 0.12);
 
-  // Genre chart
+  // ─── STATUS ────────────────────────────────────────────
+  --color-success: #5a7a60;
+  --color-success-bg: rgba(90, 122, 96, 0.1);
+  --color-success-border: #8da890;
+  --color-error: #b83232;
+  --color-error-bg: rgba(184, 50, 50, 0.08);
+  --color-error-border: rgba(184, 50, 50, 0.35);
+  --color-info: #6b7f9e;
+  --color-info-bg: #dde4ee;
+
+  // ─── OVERLAYS ──────────────────────────────────────────
+  --color-overlay: rgba(0, 0, 0, 0.45);
+
+  // ─── SUPERFICIES ───────────────────────────────────────
+  --color-bg-page: #fff;
+  --color-bg-section: #f5f5f5;
+  --color-bg-secondary: #f0f0f0;
+  --color-bg-card: #f8f8f8;
+  --color-bg-card-solid: #f2f1ef;
+  --color-bg-overlay: rgba(248, 248, 248, 0.97);
+  --color-bg-synopsis: rgba(248, 248, 248, 0.85);
+  --color-bg-darkest: #1a1714;
+  --color-bg-medium: #3a3530;
+
+  // ─── TEXTO ─────────────────────────────────────────────
+  --color-text-primary: #444340;
+  --color-text-secondary: #838178;
+  --color-text-tertiary: #9a988b;
+  --color-text-on-brand: #fff;
+  --color-text-on-dark: #faf6f1;
+  --color-text-subtle: #c4c2ba;
+
+  // ─── BORDES ────────────────────────────────────────────
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+  --color-border-medium: #e1dddd;
+  --color-border-strong: #c4c2ba;
+  --color-border-warm: rgba(0, 0, 0, 0.12);
+  --color-border-outline: #eee;
+  --color-border-input: #e1dddd;
+
+  // ─── GÉNEROS ───────────────────────────────────────────
+  --color-genre-fiction: #d4500f;
+  --color-genre-nonfiction: #b8745a;
+  --color-genre-mystery: #7a8fa3;
+  --color-genre-romance: #c47a8a;
+  --color-genre-scifi: #6b7f9e;
+  --color-genre-default: #e3ddd5;
   --color-genre-historical: #a78a6e;
 
-  // Progress bar
-  --progress-bar-start:   #fff5f0;
+  // ─── BORDER RADIUS ─────────────────────────────────────
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-pill: 9999px;
 
-  // Background colors
-  --color-bg-card:        rgba(255, 255, 255, 0.7);
-  --color-bg-darkest:     #1a1714;
-  --color-bg-medium:      #3a3530;
-  --color-border:         rgba(44, 36, 32, 0.2);
+  // ─── BOTÓN PRIMARIO ────────────────────────────────────
+  --color-btn-primary-fg: var(--color-bg-page);
+  --color-btn-primary-hover: var(--color-bg-darkest);
 
-  // Shadows
-  --shadow-card:          0 2px 12px rgba(44, 36, 32, 0.06);
-  --shadow-card-hover:    0 6px 20px rgba(44, 36, 32, 0.12);
-  --shadow-cover:         0 8px 20px rgba(44, 36, 32, 0.32);
-  --shadow-nav:           0 4px 20px rgba(0, 0, 0, 0.08);
-  --shadow-modal:         0 20px 60px rgba(44, 36, 32, 0.18), 0 4px 16px rgba(44, 36, 32, 0.10);
+  // ─── SOMBRAS ───────────────────────────────────────────
+  --shadow-card:
+    0 1px 3px rgba(44, 36, 32, 0.06), 0 4px 12px rgba(44, 36, 32, 0.04);
+  --shadow-card-hover:
+    0 4px 16px rgba(44, 36, 32, 0.1), 0 1px 4px rgba(44, 36, 32, 0.06);
+  --shadow-nav:
+    0 4px 20px rgba(44, 36, 32, 0.08), 0 1px 4px rgba(44, 36, 32, 0.04);
+  --shadow-modal:
+    0 24px 64px rgba(44, 36, 32, 0.16), 0 8px 24px rgba(44, 36, 32, 0.08);
+  --shadow-book:
+    0 8px 24px rgba(44, 36, 32, 0.18), 0 2px 6px rgba(44, 36, 32, 0.1);
+  --shadow-cover:
+    0 4px 16px rgba(44, 36, 32, 0.2), 0 1px 4px rgba(44, 36, 32, 0.1);
 
-  // Extended palette
-  --color-text-on-brand:  #ffffff;
-  --color-border-subtle:  rgba(44, 36, 32, 0.10);
+  // ─── ESPACIADO ─────────────────────────────────────────
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-30: 120px;
+  --space-40: 160px;
+
+  // ─── TRANSICIONES ──────────────────────────────────────
+  --transition-fast: 150ms ease-out;
+  --transition-base: 200ms ease-out;
+  --transition-slow: 300ms ease-out;
+}
+
+// ─── DARK THEME ────────────────────────────────────────
+[data-theme="dark"] {
+  --color-bg-page: #1a1714;
+  --color-bg-section: #221e1b;
+  --color-bg-secondary: #2a2521;
+  --color-bg-card: #242220;
+  --color-bg-card-solid: #2e2924;
+  --color-bg-overlay: rgba(26, 23, 20, 0.97);
+  --color-bg-synopsis: rgba(36, 34, 32, 0.85);
+
+  --color-text-primary: #e8e6e3;
+  --color-text-secondary: #9a988b;
+  --color-text-tertiary: #6c6c67;
+  --color-text-subtle: #4a4845;
+
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-medium: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.22);
+  --color-border-warm: rgba(255, 255, 255, 0.10);
+  --color-border-outline: rgba(255, 255, 255, 0.10);
+
+  --color-neutral-alpha-light: rgba(255, 255, 255, 0.03);
+  --color-neutral-alpha-subtle: rgba(255, 255, 255, 0.05);
+  --color-neutral-alpha-muted: rgba(255, 255, 255, 0.08);
+  --color-neutral-alpha-medium: rgba(255, 255, 255, 0.13);
+
+  --color-btn-primary-hover: #cfcbc5;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 6px rgba(0, 0, 0, 0.12);
+  --shadow-nav: 0 4px 20px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --page-padding-x: 24px;
+    --grid-cols: 2;
+    --cover-size: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-padding-x: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --page-padding-x: 16px;
+    --page-padding-y: 24px;
+    --grid-cols: 1;
+    --cover-size: 120px;
+  }
 }

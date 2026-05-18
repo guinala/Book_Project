@@ -1,21 +1,24 @@
 import i18n from "@/plugins/i18n/i18n";
 import type { Book } from "@/types/Book";
-import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryWork, WikiSummary } from "@/types/OpenLibrary";
+import type { OLAuthorDoc, OLAuthorWork, OpenLibrarySearchResponse, OpenLibraryWork, WikiSummary, WorkEditionsResponse } from "@/types/OpenLibrary";
 import { openLibraryClient } from "@/services/api/apiConnections";
 import { getLangIso3Letters } from "@/utils/langConversion";
+import { genreFieldsFromSubjects } from "@/utils/genreUtils";
+import { getCoverUrl } from "@/utils/coverImage";
 
 const FANTASY_FIELDS = [
   "key",
   "title",
   "author_name",
+  "author_key",
   "first_publish_year",
   "cover_i",
   "edition_count",
   "subject",
-  "ratings_average",
-  "ratings_count",
   "isbn",
   "number_of_pages_median",
+  "ratings_average",
+  "ratings_count",
   "editions",
   "editions.title",
   "editions.language",
@@ -23,7 +26,14 @@ const FANTASY_FIELDS = [
   "editions.isbn",
 ].join(",");
 
-const SEARCH_FIELDS = "key,title,author_name,first_publish_year,cover_i,edition_count, isbn, number_of_pages_median";
+const SEARCH_FIELDS = [
+  "key", "title", "author_name", "author_key",
+  "first_publish_year", "cover_i", "edition_count",
+  "subject", "isbn", "number_of_pages_median",
+  "ratings_average", "ratings_count",
+  "editions", "editions.title", "editions.language",
+  "editions.cover_i", "editions.isbn",
+].join(",");
 
 export async function fetchFantasyBooks(
   limit: number,
@@ -44,7 +54,8 @@ export async function fetchFantasyBooks(
   });
 
   return data.docs.map((doc) => {
-    const bestEdition = doc.editions?.docs?.[0];
+    const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+      ?? doc.editions?.docs?.[0];
     const title = bestEdition?.title ?? doc.title;
     const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
 
@@ -52,10 +63,12 @@ export async function fetchFantasyBooks(
       key: doc.key,
       title,
       authors: doc.author_name ?? [unknownAuthor],
+      authorKeys: doc.author_key,
       first_publish_year: doc.first_publish_year ?? 0,
       cover_id,
+      cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
       edition_count: doc.edition_count ?? 0,
-      genre: doc.subject?.[0],
+      ...genreFieldsFromSubjects(doc.subject),
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
       isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
@@ -70,6 +83,7 @@ export async function searchBooks(
   lang: string,
   signal: AbortSignal
 ): Promise<{ books: Book[]; totalResults: number }> {
+  const langCode = getLangIso3Letters(lang);
   const unknownAuthor = i18n.t("book.unknownAuthor");
 
   const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
@@ -82,16 +96,26 @@ export async function searchBooks(
     signal,
   });
 
-  const books: Book[] = data.docs.map((doc) => ({
-    key: doc.key,
-    title: doc.title,
-    authors: doc.author_name ?? [unknownAuthor],
-    first_publish_year: doc.first_publish_year ?? 0,
-    cover_id: doc.cover_i ?? null,
-    edition_count: doc.edition_count ?? 0,
-    isbn: doc.isbn?.[0],
-    pages: doc.number_of_pages_median,  
-  }));
+  const books: Book[] = data.docs.map((doc) => {
+    const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+      ?? doc.editions?.docs?.[0];
+    const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
+    return {
+      key: doc.key,
+      title: bestEdition?.title ?? doc.title,
+      authors: doc.author_name ?? [unknownAuthor],
+      authorKeys: doc.author_key,
+      first_publish_year: doc.first_publish_year ?? 0,
+      cover_id,
+      cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
+      edition_count: doc.edition_count ?? 0,
+      ...genreFieldsFromSubjects(doc.subject),
+      rating: doc.ratings_average,
+      ratingCount: doc.ratings_count,
+      isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
+      pages: doc.number_of_pages_median,
+    };
+  });
 
   return { books, totalResults: data.numFound };
 }
@@ -116,7 +140,9 @@ export async function fetchBookByTitle(
   if (!data.docs || data.docs.length === 0) return null;
 
   const doc = data.docs[0];
-  const bestEdition = doc.editions?.docs?.[0];
+  const langCode = getLangIso3Letters(lang);
+  const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+    ?? doc.editions?.docs?.[0];
   const bookTitle = bestEdition?.title ?? doc.title;
   const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
 
@@ -124,10 +150,12 @@ export async function fetchBookByTitle(
     key: doc.key,
     title: bookTitle,
     authors: doc.author_name ?? [unknownAuthor],
+    authorKeys: doc.author_key,
     first_publish_year: doc.first_publish_year ?? 0,
     cover_id,
+    cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
     edition_count: doc.edition_count ?? 0,
-    genre: doc.subject?.[0],
+    ...genreFieldsFromSubjects(doc.subject),
     rating: doc.ratings_average,
     ratingCount: doc.ratings_count,
   };
@@ -179,20 +207,25 @@ export async function fetchAuthorBooks(
     params: {
       q: `author:${authorName} language:${langCode}`,
       lang,
-      fields: "key,title,author_name,cover_i,first_publish_year,edition_count,ratings_average,ratings_count,isbn,number_of_pages_median,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
+      fields: "key,title,author_name,author_key,cover_i,subject,first_publish_year,edition_count,isbn,number_of_pages_median,ratings_average,ratings_count,editions,editions.title,editions.language,editions.cover_i,editions.isbn",
       limit,
     },
     signal,
   });
 
   return data.docs.map(doc => {
-    const bestEdition = doc.editions?.docs?.[0];
+    const bestEdition = doc.editions?.docs?.find(e => e.language?.includes(langCode))
+      ?? doc.editions?.docs?.[0];
+    const cover_id = bestEdition?.cover_i ?? doc.cover_i ?? null;
     return {
       key: doc.key,
       title: bestEdition?.title ?? doc.title,
       authors: doc.author_name ?? [unknownAuthor],
+      authorKeys: doc.author_key,
       first_publish_year: doc.first_publish_year ?? 0,
-      cover_id: bestEdition?.cover_i ?? doc.cover_i ?? null,
+      cover_id,
+      cover_url: cover_id ? getCoverUrl(cover_id) : undefined,
+      ...genreFieldsFromSubjects(doc.subject),
       edition_count: doc.edition_count ?? 0,
       rating: doc.ratings_average,
       ratingCount: doc.ratings_count,
@@ -202,7 +235,49 @@ export async function fetchAuthorBooks(
   });
 }
 
-export async function getWikipediaSummary(name: string): Promise<WikiSummary | null> {
+export async function fetchBooksByGenre(
+  genre: string,
+  limit: number,
+  lang: string,
+  signal: AbortSignal
+): Promise<Book[]> {
+  const langCode = getLangIso3Letters(lang);
+  const unknownAuthor = i18n.t("book.unknownAuthor");
+
+  const { data } = await openLibraryClient.get<OpenLibrarySearchResponse>("/search.json", {
+    params: {
+      q: `subject:${genre} language:${langCode}`,
+      lang,
+      fields: FANTASY_FIELDS,
+      limit,
+      sort: "rating desc",
+    },
+    signal,
+  });
+
+  return data.docs.map((doc) => {
+    const bestEdition = doc.editions?.docs?.[0];
+    return {
+      key: doc.key,
+      title: bestEdition?.title ?? doc.title,
+      authors: doc.author_name ?? [unknownAuthor],
+      first_publish_year: doc.first_publish_year ?? 0,
+      cover_id: bestEdition?.cover_i ?? doc.cover_i ?? null,
+      edition_count: doc.edition_count ?? 0,
+      genre,
+      topics: doc.subject ?? [],
+      rating: doc.ratings_average,
+      ratingCount: doc.ratings_count,
+      isbn: bestEdition?.isbn?.[0] ?? doc.isbn?.[0],
+      pages: doc.number_of_pages_median,
+    };
+  });
+}
+
+export async function getWikipediaSummary(
+  name: string,
+  lang: string
+): Promise<WikiSummary | null> {
   const title = encodeURIComponent(name.trim().replace(/ /g, '_'));
 
   const attempt = async (lang: string): Promise<WikiSummary | null> => {
@@ -217,6 +292,47 @@ export async function getWikipediaSummary(name: string): Promise<WikiSummary | n
     }
   };
 
-  return (await attempt('es')) ?? (await attempt('en'));
+  const fallback = lang === 'en' ? 'es' : 'en';
+  return (await attempt(lang)) ?? (await attempt(fallback));
 }
+
+export async function fetchWorkEditionByLang(
+  workKey: string,
+  lang: string
+): Promise<{ title: string; isbn?: string } | null> {
+  const langPath = `/languages/${getLangIso3Letters(lang)}`;  
+
+  try {
+    const { data } = await openLibraryClient.get<WorkEditionsResponse>(
+      `${workKey}/editions.json`,
+      { params: { limit: 20 } }
+    );
+
+    const edition = data.entries?.find(e =>
+      e.languages?.some(l => l.key === langPath)
+    );
+
+    if (!edition?.title) return null;
+
+    return {
+      title: edition.title,
+      isbn: edition.isbn_13?.[0] ?? edition.isbn_10?.[0],
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchOpenLibrarySynopsis(
+  workKey: string,
+  signal?: AbortSignal
+): Promise<string> {
+  try {
+    const work = await getWork(workKey, signal);
+    return extractSynopsis(work);
+  } catch {
+    return '';
+  }
+}
+
 

@@ -36,8 +36,10 @@ export type BookDetail = {
   key: string;
   cover_url: string;
   genre: string;
+  genre2?: string;
   title: string;
   author: string;
+  authorKey?: string;
   rating: number;
   reviewCount: number;
   pages: number;

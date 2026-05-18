@@ -1,0 +1,137 @@
+@use '../../styles/lib' as *;
+
+.explore-page {
+  &__search-status {
+    @include container;
+    padding-top: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+
+    @include from($bp-md) {
+      padding-top: var(--space-4);
+      font-size: var(--text-md);
+    }
+
+    p { margin: 0; }
+  }
+
+  &__clear-btn {
+    background: none;
+    border: none;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 4px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    transition: color var(--transition-fast);
+
+    svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    &:hover { color: var(--color-text-primary); }
+  }
+
+  &__section {
+    @include container;
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-16);
+  }
+
+  &__search-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    align-items: start;
+
+    @include from($bp-md) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @include from($bp-lg) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+  }
+
+  &__sections {
+    @include container;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding-top: var(--space-14);
+    padding-bottom: var(--space-16);
+
+    @include from($bp-md) {
+      gap: var(--space-16);
+    }
+  }
+
+  &__skeleton-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  &__skeleton-title {
+    height: 22px;
+    width: 200px;
+    background: linear-gradient(
+      90deg,
+      var(--color-neutral-alpha-muted) 25%,
+      var(--color-border-subtle) 50%,
+      var(--color-neutral-alpha-muted) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  &__break {
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+    width: 100vw;
+    height: 80px;
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-bg-page),
+      var(--color-bg-card-solid) 50%,
+      var(--color-bg-page)
+    );
+  }
+
+  &__error {
+    text-align: center;
+    padding: var(--space-10) var(--space-4);
+    font-size: var(--text-md);
+    color: var(--color-error);
+  }
+
+  &__no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-8) var(--space-6);
+    text-align: center;
+  }
+
+  &__no-results-title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  &__no-results-img {
+    width: 210px;
+    height: 210px;
+    object-fit: contain;
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { auth } from "@/services/firebase/firebase_init";
+import { auth } from "@/services/firebase/firebaseInit";
 import { AuthContext } from "@/context/auth_init";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -11,9 +11,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        setIsGuest(false);
+      const isEmailPasswordUser = firebaseUser?.providerData[0]?.providerId === "password";
+      if (firebaseUser && isEmailPasswordUser && !firebaseUser.emailVerified) {
+        setUser(null);
+      } else {
+        setUser(firebaseUser);
+        if (firebaseUser) setIsGuest(false);
       }
       setLoading(false);
     });

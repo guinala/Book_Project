@@ -1,0 +1,58 @@
+// src/components/ProfileCard/ProfileCard.scss
+@use '../../../styles/lib' as *;
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  @include transition(background);
+
+  &:hover { background: var(--color-bg-section); }
+
+  &__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &:not(&--placeholder) {
+      object-fit: cover;
+    }
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-brand-light);
+      color: var(--color-brand-primary);
+      font-size: var(--text-lg);
+      font-weight: var(--weight-bold);
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__handle {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+}

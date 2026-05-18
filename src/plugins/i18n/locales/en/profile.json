@@ -1,0 +1,131 @@
+{
+  "profile": {
+    "loading": "Loading profile...",
+    "notFound": "Profile not found",
+
+    "edit": {
+      "title": "Edit profile",
+      "loading": "Loading...",
+      "saveBtn": "Save changes",
+      "saving": "Saving...",
+      "cancelBtn": "Cancel",
+      "saveError": "Unexpected error, please try again later.",
+      "uploadTimeoutError": "The upload took too long. Please verify that Firebase Storage is enabled in your Firebase Console project.",
+
+      "banner": {
+        "uploadHint": "Upload cover",
+        "ariaLabel": "Upload banner image"
+      },
+
+      "photo": {
+        "uploadHint": "Photo",
+        "alt": "Profile photo",
+        "ariaLabel": "Upload profile photo"
+      },
+
+      "fields": {
+        "name": "Name",
+        "nameRequired": "Name is required",
+        "surname": "Surname",
+        "username": "Handle",
+        "usernamePattern": "Only lowercase letters, numbers and _, between 3 and 20 characters",
+        "bio": "Bio",
+        "bioHint": "(max. 300 characters)"
+      }
+    },
+    "share": {
+      "ariaLabel": "Share profile",
+      "copied": "Link copied",
+      "shareText": "Check out {{name}}'s profile"
+    },
+    "actions": {
+      "menuAriaLabel": "More options",
+      "shareLink": "Share profile link",
+      "block": "Block"
+    },
+    "blocked": {
+      "title": "This user is blocked",
+      "subtitle": "You can't see their profile while they are blocked.",
+      "unblock": "Unblock"
+    },
+    "favorites": {
+      "modalTitle": "Edit favorite books",
+      "hint": "{{selected}}/{{max}} books selected",
+      "searchPlaceholder": "Search book...",
+      "searching": "Searching...",
+      "noResults": "No books in the catalog match that search. Try another word or look them up in Explore first.",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "saveError": "Could not save. Check your connection and try again.",
+      "closeAria": "Close",
+      "removeAria": "Remove {{title}}",
+      "sectionTitle": "Favorite books",
+      "edit": "Edit",
+      "emptyOwn": "Add up to 5 favorite books by clicking \"Edit\"",
+      "emptyOther": "No favorite books yet"
+    },
+    "userFallback": "User",
+    "header": {
+      "followers_one": "follower",
+      "followers_other": "followers",
+      "following_one": "following",
+      "following_other": "following",
+      "booksRead_one": "book read",
+      "booksRead_other": "books read",
+      "changeCover": "Change cover",
+      "editPhoto": "Edit",
+      "editProfile": "Edit profile",
+      "requests": "Requests",
+      "follow": "Follow",
+      "followingState": "Following",
+      "requested": "Requested"
+    },
+    "followList": {
+      "followersTitle": "Followers",
+      "followingTitle": "Following",
+      "loading": "Loading...",
+      "emptyFollowers": "No followers yet",
+      "emptyFollowing": "Not following anyone yet",
+      "closeAria": "Close"
+    },
+    "requests": {
+      "title": "Requests",
+      "loading": "Loading...",
+      "empty": "You have no pending requests",
+      "acceptAria": "Accept",
+      "rejectAria": "Reject",
+      "closeAria": "Close"
+    },
+    "locked": {
+      "title": "This profile is private",
+      "subtitle": "Follow {{name}} to see their activity and shelf"
+    },
+    "menu": {
+      "viewProfile": "View profile",
+      "settings": "Settings",
+      "darkTheme": "Dark theme",
+      "lightTheme": "Light theme",
+      "logout": "Log out"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "empty": "No recent activity",
+      "events": {
+        "reading_started": "Started reading",
+        "book_finished": "Finished reading",
+        "progress": "Updated their progress",
+        "review": "Wrote a review",
+        "list_created": "Created a list",
+        "watchlist_add": "Added to their list",
+        "book_rated": "Rated a book"
+      },
+      "time": {
+        "secondsAgo": "a few seconds ago",
+        "minutesAgo": "{{value}}m ago",
+        "hoursAgo": "{{value}}h ago",
+        "daysAgo": "{{value}}d ago"
+      }
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "profile": {
+    "loading": "Cargando perfil...",
+    "notFound": "Perfil no encontrado",
+
+    "edit": {
+      "title": "Editar perfil",
+      "loading": "Cargando...",
+      "saveBtn": "Guardar cambios",
+      "saving": "Guardando...",
+      "cancelBtn": "Cancelar",
+      "saveError": "Error inesperado, inténtalo de nuevo más tarde.",
+      "uploadTimeoutError": "La subida tardó demasiado. Verifica que Firebase Storage esté habilitado en tu proyecto de Firebase Console.",
+
+      "banner": {
+        "uploadHint": "Subir portada",
+        "ariaLabel": "Subir imagen de portada"
+      },
+
+      "photo": {
+        "uploadHint": "Foto",
+        "alt": "Foto de perfil",
+        "ariaLabel": "Subir foto de perfil"
+      },
+
+      "fields": {
+        "name": "Nombre",
+        "nameRequired": "El nombre es obligatorio",
+        "surname": "Apellido",
+        "username": "Handle",
+        "usernamePattern": "Solo letras minúsculas, números y _, entre 3 y 20 caracteres",
+        "bio": "Bio",
+        "bioHint": "(máx. 300 caracteres)"
+      }
+    },
+    "share": {
+      "ariaLabel": "Compartir perfil",
+      "copied": "Enlace copiado",
+      "shareText": "Mira el perfil de {{name}}"
+    },
+    "actions": {
+      "menuAriaLabel": "Más opciones",
+      "shareLink": "Compartir enlace al perfil",
+      "block": "Bloquear"
+    },
+    "blocked": {
+      "title": "Este usuario está bloqueado",
+      "subtitle": "No puedes ver su perfil mientras esté bloqueado.",
+      "unblock": "Desbloquear"
+    },
+    "favorites": {
+      "modalTitle": "Editar libros favoritos",
+      "hint": "{{selected}}/{{max}} libros seleccionados",
+      "searchPlaceholder": "Buscar libro...",
+      "searching": "Buscando...",
+      "noResults": "No hay libros en el catálogo con esa búsqueda. Prueba otra palabra o búscalos antes en Explorar.",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "saveError": "No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.",
+      "closeAria": "Cerrar",
+      "removeAria": "Eliminar {{title}}",
+      "sectionTitle": "Libros favoritos",
+      "edit": "Editar",
+      "emptyOwn": "Añade hasta 5 libros favoritos pulsando \"Editar\"",
+      "emptyOther": "Sin libros favoritos aún"
+    },
+    "userFallback": "Usuario",
+    "header": {
+      "followers_one": "seguidor",
+      "followers_other": "seguidores",
+      "following_one": "seguido",
+      "following_other": "seguidos",
+      "booksRead_one": "libro leído",
+      "booksRead_other": "libros leídos",
+      "changeCover": "Cambiar portada",
+      "editPhoto": "Editar",
+      "editProfile": "Editar perfil",
+      "requests": "Solicitudes",
+      "follow": "Seguir",
+      "followingState": "Siguiendo",
+      "requested": "Solicitado"
+    },
+    "followList": {
+      "followersTitle": "Seguidores",
+      "followingTitle": "Seguidos",
+      "loading": "Cargando...",
+      "emptyFollowers": "Aún no tienes seguidores",
+      "emptyFollowing": "Aún no sigues a nadie",
+      "closeAria": "Cerrar"
+    },
+    "requests": {
+      "title": "Solicitudes",
+      "loading": "Cargando...",
+      "empty": "No tienes solicitudes pendientes",
+      "acceptAria": "Aceptar",
+      "rejectAria": "Rechazar",
+      "closeAria": "Cerrar"
+    },
+    "locked": {
+      "title": "Este perfil es privado",
+      "subtitle": "Sigue a {{name}} para ver su actividad y estantería"
+    },
+    "menu": {
+      "viewProfile": "Ver perfil",
+      "settings": "Ajustes",
+      "darkTheme": "Tema oscuro",
+      "lightTheme": "Tema claro",
+      "logout": "Cerrar sesión"
+    },
+    "activity": {
+      "title": "Actividad reciente",
+      "empty": "Sin actividad reciente",
+      "events": {
+        "reading_started": "Empezó a leer",
+        "book_finished": "Terminó de leer",
+        "progress": "Actualizó su progreso",
+        "review": "Escribió una reseña",
+        "list_created": "Creó una lista",
+        "watchlist_add": "Añadió a su lista",
+        "book_rated": "Calificó un libro"
+      },
+      "time": {
+        "secondsAgo": "hace unos segundos",
+        "minutesAgo": "hace {{value}}m",
+        "hoursAgo": "hace {{value}}h",
+        "daysAgo": "hace {{value}}d"
+      }
+    }
+  }
+}

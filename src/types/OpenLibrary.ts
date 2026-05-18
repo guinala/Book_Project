@@ -15,6 +15,7 @@ export type OpenLibraryDoc = {
   key: string;
   title: string;
   author_name?: string[];
+  author_key?: string[]; 
   first_publish_year?: number;
   cover_i?: number;
   edition_count?: number;
@@ -39,12 +40,12 @@ export type OpenLibraryWork = {
 }
 
 export type OLAuthorDoc = {
-  key: string;   // e.g. "OL23919A"
+  key: string;   // "OL23919A"
   name: string;
 }
 
 export type OLAuthorWork = {
-  key: string;   // e.g. "/works/OL123W"
+  key: string;   // "/works/OL123W"
   title: string;
   covers?: number[];
   first_publish_year?: number;
@@ -55,3 +56,13 @@ export type WikiSummary = {
   thumbnail?: { source: string };
 }
 
+export type WorkEditionEntry = {
+  title?: string;
+  languages?: { key: string }[];   
+  isbn_13?: string[];
+  isbn_10?: string[];
+};
+
+export type WorkEditionsResponse = {
+  entries?: WorkEditionEntry[];
+};

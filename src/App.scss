@@ -7,5 +7,5 @@
 }
 
 main {
-  padding-top: var(--navbar-height);
+  padding-top: calc(var(--navbar-height) + var(--space-2));
 }

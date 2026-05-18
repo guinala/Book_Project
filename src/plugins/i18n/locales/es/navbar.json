@@ -5,7 +5,8 @@
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión",
     "notifications": "Notificaciones",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "search": "Buscar libros, autores..."
   },
   "nav": {
     "myLibrary": "Mi Biblioteca",
