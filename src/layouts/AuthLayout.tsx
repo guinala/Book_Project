@@ -7,10 +7,14 @@ interface AuthLayoutProps {
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="auth">
-      <div className="auth__box">
-        <span className="auth__brand">Trama</span>
-        {children}
-      </div>
+      <header className="auth__header">
+        <span className="auth__brand">
+          Trama<span className="auth__brand-dot">.</span>
+        </span>
+      </header>
+      <main className="auth__body">
+        <div className="auth__container">{children}</div>
+      </main>
     </div>
   );
 }

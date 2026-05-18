@@ -1,12 +1,43 @@
 @use "../../styles/shared" as *;
 
 .auth {
-  @include page-centered;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  padding-bottom: 30vh;
+  background: var(--color-bg-page);
 
-  &__box {
-    padding: var(--space-7) var(--space-5) var(--space-4);
+  // ── Cabecera ──────────────────────────────────────────────
+  &__header {
+    height: var(--navbar-height);
+    border-bottom: 1px solid var(--color-border-medium);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--navbar-padding);
+    flex-shrink: 0;
+  }
+
+  &__brand {
+    font-family: var(--font-editorial);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  &__brand-dot {
+    color: var(--color-brand-primary);
+  }
+
+  // ── Cuerpo centrado ───────────────────────────────────────
+  &__body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6) var(--space-4);
+  }
+
+  &__container {
     width: 100%;
     max-width: 400px;
     display: flex;
@@ -14,19 +45,40 @@
     gap: var(--space-5);
 
     @include from($bp-md) {
-      padding: var(--space-10) var(--space-9) var(--space-6);
       gap: var(--space-6);
     }
   }
 
-  &__brand {
-    font-size: var(--text-xl);
-    font-weight: var(--weight-extrabold);
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    text-align: center;
+  // ── Tabs segmentados ─────────────────────────────────────
+  &__tabs {
+    display: flex;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    gap: 2px;
   }
 
+  &__tab {
+    flex: 1;
+    text-align: center;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    padding: var(--space-2) 0;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-tertiary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+
+    &--active {
+      background: var(--color-bg-page);
+      color: var(--color-text-primary);
+      box-shadow: 0 1px 4px rgba(44, 36, 32, 0.12);
+    }
+  }
+
+  // ── Titulo (solo estado verificationSent) ────────────────
   &__title {
     font-size: var(--text-xl);
     font-weight: var(--weight-semibold);
@@ -34,10 +86,6 @@
     margin: 0 0 var(--space-2);
     letter-spacing: 0.01em;
     color: var(--color-text-secondary);
-
-    @include from($bp-md) {
-      margin-bottom: var(--space-4);
-    }
   }
 
   &__description {
@@ -48,6 +96,7 @@
     line-height: 1.6;
   }
 
+  // ── Formulario ───────────────────────────────────────────
   &__form {
     display: flex;
     flex-direction: column;
@@ -56,6 +105,12 @@
     .auth__btn-primary {
       margin-top: var(--space-2);
     }
+  }
+
+  &__name-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
   }
 
   &__field {
@@ -111,7 +166,7 @@
       color: var(--color-text-primary);
     }
   }
-  
+
   &__input {
     @include text-input;
     outline: none;
@@ -218,16 +273,6 @@
     }
   }
 
-  &__btn-danger {
-    background-color: transparent;
-    border-radius: var(--radius-sm);
-    padding: var(--space-2);
-    font-size: var(--text-md);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    width: 100%;
-  }
-
   &__google-group {
     display: flex;
     flex-direction: column;
@@ -268,25 +313,6 @@
     font-size: var(--text-md);
     color: var(--color-text-secondary);
     margin: 0;
-  }
-
-  &__toggle {
-    text-align: center;
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    margin: 0;
-  }
-
-  &__toggle-link {
-    cursor: pointer;
-    color: var(--color-brand-primary);
-    font-weight: var(--weight-medium);
-    text-decoration: underline;
-    transition: color var(--transition-fast);
-
-    &:hover {
-      color: var(--color-brand-dark);
-    }
   }
 
   &__remember-row {
@@ -374,9 +400,5 @@
     text-align: center;
     font-size: var(--text-md);
     color: var(--color-text-secondary);
-  }
-
-  &__hidden {
-    display: none;
   }
 }
