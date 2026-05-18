@@ -7,14 +7,12 @@ import type { LoginFormValues } from "@/types/AuthTypes";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import FormInput from "@/components/auth/form-components/FormInput";
 import GoogleFormInput from "@/components/auth/form-components/GoogleFormInput";
-//import AppleFormInput from "@/components/auth/form-components/AppleFormInput";
-import AuthToggleLink from "@/components/auth/form-components/AuthToggleLink";
 
 type LoginFormProps = {
-  onSwitchToRegister: () => void;
+  onSwitchToRegister?: () => void;
 };
 
-export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
+export default function LoginForm({ onSwitchToRegister: _unused }: LoginFormProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
@@ -63,8 +61,6 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
 
   return (
     <>
-      <h2 className="auth__title">{t("auth.loginTitle")}</h2>
-
       <GoogleFormInput disabled={isSubmitting} />
       {/* <AppleFormInput disabled={isSubmitting} /> */}
 
@@ -133,12 +129,6 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           )}
         </div>
       )}
-
-      <AuthToggleLink
-        text={t("auth.noAccount")}
-        linkText={t("auth.registerLink")}
-        onClick={onSwitchToRegister}
-      />
     </>
   );
 }
