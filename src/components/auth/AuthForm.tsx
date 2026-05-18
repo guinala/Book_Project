@@ -23,11 +23,27 @@ export default function AuthForm() {
 
   return (
     <AuthLayout>
-      {screen === "login" ? (
-        <LoginForm onSwitchToRegister={() => setScreen("register")} />
-      ) : (
-        <RegisterForm onSwitchToLogin={() => setScreen("login")} />
-      )}
+      <div className="auth__tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={screen === "login"}
+          className={`auth__tab${screen === "login" ? " auth__tab--active" : ""}`}
+          onClick={() => setScreen("login")}
+        >
+          {t("auth.tabLogin")}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={screen === "register"}
+          className={`auth__tab${screen === "register" ? " auth__tab--active" : ""}`}
+          onClick={() => setScreen("register")}
+        >
+          {t("auth.tabRegister")}
+        </button>
+      </div>
+      {screen === "login" ? <LoginForm /> : <RegisterForm />}
     </AuthLayout>
   );
 }
