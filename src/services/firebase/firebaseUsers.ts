@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getCountFromServer, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db, auth } from "./firebaseInit";
 import type { FavoriteBook, UserFullProfile, UserMinimal } from "@/types/UserProfile";
 
@@ -72,15 +72,22 @@ export async function getUserProfile(uid: string): Promise<UserFullProfile | nul
   if (!snap.exists()) return null;
   const d = snap.data();
 
+  const privFetch = auth.currentUser?.uid === uid
+    ? getDoc(doc(db, "Users", uid, "private", "info"))
+    : Promise.resolve(null);
+
+  const [followingCountSnap, followersCountSnap, privSnap] = await Promise.all([
+    getCountFromServer(collection(db, "Users", uid, "following")),
+    getCountFromServer(collection(db, "Users", uid, "followers")),
+    privFetch,
+  ]);
+
   let email = "";
   let birthDate: string | undefined;
-  if (auth.currentUser?.uid === uid) {
-    const privSnap = await getDoc(doc(db, "Users", uid, "private", "info"));
-    if (privSnap.exists()) {
-      const p = privSnap.data();
-      email = p.email ?? "";
-      birthDate = p.birthDate;
-    }
+  if (privSnap?.exists()) {
+    const p = privSnap.data();
+    email = p.email ?? "";
+    birthDate = p.birthDate;
   }
 
   return {
@@ -93,8 +100,8 @@ export async function getUserProfile(uid: string): Promise<UserFullProfile | nul
     bio: d.bio ?? "",
     profilePhotoUrl: d.profilePhotoUrl ?? "",
     bannerImageUrl: d.bannerImageUrl ?? "",
-    followersCount: d.followersCount ?? 0,
-    followingCount: d.followingCount ?? 0,
+    followersCount: followersCountSnap.data().count,
+    followingCount: followingCountSnap.data().count,
     isPublic: d.isPublic ?? true,
   };
 }
