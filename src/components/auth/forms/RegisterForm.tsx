@@ -10,7 +10,7 @@ import GoogleFormInput from "@/components/auth/form-components/GoogleFormInput";
 
 export default function RegisterForm() {
   const { t } = useTranslation();
-  const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
     defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "" },
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -44,11 +44,7 @@ export default function RegisterForm() {
       setVerificationSent(true);
     } catch (error: unknown) {
       const firebaseErr = error as { code?: string };
-      if (firebaseErr.code === "auth/email-already-in-use") {
-        setError("email", { message: getFirebaseErrorMessage(firebaseErr.code) });
-      } else {
-        setFirebaseError(getFirebaseErrorMessage(firebaseErr.code ?? "unknown"));
-      }
+      setFirebaseError(getFirebaseErrorMessage(firebaseErr.code ?? "unknown"));
     }
   }
 
@@ -104,7 +100,7 @@ export default function RegisterForm() {
             pattern: { value: /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/, message: t("authErrors.auth/invalid-email") },
             validate: async (value) => {
               const inUse = await isEmailInUse(value);
-              return inUse ? t("authErrors.auth/email-already-in-use") : true;
+              return inUse ? t("authErrors.email-already-in-use-field") : true;
             },
           })}
         />

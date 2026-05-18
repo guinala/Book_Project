@@ -12,6 +12,17 @@ export default function AuthForm() {
   const { t } = useTranslation();
   const { loading } = useAuth();
   const [screen, setScreen] = useState<FormScreen>("login");
+  const [slideDir, setSlideDir] = useState<"left" | "right">("right");
+
+  function goToLogin() {
+    setSlideDir("left");
+    setScreen("login");
+  }
+
+  function goToRegister() {
+    setSlideDir("right");
+    setScreen("register");
+  }
 
   if (loading) {
     return (
@@ -29,7 +40,7 @@ export default function AuthForm() {
           role="tab"
           aria-selected={screen === "login"}
           className={`auth__tab${screen === "login" ? " auth__tab--active" : ""}`}
-          onClick={() => setScreen("login")}
+          onClick={goToLogin}
         >
           {t("auth.tabLogin")}
         </button>
@@ -38,12 +49,14 @@ export default function AuthForm() {
           role="tab"
           aria-selected={screen === "register"}
           className={`auth__tab${screen === "register" ? " auth__tab--active" : ""}`}
-          onClick={() => setScreen("register")}
+          onClick={goToRegister}
         >
           {t("auth.tabRegister")}
         </button>
       </div>
-      {screen === "login" ? <LoginForm /> : <RegisterForm />}
+      <div key={screen} className={`auth__slide auth__slide--${slideDir}`}>
+        {screen === "login" ? <LoginForm /> : <RegisterForm />}
+      </div>
     </AuthLayout>
   );
 }
