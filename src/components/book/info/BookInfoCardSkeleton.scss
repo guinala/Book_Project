@@ -1,0 +1,91 @@
+@use "../../../styles/shared" as *;
+
+%shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-neutral-alpha-muted) 25%,
+    var(--color-border-subtle) 50%,
+    var(--color-neutral-alpha-muted) 75%
+  );
+  @include shimmer-bg;
+  border-radius: var(--radius-sm);
+}
+
+.book-info-card-skeleton {
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-border-outline);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @include from($bp-md) {
+    flex-direction: row;
+    gap: var(--space-6);
+  }
+
+  &__cover {
+    @extend %shimmer;
+    width: 100%;
+    height: 300px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+
+    @include from($bp-md) {
+      width: 250px;
+      height: auto;
+      min-height: 375px;
+      align-self: stretch;
+    }
+  }
+
+  &__details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+
+    @include from($bp-md) {
+      padding-right: 52px;
+    }
+  }
+
+  &__line {
+    @extend %shimmer;
+    height: 12px;
+
+    &--genre  { width: 80px; }
+    &--title  { width: 70%; height: 22px; }
+    &--author { width: 40%; }
+  }
+
+  &__info-row {
+    @extend %shimmer;
+    height: 48px;
+    border-radius: var(--radius-sm);
+  }
+
+  &__synopsis {
+    @extend %shimmer;
+    height: 170px;
+    border-radius: var(--radius-md);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--space-1);
+  }
+
+  &__button {
+    @extend %shimmer;
+    width: 140px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+  }
+}
