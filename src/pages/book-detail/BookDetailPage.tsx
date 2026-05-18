@@ -5,6 +5,8 @@ import BookInfoCard from "@/components/book/info/BookInfoCard";
 import ReviewsSection from "@/components/book/info/ReviewsSection";
 import AuthorSection from "@/components/book/info/AuthorSection";
 import RecommendationsSection from "@/components/book/info/RecommendationsSection";
+import BookInfoCardSkeleton from "@/components/book/info/BookInfoCardSkeleton";
+import AuthorSectionSkeleton from "@/components/book/info/AuthorSectionSkeleton";
 import "./BookDetailPage.scss";
 import { useAuthorData } from "@/hooks/useAuthorData";
 import { useBookRecommendations } from "@/hooks/useBookRecommendations";
@@ -34,7 +36,9 @@ export default function BookDetailPage() {
   if (loading) {
     return (
       <div className="book-detail-page">
-        <p className="book-detail-page__status">{t("bookDetail.loading")}</p>
+        <section className="book-detail-page__info-section">
+          <BookInfoCardSkeleton />
+        </section>
       </div>
     );
   }
@@ -67,7 +71,7 @@ export default function BookDetailPage() {
       <ReviewsSection reviews={book.reviews} />
 
       {authorLoading
-        ? <p className="book-detail-page__status">{t("bookDetail.loading")}</p>
+        ? <AuthorSectionSkeleton />
         : <AuthorSection authorInfo={authorInfo ?? book.authorInfo} />
       }
 
