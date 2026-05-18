@@ -8,11 +8,7 @@ import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import FormInput from "@/components/auth/form-components/FormInput";
 import GoogleFormInput from "@/components/auth/form-components/GoogleFormInput";
 
-type RegisterFormProps = {
-  onSwitchToLogin?: () => void;
-};
-
-export default function RegisterForm({ onSwitchToLogin: _unused }: RegisterFormProps) {
+export default function RegisterForm() {
   const { t } = useTranslation();
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
     defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "" },
