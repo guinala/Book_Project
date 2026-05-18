@@ -183,67 +183,104 @@ export function useProfile(userId: string) {
     if (!user || !profile) {
       return;
     }
+    const isPrivate = profile.isPublic === false;
+
+    //Se actualiza ya la UI (a falta de que se actulice Firebase)
+    if (isPrivate) {
+      setHasPendingRequest(true);
+    } else {
+      setIsFollowingState(true);
+      setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
+    }
+
     try {
-      if (profile.isPublic === false) {
+      if (isPrivate) {
         //Privado -> se manda solicitud
         await sendFollowRequest(userId);
-        setHasPendingRequest(true);
+        ///setHasPendingRequest(true);
       } else {
         await followUser(userId);
-        setIsFollowingState(true);
-        setProfile((p) => 
-          p ? {...p, followersCount: p.followersCount + 1 } : p
-        );
+        // setIsFollowingState(true);
+        // setProfile((p) => 
+        //   p ? {...p, followersCount: p.followersCount + 1 } : p
+        // );
       }
     } catch {
       console.error("[useProfile] follow failed");
+      if (isPrivate) {
+        setHasPendingRequest(false);
+      } else {
+        setIsFollowingState(false);
+        setProfile((p) =>
+          p ? { ...p, followersCount: p.followersCount - 1 } : p
+        );
+      }
     }
   }, [user, userId, profile]);
 
   const unfollow = useCallback(async () => {
     if (!user) return;
+
+    // Actualizar ya
+    setIsFollowingState(false);
+    setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
+
     try {
       await unfollowUser(userId);
-      setIsFollowingState(false);
-      setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
-      if (profile && profile.isPublic === false) {
-        setPublicShelf(EMPTY_SHELF);
-        setActivity(EMPTY_ACTIVITY);
-      }
+      // setIsFollowingState(false);
+      // setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
+      // if (profile && profile.isPublic === false) {
+      //   setPublicShelf(EMPTY_SHELF);
+      //   setActivity(EMPTY_ACTIVITY);
+      // }
     } catch {
       console.error("[useProfile] unfollow failed");
+      setIsFollowingState(true);
+      setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
     }
-  }, [user, userId, profile]);
+  }, [user, userId]);
 
   const cancelRequest = useCallback(async () => {
     if (!user) return;
+    setHasPendingRequest(false);
+
     try {
       await cancelFollowRequest(userId);
-      setHasPendingRequest(false);
+      //setHasPendingRequest(false);
     } catch {
       console.error("[useProfile] cancelRequest failed");
+      setHasPendingRequest(true);
     }
   }, [user, userId]);
 
   const block = useCallback(async () => {
     if (!user) return;
+    setIsBlockedState(true);
     try {
       await blockUser(userId);
-      setIsBlockedState(true);
+      //setIsBlockedState(true);
     } catch {
       console.error("[useProfile] block failed");
+      setIsBlockedState(false);
     }
   }, [user, userId]);
 
   const unblock = useCallback(async () => {
     if (!user) return;
+    setIsBlockedState(false);
     try {
       await unblockUser(userId);
-      setIsBlockedState(false);
+      //setIsBlockedState(false);
     } catch {
       console.error("[useProfile] unblock failed");
+      setIsBlockedState(true);
     }
   }, [user, userId]);
+
+  //Acutalizar contador sin esperar a Firebase
+  const incrementFollowers = useCallback(() => {
+    setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
+  }, []);
 
   return {
     profile,
@@ -262,5 +299,6 @@ export function useProfile(userId: string) {
     cancelRequest,
     block,
     unblock,
+    incrementFollowers,
   };
 }

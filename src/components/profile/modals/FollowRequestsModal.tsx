@@ -12,17 +12,19 @@ import "./FollowRequestsModal.scss";
 
 type FollowRequestsModalProps = {
   onClose: () => void;
+  onAccepted?: () => void;
 };
 
 export default function FollowRequestsModal({
   onClose,
+  onAccepted,
 }: FollowRequestsModalProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [requests, setRequests] = useState<FollowRequest[]>([]);
   const [loading, setLoading] = useState(true);
   // uids con una acción en curso → desactiva sus botones para evitar doble clic.
-  const [busy, setBusy] = useState<Set<string>>(new Set());
+  //const [busy, setBusy] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -41,20 +43,25 @@ export default function FollowRequestsModal({
   }, []);
 
   const resolve = async (
-    requesterUid: string,
+    request: FollowRequest,
     action: (uid: string) => Promise<void>,
   ) => {
-    setBusy((b) => new Set(b).add(requesterUid));
+    setRequests((rs) =>
+      rs.filter((r) => r.requesterUid !== request.requesterUid)
+    );
+    //setBusy((b) => new Set(b).add(requesterUid));
     try {
-      await action(requesterUid);
-      setRequests((rs) => rs.filter((r) => r.requesterUid !== requesterUid));
+      await action(request.requesterUid);
+      if (action === acceptFollowRequest) onAccepted?.();
+      //setRequests((rs) => rs.filter((r) => r.requesterUid !== requesterUid));
     } catch {
       console.error("[FollowRequestsModal] acción fallida");
-      setBusy((b) => {
-        const next = new Set(b);
-        next.delete(requesterUid);
-        return next;
-      });
+      setRequests((rs) => [request, ...rs]); // rollback
+      // setBusy((b) => {
+      //   const next = new Set(b);
+      //   next.delete(requesterUid);
+      //   return next;
+      // });
     }
   };
 
@@ -93,7 +100,6 @@ export default function FollowRequestsModal({
                 r.requesterName ||
                 r.requesterUsername ||
                 t("profile.userFallback");
-              const isBusy = busy.has(r.requesterUid);
               return (
                 <div
                   className="follow-requests-modal__row"
@@ -134,10 +140,7 @@ export default function FollowRequestsModal({
                     <button
                       type="button"
                       className="follow-requests-modal__btn follow-requests-modal__btn--accept"
-                      disabled={isBusy}
-                      onClick={() =>
-                        resolve(r.requesterUid, acceptFollowRequest)
-                      }
+                      onClick={() => resolve(r, acceptFollowRequest)}
                       aria-label={t("profile.requests.acceptAria")}
                     >
                       <Check size={18} aria-hidden="true" />
@@ -145,10 +148,7 @@ export default function FollowRequestsModal({
                     <button
                       type="button"
                       className="follow-requests-modal__btn follow-requests-modal__btn--reject"
-                      disabled={isBusy}
-                      onClick={() =>
-                        resolve(r.requesterUid, rejectFollowRequest)
-                      }
+                      onClick={() => resolve(r, rejectFollowRequest)}
                       aria-label={t("profile.requests.rejectAria")}
                     >
                       <X size={18} aria-hidden="true" />

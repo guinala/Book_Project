@@ -34,7 +34,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
 
   return (
     <div className="searchbar">
-      <h2 className="searchbar__title">Descubre tu próxima trama</h2>
+      <h2 className="searchbar__title">{t("explore.searchTitle")}</h2>
 
       <div className={inputRowClass}>
         <span className="searchbar__icon" aria-hidden="true">

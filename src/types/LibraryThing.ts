@@ -6,7 +6,7 @@ export type LTFactVersion = {
 };
 
 export type LTField = {
-  name: string;          // "description", "summary", "characters", ...
+  name: string;      
   versions: LTFactVersion[];
 };
 

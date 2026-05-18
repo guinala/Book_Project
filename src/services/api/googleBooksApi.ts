@@ -62,7 +62,6 @@ export async function fetchGoogleCover(
 //   return covers;
 // }
 
-// Nueva función privada con retry por libro
 async function fetchGoogleCoverWithRetry(
   title: string,
   author: string,

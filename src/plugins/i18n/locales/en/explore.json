@@ -1,5 +1,6 @@
 {
   "explore": {
+    "searchTitle": "Discover your next story",
     "searchPlaceholder": "Search by title, author or ISBN",
     "searching": "Searching...",
     "resultsFound": "{{count}} results found",

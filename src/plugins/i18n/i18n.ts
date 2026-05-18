@@ -60,6 +60,7 @@ i18n
     },
     fallbackLng: "es",
     supportedLngs: ["es", "en"],
+    load: "languageOnly",
     interpolation: {
       escapeValue: false,
     },

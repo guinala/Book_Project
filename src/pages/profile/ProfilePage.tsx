@@ -58,6 +58,7 @@ export default function ProfilePage() {
     cancelRequest,
     block,
     unblock,
+    incrementFollowers,
   } = useProfile(resolvedUserId ?? "");
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
@@ -199,7 +200,7 @@ export default function ProfilePage() {
       )}
 
       {showRequests && (
-        <FollowRequestsModal onClose={() => setShowRequests(false)} />
+        <FollowRequestsModal onClose={() => setShowRequests(false)} onAccepted={incrementFollowers} />
       )}
 
       {showFavEditor && isOwnProfile && (

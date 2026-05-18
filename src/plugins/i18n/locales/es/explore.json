@@ -1,5 +1,6 @@
 {
   "explore": {
+    "searchTitle": "Descubre tu próxima trama",
     "searchPlaceholder": "Busca por título, autor o ISBN",
     "searching": "Buscando...",
     "resultsFound": "{{count}} resultados encontrados",

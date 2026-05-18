@@ -13,7 +13,7 @@ describe('SearchBar', () => {
   it('renderiza el título y el campo de búsqueda', () => {
     render(<SearchBar />);
 
-    expect(screen.getByText('Descubre tu próxima trama')).toBeInTheDocument();
+    expect(screen.getByText('explore.searchTitle')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('explore.searchPlaceholder')).toBeInTheDocument();
   });
 
