@@ -38,6 +38,16 @@
       "copied": "Enlace copiado",
       "shareText": "Mira el perfil de {{name}}"
     },
+    "actions": {
+      "menuAriaLabel": "Más opciones",
+      "shareLink": "Compartir enlace al perfil",
+      "block": "Bloquear"
+    },
+    "blocked": {
+      "title": "Este usuario está bloqueado",
+      "subtitle": "No puedes ver su perfil mientras esté bloqueado.",
+      "unblock": "Desbloquear"
+    },
     "favorites": {
       "modalTitle": "Editar libros favoritos",
       "hint": "{{selected}}/{{max}} libros seleccionados",
@@ -57,9 +67,12 @@
     },
     "userFallback": "Usuario",
     "header": {
-      "followers": "Seguidores",
-      "following": "Seguidos",
-      "booksRead": "Libros acabados",
+      "followers_one": "seguidor",
+      "followers_other": "seguidores",
+      "following_one": "seguido",
+      "following_other": "seguidos",
+      "booksRead_one": "libro leído",
+      "booksRead_other": "libros leídos",
       "changeCover": "Cambiar portada",
       "editPhoto": "Editar",
       "editProfile": "Editar perfil",

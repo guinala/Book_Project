@@ -1,0 +1,50 @@
+@use "@/styles/lib" as *;
+
+.blocked-profile-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-lg);
+
+  &__icon {
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-2);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    max-width: 320px;
+  }
+
+  &__unblock-btn {
+    margin-top: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    background: var(--color-bg-card-solid);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    @include transition(all);
+
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      background: var(--color-brand-alpha-subtle);
+    }
+  }
+}

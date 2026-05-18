@@ -13,16 +13,22 @@
     height: 40px;
     padding: 0;
     border-radius: var(--radius-pill);
-    border: 1px solid var(--color-border-medium);
-    background: var(--color-bg-card-solid);
+    border: 1.5px solid var(--color-border-medium);
+    background: var(--color-bg-page);
     color: var(--color-text-secondary);
     cursor: pointer;
-    @include transition(all);
+    transition:
+      border-color var(--transition-fast),
+      color var(--transition-fast);
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
 
     &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
-      background: var(--color-brand-alpha-subtle);
+      border-color: var(--color-text-primary);
+      color: var(--color-text-primary);
     }
   }
 

@@ -19,6 +19,7 @@ import listCover4 from "@/assets/covers/shelf-4.jpg";
 import listCover5 from "@/assets/covers/shelf-5.jpg";
 import "./ProfilePage.scss";
 import LockedProfileNotice from "@/components/profile/sections/LockedProfileNotice";
+import BlockedProfileNotice from "@/components/profile/sections/BlockedProfileNotice";
 import { lookupUidByUsername } from "@/services/firebase/firebaseUsernames";
 import FollowRequestsModal from "@/components/profile/modals/FollowRequestsModal";
 
@@ -48,12 +49,15 @@ export default function ProfilePage() {
     favorites,
     isOwnProfile,
     isFollowing,
+    isBlocked,
     loading,
     canViewFull,
     hasPendingRequest,
     follow,
     unfollow,
     cancelRequest,
+    block,
+    unblock,
   } = useProfile(resolvedUserId ?? "");
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
@@ -156,9 +160,13 @@ export default function ProfilePage() {
         onFollowingClick={() => setFollowModal("following")}
         onEditClick={() => navigate("/profile/edit")}
         onRequestsClick={() => setShowRequests(true)}
+        onBlock={block}
+        onBooksReadClick={isOwnProfile ? () => navigate("/my-library/shelf", { state: { status: "finished" } }) : undefined}
       />
 
-      {canViewFull ? (
+      {isBlocked ? (
+        <BlockedProfileNotice onUnblock={unblock} />
+      ) : canViewFull ? (
         <>
           <FavoriteBooksSection
             favorites={localFavorites}

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import ShareProfileButton from "../ShareProfileButton";
+import ProfileActionsMenu from "../ProfileActionsMenu";
 import "./ProfileHeader.scss";
 import type { UserFullProfile } from "@/types/UserProfile";
 
@@ -16,6 +17,8 @@ type ProfileHeaderProps = {
   onFollowingClick: () => void;
   onEditClick: () => void;
   onRequestsClick: () => void;
+  onBlock: () => void;
+  onBooksReadClick?: () => void;
 };
 
 export default function ProfileHeader({
@@ -30,7 +33,9 @@ export default function ProfileHeader({
   onFollowersClick,
   onFollowingClick,
   onEditClick,
-  onRequestsClick
+  onRequestsClick,
+  onBlock,
+  onBooksReadClick,
 }: ProfileHeaderProps) {
   const { t } = useTranslation();
   const displayName = `${profile.name} ${profile.surname}`.trim() || profile.email;
@@ -107,11 +112,9 @@ export default function ProfileHeader({
               className="profile-header__stat"
               onClick={onFollowersClick}
             >
+              <span className="profile-header__stat-count">{profile.followersCount}</span>
               <span className="profile-header__stat-label">
-                {t("profile.header.followers")}
-              </span>
-              <span className="profile-header__stat-value">
-                {profile.followersCount}
+                {t("profile.header.followers", { count: profile.followersCount })}
               </span>
             </button>
 
@@ -122,29 +125,40 @@ export default function ProfileHeader({
               className="profile-header__stat"
               onClick={onFollowingClick}
             >
+              <span className="profile-header__stat-count">{profile.followingCount}</span>
               <span className="profile-header__stat-label">
-                {t("profile.header.following")}
-              </span>
-              <span className="profile-header__stat-value">
-                {profile.followingCount}
+                {t("profile.header.following", { count: profile.followingCount })}
               </span>
             </button>
 
             <div className="profile-header__stat-divider" aria-hidden="true" />
 
-            <div className="profile-header__stat">
+            <button
+              type="button"
+              className="profile-header__stat"
+              onClick={onBooksReadClick}
+              disabled={!onBooksReadClick}
+            >
+              <span className="profile-header__stat-count">{booksReadCount}</span>
               <span className="profile-header__stat-label">
-                {t("profile.header.booksRead")}
+                {t("profile.header.booksRead", { count: booksReadCount })}
               </span>
-              <span className="profile-header__stat-value">{booksReadCount}</span>
-            </div>
+            </button>
           </div>
 
           <div className="profile-header__actions">
-            <ShareProfileButton
-              username={profile.username}
-              name={displayName}
-            />
+            {isOwnProfile ? (
+              <ShareProfileButton
+                username={profile.username}
+                name={displayName}
+              />
+            ) : (
+              <ProfileActionsMenu
+                username={profile.username}
+                name={displayName}
+                onBlock={onBlock}
+              />
+            )}
             {isOwnProfile ? (
               <>
                 {profile.isPublic === false && (

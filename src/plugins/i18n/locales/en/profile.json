@@ -38,6 +38,16 @@
       "copied": "Link copied",
       "shareText": "Check out {{name}}'s profile"
     },
+    "actions": {
+      "menuAriaLabel": "More options",
+      "shareLink": "Share profile link",
+      "block": "Block"
+    },
+    "blocked": {
+      "title": "This user is blocked",
+      "subtitle": "You can't see their profile while they are blocked.",
+      "unblock": "Unblock"
+    },
     "favorites": {
       "modalTitle": "Edit favorite books",
       "hint": "{{selected}}/{{max}} books selected",
@@ -57,9 +67,12 @@
     },
     "userFallback": "User",
     "header": {
-      "followers": "Followers",
-      "following": "Following",
-      "booksRead": "Books read",
+      "followers_one": "follower",
+      "followers_other": "followers",
+      "following_one": "following",
+      "following_other": "following",
+      "booksRead_one": "book read",
+      "booksRead_other": "books read",
       "changeCover": "Change cover",
       "editPhoto": "Edit",
       "editProfile": "Edit profile",

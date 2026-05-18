@@ -8,18 +8,18 @@
 
   &__title {
     font-family: var(--font-editorial);
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
     font-weight: var(--weight-bold);
     color: var(--color-text-primary);
-    margin: 0 0 var(--space-8);
+    margin: 0 0 var(--space-6);
     letter-spacing: -0.02em;
   }
 
   &__section {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    margin-bottom: var(--space-8);
+    gap: var(--space-1);
+    margin-bottom: var(--space-6);
   }
 
   &__section-title {
@@ -28,47 +28,47 @@
     color: var(--color-text-tertiary);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    margin: 0 0 var(--space-2);
+    margin: 0 0 var(--space-1);
   }
 
   &__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-6);
-    padding: var(--space-4) var(--space-5);
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
     background: transparent;
     border: 1px solid var(--color-border-outline);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
   }
 
   &__row-info {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 2px;
     min-width: 0;
   }
 
   &__row-label {
-    font-size: var(--text-md);
+    font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
     margin: 0;
   }
 
   &__row-desc {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     color: var(--color-text-secondary);
     margin: 0;
   }
 
-  // Toggle 
+  // Toggle
   &__toggle {
     position: relative;
     flex-shrink: 0;
-    width: 44px;
-    height: 26px;
+    width: 36px;
+    height: 22px;
     border-radius: var(--radius-pill);
     border: none;
     background: var(--color-border-medium);
@@ -81,8 +81,8 @@
       position: absolute;
       top: 3px;
       left: 3px;
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       border-radius: var(--radius-pill);
       background: #fff;
       transition: transform var(--transition-base);
@@ -93,7 +93,7 @@
       background: var(--color-text-primary);
 
       &::after {
-        transform: translateX(18px);
+        transform: translateX(14px);
       }
     }
 

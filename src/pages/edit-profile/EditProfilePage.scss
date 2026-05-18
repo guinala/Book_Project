@@ -275,26 +275,48 @@
   }
 
   &__btn {
-    padding: var(--space-3) var(--space-8);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 20px;
     border-radius: var(--radius-sm);
-    font-size: var(--text-md);
-    font-weight: var(--weight-semibold);
+    font-family: var(--font-main);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
     cursor: pointer;
-    @include transition(all);
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast),
+      transform 100ms;
+
+    &:active {
+      transform: scale(0.97);
+    }
 
     &--cancel {
-      background: none;
-      border: 1.5px solid var(--color-border-medium);
+      background: transparent;
+      border: 2px solid var(--color-border-medium);
       color: var(--color-text-primary);
-      &:hover { border-color: var(--color-text-primary); }
+
+      &:hover {
+        border-color: var(--color-text-primary);
+      }
     }
 
     &--save {
       background: var(--color-text-primary);
-      border: none;
+      border: 2px solid transparent;
       color: var(--color-btn-primary-fg);
-      &:hover { background: var(--color-btn-primary-hover); }
-      &:disabled { opacity: 0.6; cursor: default; }
+
+      &:hover {
+        background: var(--color-btn-primary-hover);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
     }
   }
 

@@ -11,6 +11,7 @@ import {
   sendFollowRequest,
   unfollowUser,
 } from "@/services/firebase/firebaseFollows";
+import { blockUser, checkIsBlocked, unblockUser } from "@/services/firebase/firebaseBlocks";
 import { getActivity } from "@/services/firebase/firebaseActivity";
 import { getShelf } from "@/services/firebase/firebaseLibrary";
 import type { UserFullProfile, ActivityItem, FavoriteBook } from "@/types/UserProfile";
@@ -60,6 +61,7 @@ export function useProfile(userId: string) {
   const [favorites, setFavorites] = useState<FavoriteBook[]>(EMPTY_FAVORITES);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [isFollowingState, setIsFollowingState] = useState(false);
+  const [isBlockedState, setIsBlockedState] = useState(false);
   const [loading, setLoading] = useState(() => !!userId);
   const [bodyLoading, setBodyLoading] = useState(false);
 
@@ -73,6 +75,7 @@ export function useProfile(userId: string) {
     setFavorites(EMPTY_FAVORITES);
     setIsFollowingState(false);
     setHasPendingRequest(false);
+    setIsBlockedState(false);
   }
 
   const canViewFull = isOwnProfile || (profile?.isPublic !== false) || isFollowingState;
@@ -101,6 +104,9 @@ export function useProfile(userId: string) {
         }),
         checkHasPendingRequest(userId).then((p) => {
           if (!cancelled) setHasPendingRequest(p);
+        }),
+        checkIsBlocked(userId).then((b) => {
+          if (!cancelled) setIsBlockedState(b);
         })
       );
     }
@@ -219,6 +225,26 @@ export function useProfile(userId: string) {
     }
   }, [user, userId]);
 
+  const block = useCallback(async () => {
+    if (!user) return;
+    try {
+      await blockUser(userId);
+      setIsBlockedState(true);
+    } catch {
+      console.error("[useProfile] block failed");
+    }
+  }, [user, userId]);
+
+  const unblock = useCallback(async () => {
+    if (!user) return;
+    try {
+      await unblockUser(userId);
+      setIsBlockedState(false);
+    } catch {
+      console.error("[useProfile] unblock failed");
+    }
+  }, [user, userId]);
+
   return {
     profile,
     shelf,
@@ -228,10 +254,13 @@ export function useProfile(userId: string) {
     isOwnProfile,
     isFollowing: isFollowingState,
     hasPendingRequest,
+    isBlocked: isBlockedState,
     loading,
     canViewFull,
     follow,
     unfollow,
     cancelRequest,
+    block,
+    unblock,
   };
 }

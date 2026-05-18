@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
 import type { Book } from "@/types/Book";
@@ -14,8 +14,10 @@ const SKELETON_COUNT = 14;
 export default function FullShelfPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { shelfByStatus, loading } = useShelf();
-  const [activeStatus, setActiveStatus] = useState<ShelfStatus>("wantToRead");
+  const initialStatus = (location.state as { status?: ShelfStatus } | null)?.status ?? "wantToRead";
+  const [activeStatus, setActiveStatus] = useState<ShelfStatus>(initialStatus);
   const [searchQuery, setSearchQuery] = useState("");
 
   const isSearching = searchQuery.trim().length > 0;
