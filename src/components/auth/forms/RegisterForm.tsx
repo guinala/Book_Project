@@ -7,14 +7,12 @@ import { createUserProfile } from "@/services/firebase/firebaseUsers";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import FormInput from "@/components/auth/form-components/FormInput";
 import GoogleFormInput from "@/components/auth/form-components/GoogleFormInput";
-//import AppleFormInput from "@/components/auth/form-components/AppleFormInput";
-import AuthToggleLink from "@/components/auth/form-components/AuthToggleLink";
 
 type RegisterFormProps = {
-  onSwitchToLogin: () => void;
+  onSwitchToLogin?: () => void;
 };
 
-export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+export default function RegisterForm({ onSwitchToLogin: _unused }: RegisterFormProps) {
   const { t } = useTranslation();
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
     defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "" },
@@ -63,35 +61,31 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       <>
         <h2 className="auth__title">{t("auth.verificationSentTitle")}</h2>
         <p className="auth__description">{t("auth.verificationSentBody", { email: sentEmail })}</p>
-        <button className="auth__btn-secondary" type="button" onClick={onSwitchToLogin}>
-          {t("auth.backToLogin")}
-        </button>
       </>
     );
   }
 
   return (
     <>
-      <h2 className="auth__title">{t("auth.registerTitle")}</h2>
-
       <GoogleFormInput disabled={isSubmitting} />
-      {/* <AppleFormInput disabled={isSubmitting} /> */}
 
       <form className="auth__form" onSubmit={handleSubmit(onSubmit)}>
-        <FormInput
-          type="text"
-          label={t("auth.namePlaceholder")}
-          required
-          error={errors.name}
-          registration={register("name", { required: t("authErrors.fieldRequired") })}
-        />
-        <FormInput
-          type="text"
-          label={t("auth.surnamePlaceholder")}
-          required
-          error={errors.surname}
-          registration={register("surname", { required: t("authErrors.fieldRequired") })}
-        />
+        <div className="auth__name-row">
+          <FormInput
+            type="text"
+            label={t("auth.namePlaceholder")}
+            required
+            error={errors.name}
+            registration={register("name", { required: t("authErrors.fieldRequired") })}
+          />
+          <FormInput
+            type="text"
+            label={t("auth.surnamePlaceholder")}
+            required
+            error={errors.surname}
+            registration={register("surname", { required: t("authErrors.fieldRequired") })}
+          />
+        </div>
         <FormInput
           type="date"
           label={t("auth.birthDatePlaceholder")}
@@ -140,12 +134,6 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
 
         {firebaseError && <p className="auth__error">{firebaseError}</p>}
       </form>
-
-      <AuthToggleLink
-        text={t("auth.hasAccount")}
-        linkText={t("auth.loginLink")}
-        onClick={onSwitchToLogin}
-      />
     </>
   );
 }
