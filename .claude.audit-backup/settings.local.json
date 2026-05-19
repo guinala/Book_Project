@@ -15,15 +15,7 @@
       "Bash(npm audit *)",
       "Bash(npm run *)",
       "Bash(git *)",
-      "Bash(cd *)",
-      "Bash(npm install *)",
-      "Bash(tasklist)",
-      "mcp__chrome-devtools__select_page",
-      "Bash(tasklist /v /fi \"imagename eq chrome.exe\" /fo csv)",
-      "Bash(curl -s http://localhost:5173/)",
-      "Bash(curl -s http://localhost:5173/src/main.tsx)",
-      "PowerShell(Get-NetTCPConnection *)",
-      "mcp__chrome-devtools__click"
+      "Bash(cd *)"
     ]
   }
 }
