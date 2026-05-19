@@ -15,7 +15,7 @@ function mapListDoc(id: string, d: Record<string, unknown>): BookList {
 export async function getLists(uid: string): Promise<BookList[]> {
     const userLists = await getDocs(collection(db, "Users", uid, "lists"));
     return userLists.docs
-        .map((doc) => mapListDoc(doc.id, doc.data()))
+        .map((docList) => mapListDoc(docList.id, docList.data()))
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
@@ -25,7 +25,7 @@ export async function getList(uid: string, listId: string): Promise<BookList | n
   return mapListDoc(listDoc.id, listDoc.data());
 }
 
-export async function createList(
+export async function createListDB(
     uid: string, name: string, books: ListBook[],
 ): Promise<string> {
     const ref = doc(collection(db, "Users", uid, "lists"));
@@ -34,7 +34,7 @@ export async function createList(
     return ref.id;
 }
 
-export async function updateList(
+export async function updateListDB(
   uid: string,
   listId: string,
   content: { name?: string; books?: ListBook[] },
@@ -45,6 +45,6 @@ export async function updateList(
   });
 }
 
-export async function deleteList(uid: string, listId: string): Promise<void> {
+export async function deleteListDB(uid: string, listId: string): Promise<void> {
   await deleteDoc(doc(db, "Users", uid, "lists", listId));
 }
