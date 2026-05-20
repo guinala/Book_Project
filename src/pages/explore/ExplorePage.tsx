@@ -8,6 +8,7 @@ import SearchBar from "@/components/common/Searchbar";
 import BookCard from "@/components/book/cards/BookCard";
 import GridLoading from "@/components/layout/GridLoading";
 import ExploreSection from "@/components/explore/ExploreSection";
+import TrendingSection from "@/components/explore/TrendingSection";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
 import { genreToI18nKey } from "@/utils/genreUtils";
@@ -232,11 +233,8 @@ function ExplorePage() {
         <div className="explore-page__sections">
 
           {showGuestVersion && (
-            <ExploreSection
-              type="trending"
+            <TrendingSection
               params={shelfParams}
-              titleKey="explore.sections.trending"
-              titleFallbackKey="explore.sections.trendingFallback"
               onNavigate={handleNavigateToSection}
             />
           )}
@@ -259,17 +257,25 @@ function ExplorePage() {
                   {sectionsResult.sections.length > 1 && index === Math.floor(sectionsResult.sections.length / 2) && (
                     <div className="explore-page__break" aria-hidden="true" />
                   )}
-                  <ExploreSection
-                    type={entry.type}
-                    override={{ books: entry.books, isFallback: entry.isFallback }}
-                    params={buildParamsForEntry(entry, shelfDerived!)}
-                    titleKey={titleKeyForEntry(entry)}
-                    titleFallbackKey={entry.type === "trending" ? "explore.sections.trendingFallback"
-                      : entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback"
-                      : undefined}
-                    titleHighlight={titleHighlightForEntry(entry)}
-                    onNavigate={handleNavigateToSection}
-                  />
+                  {entry.type === "trending" ? (
+                    <TrendingSection
+                      books={entry.books}
+                      isFallback={entry.isFallback}
+                      params={buildParamsForEntry(entry, shelfDerived!)}
+                      onNavigate={handleNavigateToSection}
+                    />
+                  ) : (
+                    <ExploreSection
+                      type={entry.type}
+                      override={{ books: entry.books, isFallback: entry.isFallback }}
+                      params={buildParamsForEntry(entry, shelfDerived!)}
+                      titleKey={titleKeyForEntry(entry)}
+                      titleFallbackKey={entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback" : undefined}
+                      titleHighlight={titleHighlightForEntry(entry)}
+                      onNavigate={handleNavigateToSection}
+                      featured={entry.type === "because-reading"}
+                    />
+                  )}
                 </Fragment>
               ))}
             </>
