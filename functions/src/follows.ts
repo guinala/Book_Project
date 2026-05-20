@@ -5,10 +5,8 @@ if (admin.apps.length === 0) {
   admin.initializeApp();
 }
 
-// Misma región que scrapeSynopsis, para mantener todo junto.
 const REGION = "europe-west1";
 
-/** Seguir a un usuario de perfil público. Idempotente. */
 export const followUser = onCall({ region: REGION }, async (request) => {
   const followerId = request.auth?.uid;
   if (!followerId) {
@@ -33,7 +31,7 @@ export const followUser = onCall({ region: REGION }, async (request) => {
 
   const followingRef = db.doc(`Users/${followerId}/following/${targetId}`);
   if ((await followingRef.get()).exists) {
-    return { ok: true }; // ya lo sigue → idempotente
+    return { ok: true }; // idempotente
   }
 
   const ts = admin.firestore.FieldValue.serverTimestamp();
@@ -49,7 +47,6 @@ export const followUser = onCall({ region: REGION }, async (request) => {
   return { ok: true };
 });
 
-/** Dejar de seguir. Idempotente: si no seguía, no hace nada. */
 export const unfollowUser = onCall({ region: REGION }, async (request) => {
   const followerId = request.auth?.uid;
   if (!followerId) {
@@ -63,7 +60,7 @@ export const unfollowUser = onCall({ region: REGION }, async (request) => {
   const db = admin.firestore();
   const followingRef = db.doc(`Users/${followerId}/following/${targetId}`);
   if (!(await followingRef.get()).exists) {
-    return { ok: true }; // no lo seguía → idempotente
+    return { ok: true }; 
   }
 
   const dec = admin.firestore.FieldValue.increment(-1);
