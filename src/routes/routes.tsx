@@ -1,6 +1,7 @@
 import App from "@/App";
 import LandingPage from "@/pages/landing/LandingPage";
 import AuthPage from "@/pages/auth/AuthPage";
+import SearchPage from "@/pages/search/SearchPage";
 import ExplorePage from "@/pages/explore/ExplorePage";
 import ExploreSectionPage from "@/pages/explore/section/ExploreSectionPage";
 import MyLibraryPage from "@/pages/my-library/MyLibraryPage";
@@ -21,6 +22,7 @@ export const ROUTES = [
     children: [
       { index: true, element: <LandingPage /> },
       { path: "auth", element: <AuthPage /> },
+      { path: "search", element: <SearchPage /> },
       { path: "explore", element: <ExplorePage /> },
       { path: "explore/section/:type", element: <ExploreSectionPage /> },
       { path: "books/:bookId", element: <BookDetailPage /> },
