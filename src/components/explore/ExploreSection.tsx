@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import BookCard from "@/components/book/cards/BookCard";
+import FeaturedBookCard from "@/components/book/cards/FeaturedBookCard";
 import ExploreGridSkeleton from "./ExploreGridSkeleton";
 import { useExploreSection } from "@/hooks/useExploreSection";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
@@ -17,6 +18,7 @@ type ExploreSectionProps = {
   titleFallbackKey?: string;
   titleHighlight?: string;
   onNavigate?: () => void;
+  featured?: boolean;
 };
 
 function buildSectionUrl(type: ExploreSectionType, params: ExploreSectionParams = {}): string {
@@ -54,6 +56,7 @@ export default function ExploreSection({
   titleFallbackKey,
   titleHighlight,
   onNavigate,
+  featured = false,
 }: ExploreSectionProps) {
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
@@ -104,8 +107,9 @@ export default function ExploreSection({
       )}
 
       {!loading && !error && books.length > 0 && (
-        <div className="explore-section__grid">
-          {books.map(book => (
+        <div className={`explore-section__grid${featured ? " explore-section__grid--featured" : ""}`}>
+          {featured && <FeaturedBookCard book={books[0]} />}
+          {(featured ? books.slice(1) : books).map(book => (
             <BookCard key={book.key} book={book} />
           ))}
         </div>

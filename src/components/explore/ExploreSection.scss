@@ -62,6 +62,26 @@
     }
   }
 
+  &__grid--featured {
+    align-items: stretch;
+
+    .featured-book-card {
+      grid-column: 1 / -1;
+    }
+
+    @include from($bp-md) {
+      .featured-book-card {
+        grid-column: span 4;
+      }
+    }
+
+    @include from($bp-lg) {
+      .featured-book-card {
+        grid-column: span 3;
+      }
+    }
+  }
+
   &__error {
     display: flex;
     flex-direction: column;
