@@ -25,6 +25,7 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
   const { isAuthenticated } = useAuth();
   const saved = getStatus(book.key);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -39,6 +40,12 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
 
+  useEffect(() => {
+    return () => {
+      if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    };
+  }, []);
+
   const handleCardClick = () => {
     navigate(`/books/${encodeKey(book.key)}`, { state: { book } });
   };
@@ -52,7 +59,8 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
     e.stopPropagation();
     if (!isAuthenticated) {
       setTooltipVisible(true);
-      setTimeout(() => setTooltipVisible(false), 2000);
+      if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+      tooltipTimerRef.current = setTimeout(() => setTooltipVisible(false), 2000);
       return;
     }
     setDropdownOpen((o) => !o);
