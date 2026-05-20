@@ -151,7 +151,7 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
                 )}
               </>
             ) : (
-              <span className="featured-book-card__rating-count">Sin valorar</span>
+              <span className="featured-book-card__rating-count">{t("book.noRating")}</span>
             )}
           </div>
         </div>
@@ -173,6 +173,7 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
               type="button"
               className={`featured-book-card__btn featured-book-card__btn--solid${saved && !dropdownOpen ? " featured-book-card__btn--saved" : ""}`}
               onClick={handleSaveBtnClick}
+              aria-label={t("book.save")}
             >
               {saved && !dropdownOpen ? (
                 <>
