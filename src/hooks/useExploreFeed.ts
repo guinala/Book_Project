@@ -51,7 +51,7 @@ export type ExploreSectionsResult = {
 };
 
 const FEATURED_COUNT = 4;
-const STANDARD_COUNT = 6;
+const STANDARD_COUNT = 15;
 
 async function buildSections(params: ExploreSectionsParams): Promise<SectionEntry[]> {
   const {
@@ -72,14 +72,14 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     return books;
   }
 
-  // 1. Trending
+  // 1. Trending — no shelf filter: trending shows popular books regardless of shelf status
   const trendingRaw = await getTrendingBooks(lang, FEATURED_COUNT + 10);
-  const trendingBooks = trendingRaw.filter(b => !seenKeys.has(b.key)).slice(0, FEATURED_COUNT);
+  const trendingBooks = trendingRaw.slice(0, FEATURED_COUNT);
   if (trendingBooks.length > 0) {
     entries.push({ id: "trending", type: "trending", books: claim(trendingBooks), isFallback: false });
   } else {
     const fallbackRaw = await getTopRatedBooks(lang, FEATURED_COUNT + 10);
-    const fallback = fallbackRaw.filter(b => !seenKeys.has(b.key)).slice(0, FEATURED_COUNT);
+    const fallback = fallbackRaw.slice(0, FEATURED_COUNT);
     entries.push({ id: "trending", type: "trending", books: claim(fallback), isFallback: true });
   }
 
@@ -168,7 +168,7 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   const resolvedAuthorKey = fiveStarAuthorKey ?? favoriteAuthorKey;
   const resolvedAuthorName = fiveStarAuthorName ?? favoriteAuthorName;
   if (resolvedAuthorKey) {
-    const books = (await getTopAuthorBooks(resolvedAuthorKey, lang, 4))
+    const books = (await getTopAuthorBooks(resolvedAuthorKey, lang, STANDARD_COUNT + 10))
       .filter(b => !seenKeys.has(b.key))
       .slice(0, STANDARD_COUNT);
     if (books.length > 0) {

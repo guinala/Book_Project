@@ -1,6 +1,7 @@
 @use "../../../styles/shared" as *;
 
 .featured-book-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--color-bg-page);

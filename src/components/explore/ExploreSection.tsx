@@ -61,7 +61,7 @@ export default function ExploreSection({
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
   const navigate = useNavigate();
-  const result = useSectionBooks(type, params, lang, featured ? 4 : 6, !!override);
+  const result = useSectionBooks(type, params, lang, featured ? 4 : 15, !!override);
   const { books, loading, error, retry, isFallback } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback } : result
 
   const resolvedTitleKey = isFallback && titleFallbackKey ? titleFallbackKey : titleKey;
@@ -107,12 +107,20 @@ export default function ExploreSection({
       )}
 
       {!loading && !error && books.length > 0 && (
-        <div className={`explore-section__grid${featured ? " explore-section__grid--featured" : ""}`}>
-          {featured && <FeaturedBookCard book={books[0]} />}
-          {(featured ? books.slice(1, 4) : books).map(book => (
-            <BookCard key={book.key} book={book} />
-          ))}
-        </div>
+        featured ? (
+          <div className="explore-section__grid explore-section__grid--featured">
+            <FeaturedBookCard book={books[0]} />
+            {books.slice(1, 4).map(book => (
+              <BookCard key={book.key} book={book} />
+            ))}
+          </div>
+        ) : (
+          <div className="explore-section__scroll">
+            {books.map(book => (
+              <BookCard key={book.key} book={book} />
+            ))}
+          </div>
+        )
       )}
     </section>
   );

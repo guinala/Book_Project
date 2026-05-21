@@ -10,6 +10,8 @@ const EXPLORE_GENRES = [
   "Romance",
   "Science Fiction",
   "Historical Fiction",
+  "Fantasy",
+  "Thriller",
 ];
 
 type Props = {
@@ -23,7 +25,8 @@ export default function GenreSection({ featuredGenre }: Props) {
   const otherGenres = EXPLORE_GENRES.filter(g => g !== featuredGenre);
 
   const handleClick = (genre: string) => {
-    navigate(`/explore/section/more-genre?genre=${encodeURIComponent(genre)}`);
+    const label = t(`book.genres.${genreToI18nKey(genre)}`, { defaultValue: genre });
+    navigate(`/explore/section/more-genre?genre=${encodeURIComponent(genre)}&genreLabel=${encodeURIComponent(label)}`);
   };
 
   return (
@@ -43,7 +46,7 @@ export default function GenreSection({ featuredGenre }: Props) {
           </span>
         </button>
 
-        {otherGenres.slice(0, 4).map(genre => (
+        {otherGenres.slice(0, 6).map(genre => (
           <button
             key={genre}
             type="button"

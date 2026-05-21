@@ -46,6 +46,29 @@
     &:hover { color: var(--color-text-primary); }
   }
 
+  &__scroll {
+    display: flex;
+    gap: var(--space-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-top: var(--space-2);
+    margin-top: calc(-1 * var(--space-2));
+    padding-bottom: var(--space-2);
+
+    &::-webkit-scrollbar { display: none; }
+
+    .book-card {
+      flex-shrink: 0;
+      width: calc(50% - var(--space-4));
+      scroll-snap-align: start;
+
+      @include from($bp-md) { width: calc(25% - var(--space-4)); }
+      @include from($bp-lg) { width: calc(100% / 6 - var(--space-4)); }
+    }
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
