@@ -66,6 +66,16 @@ Orden fijo en `buildSections`. Cada sección se omite si no hay datos suficiente
 
 > La vista sin login se revisará en una iteración futura para añadir más secciones.
 
+### Estado: login sin libros
+
+Usuarios registrados que aún no han añadido libros a su estantería muestran provisionalmente la vista guest (sin el banner de conversión). Esta vista se reemplazará cuando se implemente el onboarding de registro.
+
+**Diseño previsto** (pendiente spec de onboarding):
+- Si el usuario completó el onboarding → mostrar secciones semi-personalizadas usando sus preferencias de géneros/autores guardadas en Firestore, aunque la estantería esté vacía.
+- Si el usuario saltó el onboarding o no existe aún → vista guest con prompt suave ("Añade libros o cuéntanos qué te gusta para personalizar tu explorar").
+
+Ver `docs/superpowers/ideas/onboarding-registro-idea.md` para la idea del onboarding.
+
 ---
 
 ## Algoritmos de recomendación
