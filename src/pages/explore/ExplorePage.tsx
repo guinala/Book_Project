@@ -14,7 +14,7 @@ import TrendingSection from "@/components/explore/TrendingSection";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
 import GenreSection from "@/components/explore/GenreSection";
-import { genreToI18nKey } from "@/utils/genreUtils";
+import { genreToI18nKey, moreGenreTitleKey } from "@/utils/genreUtils";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import type { SearchFilter } from "@/types/Search";
 import { ChevronLeft } from "lucide-react";
@@ -64,6 +64,7 @@ function buildParamsForEntry(entry: SectionEntry, shelf: ShelfDerived): ExploreS
 }
 
 function titleKeyForEntry(entry: SectionEntry): string {
+  if (entry.type === "more-genre") return moreGenreTitleKey(entry.favoriteGenre);
   const map: Partial<Record<ExploreSectionType, string>> = {
     "trending": "explore.sections.trending",
     "because-reading": "explore.sections.becauseReading",
@@ -71,7 +72,6 @@ function titleKeyForEntry(entry: SectionEntry): string {
     "because-finished": "explore.sections.becauseFinished",
     "because-favorites": "explore.sections.becauseFavorites",
     "acclaimed": "explore.sections.acclaimed",
-    "more-genre": "explore.sections.moreGenre",
     "top-genre": "explore.sections.topGenre",
     "new-releases-for-you": "explore.sections.newReleasesForYou",
     "waiting": "explore.sections.waiting",

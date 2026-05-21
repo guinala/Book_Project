@@ -5,6 +5,7 @@ import { useSectionBooks } from "@/hooks/useSectionBooks";
 import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
+import { moreGenreTitleKey } from "@/utils/genreUtils";
 import { ChevronLeft } from "lucide-react";
 import "./ExploreSectionPage.scss";
 
@@ -72,7 +73,9 @@ export default function ExploreSectionPage() {
 
   const titleKey = isFallback && SECTION_FALLBACK_KEYS[sectionType]
     ? SECTION_FALLBACK_KEYS[sectionType]!
-    : (SECTION_TITLE_KEYS[sectionType] ?? "");
+    : sectionType === "more-genre"
+      ? moreGenreTitleKey(params.favoriteGenre)
+      : (SECTION_TITLE_KEYS[sectionType] ?? "");
 
   const title = t(titleKey, {
     title: params.referenceBookTitle,
