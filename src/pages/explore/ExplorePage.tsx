@@ -26,7 +26,6 @@ const SCROLL_KEY = "explore_scroll";
 const FEATURED_SECTION_TYPES = new Set<import("@/types/ExploreTypes").ExploreSectionType>([
   "because-liked",
   "because-finished",
-  "acclaimed",
   "new-releases-for-you",
 ]);
 
@@ -312,9 +311,17 @@ function ExplorePage() {
               {sectionsResult.sections.map((entry) => (
                 <Fragment key={entry.id}>
                   {entry.type === "genre-grid" ? (
-                    <GenreSection
-                      featuredGenre={shelfDerived?.favoriteGenre ?? "Fiction"}
-                    />
+                    <>
+                      <GenreSection
+                        featuredGenre={shelfDerived?.favoriteGenre ?? "Fiction"}
+                      />
+                      <ExploreSection
+                        type="acclaimed"
+                        titleKey="explore.sections.acclaimed"
+                        featured
+                        onNavigate={handleNavigateToSection}
+                      />
+                    </>
                   ) : entry.type === "trending" ? (
                     <TrendingSection
                       books={entry.books}

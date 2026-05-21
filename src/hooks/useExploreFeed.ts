@@ -122,32 +122,7 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   // 4. Genre-grid (no books — special render in ExplorePage)
   entries.push({ id: "genre-grid", type: "genre-grid", books: [], isFallback: false });
 
-  // 5. Acclaimed
-  const acclaimedRaw = await getTopRatedBooks(lang, FEATURED_COUNT + 20);
-  const acclaimedBooks = acclaimedRaw
-    .filter(b => (b.rating ?? 0) >= 4.5 && !seenKeys.has(b.key))
-    .slice(0, FEATURED_COUNT);
-  if (acclaimedBooks.length > 0) {
-    entries.push({ id: "acclaimed", type: "acclaimed", books: claim(acclaimedBooks), isFallback: false });
-  }
-
-  // 6. More-genre
-  if (favoriteGenre) {
-    const raw = await getBooksByGenre(favoriteGenre, lang, STANDARD_COUNT + 20);
-    const books = raw.filter(b => !seenKeys.has(b.key)).slice(0, STANDARD_COUNT);
-    if (books.length > 0) {
-      entries.push({
-        id: "more-genre",
-        type: "more-genre",
-        books: claim(books),
-        isFallback: false,
-        favoriteGenre,
-        favoriteGenreLabel: favoriteGenreLabel ?? undefined,
-      });
-    }
-  }
-
-  // 7. Because-finished
+  // 5. Because-finished
   if (finishedBook?.genre) {
     const raw = await getRecommendationsByGenre(finishedBook.genre, lang, finishedBook.key, FEATURED_COUNT + 10);
     const books = raw.filter(b => (b.rating ?? 0) >= 4 && !seenKeys.has(b.key)).slice(0, FEATURED_COUNT);
@@ -183,6 +158,22 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     }
   }
 
+  // 8. More-genre
+  if (favoriteGenre) {
+    const raw = await getBooksByGenre(favoriteGenre, lang, STANDARD_COUNT + 20);
+    const books = raw.filter(b => !seenKeys.has(b.key)).slice(0, STANDARD_COUNT);
+    if (books.length > 0) {
+      entries.push({
+        id: "more-genre",
+        type: "more-genre",
+        books: claim(books),
+        isFallback: false,
+        favoriteGenre,
+        favoriteGenreLabel: favoriteGenreLabel ?? undefined,
+      });
+    }
+  }
+
   // 9. Because-reading
   for (let i = 0; i < referenceBooks.length && i < 3; i++) {
     const book = referenceBooks[i];
@@ -201,17 +192,7 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     });
   }
 
-  // 10. Waiting
-  if (wantToReadBooks.length > 0) {
-    entries.push({
-      id: "waiting",
-      type: "waiting",
-      books: wantToReadBooks.slice(0, STANDARD_COUNT),
-      isFallback: false,
-    });
-  }
-
-  // 11. New-releases-for-you
+  // 10. New-releases-for-you
   const [byAuthor, byGenre] = await Promise.all([
     userAuthorKeys.length
       ? getAuthorNewReleases(userAuthorKeys, year, lang, FEATURED_COUNT + 10)
@@ -235,6 +216,16 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     if (fallback.length > 0) {
       entries.push({ id: "new-releases-for-you", type: "new-releases-for-you", books: claim(fallback), isFallback: true });
     }
+  }
+
+  // 11. Waiting
+  if (wantToReadBooks.length > 0) {
+    entries.push({
+      id: "waiting",
+      type: "waiting",
+      books: wantToReadBooks.slice(0, STANDARD_COUNT),
+      isFallback: false,
+    });
   }
 
   return entries;
