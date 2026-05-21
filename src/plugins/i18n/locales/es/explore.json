@@ -25,8 +25,14 @@
       "newReleasesForYou": "Nuevos lanzamientos para ti",
       "waiting": "Fantásticas tramas te esperan",
       "moreAuthor": "Más de {{author}}",
-      "topGenre": "Mejores libros de {{genre}}"
+      "topGenre": "Mejores libros de {{genre}}",
+      "acclaimed": "Aclamados por la crítica",
+      "becauseLiked": "Porque te gustó {{title}}",
+      "becauseFinished": "Porque leíste {{title}}",
+      "becauseFavorites": "Basado en tus favoritos",
+      "genreGrid": "Explorar por género"
     },
+    "allGenres": "Todos los géneros",
     "banner": {
       "title": "Descubre libros para ti",
       "body": "Crea una cuenta para ver recomendaciones personalizadas según lo que lees.",

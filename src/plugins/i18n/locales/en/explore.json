@@ -25,8 +25,14 @@
       "newReleasesForYou": "New releases for you",
       "waiting": "Fantastic stories await you",
       "moreAuthor": "More by {{author}}",
-      "topGenre": "Top Books of {{genre}}"
+      "topGenre": "Top Books of {{genre}}",
+      "acclaimed": "Critically acclaimed",
+      "becauseLiked": "Because you liked {{title}}",
+      "becauseFinished": "Because you read {{title}}",
+      "becauseFavorites": "Based on your favorites",
+      "genreGrid": "Explore by genre"
     },
+    "allGenres": "All genres",
     "banner": {
       "title": "Discover books for you",
       "body": "Create an account to see personalized recommendations based on what you read.",
