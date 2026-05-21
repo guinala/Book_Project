@@ -86,8 +86,6 @@ function ExplorePage() {
   const [favoritesReferenceBook, setFavoritesReferenceBook] = useState<import("@/types/Book").Book | null>(null);
   const scrollRestored = useRef(false);
 
-  void favoritesReferenceBook;
-
   const isLoggedIn = isAuthenticated && !isGuest;
   const isSearching = searchQuery.trim().length > 0;
 
@@ -203,14 +201,21 @@ function ExplorePage() {
           favoriteGenreLabel: shelfDerived.favoriteGenreLabel,
           favoriteAuthorKey: shelfDerived.favoriteAuthorKey,
           favoriteAuthorName: shelfDerived.favoriteAuthorName,
+          fiveStarAuthorKey: shelfDerived.fiveStarAuthorKey,
+          fiveStarAuthorName: shelfDerived.fiveStarAuthorName,
           referenceBooks: shelfDerived.referenceBooks,
           wantToReadBooks: shelfDerived.wantToReadBooks,
+          likedBook: shelfDerived.likedBook,
+          finishedBook: shelfDerived.finishedBook,
+          favoritesReferenceBook,
         }
       : {
           lang, userShelfKeys: new Set(), userAuthorKeys: [],
           favoriteGenre: null, favoriteGenreLabel: null,
           favoriteAuthorKey: null, favoriteAuthorName: null,
+          fiveStarAuthorKey: null, fiveStarAuthorName: null,
           referenceBooks: [], wantToReadBooks: [],
+          likedBook: null, finishedBook: null, favoritesReferenceBook: null,
         },
       !(isLoggedIn && shelfDerived?.hasBooks)
   );
