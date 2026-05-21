@@ -302,6 +302,26 @@ export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]>
     .slice(0, count);
 }
 
+export async function getTopAuthorBooks(authorKey: string, lang: string, minCount = 4): Promise<Book[]> {
+  const books = await getAuthorBooksFromDB(authorKey, "", lang);
+  return books.length < minCount ? [] : books;
+}
+
+export async function getPopularAuthorWithBooks(
+  lang: string,
+): Promise<{ authorKey: string; authorName: string; books: Book[] } | null> {
+  const trending = await getTrendingBooks(lang, 20);
+  for (const book of trending) {
+    if (!book.authorKeys?.length) continue;
+    const authorKey = book.authorKeys[0];
+    const authorName = book.authors[0];
+    if (!authorKey || !authorName) continue;
+    const books = await getTopAuthorBooks(authorKey, lang, 4);
+    if (books.length >= 4) return { authorKey, authorName, books };
+  }
+  return null;
+}
+
 export async function getBooksByGenre(genre: string, lang: string, count = 6): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
