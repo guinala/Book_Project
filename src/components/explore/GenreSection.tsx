@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { genreToColorVar, genreToI18nKey } from "@/utils/genreUtils";
 import "./GenreSection.scss";
 
-export const EXPLORE_GENRES = [
+const EXPLORE_GENRES = [
   "Fiction",
   "Non-Fiction",
   "Mystery and detective stories",

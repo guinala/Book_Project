@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { getFavorites } from "@/services/firebase/firebaseUsers";
+import { getBookFromDB } from "@/services/firebase/firebaseBooks";
 import { useShelf } from "@/hooks/useShelf";
 import { useBookSearch } from "@/hooks/useBookSearch";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
@@ -116,7 +117,6 @@ function ExplorePage() {
     let cancelled = false;
     getFavorites(user.uid).then(async favs => {
       if (cancelled || favs.length === 0) return;
-      const { getBookFromDB } = await import("@/services/firebase/firebaseBooks");
       for (const fav of favs) {
         const book = await getBookFromDB(fav.key, lang);
         if (cancelled) return;

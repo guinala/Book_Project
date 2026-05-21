@@ -56,7 +56,6 @@ export function useExploreSection(
     params.favoriteGenre, params.favoriteAuthorKey, params.favoriteGenreLabel,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     params.userAuthorKeys?.join(","),
-    params.userShelfKeys?.size,
     params.favoritesReferenceBook?.key,
   ]);
 
@@ -125,9 +124,10 @@ async function fetchSection(
     }
 
     case "because-favorites": {
-      const ref = params.favoritesReferenceBook;
-      if (!ref?.genre) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(ref.genre, lang, ref.key, count + 10);
+      const genre = params.favoritesReferenceBook?.genre ?? params.referenceGenre;
+      const excludeKey = params.favoritesReferenceBook?.key ?? params.referenceBookKey;
+      if (!genre || !excludeKey) return { books: [], isFallback: false };
+      const raw = await getRecommendationsByGenre(genre, lang, excludeKey, count + 10);
       const books = raw
         .filter(b => (b.rating ?? 0) >= 4)
         .filter(b => !params.userShelfKeys?.has(b.key))
