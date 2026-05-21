@@ -17,6 +17,7 @@
 
   &--open {
     z-index: 50;
+    overflow: visible;
   }
 
   @include from($bp-md) {
@@ -139,9 +140,10 @@
 
     @include from($bp-md) {
       flex: 1;
-      display: block;
-      -webkit-line-clamp: unset;
-      line-clamp: unset;
+      -webkit-line-clamp: 9;
+      line-clamp: 9;
+      -webkit-mask-image: none;
+      mask-image: none;
       padding-bottom: var(--space-3);
     }
   }
@@ -258,8 +260,8 @@
 
   &__dropdown {
     position: absolute;
-    bottom: calc(100% + var(--space-2));
-    right: 0;
+    top: 0;
+    left: calc(100% + var(--space-2));
     list-style: none;
     margin: 0;
     padding: var(--space-2);
