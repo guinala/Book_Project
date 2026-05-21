@@ -56,6 +56,7 @@ export function useExploreSection(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     params.userAuthorKeys?.join(","),
     params.userShelfKeys?.size,
+    params.favoritesReferenceBook?.key,
   ]);
 
   useEffect(() => { fetch(); }, [fetch]);
