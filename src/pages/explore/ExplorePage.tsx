@@ -83,8 +83,10 @@ function ExplorePage() {
   const { shelfByStatus, loading: shelfLoading } = useShelf();
   const search = useBookSearch();
   const [searchQuery, setSearchQuery] = useState("");
-  const [_favoritesReferenceBook, setFavoritesReferenceBook] = useState<import("@/types/Book").Book | null>(null);
+  const [favoritesReferenceBook, setFavoritesReferenceBook] = useState<import("@/types/Book").Book | null>(null);
   const scrollRestored = useRef(false);
+
+  void favoritesReferenceBook;
 
   const isLoggedIn = isAuthenticated && !isGuest;
   const isSearching = searchQuery.trim().length > 0;
