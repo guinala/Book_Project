@@ -127,28 +127,9 @@ git commit -m "feat(explore): add i18n keys for new section types"
 **Files:**
 - Modify: `src/services/firebase/firebaseBooks.ts`
 
-Añadir las tres funciones al final del archivo, antes del cierre.
+`getTopRatedBooks` ya existe y sirve como base para `acclaimed` — se filtrará a `>= 4.5` en el cliente dentro de `useExploreSection`. Solo hay que añadir dos funciones nuevas.
 
-- [ ] **Añadir `getAcclaimedBooks` después de `getTopRatedBooks`:**
-
-```ts
-export async function getAcclaimedBooks(lang: string, count = 6): Promise<Book[]> {
-  const q = query(
-    collection(db, BOOKS_COLLECTION),
-    where("langs", "array-contains", lang),
-    where("rating", ">=", 4.5),
-    orderBy("rating", "desc"),
-    limit(60),
-  );
-  const snap = await getDocs(q);
-  return snap.docs
-    .map(d => mapBookDoc(d.data(), lang))
-    .filter(b => (b.ratingCount ?? 0) >= 10)
-    .slice(0, count);
-}
-```
-
-- [ ] **Añadir `getTopAuthorBooks` después de `getAcclaimedBooks`:**
+- [ ] **Añadir `getTopAuthorBooks` después de `getTopRatedBooks`:**
 
 ```ts
 export async function getTopAuthorBooks(authorKey: string, lang: string, minCount = 4): Promise<Book[]> {
@@ -456,8 +437,11 @@ import {
 - [ ] **En el `switch` de `fetchSection`, añadir los nuevos casos** (antes del `default`):
 
 ```ts
-case "acclaimed":
-  return { books: await getAcclaimedBooks(lang, count), isFallback: false };
+case "acclaimed": {
+  const raw = await getTopRatedBooks(lang, count + 20);
+  const books = raw.filter(b => (b.rating ?? 0) >= 4.5).slice(0, count);
+  return { books, isFallback: false };
+}
 
 case "because-liked": {
   if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
@@ -659,11 +643,10 @@ export type ExploreSectionsParams = {
 };
 ```
 
-- [ ] **Actualizar los imports** para añadir `getAcclaimedBooks` y `getTopAuthorBooks` y `getPopularAuthorWithBooks`:
+- [ ] **Actualizar los imports** para añadir `getTopAuthorBooks` y `getPopularAuthorWithBooks`:
 
 ```ts
 import {
-  getAcclaimedBooks,
   getAuthorBooksFromDB,
   getAuthorNewReleases,
   getBooksByGenre,
@@ -756,9 +739,11 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   // 4. Genre-grid (sin libros — renderizado especial en ExplorePage)
   entries.push({ id: "genre-grid", type: "genre-grid", books: [], isFallback: false });
 
-  // 5. Acclaimed
-  const acclaimedRaw = await getAcclaimedBooks(lang, FEATURED_COUNT + 10);
-  const acclaimedBooks = acclaimedRaw.filter(b => !seenKeys.has(b.key)).slice(0, FEATURED_COUNT);
+  // 5. Acclaimed (top-rated con filtro >= 4.5 en cliente)
+  const acclaimedRaw = await getTopRatedBooks(lang, FEATURED_COUNT + 20);
+  const acclaimedBooks = acclaimedRaw
+    .filter(b => (b.rating ?? 0) >= 4.5 && !seenKeys.has(b.key))
+    .slice(0, FEATURED_COUNT);
   if (acclaimedBooks.length > 0) {
     entries.push({ id: "acclaimed", type: "acclaimed", books: claim(acclaimedBooks), isFallback: false });
   }
