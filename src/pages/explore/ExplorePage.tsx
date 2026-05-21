@@ -12,6 +12,7 @@ import ExploreSection from "@/components/explore/ExploreSection";
 import TrendingSection from "@/components/explore/TrendingSection";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
+import GenreSection from "@/components/explore/GenreSection";
 import { genreToI18nKey } from "@/utils/genreUtils";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import type { SearchFilter } from "@/types/Search";
@@ -20,6 +21,13 @@ import "./ExplorePage.scss";
 import { useExploreSections, type SectionEntry } from "@/hooks/useExploreSections";
 
 const SCROLL_KEY = "explore_scroll";
+
+const FEATURED_SECTION_TYPES = new Set<import("@/types/ExploreTypes").ExploreSectionType>([
+  "because-liked",
+  "because-finished",
+  "acclaimed",
+  "new-releases-for-you",
+]);
 
 type ShelfDerived = {
   userShelfKeys: Set<string>;
@@ -59,6 +67,10 @@ function titleKeyForEntry(entry: SectionEntry): string {
   const map: Partial<Record<ExploreSectionType, string>> = {
     "trending": "explore.sections.trending",
     "because-reading": "explore.sections.becauseReading",
+    "because-liked": "explore.sections.becauseLiked",
+    "because-finished": "explore.sections.becauseFinished",
+    "because-favorites": "explore.sections.becauseFavorites",
+    "acclaimed": "explore.sections.acclaimed",
     "more-genre": "explore.sections.moreGenre",
     "top-genre": "explore.sections.topGenre",
     "new-releases-for-you": "explore.sections.newReleasesForYou",
@@ -297,12 +309,13 @@ function ExplorePage() {
 
           {!showGuestVersion && !sectionsResult.loading && (
             <>
-              {sectionsResult.sections.map((entry, index) => (
+              {sectionsResult.sections.map((entry) => (
                 <Fragment key={entry.id}>
-                  {sectionsResult.sections.length > 1 && index === Math.floor(sectionsResult.sections.length / 2) && (
-                    <div className="explore-page__break" aria-hidden="true" />
-                  )}
-                  {entry.type === "trending" ? (
+                  {entry.type === "genre-grid" ? (
+                    <GenreSection
+                      featuredGenre={shelfDerived?.favoriteGenre ?? "Fiction"}
+                    />
+                  ) : entry.type === "trending" ? (
                     <TrendingSection
                       books={entry.books}
                       isFallback={entry.isFallback}
@@ -317,8 +330,8 @@ function ExplorePage() {
                       titleKey={titleKeyForEntry(entry)}
                       titleFallbackKey={entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback" : undefined}
                       titleHighlight={titleHighlightForEntry(entry)}
+                      featured={FEATURED_SECTION_TYPES.has(entry.type)}
                       onNavigate={handleNavigateToSection}
-                      featured={entry.type === "because-reading"}
                     />
                   )}
                 </Fragment>
@@ -329,18 +342,19 @@ function ExplorePage() {
           {showGuestVersion && (
             <>
               <ExploreSection
-                type="top-rated"
-                titleKey="explore.sections.topRated"
+                type="acclaimed"
+                titleKey="explore.sections.acclaimed"
+                featured
                 onNavigate={handleNavigateToSection}
               />
 
-              <div className="explore-page__break" aria-hidden="true" />
-
               {isGuest && <ExploreConversionBanner />}
 
+              <GenreSection featuredGenre="Fiction" />
+
               <ExploreSection
-                type="acclaimed"
-                titleKey="explore.sections.acclaimed"
+                type="more-author"
+                titleKey="explore.sections.moreAuthor"
                 onNavigate={handleNavigateToSection}
               />
             </>
