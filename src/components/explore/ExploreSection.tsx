@@ -109,7 +109,7 @@ export default function ExploreSection({
       {!loading && !error && books.length > 0 && (
         <div className={`explore-section__grid${featured ? " explore-section__grid--featured" : ""}`}>
           {featured && <FeaturedBookCard book={books[0]} />}
-          {(featured ? books.slice(1) : books).map(book => (
+          {(featured ? books.slice(1, 4) : books).map(book => (
             <BookCard key={book.key} book={book} />
           ))}
         </div>

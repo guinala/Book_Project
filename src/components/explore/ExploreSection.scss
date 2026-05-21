@@ -65,6 +65,14 @@
   &__grid--featured {
     align-items: stretch;
 
+    // Cover grows to fill the stretched height instead of leaving dead space below text
+    .book-card {
+      .book-card__cover-wrapper {
+        flex: 1;
+        aspect-ratio: unset;
+      }
+    }
+
     .featured-book-card {
       grid-column: 1 / -1;
     }

@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { encodeKey } from "@/utils/bookPaths";
 import { genreToI18nKey } from "@/utils/genreUtils";
 import { BookOpen, Bookmark, Star } from "lucide-react";
+import { fetchSynopsisRace } from "@/services/api/synopsisSources";
 import "./FeaturedBookCard.scss";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
@@ -21,13 +22,15 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [coverFailed, setCoverFailed] = useState(false);
+  const [synopsis, setSynopsis] = useState(book.synopsis ?? "");
   const { addBook, removeBook, getStatus } = useShelf();
   const { isAuthenticated } = useAuth();
   const saved = getStatus(book.key);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language.split("-")[0];
 
   useEffect(() => {
     if (!dropdownOpen) return;
@@ -45,6 +48,22 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
       if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (book.synopsis) return;
+    const controller = new AbortController();
+    fetchSynopsisRace({
+      title: book.title,
+      isbn: book.isbn,
+      author: book.authors[0],
+      lang,
+      signal: controller.signal,
+      workKey: book.key,
+    }).then((result) => {
+      if (result) setSynopsis(result);
+    }).catch(() => {});
+    return () => controller.abort();
+  }, [book.key]);
 
   const handleCardClick = () => {
     navigate(`/books/${encodeKey(book.key)}`, { state: { book } });
@@ -130,8 +149,8 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
           </div>
         )}
 
-        {book.synopsis && (
-          <p className="featured-book-card__synopsis">{book.synopsis}</p>
+        {synopsis && (
+          <p className="featured-book-card__synopsis">{synopsis}</p>
         )}
 
         <div className="featured-book-card__text">
