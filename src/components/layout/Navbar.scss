@@ -58,7 +58,7 @@
     align-items: center;
     gap: 0;
     height: 44px;
-    padding: 0 var(--space-2);
+    padding: 0 11px;
     border: 1px solid transparent;
     border-radius: var(--radius-pill);
     cursor: text;
@@ -91,7 +91,7 @@
   &__search-clear-btn {
     @include flex-center;
     flex-shrink: 0;
-    width: 24px;
+    width: 0;
     height: 24px;
     background: transparent;
     border: none;
@@ -100,14 +100,16 @@
     cursor: pointer;
     padding: 0;
     opacity: 0;
+    overflow: hidden;
     pointer-events: none;
-    transition: color var(--transition-fast), opacity 150ms ease;
+    transition: width 150ms ease, color var(--transition-fast), opacity 150ms ease;
 
     &:hover {
       color: var(--color-text-primary);
     }
 
     &--visible {
+      width: 24px;
       opacity: 1;
       pointer-events: auto;
     }
