@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
+import { getFavorites } from "@/services/firebase/firebaseUsers";
 import { useShelf } from "@/hooks/useShelf";
 import { useBookSearch } from "@/hooks/useBookSearch";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
@@ -30,6 +31,10 @@ type ShelfDerived = {
   favoriteAuthorName: string | null;
   wantToReadBooks: import("@/types/Book").Book[];
   hasBooks: boolean;
+  fiveStarAuthorKey: string | null;
+  fiveStarAuthorName: string | null;
+  likedBook: import("@/types/Book").Book | null;
+  finishedBook: import("@/types/Book").Book | null;
 };
 
 function truncate(text: string, max = 40): string {
@@ -74,10 +79,11 @@ function titleHighlightForEntry(entry: SectionEntry): string | undefined {
 function ExplorePage() {
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
-  const { isAuthenticated, isGuest } = useAuth();
+  const { isAuthenticated, isGuest, user } = useAuth();
   const { shelfByStatus, loading: shelfLoading } = useShelf();
   const search = useBookSearch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [_favoritesReferenceBook, setFavoritesReferenceBook] = useState<import("@/types/Book").Book | null>(null);
   const scrollRestored = useRef(false);
 
   const isLoggedIn = isAuthenticated && !isGuest;
@@ -92,6 +98,24 @@ function ExplorePage() {
       sessionStorage.removeItem(SCROLL_KEY);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn || !user) return;
+    let cancelled = false;
+    getFavorites(user.uid).then(async favs => {
+      if (cancelled || favs.length === 0) return;
+      const { getBookFromDB } = await import("@/services/firebase/firebaseBooks");
+      for (const fav of favs) {
+        const book = await getBookFromDB(fav.key, lang);
+        if (cancelled) return;
+        if (book?.genre) {
+          setFavoritesReferenceBook(book);
+          return;
+        }
+      }
+    });
+    return () => { cancelled = true; };
+  }, [isLoggedIn, user?.uid, lang]);
 
   const handleNavigateToSection = () => {
     sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
@@ -116,7 +140,7 @@ function ExplorePage() {
       : highRatedBook ? [highRatedBook] : [];
 
     const genreCounts: Record<string, number> = {};
-    for (const b of [...shelfByStatus.finished, ...shelfByStatus.reading]) {
+    for (const b of [...shelfByStatus.finished, ...shelfByStatus.reading, ...shelfByStatus.wantToRead]) {
       if (b.genre) genreCounts[b.genre] = (genreCounts[b.genre] ?? 0) + 1;
     }
     const favoriteGenre = Object.entries(genreCounts)
@@ -140,6 +164,16 @@ function ExplorePage() {
       ? t(`book.genres.${genreToI18nKey(favoriteGenre)}`, { defaultValue: favoriteGenre })
       : null;
 
+    const fiveStarBook = [...shelfByStatus.finished, ...shelfByStatus.reading]
+      .find(b => (b.rating ?? 0) === 5 && b.authorKeys?.length) ?? null;
+    const fiveStarAuthorKey = fiveStarBook?.authorKeys?.[0] ?? null;
+    const fiveStarAuthorName = fiveStarBook?.authors?.[0] ?? null;
+
+    const likedBook = [...shelfByStatus.finished, ...shelfByStatus.reading]
+      .find(b => (b.rating ?? 0) >= 4 && b.genre) ?? null;
+
+    const finishedBook = shelfByStatus.finished.find(b => b.genre) ?? null;
+
     return {
       userShelfKeys,
       referenceBooks,
@@ -150,6 +184,10 @@ function ExplorePage() {
       userAuthorKeys,
       wantToReadBooks: shelfByStatus.wantToRead,
       hasBooks: allBooks.length > 0,
+      fiveStarAuthorKey,
+      fiveStarAuthorName,
+      likedBook,
+      finishedBook,
     };
   }, [isLoggedIn, shelfLoading, shelfByStatus, t]);
 
