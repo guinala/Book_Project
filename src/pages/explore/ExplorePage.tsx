@@ -294,26 +294,8 @@ function ExplorePage() {
               {isGuest && <ExploreConversionBanner />}
 
               <ExploreSection
-                type="fiction"
-                titleKey="explore.sections.fiction"
-                onNavigate={handleNavigateToSection}
-              />
-
-              <ExploreSection
-                type="non-fiction"
-                titleKey="explore.sections.nonFiction"
-                onNavigate={handleNavigateToSection}
-              />
-
-              <ExploreSection
-                type="new-releases"
-                titleKey="explore.sections.newReleases"
-                onNavigate={handleNavigateToSection}
-              />
-
-              <ExploreSection
-                type="quick-reads"
-                titleKey="explore.sections.quickReads"
+                type="acclaimed"
+                titleKey="explore.sections.acclaimed"
                 onNavigate={handleNavigateToSection}
               />
             </>

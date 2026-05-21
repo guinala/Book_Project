@@ -1,15 +1,16 @@
 export type ExploreSectionType =
   | "trending"
+  | "acclaimed"
   | "top-rated"
-  | "fiction"
-  | "non-fiction"
-  | "new-releases"
-  | "quick-reads"
   | "because-reading"
+  | "because-liked"
+  | "because-finished"
+  | "because-favorites"
   | "more-genre"
+  | "more-author"
   | "new-releases-for-you"
   | "waiting"
-  | "more-author"
+  | "genre-grid"
   | "top-genre";
 
 export type ExploreSectionParams = {
@@ -23,6 +24,7 @@ export type ExploreSectionParams = {
   userAuthorKeys?: string[];
   userShelfKeys?: Set<string>;
   wantToReadBooks?: import("@/types/Book").Book[];
+  favoritesReferenceBook?: import("@/types/Book").Book;
 };
 
 export type UseSectionResult = {

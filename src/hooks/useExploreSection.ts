@@ -4,10 +4,8 @@ import type { ExploreSectionParams, ExploreSectionType, UseSectionResult } from 
 import {
   getAuthorBooksFromDB,
   getAuthorNewReleases,
-  getBooksByGenre,
   getGenreNewReleases,
   getNewReleaseBooks,
-  getQuickAndGoodBooks,
   getRecommendationsByGenre,
   getTopRatedBooks,
   getTrendingBooks,
@@ -85,20 +83,9 @@ async function fetchSection(
       return { books: fallback, isFallback: true };
     }
 
+    case "acclaimed":
     case "top-rated":
       return { books: await getTopRatedBooks(lang, count), isFallback: false };
-
-    case "fiction":
-      return { books: await getBooksByGenre("Fiction", lang, count), isFallback: false };
-
-    case "non-fiction":
-      return { books: await getBooksByGenre("Non-Fiction", lang, count), isFallback: false };
-
-    case "new-releases":
-      return { books: await getNewReleaseBooks(year, lang, count), isFallback: false };
-
-    case "quick-reads":
-      return { books: await getQuickAndGoodBooks(lang, count), isFallback: false };
 
     case "because-reading": {
       if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
@@ -110,11 +97,13 @@ async function fetchSection(
       return { books, isFallback: false };
     }
 
-    case "top-genre": {
-      if (!params.favoriteGenre) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10);
+    case "because-liked":
+    case "because-finished":
+    case "because-favorites": {
+      if (!params.favoritesReferenceBook) return { books: [], isFallback: false };
+      const raw = await getRecommendationsByGenre(params.favoritesReferenceBook.genre || "", lang, params.favoritesReferenceBook.key, count + 10);
       const books = raw
-        .filter(b => (b.rating ?? 0) >= 4.3)
+        .filter(b => (b.rating ?? 0) >= 4)
         .filter(b => !params.userShelfKeys?.has(b.key))
         .slice(0, count);
       return { books, isFallback: false };
@@ -160,6 +149,17 @@ async function fetchSection(
       if (!params.favoriteAuthorKey) return { books: [], isFallback: false };
       const raw = await getAuthorBooksFromDB(params.favoriteAuthorKey, "", lang);
       const books = raw
+        .filter(b => !params.userShelfKeys?.has(b.key))
+        .slice(0, count);
+      return { books, isFallback: false };
+    }
+
+    case "genre-grid":
+    case "top-genre": {
+      if (!params.favoriteGenre) return { books: [], isFallback: false };
+      const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10);
+      const books = raw
+        .filter(b => (b.rating ?? 0) >= 4.3)
         .filter(b => !params.userShelfKeys?.has(b.key))
         .slice(0, count);
       return { books, isFallback: false };

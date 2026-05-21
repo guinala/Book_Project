@@ -10,16 +10,17 @@ import "./ExploreSectionPage.scss";
 
 const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
   "trending": "explore.sections.trending",
+  "acclaimed": "explore.sections.acclaimed",
   "top-rated": "explore.sections.topRated",
-  "fiction": "explore.sections.fiction",
-  "non-fiction": "explore.sections.nonFiction",
-  "new-releases": "explore.sections.newReleases",
-  "quick-reads": "explore.sections.quickReads",
   "because-reading": "explore.sections.becauseReading",
+  "because-liked": "explore.sections.becauseLiked",
+  "because-finished": "explore.sections.becauseFinished",
+  "because-favorites": "explore.sections.becauseFavorites",
   "more-genre": "explore.sections.moreGenre",
+  "more-author": "explore.sections.moreAuthor",
   "new-releases-for-you": "explore.sections.newReleasesForYou",
   "waiting": "explore.sections.waiting",
-  "more-author": "explore.sections.moreAuthor",
+  "genre-grid": "explore.sections.genreGrid",
   "top-genre": "explore.sections.topGenre",
 };
 
