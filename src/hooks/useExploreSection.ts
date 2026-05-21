@@ -6,6 +6,7 @@ import {
   getAuthorNewReleases,
   getGenreNewReleases,
   getNewReleaseBooks,
+  getPopularAuthorWithBooks,
   getRecommendationsByGenre,
   getTopRatedBooks,
   getTrendingBooks,
@@ -84,7 +85,12 @@ async function fetchSection(
       return { books: fallback, isFallback: true };
     }
 
-    case "acclaimed":
+    case "acclaimed": {
+      const raw = await getTopRatedBooks(lang, count + 20);
+      const books = raw.filter(b => (b.rating ?? 0) >= 4.5).slice(0, count);
+      return { books, isFallback: false };
+    }
+
     case "top-rated":
       return { books: await getTopRatedBooks(lang, count), isFallback: false };
 
@@ -98,11 +104,30 @@ async function fetchSection(
       return { books, isFallback: false };
     }
 
-    case "because-liked":
-    case "because-finished":
+    case "because-liked": {
+      if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
+      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10);
+      const books = raw
+        .filter(b => (b.rating ?? 0) >= 4)
+        .filter(b => !params.userShelfKeys?.has(b.key))
+        .slice(0, count);
+      return { books, isFallback: false };
+    }
+
+    case "because-finished": {
+      if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
+      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10);
+      const books = raw
+        .filter(b => (b.rating ?? 0) >= 4)
+        .filter(b => !params.userShelfKeys?.has(b.key))
+        .slice(0, count);
+      return { books, isFallback: false };
+    }
+
     case "because-favorites": {
-      if (!params.favoritesReferenceBook) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(params.favoritesReferenceBook.genre || "", lang, params.favoritesReferenceBook.key, count + 10);
+      const ref = params.favoritesReferenceBook;
+      if (!ref?.genre) return { books: [], isFallback: false };
+      const raw = await getRecommendationsByGenre(ref.genre, lang, ref.key, count + 10);
       const books = raw
         .filter(b => (b.rating ?? 0) >= 4)
         .filter(b => !params.userShelfKeys?.has(b.key))
@@ -147,15 +172,19 @@ async function fetchSection(
     }
 
     case "more-author": {
-      if (!params.favoriteAuthorKey) return { books: [], isFallback: false };
-      const raw = await getAuthorBooksFromDB(params.favoriteAuthorKey, "", lang);
-      const books = raw
-        .filter(b => !params.userShelfKeys?.has(b.key))
-        .slice(0, count);
-      return { books, isFallback: false };
+      if (params.favoriteAuthorKey) {
+        const raw = await getAuthorBooksFromDB(params.favoriteAuthorKey, "", lang);
+        const books = raw.filter(b => !params.userShelfKeys?.has(b.key)).slice(0, count);
+        return { books, isFallback: false };
+      }
+      const popular = await getPopularAuthorWithBooks(lang);
+      if (!popular) return { books: [], isFallback: false };
+      return { books: popular.books.slice(0, count), isFallback: false };
     }
 
     case "genre-grid":
+      return { books: [], isFallback: false };
+
     case "top-genre": {
       if (!params.favoriteGenre) return { books: [], isFallback: false };
       const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10);

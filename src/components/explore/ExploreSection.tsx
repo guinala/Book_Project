@@ -61,7 +61,7 @@ export default function ExploreSection({
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
   const navigate = useNavigate();
-  const result = useExploreSection(type, params, lang, 6, !!override);
+  const result = useExploreSection(type, params, lang, featured ? 4 : 6, !!override);
   const { books, loading, error, retry, isFallback } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback } : result
 
   const resolvedTitleKey = isFallback && titleFallbackKey ? titleFallbackKey : titleKey;
