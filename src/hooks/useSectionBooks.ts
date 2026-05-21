@@ -12,7 +12,7 @@ import {
   getTrendingBooks,
 } from "@/services/firebase/firebaseBooks";
 
-export function useExploreSection(
+export function useSectionBooks(
   type: ExploreSectionType,
   params: ExploreSectionParams = {},
   lang: string,

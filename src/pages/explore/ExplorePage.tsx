@@ -19,7 +19,7 @@ import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTy
 import type { SearchFilter } from "@/types/Search";
 import { ChevronLeft } from "lucide-react";
 import "./ExplorePage.scss";
-import { useExploreSections, type SectionEntry } from "@/hooks/useExploreSections";
+import { useExploreFeed, type SectionEntry } from "@/hooks/useExploreFeed";
 
 const SCROLL_KEY = "explore_scroll";
 
@@ -203,7 +203,7 @@ function ExplorePage() {
     };
   }, [isLoggedIn, shelfLoading, shelfByStatus, t]);
 
-  const sectionsResult = useExploreSections(
+  const sectionsResult = useExploreFeed(
     isLoggedIn && shelfDerived?.hasBooks
       ? {
           lang,

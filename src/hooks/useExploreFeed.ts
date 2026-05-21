@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Book } from "@/types/Book";
 import type { ExploreSectionType } from "@/types/ExploreTypes";
 import {
@@ -240,11 +240,20 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   return entries;
 }
 
-export function useExploreSections(params: ExploreSectionsParams, disabled = false): ExploreSectionsResult {
+export function useExploreFeed(params: ExploreSectionsParams, disabled = false): ExploreSectionsResult {
   const [sections, setSections] = useState<SectionEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Always keep the latest params available without making them a fetch trigger.
+  // Shelf mutations update this ref but must NOT cause a re-fetch.
+  const paramsRef = useRef(params);
+  useEffect(() => { paramsRef.current = params; });
+
+  // Only re-fetch when the language changes or when the feed first becomes enabled.
+  // Shelf add/remove operations change many derived values (wantToReadBooks,
+  // referenceBooks, likedBook, etc.) but must not trigger a rebuild of the feed.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetch = useCallback(async () => {
     if (disabled) {
       setLoading(false);
@@ -253,26 +262,13 @@ export function useExploreSections(params: ExploreSectionsParams, disabled = fal
     setLoading(true);
     setError(null);
     try {
-      setSections(await buildSections(params));
+      setSections(await buildSections(paramsRef.current));
     } catch {
       setError("error");
     } finally {
       setLoading(false);
     }
-  }, [
-    params.lang,
-    params.userShelfKeys.size,
-    params.userAuthorKeys.join(","),
-    params.favoriteGenre,
-    params.favoriteAuthorKey,
-    params.fiveStarAuthorKey,
-    params.referenceBooks.map(b => b.key).join(","),
-    params.wantToReadBooks.length,
-    params.likedBook?.key,
-    params.finishedBook?.key,
-    params.favoritesReferenceBook?.key,
-    disabled,
-  ]);
+  }, [params.lang, disabled]);
 
   useEffect(() => { fetch(); }, [fetch]);
 

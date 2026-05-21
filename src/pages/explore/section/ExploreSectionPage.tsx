@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
-import { useExploreSection } from "@/hooks/useExploreSection";
+import { useSectionBooks } from "@/hooks/useSectionBooks";
 import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
@@ -63,7 +63,7 @@ export default function ExploreSectionPage() {
     userAuthorKeys: searchParams.get("authorKeys")?.split(",").filter(Boolean) ?? undefined,
   };
 
-  const { books, loading, error, retry, isFallback } = useExploreSection(
+  const { books, loading, error, retry, isFallback } = useSectionBooks(
     sectionType,
     params,
     lang,
