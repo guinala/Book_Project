@@ -1,0 +1,124 @@
+@use '../../styles/lib' as *;
+
+.trending-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  &__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+
+    @include from($bp-md) {
+      font-size: var(--text-2xl);
+    }
+  }
+
+  &__see-more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 0;
+    transition: color var(--transition-fast);
+    font-family: var(--font-main);
+
+    &:hover { color: var(--color-text-primary); }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+    padding-left: var(--space-4);
+    margin: 0 -22px 0 -6px;
+    width: calc(100% + 28px);
+
+    @include from($bp-md) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin: 0 -25px 0 -18px;
+      width: calc(100% + 43px);
+    }
+
+    @include from($bp-lg) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin: 0 -25px 0 -20px;
+      width: calc(100% + 45px);
+    }
+  }
+
+  &__item {
+    position: relative;
+    overflow: visible;
+
+    .book-card {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  &__rank {
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-editorial);
+    font-size: 80px;
+    font-weight: var(--weight-semibold);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-border-medium);
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+
+    @include from($bp-md) {
+      font-size: 160px;
+      left: -32px;
+      -webkit-text-stroke: 2px var(--color-border-medium);
+    }
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-6) 0;
+  }
+
+  &__error-text {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  &__retry {
+    @include ghost-button;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-brand-primary);
+    padding: 0;
+    border: none;
+
+    &:hover { opacity: 0.75; }
+  }
+}

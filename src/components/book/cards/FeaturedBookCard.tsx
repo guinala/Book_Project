@@ -149,10 +149,6 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
           </div>
         )}
 
-        {synopsis && (
-          <p className="featured-book-card__synopsis">{synopsis}</p>
-        )}
-
         <div className="featured-book-card__text">
           <h3 className="featured-book-card__title">{book.title}</h3>
           <p className="featured-book-card__author">
@@ -174,6 +170,10 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
             )}
           </div>
         </div>
+
+        {synopsis && (
+          <p className="featured-book-card__synopsis">{synopsis}</p>
+        )}
 
         <div className="featured-book-card__btns">
           <button

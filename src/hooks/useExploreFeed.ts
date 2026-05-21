@@ -245,14 +245,11 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Always keep the latest params available without making them a fetch trigger.
-  // Shelf mutations update this ref but must NOT cause a re-fetch.
+  // Always-fresh params without making shelf mutations a re-fetch trigger.
   const paramsRef = useRef(params);
   useEffect(() => { paramsRef.current = params; });
 
-  // Only re-fetch when the language changes or when the feed first becomes enabled.
-  // Shelf add/remove operations change many derived values (wantToReadBooks,
-  // referenceBooks, likedBook, etc.) but must not trigger a rebuild of the feed.
+  // Deps limited to lang/disabled — shelf mutations must not rebuild the feed.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetch = useCallback(async () => {
     if (disabled) {

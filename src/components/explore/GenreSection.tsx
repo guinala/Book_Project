@@ -26,10 +26,6 @@ export default function GenreSection({ featuredGenre }: Props) {
     navigate(`/explore/section/more-genre?genre=${encodeURIComponent(genre)}`);
   };
 
-  const handleAllClick = () => {
-    navigate("/explore/section/more-genre");
-  };
-
   return (
     <section className="genre-section">
       <div className="genre-section__header">
@@ -47,7 +43,7 @@ export default function GenreSection({ featuredGenre }: Props) {
           </span>
         </button>
 
-        {otherGenres.slice(0, 5).map(genre => (
+        {otherGenres.slice(0, 4).map(genre => (
           <button
             key={genre}
             type="button"
@@ -61,15 +57,6 @@ export default function GenreSection({ featuredGenre }: Props) {
           </button>
         ))}
 
-        <button
-          type="button"
-          className="genre-section__tile genre-section__tile--all"
-          onClick={handleAllClick}
-        >
-          <span className="genre-section__tile-name">
-            {t("explore.allGenres")}
-          </span>
-        </button>
       </div>
     </section>
   );

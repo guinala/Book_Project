@@ -120,27 +120,37 @@
   }
 
   &__synopsis {
-    font-family: var(--font-editorial);
-    font-style: italic;
+    font-family: var(--font-main);
+    font-style: normal;
     font-size: var(--text-xs);
     line-height: 1.65;
     color: var(--color-text-primary);
-    flex: 1;
+    flex-shrink: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    line-clamp: 7;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     border-left: 1px solid var(--color-border-strong);
     padding-left: var(--space-2);
     margin: 0;
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+
+    @include from($bp-md) {
+      flex: 1;
+      display: block;
+      -webkit-line-clamp: unset;
+      line-clamp: unset;
+      padding-bottom: var(--space-3);
+    }
   }
 
-  // Title/author/rating: anchors to bottom when no synopsis via margin-top: auto
   &__text {
     display: flex;
     flex-direction: column;
     gap: 2px;
     flex-shrink: 0;
-    margin-top: auto;
   }
 
   &__title {
@@ -190,6 +200,7 @@
     display: flex;
     gap: var(--space-2);
     flex-shrink: 0;
+    margin-top: auto;
   }
 
   &__btn {

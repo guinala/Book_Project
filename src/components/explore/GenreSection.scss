@@ -58,9 +58,6 @@
       padding: var(--space-6);
     }
 
-    &--all {
-      background: var(--color-genre-default) !important;
-    }
   }
 
   &__tile-title {
@@ -77,9 +74,5 @@
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     color: var(--color-text-on-dark);
-
-    .genre-section__tile--all & {
-      color: var(--color-text-primary);
-    }
   }
 }
