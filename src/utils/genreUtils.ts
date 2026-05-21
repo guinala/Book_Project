@@ -80,6 +80,20 @@ export function genreFieldsFromSubjects(subjects: string[] | undefined): {
   };
 }
 
+const GENRE_COLOR_MAP: Record<string, string> = {
+  "Fiction": "var(--color-genre-fiction)",
+  "Non-Fiction": "var(--color-genre-nonfiction)",
+  "Mystery and detective stories": "var(--color-genre-mystery)",
+  "Romance": "var(--color-genre-romance)",
+  "Science Fiction": "var(--color-genre-scifi)",
+  "Historical Fiction": "var(--color-genre-historical)",
+  "Fantasy": "var(--color-genre-fiction)",
+  "Thriller": "var(--color-genre-mystery)",
+};
+
+export function genreToColorVar(genre: string): string {
+  return GENRE_COLOR_MAP[genre] ?? "var(--color-genre-default)";
+}
 
 
 // export function handleFantasyGenre(subjects: string[] | undefined): string | undefined {
