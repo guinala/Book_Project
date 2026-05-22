@@ -128,8 +128,10 @@
 
   &__dropdown {
     position: absolute;
-    top: 0;
-    left: calc(100% + var(--space-2));
+    // positioned relative to .book-card (not save-wrapper), constrained within card bounds
+    top: calc(var(--space-4) + 36px + var(--space-2));
+    left: var(--space-4);
+    right: var(--space-2);
     list-style: none;
     margin: 0;
     padding: var(--space-2);
@@ -137,16 +139,11 @@
     border: 1px solid var(--color-border-outline);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card-hover);
-    min-width: 168px;
+    min-width: 140px;
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
     animation: dropdownIn var(--transition-base) ease-out forwards;
-
-    @keyframes dropdownIn {
-      from { opacity: 0; transform: translateX(-6px) scale(0.97); }
-      to   { opacity: 1; transform: none; }
-    }
   }
 
   &__dropdown-item {

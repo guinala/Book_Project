@@ -25,13 +25,17 @@ export default function BookCard({ book, rank }: BookCardProps) {
   const { isAuthenticated } = useAuth();
   const saved = getStatus(book.key);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
     if (!dropdownOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const insideWrapper = wrapperRef.current?.contains(target);
+      const insideDropdown = dropdownRef.current?.contains(target);
+      if (!insideWrapper && !insideDropdown) {
         setDropdownOpen(false);
       }
     };
@@ -106,23 +110,23 @@ export default function BookCard({ book, rank }: BookCardProps) {
             <Plus className={`book-card__save-icon${dropdownOpen ? " book-card__save-icon--open" : ""}`} />
           )}
         </button>
-
-        {dropdownOpen && (
-          <ul className="book-card__dropdown" onClick={(e) => e.stopPropagation()}>
-            {SHELF_OPTIONS.map((opt) => (
-              <li key={opt}>
-                <button
-                  className={`book-card__dropdown-item${saved === opt ? " book-card__dropdown-item--active" : ""}`}
-                  onClick={(e) => handleSelect(e, opt)}
-                >
-                  {saved === opt && <Bookmark size={16} />}
-                  {t(`myLibrary.shelf.${opt}`)}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
+
+      {dropdownOpen && (
+        <ul className="book-card__dropdown" ref={dropdownRef} onClick={(e) => e.stopPropagation()}>
+          {SHELF_OPTIONS.map((opt) => (
+            <li key={opt}>
+              <button
+                className={`book-card__dropdown-item${saved === opt ? " book-card__dropdown-item--active" : ""}`}
+                onClick={(e) => handleSelect(e, opt)}
+              >
+                {saved === opt && <Bookmark size={16} />}
+                {t(`myLibrary.shelf.${opt}`)}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div className="book-card__info">
         <div className="book-card__text">
