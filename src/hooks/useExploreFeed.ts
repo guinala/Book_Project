@@ -143,7 +143,7 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   const resolvedAuthorKey = fiveStarAuthorKey ?? favoriteAuthorKey;
   const resolvedAuthorName = fiveStarAuthorName ?? favoriteAuthorName;
   if (resolvedAuthorKey) {
-    const books = (await getTopAuthorBooks(resolvedAuthorKey, lang, STANDARD_COUNT + 10))
+    const books = (await getTopAuthorBooks(resolvedAuthorKey, lang))
       .filter(b => !seenKeys.has(b.key))
       .slice(0, STANDARD_COUNT);
     if (books.length > 0) {
@@ -240,7 +240,8 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
   const paramsRef = useRef(params);
   useEffect(() => { paramsRef.current = params; });
 
-  // Deps limited to lang/disabled — shelf mutations must not rebuild the feed.
+  // Deps limited to lang/disabled/favoritesReferenceBook — shelf mutations must not rebuild the feed,
+  // but favoritesReferenceBook is a one-time async resolution that must trigger a rebuild when it arrives.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetch = useCallback(async () => {
     if (disabled) {
@@ -256,7 +257,7 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
     } finally {
       setLoading(false);
     }
-  }, [params.lang, disabled]);
+  }, [params.lang, disabled, params.favoritesReferenceBook?.key ?? ""]);
 
   useEffect(() => { fetch(); }, [fetch]);
 

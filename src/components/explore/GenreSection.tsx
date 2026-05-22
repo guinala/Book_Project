@@ -22,7 +22,8 @@ export default function GenreSection({ featuredGenre }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const otherGenres = EXPLORE_GENRES.filter(g => g !== featuredGenre);
+  const safeFeaturedGenre = EXPLORE_GENRES.includes(featuredGenre) ? featuredGenre : "Fiction";
+  const otherGenres = EXPLORE_GENRES.filter(g => g !== safeFeaturedGenre);
 
   const handleClick = (genre: string) => {
     const label = t(`book.genres.${genreToI18nKey(genre)}`, { defaultValue: genre });
@@ -38,11 +39,11 @@ export default function GenreSection({ featuredGenre }: Props) {
         <button
           type="button"
           className="genre-section__tile genre-section__tile--hero"
-          style={{ background: genreToColorVar(featuredGenre) }}
-          onClick={() => handleClick(featuredGenre)}
+          style={{ background: genreToColorVar(safeFeaturedGenre) }}
+          onClick={() => handleClick(safeFeaturedGenre)}
         >
           <span className="genre-section__tile-title">
-            {t(`book.genres.${genreToI18nKey(featuredGenre)}`, { defaultValue: featuredGenre })}
+            {t(`book.genres.${genreToI18nKey(safeFeaturedGenre)}`, { defaultValue: safeFeaturedGenre })}
           </span>
         </button>
 

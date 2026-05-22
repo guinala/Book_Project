@@ -84,7 +84,10 @@ export default function ExploreSectionPage() {
   });
 
   const titleHighlight =
-    sectionType === "because-reading" ? params.referenceBookTitle :
+    (sectionType === "because-reading" ||
+     sectionType === "because-liked" ||
+     sectionType === "because-finished" ||
+     sectionType === "because-favorites") ? params.referenceBookTitle :
     sectionType === "more-genre" ? (params.favoriteGenreLabel ?? params.favoriteGenre) :
     sectionType === "more-author" ? params.favoriteAuthorName :
     undefined;

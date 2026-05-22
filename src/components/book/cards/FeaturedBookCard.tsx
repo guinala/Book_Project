@@ -50,6 +50,7 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
   }, []);
 
   useEffect(() => {
+    setSynopsis(book.synopsis ?? "");
     if (book.synopsis) return;
     const controller = new AbortController();
     fetchSynopsisRace({
@@ -63,7 +64,7 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
       if (result) setSynopsis(result);
     }).catch(() => {});
     return () => controller.abort();
-  }, [book.key]);
+  }, [book.key, lang]);
 
   const handleCardClick = () => {
     navigate(`/books/${encodeKey(book.key)}`, { state: { book } });
