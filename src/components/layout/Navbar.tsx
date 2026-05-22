@@ -3,8 +3,9 @@ import { Link, NavLink } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import ProfileMenu from "@/components/profile/sections/ProfileMenu";
-import { Search, Plus, Bell, User } from "lucide-react";
+import { Search, Plus, User } from "lucide-react";
 import "./Navbar.scss";
+import NotificationsBell from "../notifications/NotificationBell";
 
 const NAV_LINKS = [
   { path: "/my-library", labelKey: "nav.myLibrary" },
@@ -12,7 +13,7 @@ const NAV_LINKS = [
   { path: "/community",  labelKey: "nav.community" },
 ];
 
-interface NavbarProps {
+type NavbarProps = {
   hidden?: boolean;
 }
 
@@ -61,9 +62,7 @@ export default function Navbar({ hidden = false }: NavbarProps) {
             <Plus />
             <span className="navbar__btn-register-text" aria-hidden="true">{t("navbar.register")}</span>
           </button>
-          <button className="navbar__btn-icon" type="button" aria-label={t("navbar.notifications")}>
-            <Bell />
-          </button>
+          {isAuthenticated && <NotificationsBell />}
           <div className="navbar__avatar-wrap">
             {isAuthenticated ? (
               <button
