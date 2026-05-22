@@ -1,9 +1,41 @@
 {
   "landing": {
     "checkingSession": "Comprobando sesión...",
-    "title": "Te damos la bienvenida a Trama",
-    "subtitle": "Descubre, organiza y comparte los libros que dan forma a tu mundo.",
-    "loginBtn": "Iniciar Sesión",
-    "guestBtn": "Entrar como Invitado"
+    "hero": {
+      "title": "Tu historia literaria, en un solo lugar.",
+      "subtitle": "Busca libros, sigue tu progreso, celebra tus metas y conecta con otros lectores.",
+      "cta": "Empezar gratis",
+      "guest": "Explorar sin cuenta →"
+    },
+    "library": {
+      "title": "Tu biblioteca personal, siempre contigo.",
+      "subtitle": "Añade libros con un clic a tu propia estantería virtual, mientras llevas la cuenta del progreso de tu lectura actual.",
+      "pill": {
+        "reading": "Leyendo",
+        "read": "Leído",
+        "want": "Quiero Leer",
+        "abandoned": "Abandonado"
+      }
+    },
+    "habits": {
+      "title": "Convierte la lectura en un hábito.",
+      "subtitle": "Mantén tu racha diaria, marca tu meta de libros al año y revisa tus estadísticas de lectura."
+    },
+    "community": {
+      "title": "Descubre qué leen quienes te inspiran.",
+      "subtitle": "Sigue a otros lectores, ve su actividad reciente y descubre tu próxima lectura."
+    },
+    "socialProof": {
+      "title": "Lo que dicen los lectores de Trama"
+    },
+    "cta": {
+      "title": "Empieza tu historia lectora hoy.",
+      "subtitle": "Gratis y sin anuncios. Empieza en menos de un minuto.",
+      "btn": "Crear cuenta gratis",
+      "guest": "Explorar sin cuenta →"
+    },
+    "footer": {
+      "copyright": "© 2026 Trama · Privacidad · Términos · Contacto"
+    }
   }
 }
