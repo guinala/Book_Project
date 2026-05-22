@@ -1,0 +1,12 @@
+Rule: react-doctor/no-render-in-render
+Severity: warning
+Category: Architecture
+Count: 2
+
+Inline render function "renderTitle()" — extract to a separate component for proper reconciliation
+
+Suggestion: Extract to a named component: `const ListItem = ({ item }) => <div>{item.name}</div>`
+
+Files:
+  src/pages/explore/section/ExploreSectionPage.tsx:99
+  src/components/explore/ExploreSection.tsx:83

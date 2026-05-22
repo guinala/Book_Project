@@ -10,6 +10,7 @@ import "./App.scss"
 import { ShelfProvider } from "./context/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
 import ErrorBoundary from "./components/common/ErrorBoundary";
+import { NotificationsProvider } from "./context/NotificationsContext";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -52,7 +53,9 @@ export default function App() {
         <PreferencesProvider>
           <AuthProvider>
             <ShelfProvider>
-              <AppShell />
+              <NotificationsProvider>
+                <AppShell />
+              </NotificationsProvider>
             </ShelfProvider>
           </AuthProvider>
         </PreferencesProvider>

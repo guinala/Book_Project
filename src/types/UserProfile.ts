@@ -62,3 +62,19 @@ export type ActivityItem = ActivityEvent & {
   id: string;
   createdAt: Timestamp;
 };
+
+export type NotificationType =
+  | "follow"
+  | "follow_request"
+  | "follow_request_accepted";
+
+export type Notification = {
+  id: string;
+  type: NotificationType;
+  actorUid: string;
+  actorName: string;
+  actorUsername: string;
+  actorPhotoUrl: string;
+  createdAt: Timestamp;
+  read: boolean;
+};

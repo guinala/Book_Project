@@ -1,0 +1,25 @@
+{
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "No tienes notificaciones",
+    "loading": "Cargando...",
+    "ariaBell": "Notificaciones",
+    "ariaUnread": "{{count}} notificaciones sin leer",
+    "types": {
+      "follow": "<1>{{name}}</1> ha empezado a seguirte",
+      "follow_request": "<1>{{name}}</1> quiere seguirte",
+      "follow_request_accepted": "<1>{{name}}</1> ha aceptado tu solicitud"
+    },
+    "actions": {
+      "acceptAria": "Aceptar solicitud",
+      "rejectAria": "Rechazar solicitud",
+      "deleteAria": "Borrar notificación"
+    },
+    "time": {
+      "secondsAgo": "Ahora",
+      "minutesAgo": "Hace {{value}} min",
+      "hoursAgo": "Hace {{value}} h",
+      "daysAgo": "Hace {{value}} d"
+    }
+  }
+}

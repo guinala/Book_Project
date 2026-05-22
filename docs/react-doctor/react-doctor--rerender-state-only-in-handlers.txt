@@ -1,0 +1,16 @@
+Rule: react-doctor/rerender-state-only-in-handlers
+Severity: warning
+Category: Performance
+Count: 6
+
+useState "prevFavorites" is updated but never read in the component's return — use useRef so updates don't trigger re-renders
+
+Suggestion: Replace useState with useRef when the value is only mutated and never read in render — `ref.current = ...` updates without re-rendering the component
+
+Files:
+  src/pages/profile/ProfilePage.tsx:69
+  src/pages/edit-profile/EditProfilePage.tsx:29
+  src/pages/edit-profile/EditProfilePage.tsx:30
+  src/pages/edit-profile/EditProfilePage.tsx:36
+  src/components/layout/Navbar.tsx:23
+  src/components/profile/modals/FollowersModal.tsx:23
