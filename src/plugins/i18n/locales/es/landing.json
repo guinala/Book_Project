@@ -19,14 +19,45 @@
     },
     "habits": {
       "title": "Convierte la lectura en un hábito.",
-      "subtitle": "Mantén tu racha diaria, marca tu meta de libros al año y revisa tus estadísticas de lectura."
+      "subtitle": "Mantén tu racha diaria, marca tu meta de libros al año y revisa tus estadísticas de lectura.",
+      "stats": {
+        "streakLabel": "Racha actual",
+        "streakValue": "14 días",
+        "goalLabel": "Meta 2026",
+        "goalValue": "23 / 50 libros leídos",
+        "genresLabel": "Géneros favoritos",
+        "genre1": "Fantasía  40%",
+        "genre2": "Ciencia ficción  35%",
+        "genre3": "Misterio  25%"
+      }
     },
     "community": {
       "title": "Descubre qué leen quienes te inspiran.",
-      "subtitle": "Sigue a otros lectores, ve su actividad reciente y descubre tu próxima lectura."
+      "subtitle": "Sigue a otros lectores, ve su actividad reciente y descubre tu próxima lectura.",
+      "card": {
+        "readingNow": "Leyendo ahora:",
+        "favorites": "Favoritos:",
+        "follow": "Seguir",
+        "followers": "seguidores"
+      }
     },
     "socialProof": {
-      "title": "Lo que dicen los lectores de Trama"
+      "title": "Lo que dicen los lectores de Trama",
+      "quote1": {
+        "text": "\"Acogedora y fácil de utilizar, sin rodeos.\"",
+        "author": "— Ana M.",
+        "handle": "@ana_lee"
+      },
+      "quote2": {
+        "text": "\"Las metas y las rachas me han hecho volver a leer.\"",
+        "author": "— Carlos R.",
+        "handle": "@carlosreads"
+      },
+      "quote3": {
+        "text": "\"La comunidad es muy activa.\"",
+        "author": "— Laura P.",
+        "handle": "@laurabookclub"
+      }
     },
     "cta": {
       "title": "Empieza tu historia lectora hoy.",
@@ -35,7 +66,9 @@
       "guest": "Explorar sin cuenta →"
     },
     "footer": {
-      "copyright": "© 2026 Trama · Privacidad · Términos · Contacto"
+      "copyright": "© 2026 Trama · Privacidad · Términos · Contacto",
+      "explore": "Explorar",
+      "login": "Iniciar sesión"
     }
   }
 }

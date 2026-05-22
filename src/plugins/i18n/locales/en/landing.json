@@ -19,14 +19,45 @@
     },
     "habits": {
       "title": "Turn reading into a habit.",
-      "subtitle": "Keep your daily streak, set your annual reading goal and review your reading statistics."
+      "subtitle": "Keep your daily streak, set your annual reading goal and review your reading statistics.",
+      "stats": {
+        "streakLabel": "Current streak",
+        "streakValue": "14 days",
+        "goalLabel": "2026 goal",
+        "goalValue": "23 / 50 books read",
+        "genresLabel": "Favourite genres",
+        "genre1": "Fantasy  40%",
+        "genre2": "Science fiction  35%",
+        "genre3": "Mystery  25%"
+      }
     },
     "community": {
       "title": "Discover what your inspirations are reading.",
-      "subtitle": "Follow other readers, see their recent activity and find your next read."
+      "subtitle": "Follow other readers, see their recent activity and find your next read.",
+      "card": {
+        "readingNow": "Now reading:",
+        "favorites": "Favourites:",
+        "follow": "Follow",
+        "followers": "followers"
+      }
     },
     "socialProof": {
-      "title": "What Trama readers are saying"
+      "title": "What Trama readers are saying",
+      "quote1": {
+        "text": "\"Welcoming and easy to use, no fuss.\"",
+        "author": "— Ana M.",
+        "handle": "@ana_lee"
+      },
+      "quote2": {
+        "text": "\"Goals and streaks have got me reading again.\"",
+        "author": "— Carlos R.",
+        "handle": "@carlosreads"
+      },
+      "quote3": {
+        "text": "\"The community is very active.\"",
+        "author": "— Laura P.",
+        "handle": "@laurabookclub"
+      }
     },
     "cta": {
       "title": "Start your reading story today.",
@@ -35,7 +66,9 @@
       "guest": "Explore without an account →"
     },
     "footer": {
-      "copyright": "© 2026 Trama · Privacy · Terms · Contact"
+      "copyright": "© 2026 Trama · Privacy · Terms · Contact",
+      "explore": "Explore",
+      "login": "Sign in"
     }
   }
 }
