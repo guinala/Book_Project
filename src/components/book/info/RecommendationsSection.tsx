@@ -5,13 +5,11 @@ import "./RecommendationsSection.scss";
 
 type RecommendationsSectionProps = {
   books: Book[];
-  baseTitle: string;
   onRefresh?: () => void;
 };
 
 export default function RecommendationsSection({
   books,
-  baseTitle,
   onRefresh,
 }: RecommendationsSectionProps) {
   const { t } = useTranslation();
@@ -19,8 +17,7 @@ export default function RecommendationsSection({
   return (
     <section className="recs-section">
       <h2 className="recs-section__title">
-        {t("bookDetail.recsTitlePrefix", { defaultValue: "Porque has leído" })}{" "}
-        <span className="recs-section__title-highlight">{baseTitle}</span>
+        {t("bookDetail.recsTitle")}
       </h2>
       <div className="recs-section__grid">
         {books.map((book) => (
