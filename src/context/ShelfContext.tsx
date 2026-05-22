@@ -1,59 +1,144 @@
-import { auth } from "@/services/firebase/firebaseInit";
 import { addToShelf, encodeKey, getShelf, removeFromShelf, updateReadingProgress, updateShelfBookTitleToDB, type ShelfEntry } from "@/services/firebase/firebaseLibrary";
-import { updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
-import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ShelfContext } from "./shelf_init";
 import { logger } from "@/utils/logger";
+import { useAuth } from "@/hooks/useAuth";
+import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
+import { updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
+
+// Estantería "vacía" 
+const EMPTY_ENTRIES = new Map<string, ShelfEntry>();
 
 export function ShelfProvider({ children }: { children: React.ReactNode }) {
-  const [entries, setEntries] = useState<Map<string, ShelfEntry>>(new Map());
-  const [loading, setLoading] = useState(false);
-  const [uid, setUid] = useState<string | null>(null);
+  const { user } = useAuth();
+  const uid = user?.uid ?? null;
   const { i18n } = useTranslation();
   const lang = i18n.language.split('-')[0];
+  const [entries, setEntries] = useState<Map<string, ShelfEntry>>(new Map());
+  // uid cuya estantería ya se cargó
+  const [loadedUid, setLoadedUid] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   let generation = 0;
+
+  //   const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+  //     const uid = firebaseUser?.uid;
+  //     const myGen = ++generation;
+
+  //     if (uid) {
+  //       setUid(uid);
+  //       setLoading(true);
+  //       try {
+  //         const shelf = await getShelf(uid);
+  //         if (myGen !== generation) return;
+  //         const shelfMap = new Map(
+  //           (shelf ?? []).map(e => [encodeKey(e.book.key), e])
+  //         );
+  //         setEntries(shelfMap);
+  //       } catch {
+  //         if (myGen !== generation) return;
+  //       } finally {
+  //         if (myGen === generation) setLoading(false);
+  //       }
+  //     } else {
+  //       setUid(null);
+  //       setEntries(new Map());
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+
+  // // Obtener títulos de otros idiomas
+  // useEffect(() => {
+  //   if (!uid || entries.size === 0) return;
+
+  //   const missing = [...entries.values()].filter(e => !e.book.titles?.[lang]);
+  //   if (missing.length === 0) return;
+
+  //   let cancelled = false;
+
+  //   Promise.all(
+  //     missing.map(async ({ book }) => {
+  //       const result = await fetchWorkEditionByLang(book.key, lang);
+  //       if (!result) return null;
+
+  //       // Actualizar colección de libros y los añadidos a estantería
+  //       updateBookTitleToDB(book.key, result.title, lang, result.isbn)
+  //         .catch(err => console.warn('[ShelfEnrich] Books update failed:', err));
+  //       updateShelfBookTitleToDB(uid, book.key, result.title, lang, result.isbn)
+  //         .catch(err => console.warn('[ShelfEnrich] Shelf update failed:', err));
+
+  //       return { key: book.key, title: result.title, isbn: result.isbn };
+  //     })
+  //   ).then(results => {
+  //     if (cancelled) return;
+  //     const completed = results.filter(Boolean) as { key: string; title: string; isbn?: string }[];
+  //     if (completed.length === 0) return;
+
+  //     setEntries(prev => {
+  //       const next = new Map(prev);
+  //       for (const { key, title, isbn } of completed) {
+  //         const encoded = encodeKey(key);
+  //         const entry = next.get(encoded);
+  //         if (!entry) continue;
+  //         next.set(encoded, {
+  //           ...entry,
+  //           book: {
+  //             ...entry.book,
+  //             titles: { ...(entry.book.titles ?? {}), [lang]: title },
+  //             ...(isbn ? { isbns: { ...(entry.book.isbns ?? {}), [lang]: isbn } } : {}),
+  //           },
+  //         });
+  //       }
+  //       return next;
+  //     });
+  //   }).catch(() => {});
+
+  //   return () => { cancelled = true; };
+  // }, [uid, entries.size, lang]);
 
   useEffect(() => {
-    let generation = 0;
+    if (!uid) {
+      return;
+    }
+    let cancelled = false;
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      const uid = firebaseUser?.uid;
-      const myGen = ++generation;
-
-      if (uid) {
-        setUid(uid);
-        setLoading(true);
-        try {
-          const shelf = await getShelf(uid);
-          if (myGen !== generation) return;
-          const shelfMap = new Map(
-            (shelf ?? []).map(e => [encodeKey(e.book.key), e])
-          );
-          setEntries(shelfMap);
-        } catch {
-          if (myGen !== generation) return;
-        } finally {
-          if (myGen === generation) setLoading(false);
+    getShelf(uid)
+      .then((shelf) => {
+        if (cancelled) {
+          return;
         }
-      } else {
-        setUid(null);
-        setEntries(new Map());
-      }
-    });
+        setEntries(new Map((shelf ?? []).map((e) => [encodeKey(e.book.key), e])));
+        setLoadedUid(uid);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadedUid(uid);
+        }
+      });
+    return () => { cancelled = true; };
+  }, [uid]);
 
-    return () => unsubscribe();
-  }, []);
+  const ready = uid !== null && loadedUid === uid;
+  const loading = uid !== null && loadedUid !== uid;
+  const visibleEntries = useMemo(
+    () => (ready ? entries : EMPTY_ENTRIES),
+    [ready, entries]
+  );
 
-  // Obtener títulos de otros idiomas
   useEffect(() => {
-    if (!uid || entries.size === 0) return;
+    if (!uid || !ready || entries.size === 0) {
+      return;
+    }
 
     const missing = [...entries.values()].filter(e => !e.book.titles?.[lang]);
-    if (missing.length === 0) return;
+    if (missing.length === 0) {
+      return;
+    }
 
     let cancelled = false;
 
@@ -62,7 +147,6 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
         const result = await fetchWorkEditionByLang(book.key, lang);
         if (!result) return null;
 
-        // Actualizar colección de libros y los añadidos a estantería
         updateBookTitleToDB(book.key, result.title, lang, result.isbn)
           .catch(err => console.warn('[ShelfEnrich] Books update failed:', err));
         updateShelfBookTitleToDB(uid, book.key, result.title, lang, result.isbn)
@@ -95,7 +179,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     }).catch(() => {});
 
     return () => { cancelled = true; };
-  }, [uid, entries.size, lang]);
+  }, [uid, ready, entries.size, lang]);
 
   const addBook = async (book: Book, status: ShelfStatus) => {
     if (!uid) return;
@@ -128,10 +212,10 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getStatus = (bookKey: string) => entries.get(encodeKey(bookKey))?.status ?? null;
+  const getStatus = (bookKey: string) => visibleEntries.get(encodeKey(bookKey))?.status ?? null;
 
   const getEntry = (bookKey: string): ShelfEntry | null => {
-    const entry = entries.get(encodeKey(bookKey));
+    const entry = visibleEntries.get(encodeKey(bookKey));
     if (!entry) return null;
     return {
       ...entry,
@@ -149,11 +233,15 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     note?: string,
     rating?: number,
     review?: string) => {
-    if (!uid) return;
+    if (!uid) {
+      return;
+    }
 
     const encoded = encodeKey(bookKey);
     const existing = entries.get(encoded);
-    if (!existing) return;
+    if (!existing) {
+      return;
+    }
 
     const rollback = new Map(entries);
     const totalPages = existing.book.pages ?? 0;
@@ -180,7 +268,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     const result: Record<ShelfStatus, Book[]> = {
       wantToRead: [], reading: [], finished: [], didNotFinish: [],
     };
-    for (const { book, status } of entries.values()) {
+    for (const { book, status } of visibleEntries.values()) {
       result[status].push({
         ...book,
         title: book.titles?.[lang] ?? book.title,
@@ -189,7 +277,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     }
     logger.log(result);
     return result;
-  }, [entries, lang]);
+  }, [visibleEntries, lang]);
 
   return (
     <ShelfContext.Provider
