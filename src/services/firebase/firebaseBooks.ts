@@ -292,7 +292,7 @@ export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]>
     where("langs", "array-contains", lang),
     where("rating", ">=", 3.5),
     orderBy("rating", "desc"),
-    limit(60),
+    limit(300),
   );
   const snap = await getDocs(q);
 

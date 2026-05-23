@@ -12,6 +12,7 @@ import i18n from "./plugins/i18n/i18n";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { NotificationsProvider } from "./context/NotificationsContext";
 import AppToaster from "./components/common/Toaster/AppToaster";
+import { ExploreCacheProvider } from "./context/ExploreCacheContext";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -54,11 +55,13 @@ export default function App() {
       <ThemeProvider>
         <PreferencesProvider>
           <AuthProvider>
-            <ShelfProvider>
-              <NotificationsProvider>
-                <AppShell />
-              </NotificationsProvider>
-            </ShelfProvider>
+            <ExploreCacheProvider>
+              <ShelfProvider>
+                <NotificationsProvider>
+                  <AppShell />
+                </NotificationsProvider>
+              </ShelfProvider>
+            </ExploreCacheProvider>
           </AuthProvider>
         </PreferencesProvider>
       </ThemeProvider>

@@ -8,6 +8,8 @@ import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTy
 import { moreGenreTitleKey } from "@/utils/genreUtils";
 import { ChevronLeft } from "lucide-react";
 import "./ExploreSectionPage.scss";
+import { useExploreCache } from "@/hooks/useExploreCache";
+import { useEffect } from "react";
 
 const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
   "trending": "explore.sections.trending",
@@ -44,6 +46,7 @@ function renderTitle(title: string, highlight: string | undefined) {
 
 export default function ExploreSectionPage() {
   const { type } = useParams<{ type: string }>();
+  const { clearIfDirty } = useExploreCache();
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
@@ -91,6 +94,11 @@ export default function ExploreSectionPage() {
     sectionType === "more-genre" ? (params.favoriteGenreLabel ?? params.favoriteGenre) :
     sectionType === "more-author" ? params.favoriteAuthorName :
     undefined;
+
+
+  useEffect(() => {
+    clearIfDirty();
+  }, [clearIfDirty]);
 
   return (
     <div className="section-page">

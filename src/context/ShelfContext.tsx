@@ -9,12 +9,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
 import { updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { notifyProgressUpdated, notifyShelfAdded, notifyShelfRemoved, notifyShelfStatusChanged } from "@/utils/toast";
+import { useExploreCache } from "@/hooks/useExploreCache";
 
 // Estantería "vacía" 
 const EMPTY_ENTRIES = new Map<string, ShelfEntry>();
 
 export function ShelfProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  const exploreCache = useExploreCache();
   const uid = user?.uid ?? null;
   const { i18n } = useTranslation();
   const lang = i18n.language.split('-')[0];
@@ -118,6 +120,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await addToShelf(uid, book, status, prevStatus);
+      exploreCache.markDirty();
 
       if (!opts?.silent) {
         const localizedBook = {
@@ -154,6 +157,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await removeFromShelf(uid, bookKey);
+      exploreCache.markDirty();
 
       if (!opts?.silent) {
         const localizedBook = {
@@ -225,6 +229,8 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await updateReadingProgress(uid, existing, currentPage, opts?.note, opts?.rating, opts?.review);
+      exploreCache.markDirty();
+      
       if (!opts?.silent) {
         const localizedBook = {
           ...existing.book,

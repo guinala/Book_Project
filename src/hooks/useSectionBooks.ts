@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Book } from "@/types/Book";
 import type { ExploreSectionParams, ExploreSectionType, UseSectionResult } from "@/types/ExploreTypes";
 import {
@@ -11,6 +11,9 @@ import {
   getTopRatedBooks,
   getTrendingBooks,
 } from "@/services/firebase/firebaseBooks";
+import { useExploreCache } from "./useExploreCache";
+import { useAuth } from "./useAuth";
+import type { ExploreCacheEntry } from "@/context/explore_cache_init";
 
 export function useSectionBooks(
   type: ExploreSectionType,
@@ -19,49 +22,112 @@ export function useSectionBooks(
   count = 6,
   disabled = false,
 ): UseSectionResult {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isFallback, setIsFallback] = useState(false);
+  const cache = useExploreCache();
+  const { user } = useAuth();
+  const uid = user?.uid ?? null;
 
-  const fetch = useCallback(async () => {
+  const cacheKey = useMemo(
+    () => JSON.stringify({
+      type, lang, count, uid,
+      referenceBookKey: params.referenceBookKey,
+      referenceGenre: params.referenceGenre,
+      favoriteGenre: params.favoriteGenre,
+      favoriteAuthorKey: params.favoriteAuthorKey,
+      favoriteGenreLabel: params.favoriteGenreLabel,
+      userAuthorKeys: params.userAuthorKeys?.join(",") ?? "",
+      favoritesReferenceBookKey: params.favoritesReferenceBook?.key,
+    }),
+    [
+      type, lang, count, uid,
+      params.referenceBookKey, params.referenceGenre,
+      params.favoriteGenre, params.favoriteAuthorKey, params.favoriteGenreLabel,
+      params.userAuthorKeys, params.favoritesReferenceBook?.key,
+    ],
+  );
+
+  const initialEntry = cache.get(cacheKey);
+  const [books, setBooks] = useState<Book[]>(() => initialEntry?.books ?? []);
+  const [isFallback, setIsFallback] = useState<boolean>(() => initialEntry?.isFallback ?? false);
+  const [loading, setLoading] = useState<boolean>(() => !initialEntry && !disabled);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
     if (disabled) {
       setLoading(false);
       return;
     }
+
+    const entry = cache.get(cacheKey);
+    if (entry) {
+      setBooks(entry.books);
+      setIsFallback(entry.isFallback);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    let cancelled = false;
     setLoading(true);
     setError(null);
-    try {
-      const result = await fetchSection(type, params, lang, count);
-      const seen = new Set<string>();
-      const unique = result.books.filter(b => {
-        if (seen.has(b.key)) return false;
-        seen.add(b.key);
-        return true;
+
+    fetchSection(type, params, lang, count)
+      .then(result => {
+        const seen = new Set<string>();
+        const unique = result.books.filter(b => {
+          if (seen.has(b.key)) return false;
+          seen.add(b.key);
+          return true;
+        });
+        const newEntry: ExploreCacheEntry = { books: unique, isFallback: result.isFallback };
+        cache.set(cacheKey, newEntry);
+        if (cancelled) return;
+        setBooks(unique);
+        setIsFallback(result.isFallback);
+      })
+      .catch(err => {
+        if (cancelled) return;
+        console.error("[ExploreSection error]", err);
+        setError("error");
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setLoading(false);
       });
-      setBooks(unique);
-      setIsFallback(result.isFallback);
-    } catch (err) {
-      console.error("[ExploreSection error]", err); 
-      setError("error");
-    } finally {
-      setLoading(false);
-    }
-  // Como params es un objeto nuevo en cada render, se desestructuran las deps relevantes
+
+    return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    disabled,
-    type, lang, count,
-    params.referenceBookKey, params.referenceGenre,
-    params.favoriteGenre, params.favoriteAuthorKey, params.favoriteGenreLabel,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    params.userAuthorKeys?.join(","),
-    params.favoritesReferenceBook?.key,
-  ]);
+  }, [cacheKey, disabled]);
 
-  useEffect(() => { fetch(); }, [fetch]);
+  const retry = useCallback(async () => {
+    if (disabled) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
 
-  return { books, loading, error, retry: fetch, isFallback };
+    fetchSection(type, params, lang, count)
+      .then(result => {
+        const seen = new Set<string>();
+        const unique = result.books.filter(b => {
+          if (seen.has(b.key)) {
+            return false;
+          }
+          seen.add(b.key);
+          return true;
+        });
+        cache.set(cacheKey, { books: unique, isFallback: result.isFallback });
+        setBooks(unique);
+        setIsFallback(result.isFallback);
+      })
+      .catch(err => {
+        console.error("[ExploreSection error]", err);
+        setError("error");
+      })
+      .finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cacheKey, disabled]);
+
+  return { books, loading, error, retry, isFallback };
 }
 
 type FetchResult = { books: Book[]; isFallback: boolean };
