@@ -136,13 +136,20 @@
     }
   }
 
+  &__search-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--color-border-subtle);
+    flex-shrink: 0;
+  }
+
   &__search-input {
     flex: 1;
     min-width: 0;
     background: transparent;
     border: none;
     outline: none;
-    padding: 0 var(--space-2);
+    padding: 0 var(--space-3);
     height: 100%;
     font-size: var(--text-sm);
     font-family: var(--font-main);
