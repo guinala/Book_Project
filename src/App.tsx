@@ -11,6 +11,7 @@ import { ShelfProvider } from "./context/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { NotificationsProvider } from "./context/NotificationsContext";
+import AppToaster from "./components/common/Toaster/AppToaster";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -35,6 +36,7 @@ function AppShell() {
       <main>
         <Outlet />
       </main>
+      <AppToaster />
     </>
   );
 }
