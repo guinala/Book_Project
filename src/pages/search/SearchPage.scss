@@ -83,6 +83,12 @@
     margin-bottom: var(--space-6);
   }
 
+  &__no-results-subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
   &__no-results-img {
     width: 180px;
     opacity: 0.5;

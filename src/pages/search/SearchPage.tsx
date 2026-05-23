@@ -85,6 +85,7 @@ export default function SearchPage() {
         {showNoResults && (
           <div className="search-page__no-results">
             <h3 className="search-page__no-results-title">{t("myLibrary.noResults")}</h3>
+            <p className="search-page__no-results-subtitle">{t("search.noResultsSubtitle")}</p>
             <img src="/no-results.png" alt="" className="search-page__no-results-img" />
           </div>
         )}
