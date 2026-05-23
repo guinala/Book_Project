@@ -30,19 +30,12 @@
     padding-top: var(--space-2);
     margin-top: calc(-1 * var(--space-2));
     padding-bottom: var(--space-2);
-    padding-left: 34px;
-    scroll-padding-left: 34px;
     margin-right: -$padding-horizontal;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 
     &::-webkit-scrollbar { display: none; }
-
-    @include from($bp-md) {
-      padding-left: 54px;
-      scroll-padding-left: 54px;
-    }
   }
 
   &__item {
@@ -64,10 +57,11 @@
 
   &__rank {
     position: absolute;
-    left: -28px;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 8px;
     font-family: var(--font-editorial);
-    font-size: 80px;
+    font-size: 120px;
     font-weight: var(--weight-semibold);
     line-height: 1;
     letter-spacing: -0.05em;
@@ -78,8 +72,7 @@
     z-index: 0;
 
     @include from($bp-md) {
-      font-size: 100px;
-      left: -36px;
+      font-size: 160px;
       -webkit-text-stroke: 2px var(--color-border-medium);
     }
   }
