@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Book } from "@/types/Book";
 import type { ExploreSectionType } from "@/types/ExploreTypes";
 import {
@@ -11,6 +11,8 @@ import {
   getTopRatedBooks,
   getTrendingBooks,
 } from "@/services/firebase/firebaseBooks";
+import { useAuth } from "./useAuth";
+import { useExploreCache } from "./useExploreCache";
 
 export type SectionEntry = {
   id: string;
@@ -251,34 +253,59 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
 }
 
 export function useExploreFeed(params: ExploreSectionsParams, disabled = false): ExploreSectionsResult {
-  const [sections, setSections] = useState<SectionEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cache = useExploreCache();
+  const { user } = useAuth();
+  const uid = user?.uid ?? null;
+
+  const cacheKey = useMemo(
+    () => "feed:" + JSON.stringify({
+      lang: params.lang,
+      uid,
+      favoritesReferenceBookKey: params.favoritesReferenceBook?.key ?? null,
+    }),
+    [params.lang, uid, params.favoritesReferenceBook?.key],
+  );
+
+  const initial = cache.getFeed(cacheKey);
+  const [sections, setSections] = useState<SectionEntry[]>(() => initial ?? []);
+  const [loading, setLoading] = useState<boolean>(() => !initial && !disabled);
   const [error, setError] = useState<string | null>(null);
 
   // Always-fresh params without making shelf mutations a re-fetch trigger.
   const paramsRef = useRef(params);
   useEffect(() => { paramsRef.current = params; });
 
-  // Deps limited to lang/disabled/favoritesReferenceBook — shelf mutations must not rebuild the feed,
-  // but favoritesReferenceBook is a one-time async resolution that must trigger a rebuild when it arrives.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetch = useCallback(async () => {
+  const fetch = useCallback(async (bypassCache = false) => {
     if (disabled) {
       setLoading(false);
       return;
     }
+    if (!bypassCache) {
+      const entry = cache.getFeed(cacheKey);
+      if (entry) {
+        setSections(entry);
+        setLoading(false);
+        setError(null);
+        return;
+      }
+    }
     setLoading(true);
     setError(null);
     try {
-      setSections(await buildSections(paramsRef.current));
+      const result = await buildSections(paramsRef.current);
+      cache.setFeed(cacheKey, result);
+      setSections(result);
     } catch {
       setError("error");
     } finally {
       setLoading(false);
     }
-  }, [params.lang, disabled, params.favoritesReferenceBook?.key ?? ""]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cacheKey, disabled]);
 
   useEffect(() => { fetch(); }, [fetch]);
 
-  return { sections, loading, error, retry: fetch };
+  const retry = useCallback(() => fetch(true), [fetch]);
+
+  return { sections, loading, error, retry };
 }

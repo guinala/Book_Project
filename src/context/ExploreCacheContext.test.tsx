@@ -57,7 +57,38 @@ describe("ExploreCacheContext", () => {
 
   it("useExploreCache throws when used without a provider", () => {
     expect(() => renderHook(() => useExploreCache())).toThrow(
-      /ExploreCacheProvider/
+      /ExploreCacheProvider/,
     );
+  });
+
+  it("getFeed returns undefined for unset keys", () => {
+    const { result } = renderHook(() => useExploreCache(), { wrapper });
+    expect(result.current.getFeed("missing")).toBeUndefined();
+  });
+
+  it("setFeed then getFeed returns the stored entries", () => {
+    const { result } = renderHook(() => useExploreCache(), { wrapper });
+    const feedEntries = [
+      { id: "s1", type: "trending" as const, books: [], isFallback: false },
+    ];
+    act(() => {
+      result.current.setFeed("feed:key1", feedEntries);
+    });
+    expect(result.current.getFeed("feed:key1")).toEqual(feedEntries);
+  });
+
+  it("clearIfDirty clears both section and feed caches", () => {
+    const { result } = renderHook(() => useExploreCache(), { wrapper });
+    const feedEntries = [
+      { id: "s1", type: "trending" as const, books: [], isFallback: false },
+    ];
+    act(() => {
+      result.current.set("k1", entry);
+      result.current.setFeed("feed:key1", feedEntries);
+      result.current.markDirty();
+      result.current.clearIfDirty();
+    });
+    expect(result.current.get("k1")).toBeUndefined();
+    expect(result.current.getFeed("feed:key1")).toBeUndefined();
   });
 });
