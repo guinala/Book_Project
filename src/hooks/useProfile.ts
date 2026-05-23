@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
-import { getFavorites, getUserProfile } from "@/services/firebase/firebaseUsers";
+import { getFavorites, getUserProfile, subscribeToProfileCounts } from "@/services/firebase/firebaseUsers";
 import {
   cancelFollowRequest,
   checkHasPendingRequest,
@@ -114,6 +114,15 @@ export function useProfile(userId: string) {
     Promise.all(fetches).finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [userId, user]);
+
+  // Escucha cambios en tiempo real de followersCount / followingCount
+  useEffect(() => {
+    if (!userId) return;
+    const unsubscribe = subscribeToProfileCounts(userId, ({ followersCount, followingCount }) => {
+      setProfile((p) => p ? { ...p, followersCount, followingCount } : p);
+    });
+    return unsubscribe;
+  }, [userId]);
 
   // shelf + activity (solo cuando canViewFull)
   useEffect(() => {

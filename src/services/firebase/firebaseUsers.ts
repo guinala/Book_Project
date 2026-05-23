@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db, auth } from "./firebaseInit";
 import type { FavoriteBook, UserFullProfile, UserMinimal } from "@/types/UserProfile";
 
@@ -145,5 +145,19 @@ export async function saveFavorites(
   books: FavoriteBook[]
 ): Promise<void> {
   await setDoc(doc(db, "Users", uid, "favorites", "list"), { books });
+}
+
+export function subscribeToProfileCounts(
+  uid: string,
+  onUpdate: (counts: { followersCount: number; followingCount: number }) => void
+): () => void {
+  return onSnapshot(doc(db, "Users", uid), (snap) => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    onUpdate({
+      followersCount: d.followersCount ?? 0,
+      followingCount: d.followingCount ?? 0,
+    });
+  });
 }
 
