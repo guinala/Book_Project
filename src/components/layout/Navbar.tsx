@@ -52,7 +52,6 @@ export default function Navbar({ hidden = false }: NavbarProps) {
         </nav>
 
         <div className="navbar__actions">
-          {isAuthenticated && <NotificationsBell />}
           <div className="navbar__search-wrap" role="search">
             <Search size={20} className="navbar__search-wrap-icon" aria-hidden="true" />
             <input
@@ -83,6 +82,7 @@ export default function Navbar({ hidden = false }: NavbarProps) {
               <X size={14} />
             </button>
           </div>
+          {isAuthenticated && <NotificationsBell />}
           <div className="navbar__avatar-wrap">
             {isAuthenticated ? (
               <button
