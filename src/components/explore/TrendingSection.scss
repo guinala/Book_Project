@@ -26,6 +26,7 @@
   &__scroll {
     display: flex;
     overflow-x: auto;
+    overflow-y: hidden;
     gap: var(--space-3);
     padding-top: var(--space-2);
     margin-top: calc(-1 * var(--space-2));
