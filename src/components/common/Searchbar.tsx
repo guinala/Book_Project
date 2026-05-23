@@ -67,7 +67,7 @@ export default function SearchBar({ onSearch, initialQuery = "" }: SearchBarProp
             }}
             aria-label={t("search.clearLabel")}
           >
-            <X size={18} aria-hidden="true" />
+            <X size={20} aria-hidden="true" />
           </button>
         )}
       </div>

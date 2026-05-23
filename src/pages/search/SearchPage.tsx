@@ -66,7 +66,7 @@ export default function SearchPage() {
                 inputRef.current?.focus();
               }}
             >
-              <X size={16} />
+              <X size={18} />
             </button>
           )}
         </form>
