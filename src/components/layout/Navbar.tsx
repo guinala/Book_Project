@@ -79,7 +79,7 @@ export default function Navbar({ hidden = false }: NavbarProps) {
                 searchInputRef.current?.blur();
               }}
             >
-              <X size={14} />
+              <X size={16} />
             </button>
           </div>
           {isAuthenticated && <NotificationsBell />}
