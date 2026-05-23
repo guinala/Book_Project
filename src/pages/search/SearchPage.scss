@@ -41,7 +41,7 @@
   }
 
   &__status {
-    margin: 0;
+    margin: 0 0 var(--space-4);
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
   }
@@ -83,8 +83,107 @@
     margin-bottom: var(--space-6);
   }
 
+  &__no-results-subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
   &__no-results-img {
     width: 180px;
-    opacity: 0.5;
+  }
+
+  &__search-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: var(--space-6);
+
+    @include from($bp-md) {
+      padding-bottom: var(--space-8);
+    }
+  }
+
+  &__search-form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 480px;
+    border: 1.5px solid var(--color-border-medium);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-page);
+    transition: border-color var(--transition-fast);
+    overflow: hidden;
+
+    &:focus-within {
+      border-color: var(--color-text-primary);
+    }
+  }
+
+  &__search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    flex-shrink: 0;
+    padding: 0 var(--space-3);
+    color: var(--color-text-tertiary);
+    pointer-events: none;
+    transition: color var(--transition-fast);
+
+    .search-page__search-form:focus-within & {
+      color: var(--color-text-primary);
+    }
+  }
+
+  &__search-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--color-border-subtle);
+    flex-shrink: 0;
+  }
+
+  &__search-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0 var(--space-3);
+    height: 44px;
+    font-size: var(--text-sm);
+    font-family: var(--font-main);
+    color: var(--color-text-primary);
+    letter-spacing: 0.01em;
+
+    &::placeholder {
+      color: var(--color-text-subtle);
+    }
+
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+
+  &__search-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-right: var(--space-2);
+    flex-shrink: 0;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+
+    svg { width: 18px; height: 18px; }
+
+    &:hover {
+      color: var(--color-text-primary);
+    }
   }
 }

@@ -89,6 +89,8 @@
       "emptyFollowing": "Aún no sigues a nadie",
       "closeAria": "Cerrar",
       "removeAria": "Eliminar seguidor"
+      "emptyFollowersOther": "Aún no tiene seguidores",
+      "emptyFollowingOther": "Aún no sigue a nadie",
     },
     "requests": {
       "title": "Solicitudes",

@@ -36,7 +36,7 @@ export default function EditProfilePage() {
   const [originalUsername, setOriginalUsername] = useState("");
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "taken" | "available">("idle");
 
-  const BIO_MAX = 300;
+  const BIO_MAX = 150;
   const bioValue = watch("bio") ?? "";
   const usernameValue = watch("username") ?? "";
   const isPublicProfile = watch("isPublic");

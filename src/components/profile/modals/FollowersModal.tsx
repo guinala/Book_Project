@@ -91,9 +91,9 @@ export default function FollowersModal({
           {!loading && users.length === 0 && (
             <p className="followers-modal__empty">
               {mode === "followers"
-                ? t("profile.followList.emptyFollowers")
-                : t("profile.followList.emptyFollowing")}
-          </p>
+                ? t(isOwnProfile ? "profile.followList.emptyFollowers" : "profile.followList.emptyFollowersOther")
+                : t(isOwnProfile ? "profile.followList.emptyFollowing" : "profile.followList.emptyFollowingOther")}
+            </p>
           )}
           {!loading &&
             users.map((u) =>

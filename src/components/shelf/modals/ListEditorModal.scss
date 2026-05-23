@@ -1,4 +1,4 @@
-@use '../../../styles/lib' as *;
+@use '../../../styles/shared' as *;
 
 .list-editor-modal {
   position: fixed;
@@ -50,18 +50,7 @@
   }
 
   &__close {
-    background: transparent;
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    cursor: pointer;
-    color: var(--color-text-secondary);
-    padding: var(--space-1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color var(--transition-fast), color var(--transition-fast);
-
-    &:hover { border-color: var(--color-text-primary); color: var(--color-text-primary); }
+    @include modal-close;
   }
 
   &__name {
@@ -283,7 +272,7 @@
 
   &__btn {
     padding: var(--space-2) var(--space-6);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-pill);
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     cursor: pointer;
@@ -300,8 +289,8 @@
       background: var(--color-text-primary);
       border: none;
       color: var(--color-btn-primary-fg);
-      &:hover { background: var(--color-btn-primary-hover); }
-      &:disabled { opacity: 0.6; cursor: default; }
+      &:hover:not(:disabled) { background: var(--color-btn-primary-hover); }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
     }
   }
 }

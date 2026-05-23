@@ -54,6 +54,8 @@
     "isbn": "ISBN",
     "searchLabel": "Buscar Libros",
     "clearLabel": "Borrar Búsqueda",
-    "searchBtnLabel": "Buscar"
+    "searchBtnLabel": "Buscar",
+    "emptyPrompt": "Escribe algo para buscar libros",
+    "noResultsSubtitle": "Prueba con otra búsqueda"
   }
 }

@@ -33,5 +33,9 @@
       grid-template-columns: 3fr 2fr;
       align-items: stretch;
     }
+
+    > * {
+      min-width: 0;
+    }
   }
 }

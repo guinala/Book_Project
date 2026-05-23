@@ -87,8 +87,10 @@
       "loading": "Loading...",
       "emptyFollowers": "No followers yet",
       "emptyFollowing": "Not following anyone yet",
-      "closeAria": "Close",
       "removeAria": "Remove follower"
+      "emptyFollowersOther": "No followers yet",
+      "emptyFollowingOther": "Not following anyone yet",
+      "closeAria": "Close"
     },
     "requests": {
       "title": "Requests",
