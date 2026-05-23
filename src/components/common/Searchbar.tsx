@@ -39,7 +39,7 @@ export default function SearchBar({ onSearch, initialQuery = "" }: SearchBarProp
 
       <div className={inputRowClass}>
         <span className="searchbar__icon" aria-hidden="true">
-          <Search size={14} aria-hidden="true" />
+          <Search size={18} aria-hidden="true" />
         </span>
 
         <div className="searchbar__divider" />
