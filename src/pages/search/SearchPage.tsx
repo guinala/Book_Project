@@ -52,7 +52,7 @@ export default function SearchPage() {
             type="search"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={t("navbar.search")}
+            placeholder={t("explore.searchPlaceholder")}
             aria-label={t("search.searchLabel")}
           />
           {inputValue && (
