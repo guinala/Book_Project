@@ -54,6 +54,8 @@
     "isbn": "ISBN",
     "searchLabel": "Search books",
     "clearLabel": "Clear search",
-    "searchBtnLabel": "Search"
+    "searchBtnLabel": "Search",
+    "noResults": "No results found for \"{{query}}\"",
+    "emptyPrompt": "Type something to search for books"
   }
 }
