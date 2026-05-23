@@ -6,16 +6,20 @@ import { createContext } from "react";
 export type ShelfContextType = {
   shelfByStatus: Record<ShelfStatus, Book[]>;
   loading: boolean;
-  addBook: (book: Book, status: ShelfStatus) => Promise<void>;
-  removeBook: (bookKey: string) => Promise<void>;
+  addBook: (book: Book, status: ShelfStatus, opts?: { silent?: boolean }) => Promise<void>;
+  removeBook: (bookKey: string, opts?: { silent?: boolean }) => Promise<void>;
   getStatus: (bookKey: string) => ShelfStatus | null;
   getEntry: (bookKey: string) => ShelfEntry | null;
   updateProgress: (
-    bookKey: string, 
-    currentPage: number, 
-    note?: string,
-    rating?: number,   
-    review?: string
+    bookKey: string,
+    currentPage: number,
+    opts?: {
+      note?: string;
+      rating?: number;
+      review?: string;
+      status?: ShelfStatus;
+      silent?: boolean;
+    }
   ) => Promise<void>;
 }
 
