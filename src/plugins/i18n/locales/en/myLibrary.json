@@ -41,10 +41,33 @@
     "createList": "Create new list",
     "listsTitle": "Lists",
     "listsCount": "{{count}} books",
-    "lists": {
-      "recommended": "Very recommended",
-      "drama": "Drama",
-      "women": "Written by Women"
+    "allListsTitle": "Lists",
+    "listEditor": {
+      "createTitle": "Create list",
+      "editTitle": "Edit list",
+      "closeAria": "Close",
+      "namePlaceholder": "List name",
+      "counter": "{{count}}/{{max}} books",
+      "empty": "You haven't added any books yet",
+      "searchPlaceholder": "Search by title, author or ISBN",
+      "searching": "Searching...",
+      "noResults": "No results",
+      "removeAria": "Remove {{title}}",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "saveError": "Could not save the list"
+    },
+    "listDetail": {
+      "empty": "This list has no books",
+      "notFound": "List not available",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete this list?",
+      "confirmDeleteYes": "Delete",
+      "confirmDeleteNo": "Cancel"
     },
     "shelf": {
       "wantToRead": "Want to read",

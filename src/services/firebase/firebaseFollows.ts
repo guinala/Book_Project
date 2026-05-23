@@ -14,6 +14,7 @@ import { auth, db, functions } from "./firebaseInit";
 import type { FollowRequest, UserMinimal } from "@/types/UserProfile";
 import { getUserMinimal } from "./firebaseUsers";
 import { httpsCallable } from "firebase/functions";
+import { createFollowRequestNotification, deleteOwnFollowRequestNotifFrom } from "./firebaseNotifications";
 
 // --- Callable Cloud Functions ---------------------------------------------
 // Operaciones que escriben sobre documentos de OTRO usuario (aristas +
@@ -61,6 +62,13 @@ export async function sendFollowRequest(targetUid: string): Promise<void> {
     requesterUsername: profile.username,
     requesterPhotoUrl: profile.profilePhotoUrl,
   });
+
+  try {
+    await createFollowRequestNotification(targetUid, profile);
+  }
+  catch (err) {
+    console.warn("[sendFollowRequest] notif create failed", err);
+  }
 }
 
 export async function cancelFollowRequest(targetUid: string): Promise<void> {
@@ -73,6 +81,13 @@ export async function rejectFollowRequest(requesterUid: string): Promise<void> {
   const me = auth.currentUser?.uid;
   if (!me) throw new Error("Sesión requerida");
   await deleteDoc(doc(db, "Users", me, "followRequests", requesterUid));
+
+  //Limpiar notifiacion 
+  try {
+    await deleteOwnFollowRequestNotifFrom(me, requesterUid);
+  } catch (err) {
+    console.warn("[rejectFollowRequest] notif cleanup failed", err);
+  }
 }
 
 // Consultas de estado

@@ -1,0 +1,12 @@
+Rule: react-doctor/no-giant-component
+Severity: warning
+Category: Architecture
+Count: 2
+
+Component "EditProfilePage" is 367 lines — consider breaking it into smaller focused components
+
+Suggestion: Extract logical sections into focused components: `<UserHeader />`, `<UserActions />`, etc.
+
+Files:
+  src/pages/edit-profile/EditProfilePage.tsx:22
+  src/components/shelf/modals/UpdateProgressModal.tsx:91

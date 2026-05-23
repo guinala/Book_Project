@@ -1,8 +1,8 @@
 import type { Book } from "@/types/Book";
-import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, orderBy, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, increment, limit, orderBy, query, setDoc, updateDoc, where, writeBatch, type DocumentData } from "firebase/firestore";
 import { db } from "./firebaseInit";
 import { fetchWorkEditionByLang, searchBooks } from "@/services/api/openLibraryApi";
-import { buildAuthorTokens, buildTitleTokens } from "@/utils/titleSearch";
+import { buildAuthorTokens, buildTitleTokens, normalizeTitleForSearch, scoreAuthorRelevance, scoreTitleRelevance } from "@/utils/titleSearch";
 import type { SearchFilter } from "@/types/Search";
 
 const BOOKS_COLLECTION = "Books";
@@ -194,6 +194,7 @@ export async function updateBookTitleToDB(
   const update: Record<string, unknown> = {
     [`titles.${lang}`]: title,
     [`titleTokens.${lang}`]: buildTitleTokens(title),
+    [`titleNorm.${lang}`]: normalizeTitleForSearch(title),
     langs: arrayUnion(lang),
   };
   if (isbn) update[`isbns.${lang}`] = isbn;
@@ -478,30 +479,46 @@ export async function searchBooksFromDB(
 
   const collectionRef = collection(db, BOOKS_COLLECTION);
   const tokenField = `titleTokens.${lang}`;
-  const FETCH_LIMIT = 40; 
+  const normField = `titleNorm.${lang}`;
+  const qNorm = normalizeTitleForSearch(queryText);
+  const FETCH_LIMIT = 40;
 
-  const constraints =
+  const tokenConstraints =
     words.length === 1
       ? [where(tokenField, "array-contains", words[0]), limit(FETCH_LIMIT)]
       : [where(tokenField, "array-contains-any", words.slice(0, 10)), limit(FETCH_LIMIT)];
 
-  const snap = await getDocs(query(collectionRef, ...constraints));
+  // En paralelo: candidatos por tokens + match exacto de título
+  const [tokenSnap, exactSnap] = await Promise.all([
+    getDocs(query(collectionRef, ...tokenConstraints)),
+    getDocs(query(collectionRef, where(normField, "==", qNorm), limit(5))),
+  ]);
 
-  const scored = snap.docs.map((d) => {
-    const data = d.data();
-    const tokens: string[] = data.titleTokens?.[lang] ?? [];
-    let score = 0;
-    for (const w of words) {
-      if (tokens.includes(w)) score++;
-    }
-    return { book: mapBookDoc(data, lang), score };
+  // Fusionar
+  const byId = new Map<string, DocumentData>();
+  for (const d of [...exactSnap.docs, ...tokenSnap.docs]) {
+    if (!byId.has(d.id)) byId.set(d.id, d.data());
+  }
+
+  const scored = [...byId.values()].map((data) => {
+    const book = mapBookDoc(data, lang);
+    return {
+      book,
+      score: scoreTitleRelevance(queryText, book.title),
+      ratingCount: book.ratingCount ?? 0,
+      addCount: (data.addCount as number) ?? 0,
+    };
   });
 
-  // Primero los que reúnen más coincidencias
-  scored.sort((a, b) => b.score - a.score);
+  // Ordenar por relevancia
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    if (b.ratingCount !== a.ratingCount) return b.ratingCount - a.ratingCount;
+    return b.addCount - a.addCount;
+  });
+
   return scored.slice(0, maxResults).map((s) => s.book);
 }
-
 
 export async function searchBooksWithFallback(
   queryText: string,
@@ -568,15 +585,21 @@ export async function searchBooksByAuthorFromDB(
 
   const scored = snap.docs.map((d) => {
     const data = d.data();
-    const tokens: string[] = data.authorTokens ?? [];
-    let score = 0;
-    for (const w of words) {
-      if (tokens.includes(w)) score++;
-    }
-    return { book: mapBookDoc(data, lang), score };
+    const book = mapBookDoc(data, lang);
+    return {
+      book,
+      score: scoreAuthorRelevance(queryText, book.authors ?? []),
+      ratingCount: book.ratingCount ?? 0,
+      addCount: (data.addCount as number) ?? 0,
+    };
   });
 
-  scored.sort((a, b) => b.score - a.score);
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    if (b.ratingCount !== a.ratingCount) return b.ratingCount - a.ratingCount;
+    return b.addCount - a.addCount;
+  });
+
   return scored.slice(0, maxResults).map((s) => s.book);
 }
 

@@ -5,10 +5,27 @@ if (admin.apps.length === 0) {
   admin.initializeApp();
 }
 
-// Misma región que scrapeSynopsis, para mantener todo junto.
+async function buildActorPayload(
+  db: admin.firestore.Firestore,
+  actorUid: string
+): Promise<{
+  actorUid: string;
+  actorName: string;
+  actorUsername: string;
+  actorPhotoUrl: string;
+}> {
+  const snap = await db.doc(`Users/${actorUid}`).get();
+  const d = snap.data() ?? {};
+  return {
+    actorUid,
+    actorName: (d.name as string) ?? "",
+    actorUsername: (d.username as string) ?? "",
+    actorPhotoUrl: (d.profilePhotoUrl as string) ?? "",
+  };
+}
+
 const REGION = "europe-west1";
 
-/** Seguir a un usuario de perfil público. Idempotente. */
 export const followUser = onCall({ region: REGION }, async (request) => {
   const followerId = request.auth?.uid;
   if (!followerId) {
@@ -33,11 +50,14 @@ export const followUser = onCall({ region: REGION }, async (request) => {
 
   const followingRef = db.doc(`Users/${followerId}/following/${targetId}`);
   if ((await followingRef.get()).exists) {
-    return { ok: true }; // ya lo sigue → idempotente
+    return { ok: true }; // idempotente
   }
 
+  const actor = await buildActorPayload(db, followerId);
   const ts = admin.firestore.FieldValue.serverTimestamp();
   const inc = admin.firestore.FieldValue.increment(1);
+  const notifRef = db.collection(`Users/${targetId}/notifications`).doc();
+
   const batch = db.batch();
   batch.set(followingRef, { createdAt: ts });
   batch.set(db.doc(`Users/${targetId}/followers/${followerId}`), {
@@ -45,11 +65,16 @@ export const followUser = onCall({ region: REGION }, async (request) => {
   });
   batch.update(db.doc(`Users/${followerId}`), { followingCount: inc });
   batch.update(db.doc(`Users/${targetId}`), { followersCount: inc });
+  batch.set(notifRef, {
+    type: "follow",
+    ...actor,
+    createdAt: ts,
+    read: false,
+  });
   await batch.commit();
   return { ok: true };
 });
 
-/** Dejar de seguir. Idempotente: si no seguía, no hace nada. */
 export const unfollowUser = onCall({ region: REGION }, async (request) => {
   const followerId = request.auth?.uid;
   if (!followerId) {
@@ -63,7 +88,7 @@ export const unfollowUser = onCall({ region: REGION }, async (request) => {
   const db = admin.firestore();
   const followingRef = db.doc(`Users/${followerId}/following/${targetId}`);
   if (!(await followingRef.get()).exists) {
-    return { ok: true }; // no lo seguía → idempotente
+    return { ok: true }; 
   }
 
   const dec = admin.firestore.FieldValue.increment(-1);
@@ -95,15 +120,29 @@ export const acceptFollowRequest = onCall(
       throw new HttpsError("not-found", "No hay solicitud de ese usuario");
     }
 
+    // Notificación huérfana
+    const staleNotif = await db
+      .collection(`Users/${targetId}/notifications`)
+      .where("type", "==", "follow_request")
+      .where("actorUid", "==", requesterId)
+      .get();
+
     const followingRef = db.doc(`Users/${requesterId}/following/${targetId}`);
-    // Si ya existe la arista (doble-click, reintento), solo limpia la solicitud.
     if ((await followingRef.get()).exists) {
-      await reqRef.delete();
+      const cleanup = db.batch();
+      staleNotif.docs.forEach((d) => cleanup.delete(d.ref));
+      cleanup.delete(reqRef);
+      await cleanup.commit();
       return { ok: true };
     }
 
+    const actor = await buildActorPayload(db, targetId);
     const ts = admin.firestore.FieldValue.serverTimestamp();
     const inc = admin.firestore.FieldValue.increment(1);
+    const notifRef = db
+      .collection(`Users/${requesterId}/notifications`)
+      .doc();
+
     const batch = db.batch();
     batch.set(followingRef, { createdAt: ts });
     batch.set(db.doc(`Users/${targetId}/followers/${requesterId}`), {
@@ -111,7 +150,14 @@ export const acceptFollowRequest = onCall(
     });
     batch.update(db.doc(`Users/${requesterId}`), { followingCount: inc });
     batch.update(db.doc(`Users/${targetId}`), { followersCount: inc });
+    batch.set(notifRef, {
+      type: "follow_request_accepted",
+      ...actor,
+      createdAt: ts,
+      read: false,
+    });
     batch.delete(reqRef);
+    staleNotif.docs.forEach((d) => batch.delete(d.ref));
     await batch.commit();
     return { ok: true };
   }

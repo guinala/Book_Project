@@ -2,6 +2,8 @@
 
 .list-card {
   display: flex;
+  text-decoration: none;
+  color: inherit;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);

@@ -12,6 +12,8 @@ import ProfilePage from "@/pages/profile/ProfilePage";
 import EditProfilePage from "@/pages/edit-profile/EditProfilePage";
 import SettingsPage from "@/pages/settings/SettingsPage";
 import AuthRoute from "@/routes/AuthRoute";
+import AllListsPage from "@/pages/lists/AllListsPage";
+import ListDetailPage from "@/pages/lists/ListDetailPage";
 
 export const ROUTES = [
   {
@@ -64,6 +66,12 @@ export const ROUTES = [
       {
         path: "u/:username",
         element: <ProfilePage />,
+      },
+      { path: "lists/:userId", 
+        element: <AllListsPage /> 
+      },
+      { path: "lists/:userId/:listId", 
+        element: <ListDetailPage /> 
       },
       {
         path: "settings",

@@ -1,35 +1,47 @@
 import { useTranslation } from "react-i18next";
 import ListCard from "@/components/shelf/cards/ListCard";
-import type { ReadingList } from "@/components/shelf/cards/ListCard";
 import { ChevronRight, Plus } from "lucide-react";
 import "./ListsSection.scss";
+import type { BookList } from "@/types/BookList";
+import { Link } from "react-router";
 
-const MAX_LISTS = 3;
+const PREVIEW_COUNT = 3;
 
 type ListsSectionProps = {
-  lists: ReadingList[];
+  lists: BookList[];
+  userId: string;
+  isOwner: boolean;
+  onCreateList: () => void;
 };
 
-export default function ListsSection({ lists }: ListsSectionProps) {
+export default function ListsSection({ 
+  lists, userId, isOwner, onCreateList,
+}: ListsSectionProps) {
   const { t } = useTranslation();
-  const visibleLists = lists.slice(0, MAX_LISTS);
+  const visibleLists = lists.slice(0, PREVIEW_COUNT);
 
   return (
     <section className="lists-section">
       <div className="lists-section__header">
         <h2 className="lists-section__title">{t("myLibrary.listsTitle")}</h2>
-        <a href="#" className="lists-section__see-all">
-          {t("myLibrary.seeAll")} <ChevronRight size={14} aria-hidden="true" />
-        </a>
+        {lists.length > PREVIEW_COUNT && (
+          <Link to={`/lists/${userId}`} className="lists-section__see-all">
+            {t("myLibrary.seeAll")} <ChevronRight size={14} aria-hidden="true" />
+          </Link>
+        )}
       </div>
 
       <div className="lists-section__grid">
         {visibleLists.map((list) => (
-          <ListCard key={list.id} list={list} />
+          <ListCard key={list.id} list={list} userId={userId} />
         ))}
 
-        {visibleLists.length < MAX_LISTS && (
-          <button type="button" className="lists-section__create">
+        {isOwner && (
+          <button
+            type="button"
+            className="lists-section__create"
+            onClick={onCreateList}
+          >
             <div className="lists-section__create-icon">
               <Plus size={18} aria-hidden="true" />
             </div>
