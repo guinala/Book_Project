@@ -69,12 +69,12 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
     return books.filter(b => !userShelfKeys.has(b.key));
   }
 
-  // 1. Trending
-  const trendingBooks = offShelf(await getTrendingBooks(lang, FETCH_LIMIT));
+  // 1. Trending — no shelf filter: reflects platform popularity regardless of user's shelf
+  const trendingBooks = await getTrendingBooks(lang, FETCH_LIMIT);
   if (trendingBooks.length > 0) {
     entries.push({ id: "trending", type: "trending", books: trendingBooks, isFallback: false });
   } else {
-    const fallback = offShelf(await getTopRatedBooks(lang, FETCH_LIMIT));
+    const fallback = await getTopRatedBooks(lang, FETCH_LIMIT);
     entries.push({ id: "trending", type: "trending", books: fallback, isFallback: true });
   }
 
