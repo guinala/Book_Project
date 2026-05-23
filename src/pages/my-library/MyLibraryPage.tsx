@@ -10,6 +10,7 @@ import { useLists } from "@/hooks/useLists";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import ListEditorModal from "@/components/shelf/modals/ListEditorModal";
+import RegisterForm from "@/components/auth/forms/RegisterForm";
 
 // import listCover1 from "@/assets/covers/shelf-1.jpg";
 // import listCover2 from "@/assets/covers/shelf-2.jpg";
@@ -42,7 +43,7 @@ function MyLibraryPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { shelfByStatus } = useShelf();
-  const { user } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const { lists, createList } = useLists(user?.uid);
   const [editorOpen, setEditorOpen] = useState(false);
   
@@ -50,14 +51,26 @@ function MyLibraryPage() {
     //fetchBooks(56, i18n.language);
   //}, [fetchBooks, i18n.language]);
 
+  if (loading) {
+    return <section className="my-library"><p>{t("auth.loading")}</p></section>;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <section className="my-library my-library--guest">
+        <div className="my-library__guest-form">
+          <h2 className="my-library__guest-title">Crea una cuenta para empezar a añadir tus libros</h2>
+          <RegisterForm />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="my-library">
-      {shelfByStatus.reading.length > 0 && (
-        <div className="my-library__reading-section">
-          <h2 className="my-library__section-title">{t("myLibrary.heading")}</h2>
-          <CurrentReadingCard />
-        </div>
-      )}
+      <div className="my-library__reading-section">
+        <CurrentReadingCard />
+      </div>
 
       <div className="my-library__shelf-section">
         <ShelfSection books={shelfByStatus} onSeeAll={() => navigate("/my-library/shelf")} />

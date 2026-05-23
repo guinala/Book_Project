@@ -292,7 +292,23 @@
     object-fit: contain;
   }
 
-  // Skeleton 
+  &__empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16) var(--space-4);
+    text-align: center;
+  }
+
+  &__empty-state-text {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+
+  // Skeleton
   &__book-skeleton {
     display: flex;
     flex-direction: column;

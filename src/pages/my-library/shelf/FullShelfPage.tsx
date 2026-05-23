@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router";
-import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation, Link } from "react-router";
+import { useTranslation, Trans } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
@@ -123,10 +123,20 @@ export default function FullShelfPage() {
             <BookTile key={book.key} book={book} />
           ))}
           {displayBooks.length === 0 && (
-            <div className="full-shelf__no-results">
-              <h3 className="full-shelf__no-results-title">{t("myLibrary.noResults")}</h3>
-              <img src="/no-results.png" alt="" className="full-shelf__no-results-img" />
-            </div>
+            isSearching ? (
+              <div className="full-shelf__no-results">
+                <h3 className="full-shelf__no-results-title">{t("myLibrary.noResults")}</h3>
+                <img src="/no-results.png" alt="" className="full-shelf__no-results-img" />
+              </div>
+            ) : (
+              <div className="full-shelf__empty-state">
+                <p className="full-shelf__empty-state-text">
+                  <Trans i18nKey="myLibrary.emptyShelfCategory">
+                    Esta categoría está vacía. ¡Añade libros desde <Link to="/explore">Explorar</Link>!
+                  </Trans>
+                </p>
+              </div>
+            )
           )}
         </div>
       )}

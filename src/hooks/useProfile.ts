@@ -277,9 +277,12 @@ export function useProfile(userId: string) {
     }
   }, [user, userId]);
 
-  //Acutalizar contador sin esperar a Firebase
   const incrementFollowers = useCallback(() => {
     setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
+  }, []);
+
+  const decrementFollowers = useCallback(() => {
+    setProfile((p) => (p ? { ...p, followersCount: Math.max(0, p.followersCount - 1) } : p));
   }, []);
 
   return {
@@ -300,5 +303,6 @@ export function useProfile(userId: string) {
     block,
     unblock,
     incrementFollowers,
+    decrementFollowers,
   };
 }

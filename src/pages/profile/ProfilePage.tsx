@@ -61,6 +61,7 @@ export default function ProfilePage() {
     block,
     unblock,
     incrementFollowers,
+    decrementFollowers,
   } = useProfile(resolvedUserId ?? "");
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
@@ -204,7 +205,9 @@ export default function ProfilePage() {
         <FollowersModal
           userId={resolvedUserId}
           mode={followModal}
+          isOwnProfile={isOwnProfile}
           onClose={() => setFollowModal(null)}
+          onFollowerRemoved={decrementFollowers}
         />
       )}
 

@@ -42,7 +42,11 @@ function CurrentReadingCard() {
   }
 
   if (!book || !entry) {
-    return <p className="reading-card__empty">{t("myLibrary.noCurrentReading")}</p>;
+    return (
+      <div className="reading-card__empty-state">
+        <p className="reading-card__empty-state-text">{t("myLibrary.noCurrentReading")}</p>
+      </div>
+    );
   }
 
   const totalPages = book.pages ?? 0;
@@ -52,6 +56,7 @@ function CurrentReadingCard() {
 
   return (
     <>
+      <h2 className="reading-card__heading">{t("myLibrary.heading")}</h2>
       <div className="reading-card__wrapper">
         <article className="reading-card">
           <button

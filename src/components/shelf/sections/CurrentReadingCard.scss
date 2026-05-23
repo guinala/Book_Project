@@ -6,6 +6,16 @@
 }
 
 .reading-card {
+  &__heading {
+    width: 100%;
+    max-width: 860px;
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+
   &__wrapper {
     display: flex;
     align-items: center;

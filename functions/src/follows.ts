@@ -88,16 +88,49 @@ export const unfollowUser = onCall({ region: REGION }, async (request) => {
   const db = admin.firestore();
   const followingRef = db.doc(`Users/${followerId}/following/${targetId}`);
   if (!(await followingRef.get()).exists) {
-    return { ok: true }; 
+    return { ok: true };
   }
 
-  const dec = admin.firestore.FieldValue.increment(-1);
-  const batch = db.batch();
-  batch.delete(followingRef);
-  batch.delete(db.doc(`Users/${targetId}/followers/${followerId}`));
-  batch.update(db.doc(`Users/${followerId}`), { followingCount: dec });
-  batch.update(db.doc(`Users/${targetId}`), { followersCount: dec });
-  await batch.commit();
+  await db.runTransaction(async (tx) => {
+    const followerDoc = await tx.get(db.doc(`Users/${followerId}`));
+    const targetDoc = await tx.get(db.doc(`Users/${targetId}`));
+    const followingNow = (followerDoc.data()?.followingCount as number) ?? 0;
+    const followersNow = (targetDoc.data()?.followersCount as number) ?? 0;
+    tx.delete(followingRef);
+    tx.delete(db.doc(`Users/${targetId}/followers/${followerId}`));
+    tx.update(db.doc(`Users/${followerId}`), { followingCount: Math.max(0, followingNow - 1) });
+    tx.update(db.doc(`Users/${targetId}`), { followersCount: Math.max(0, followersNow - 1) });
+  });
+  return { ok: true };
+});
+
+/** Eliminar a alguien de los propios seguidores. Lo ejecuta el dueño del perfil. */
+export const removeFollower = onCall({ region: REGION }, async (request) => {
+  const targetId = request.auth?.uid;
+  if (!targetId) {
+    throw new HttpsError("unauthenticated", "Sesión requerida");
+  }
+  const followerUid = request.data?.followerUid as string | undefined;
+  if (!followerUid || followerUid === targetId) {
+    throw new HttpsError("invalid-argument", "followerUid inválido");
+  }
+
+  const db = admin.firestore();
+  const followerRef = db.doc(`Users/${targetId}/followers/${followerUid}`);
+  if (!(await followerRef.get()).exists) {
+    return { ok: true };
+  }
+
+  await db.runTransaction(async (tx) => {
+    const targetDoc = await tx.get(db.doc(`Users/${targetId}`));
+    const followerDoc = await tx.get(db.doc(`Users/${followerUid}`));
+    const followersNow = (targetDoc.data()?.followersCount as number) ?? 0;
+    const followingNow = (followerDoc.data()?.followingCount as number) ?? 0;
+    tx.delete(followerRef);
+    tx.delete(db.doc(`Users/${followerUid}/following/${targetId}`));
+    tx.update(db.doc(`Users/${targetId}`), { followersCount: Math.max(0, followersNow - 1) });
+    tx.update(db.doc(`Users/${followerUid}`), { followingCount: Math.max(0, followingNow - 1) });
+  });
   return { ok: true };
 });
 
