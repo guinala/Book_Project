@@ -23,63 +23,46 @@
     }
   }
 
-  &__see-more {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    background: none;
-    border: none;
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    padding: 0;
-    transition: color var(--transition-fast);
-    font-family: var(--font-main);
+  &__scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-4) var(--space-4) 34px;
+    scroll-padding-left: 34px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 
-    &:hover { color: var(--color-text-primary); }
-  }
-
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-8);
-    align-items: start;
-    margin-left: var(--space-8);       // absorbs rank's left: -30px protrusion
-    width: calc(100% - 12px);          // maintains ~20px right extension (32 margin - 20 target = 12)
+    &::-webkit-scrollbar { display: none; }
 
     @include from($bp-md) {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: var(--space-5);
-      margin-left: var(--space-14);    // absorbs rank's left: -50px protrusion (56px buffer)
-      width: calc(100% - 32px);        // maintains ~24px right extension (56 - 24 = 32)
-    }
-
-    @include from($bp-lg) {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: var(--space-5);
-      margin-left: var(--space-14);
-      width: calc(100% - 36px);        // maintains ~20px right extension (56 - 20 = 36)
+      padding-left: 54px;
+      scroll-padding-left: 54px;
     }
   }
 
   &__item {
     position: relative;
-    overflow: visible;
+    flex-shrink: 0;
+    width: 130px;
+    scroll-snap-align: start;
 
     .book-card {
       position: relative;
       z-index: 1;
+      width: 100%;
+    }
+
+    @include from($bp-md) {
+      width: 160px;
     }
   }
 
   &__rank {
     position: absolute;
-    left: -30px;
-    top: 50%;
-    transform: translateY(-50%);
+    left: -28px;
+    bottom: 8px;
     font-family: var(--font-editorial);
     font-size: 80px;
     font-weight: var(--weight-semibold);
@@ -92,8 +75,8 @@
     z-index: 0;
 
     @include from($bp-md) {
-      font-size: 160px;
-      left: -50px;
+      font-size: 100px;
+      left: -36px;
       -webkit-text-stroke: 2px var(--color-border-medium);
     }
   }
