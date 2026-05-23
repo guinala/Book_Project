@@ -33,6 +33,11 @@ const acceptFollowRequestFn = httpsCallable<
   { ok: boolean }
 >(functions, "acceptFollowRequest");
 
+const removeFollowerFn = httpsCallable<{ followerUid: string }, { ok: boolean }>(
+  functions,
+  "removeFollower"
+);
+
 
 export async function followUser(targetUid: string): Promise<void> {
   await followUserFn({ targetUid });
@@ -44,6 +49,10 @@ export async function unfollowUser(targetUid: string): Promise<void> {
 
 export async function acceptFollowRequest(requesterUid: string): Promise<void> {
   await acceptFollowRequestFn({ requesterUid });
+}
+
+export async function removeFollower(followerUid: string): Promise<void> {
+  await removeFollowerFn({ followerUid });
 }
 
 // Solicitudes

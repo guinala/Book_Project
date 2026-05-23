@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
+import { Link } from "react-router";
 import BookTile from "@/components/shelf/cards/BookTile";
 import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
@@ -78,7 +79,15 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
 
       <div className="shelf-section__card">
         {!loading && categoryBooks.length === 0 && readOnly ? (
-          <p className="shelf-section__empty-readonly">Sin libros en esta estantería</p>
+          <p className="shelf-section__empty-readonly">{t("myLibrary.emptyShelfReadonly")}</p>
+        ) : !loading && categoryBooks.length === 0 ? (
+          <div className="shelf-section__empty-state">
+            <p className="shelf-section__empty-state-text">
+              <Trans i18nKey="myLibrary.emptyShelfCategory">
+                Esta categoría está vacía. ¡Añade libros desde <Link to="/explore">Explorar</Link>!
+              </Trans>
+            </p>
+          </div>
         ) : (
           <>
             <div className="shelf-section__track">

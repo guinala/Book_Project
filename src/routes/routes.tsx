@@ -28,12 +28,8 @@ export const ROUTES = [
       { path: "books/:bookId", element: <BookDetailPage /> },
       { path: "community", element: <CommunityPage /> },
       {
-        path: "my-library",
-        element: (
-          <AuthRoute requireAuth>
-            <MyLibraryPage />
-          </AuthRoute>
-        ),
+        path: "my-library", 
+        element: <MyLibraryPage /> 
       },
       {
         path: "my-library/shelf",

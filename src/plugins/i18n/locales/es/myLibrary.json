@@ -14,6 +14,8 @@
     "noResults": "¡Oops! No hemos encontrado el libro que buscas",
     "clearSearch": "Borrar búsqueda",
     "emptyShelf": "Añadir libros",
+    "emptyShelfCategory": "Esta categoría está vacía. ¡Añade libros desde <1>Explorar</1>!",
+    "emptyShelfReadonly": "Sin libros en esta estantería",
     "viewHistory": "Ver historial",
     "updateProgress": "Actualizar progreso",
     "updateProgressModal": {

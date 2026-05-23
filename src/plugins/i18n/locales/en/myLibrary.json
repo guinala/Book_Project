@@ -14,6 +14,8 @@
     "noResults": "Oops! We couldn't find the book you're looking for",
     "clearSearch": "Hide search",
     "emptyShelf": "Add books",
+    "emptyShelfCategory": "This category is empty. Add books from <1>Explore</1>!",
+    "emptyShelfReadonly": "No books in this shelf yet",
     "viewHistory": "View history",
     "updateProgress": "Update progress",
     "updateProgressModal": {

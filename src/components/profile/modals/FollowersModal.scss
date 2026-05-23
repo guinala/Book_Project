@@ -66,6 +66,37 @@
     flex: 1;
   }
 
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    .profile-card {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &__remove {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    color: var(--color-text-tertiary);
+    padding: var(--space-2);
+    margin-right: var(--space-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include transition(border-color, color);
+
+    &:hover {
+      border-color: var(--color-error, #c0392b);
+      color: var(--color-error, #c0392b);
+    }
+  }
+
   &__loading,
   &__empty {
     text-align: center;

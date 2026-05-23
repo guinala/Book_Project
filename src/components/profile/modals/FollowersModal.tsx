@@ -1,27 +1,43 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getFollowers, getFollowing } from "@/services/firebase/firebaseFollows";
+import { getFollowers, getFollowing, removeFollower } from "@/services/firebase/firebaseFollows";
 import type { UserMinimal } from "@/types/UserProfile";
 import ProfileCard from "@/components/profile/sections/ProfileCard";
-import { X } from "lucide-react";
+import { X, UserMinus } from "lucide-react";
 import "./FollowersModal.scss";
 
 type FollowersModalProps = {
   userId: string;
   mode: "followers" | "following";
-  isOwnProfile: boolean;
+  isOwnProfile?: boolean;
   onClose: () => void;
+  onFollowerRemoved?: () => void;
 };
 
 export default function FollowersModal({
   userId,
   mode,
-  isOwnProfile,
+  isOwnProfile = false,
   onClose,
+  onFollowerRemoved,
 }: FollowersModalProps) {
   const { t } = useTranslation();
   const [users, setUsers] = useState<UserMinimal[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const canRemove = isOwnProfile && mode === "followers";
+
+  const handleRemove = async (followerUid: string) => {
+    const removed = users.find((u) => u.uid === followerUid);
+    setUsers((prev) => prev.filter((u) => u.uid !== followerUid));
+    try {
+      await removeFollower(followerUid);
+      onFollowerRemoved?.();
+    } catch {
+      console.error("[FollowersModal] removeFollower failed");
+      if (removed) setUsers((prev) => [...prev, removed]);
+    }
+  };
   const [prevDeps, setPrevDeps] = useState({ userId, mode });
   if (userId !== prevDeps.userId || mode !== prevDeps.mode) {
     setPrevDeps({ userId, mode });
@@ -80,9 +96,23 @@ export default function FollowersModal({
             </p>
           )}
           {!loading &&
-            users.map((u) => (
-              <ProfileCard key={u.uid} user={u} onClose={onClose} />
-            ))}
+            users.map((u) =>
+              canRemove ? (
+                <div key={u.uid} className="followers-modal__item">
+                  <ProfileCard user={u} onClose={onClose} />
+                  <button
+                    type="button"
+                    className="followers-modal__remove"
+                    onClick={() => handleRemove(u.uid)}
+                    aria-label={t("profile.followList.removeAria")}
+                  >
+                    <UserMinus size={16} aria-hidden="true" />
+                  </button>
+                </div>
+              ) : (
+                <ProfileCard key={u.uid} user={u} onClose={onClose} />
+              )
+            )}
         </div>
       </div>
     </div>

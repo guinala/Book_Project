@@ -33,7 +33,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
   const bookForShelf: Book = {
     key: book.key,
     title: book.title,
-    authors: [book.author],
+    authors: book.author ? [book.author] : [],
     first_publish_year: book.year,
     cover_id: null,
     cover_url: book.cover_url,
@@ -150,22 +150,28 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
             </div>
           </div>
 
-          <div className="book-info-card__synopsis">
-            <div className="book-info-card__synopsis-text">
-              {book.synopsis.split("\n\n").map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
+          {book.synopsis ? (
+            <div className="book-info-card__synopsis">
+              <div className="book-info-card__synopsis-text">
+                {book.synopsis.split("\n\n").map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+              <div className="book-info-card__synopsis-gradient">
+                <button
+                  className="book-info-card__synopsis-expand"
+                  onClick={() => setSynopsisOpen(true)}
+                >
+                  {t("bookDetail.readMore")}
+                  <ChevronDown />
+                </button>
+              </div>
             </div>
-            <div className="book-info-card__synopsis-gradient">
-              <button
-                className="book-info-card__synopsis-expand"
-                onClick={() => setSynopsisOpen(true)}
-              >
-                {t("bookDetail.readMore")}
-                <ChevronDown />
-              </button>
+          ) : (
+            <div className="book-info-card__synopsis-empty">
+              <p>No hay sinopsis disponible para este libro</p>
             </div>
-          </div>
+          )}
 
           <div className="book-info-card__footer">
             <div ref={shelfRef} className="book-info-card__save-wrapper">

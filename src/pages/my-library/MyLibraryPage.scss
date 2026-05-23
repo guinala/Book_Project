@@ -21,6 +21,25 @@
     gap: var(--space-3);
   }
 
+  &--guest {
+    align-items: center;
+  }
+
+  &__guest-form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  &__guest-title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
   &__section-title {
     width: 100%;
     max-width: 860px;
