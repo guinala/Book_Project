@@ -41,7 +41,7 @@
   }
 
   &__status {
-    margin: 0;
+    margin: 0 0 var(--space-4);
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
   }
