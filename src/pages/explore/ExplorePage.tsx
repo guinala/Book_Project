@@ -20,6 +20,7 @@ import type { SearchFilter } from "@/types/Search";
 import { ChevronLeft } from "lucide-react";
 import "./ExplorePage.scss";
 import { useExploreFeed, type SectionEntry } from "@/hooks/useExploreFeed";
+import { useExploreCache } from "@/hooks/useExploreCache";
 
 const SCROLL_KEY = "explore_scroll";
 
@@ -90,6 +91,7 @@ function titleHighlightForEntry(entry: SectionEntry): string | undefined {
 
 function ExplorePage() {
   const { t } = useTranslation();
+  const { clearIfDirty } = useExploreCache();
   const { lang } = useCurrentLanguage();
   const { isAuthenticated, isGuest, user } = useAuth();
   const { shelfByStatus, loading: shelfLoading } = useShelf();
@@ -100,6 +102,10 @@ function ExplorePage() {
 
   const isLoggedIn = isAuthenticated && !isGuest;
   const isSearching = searchQuery.trim().length > 0;
+
+  useEffect(() => {
+    clearIfDirty();
+  }, [clearIfDirty]);
 
   useEffect(() => {
     if (scrollRestored.current) return;
