@@ -67,8 +67,10 @@ export async function addToShelf(
       .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
   }
 
-  incrementBookAddCount(book.key)
-    .catch((err) => console.warn("[addToShelf] incrementTrending failed:", err));
+  if (!prevStatus) {
+    incrementBookAddCount(book.key)
+      .catch((err) => console.warn("[addToShelf] incrementTrending failed:", err));
+  }
 }
 
 export async function updateReadingProgress(

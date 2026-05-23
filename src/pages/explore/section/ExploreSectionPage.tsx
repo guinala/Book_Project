@@ -1,25 +1,27 @@
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
-import { useExploreSection } from "@/hooks/useExploreSection";
+import { useSectionBooks } from "@/hooks/useSectionBooks";
 import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
+import { moreGenreTitleKey } from "@/utils/genreUtils";
 import { ChevronLeft } from "lucide-react";
 import "./ExploreSectionPage.scss";
 
 const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
   "trending": "explore.sections.trending",
+  "acclaimed": "explore.sections.acclaimed",
   "top-rated": "explore.sections.topRated",
-  "fiction": "explore.sections.fiction",
-  "non-fiction": "explore.sections.nonFiction",
-  "new-releases": "explore.sections.newReleases",
-  "quick-reads": "explore.sections.quickReads",
   "because-reading": "explore.sections.becauseReading",
+  "because-liked": "explore.sections.becauseLiked",
+  "because-finished": "explore.sections.becauseFinished",
+  "because-favorites": "explore.sections.becauseFavorites",
   "more-genre": "explore.sections.moreGenre",
+  "more-author": "explore.sections.moreAuthor",
   "new-releases-for-you": "explore.sections.newReleasesForYou",
   "waiting": "explore.sections.waiting",
-  "more-author": "explore.sections.moreAuthor",
+  "genre-grid": "explore.sections.genreGrid",
   "top-genre": "explore.sections.topGenre",
 };
 
@@ -62,7 +64,7 @@ export default function ExploreSectionPage() {
     userAuthorKeys: searchParams.get("authorKeys")?.split(",").filter(Boolean) ?? undefined,
   };
 
-  const { books, loading, error, retry, isFallback } = useExploreSection(
+  const { books, loading, error, retry, isFallback } = useSectionBooks(
     sectionType,
     params,
     lang,
@@ -71,7 +73,9 @@ export default function ExploreSectionPage() {
 
   const titleKey = isFallback && SECTION_FALLBACK_KEYS[sectionType]
     ? SECTION_FALLBACK_KEYS[sectionType]!
-    : (SECTION_TITLE_KEYS[sectionType] ?? "");
+    : sectionType === "more-genre"
+      ? moreGenreTitleKey(params.favoriteGenre)
+      : (SECTION_TITLE_KEYS[sectionType] ?? "");
 
   const title = t(titleKey, {
     title: params.referenceBookTitle,
@@ -80,7 +84,10 @@ export default function ExploreSectionPage() {
   });
 
   const titleHighlight =
-    sectionType === "because-reading" ? params.referenceBookTitle :
+    (sectionType === "because-reading" ||
+     sectionType === "because-liked" ||
+     sectionType === "because-finished" ||
+     sectionType === "because-favorites") ? params.referenceBookTitle :
     sectionType === "more-genre" ? (params.favoriteGenreLabel ?? params.favoriteGenre) :
     sectionType === "more-author" ? params.favoriteAuthorName :
     undefined;

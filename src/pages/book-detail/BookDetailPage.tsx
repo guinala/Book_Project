@@ -76,7 +76,7 @@ export default function BookDetailPage() {
       }
 
       {recommendedBooks.length > 0 && (
-        <RecommendationsSection books={recommendedBooks} baseTitle={book.title} onRefresh={refreshRecs} />
+        <RecommendationsSection books={recommendedBooks} onRefresh={refreshRecs} />
       )}
     </div>
   );

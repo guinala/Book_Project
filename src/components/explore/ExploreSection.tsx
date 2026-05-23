@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import BookCard from "@/components/book/cards/BookCard";
+import FeaturedBookCard from "@/components/book/cards/FeaturedBookCard";
 import ExploreGridSkeleton from "./ExploreGridSkeleton";
-import { useExploreSection } from "@/hooks/useExploreSection";
+import { useSectionBooks } from "@/hooks/useSectionBooks";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import { ChevronRight } from "lucide-react";
 import "./ExploreSection.scss";
-import type { SectionEntry } from "@/hooks/useExploreSections";
+import type { SectionEntry } from "@/hooks/useExploreFeed";
 
 type ExploreSectionProps = {
   type: ExploreSectionType;
@@ -17,6 +18,7 @@ type ExploreSectionProps = {
   titleFallbackKey?: string;
   titleHighlight?: string;
   onNavigate?: () => void;
+  featured?: boolean;
 };
 
 function buildSectionUrl(type: ExploreSectionType, params: ExploreSectionParams = {}): string {
@@ -54,11 +56,12 @@ export default function ExploreSection({
   titleFallbackKey,
   titleHighlight,
   onNavigate,
+  featured = false,
 }: ExploreSectionProps) {
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
   const navigate = useNavigate();
-  const result = useExploreSection(type, params, lang, 6, !!override);
+  const result = useSectionBooks(type, params, lang, featured ? 4 : 15, !!override);
   const { books, loading, error, retry, isFallback } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback } : result
 
   const resolvedTitleKey = isFallback && titleFallbackKey ? titleFallbackKey : titleKey;
@@ -104,11 +107,20 @@ export default function ExploreSection({
       )}
 
       {!loading && !error && books.length > 0 && (
-        <div className="explore-section__grid">
-          {books.map(book => (
-            <BookCard key={book.key} book={book} />
-          ))}
-        </div>
+        featured ? (
+          <div className="explore-section__grid explore-section__grid--featured">
+            <FeaturedBookCard book={books[0]} />
+            {books.slice(1, 4).map(book => (
+              <BookCard key={book.key} book={book} />
+            ))}
+          </div>
+        ) : (
+          <div className="explore-section__scroll">
+            {books.map(book => (
+              <BookCard key={book.key} book={book} />
+            ))}
+          </div>
+        )
       )}
     </section>
   );

@@ -1,6 +1,8 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
+import { getFavorites } from "@/services/firebase/firebaseUsers";
+import { getBookFromDB } from "@/services/firebase/firebaseBooks";
 import { useShelf } from "@/hooks/useShelf";
 import { useBookSearch } from "@/hooks/useBookSearch";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
@@ -8,16 +10,24 @@ import SearchBar from "@/components/common/Searchbar";
 import BookCard from "@/components/book/cards/BookCard";
 import GridLoading from "@/components/layout/GridLoading";
 import ExploreSection from "@/components/explore/ExploreSection";
+import TrendingSection from "@/components/explore/TrendingSection";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import ExploreConversionBanner from "@/components/explore/ExploreConversionBanner";
-import { genreToI18nKey } from "@/utils/genreUtils";
+import GenreSection from "@/components/explore/GenreSection";
+import { genreToI18nKey, moreGenreTitleKey } from "@/utils/genreUtils";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import type { SearchFilter } from "@/types/Search";
 import { ChevronLeft } from "lucide-react";
 import "./ExplorePage.scss";
-import { useExploreSections, type SectionEntry } from "@/hooks/useExploreSections";
+import { useExploreFeed, type SectionEntry } from "@/hooks/useExploreFeed";
 
 const SCROLL_KEY = "explore_scroll";
+
+const FEATURED_SECTION_TYPES = new Set<import("@/types/ExploreTypes").ExploreSectionType>([
+  "because-liked",
+  "because-finished",
+  "new-releases-for-you",
+]);
 
 type ShelfDerived = {
   userShelfKeys: Set<string>;
@@ -29,6 +39,10 @@ type ShelfDerived = {
   favoriteAuthorName: string | null;
   wantToReadBooks: import("@/types/Book").Book[];
   hasBooks: boolean;
+  fiveStarAuthorKey: string | null;
+  fiveStarAuthorName: string | null;
+  likedBook: import("@/types/Book").Book | null;
+  finishedBook: import("@/types/Book").Book | null;
 };
 
 function truncate(text: string, max = 40): string {
@@ -50,10 +64,14 @@ function buildParamsForEntry(entry: SectionEntry, shelf: ShelfDerived): ExploreS
 }
 
 function titleKeyForEntry(entry: SectionEntry): string {
+  if (entry.type === "more-genre") return moreGenreTitleKey(entry.favoriteGenre);
   const map: Partial<Record<ExploreSectionType, string>> = {
     "trending": "explore.sections.trending",
     "because-reading": "explore.sections.becauseReading",
-    "more-genre": "explore.sections.moreGenre",
+    "because-liked": "explore.sections.becauseLiked",
+    "because-finished": "explore.sections.becauseFinished",
+    "because-favorites": "explore.sections.becauseFavorites",
+    "acclaimed": "explore.sections.acclaimed",
     "top-genre": "explore.sections.topGenre",
     "new-releases-for-you": "explore.sections.newReleasesForYou",
     "waiting": "explore.sections.waiting",
@@ -73,10 +91,11 @@ function titleHighlightForEntry(entry: SectionEntry): string | undefined {
 function ExplorePage() {
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
-  const { isAuthenticated, isGuest } = useAuth();
+  const { isAuthenticated, isGuest, user } = useAuth();
   const { shelfByStatus, loading: shelfLoading } = useShelf();
   const search = useBookSearch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [favoritesReferenceBook, setFavoritesReferenceBook] = useState<import("@/types/Book").Book | null>(null);
   const scrollRestored = useRef(false);
 
   const isLoggedIn = isAuthenticated && !isGuest;
@@ -91,6 +110,23 @@ function ExplorePage() {
       sessionStorage.removeItem(SCROLL_KEY);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn || !user) return;
+    let cancelled = false;
+    getFavorites(user.uid).then(async favs => {
+      if (cancelled || favs.length === 0) return;
+      for (const fav of favs) {
+        const book = await getBookFromDB(fav.key, lang);
+        if (cancelled) return;
+        if (book?.genre) {
+          setFavoritesReferenceBook(book);
+          return;
+        }
+      }
+    });
+    return () => { cancelled = true; };
+  }, [isLoggedIn, user?.uid, lang]);
 
   const handleNavigateToSection = () => {
     sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
@@ -115,7 +151,7 @@ function ExplorePage() {
       : highRatedBook ? [highRatedBook] : [];
 
     const genreCounts: Record<string, number> = {};
-    for (const b of [...shelfByStatus.finished, ...shelfByStatus.reading]) {
+    for (const b of [...shelfByStatus.finished, ...shelfByStatus.reading, ...shelfByStatus.wantToRead]) {
       if (b.genre) genreCounts[b.genre] = (genreCounts[b.genre] ?? 0) + 1;
     }
     const favoriteGenre = Object.entries(genreCounts)
@@ -139,6 +175,16 @@ function ExplorePage() {
       ? t(`book.genres.${genreToI18nKey(favoriteGenre)}`, { defaultValue: favoriteGenre })
       : null;
 
+    const fiveStarBook = [...shelfByStatus.finished, ...shelfByStatus.reading]
+      .find(b => (b.rating ?? 0) === 5 && b.authorKeys?.length) ?? null;
+    const fiveStarAuthorKey = fiveStarBook?.authorKeys?.[0] ?? null;
+    const fiveStarAuthorName = fiveStarBook?.authors?.[0] ?? null;
+
+    const likedBook = [...shelfByStatus.finished, ...shelfByStatus.reading]
+      .find(b => (b.rating ?? 0) >= 4 && b.genre) ?? null;
+
+    const finishedBook = shelfByStatus.finished.find(b => b.genre) ?? null;
+
     return {
       userShelfKeys,
       referenceBooks,
@@ -149,10 +195,14 @@ function ExplorePage() {
       userAuthorKeys,
       wantToReadBooks: shelfByStatus.wantToRead,
       hasBooks: allBooks.length > 0,
+      fiveStarAuthorKey,
+      fiveStarAuthorName,
+      likedBook,
+      finishedBook,
     };
   }, [isLoggedIn, shelfLoading, shelfByStatus, t]);
 
-  const sectionsResult = useExploreSections(
+  const sectionsResult = useExploreFeed(
     isLoggedIn && shelfDerived?.hasBooks
       ? {
           lang,
@@ -162,14 +212,21 @@ function ExplorePage() {
           favoriteGenreLabel: shelfDerived.favoriteGenreLabel,
           favoriteAuthorKey: shelfDerived.favoriteAuthorKey,
           favoriteAuthorName: shelfDerived.favoriteAuthorName,
+          fiveStarAuthorKey: shelfDerived.fiveStarAuthorKey,
+          fiveStarAuthorName: shelfDerived.fiveStarAuthorName,
           referenceBooks: shelfDerived.referenceBooks,
           wantToReadBooks: shelfDerived.wantToReadBooks,
+          likedBook: shelfDerived.likedBook,
+          finishedBook: shelfDerived.finishedBook,
+          favoritesReferenceBook,
         }
       : {
           lang, userShelfKeys: new Set(), userAuthorKeys: [],
           favoriteGenre: null, favoriteGenreLabel: null,
           favoriteAuthorKey: null, favoriteAuthorName: null,
+          fiveStarAuthorKey: null, fiveStarAuthorName: null,
           referenceBooks: [], wantToReadBooks: [],
+          likedBook: null, finishedBook: null, favoritesReferenceBook: null,
         },
       !(isLoggedIn && shelfDerived?.hasBooks)
   );
@@ -232,11 +289,8 @@ function ExplorePage() {
         <div className="explore-page__sections">
 
           {showGuestVersion && (
-            <ExploreSection
-              type="trending"
+            <TrendingSection
               params={shelfParams}
-              titleKey="explore.sections.trending"
-              titleFallbackKey="explore.sections.trendingFallback"
               onNavigate={handleNavigateToSection}
             />
           )}
@@ -254,22 +308,39 @@ function ExplorePage() {
 
           {!showGuestVersion && !sectionsResult.loading && (
             <>
-              {sectionsResult.sections.map((entry, index) => (
+              {sectionsResult.sections.map((entry) => (
                 <Fragment key={entry.id}>
-                  {sectionsResult.sections.length > 1 && index === Math.floor(sectionsResult.sections.length / 2) && (
-                    <div className="explore-page__break" aria-hidden="true" />
+                  {entry.type === "genre-grid" ? (
+                    <>
+                      <GenreSection
+                        featuredGenre={shelfDerived?.favoriteGenre ?? "Fiction"}
+                      />
+                      <ExploreSection
+                        type="acclaimed"
+                        titleKey="explore.sections.acclaimed"
+                        featured
+                        onNavigate={handleNavigateToSection}
+                      />
+                    </>
+                  ) : entry.type === "trending" ? (
+                    <TrendingSection
+                      books={entry.books}
+                      isFallback={entry.isFallback}
+                      params={buildParamsForEntry(entry, shelfDerived!)}
+                      onNavigate={handleNavigateToSection}
+                    />
+                  ) : (
+                    <ExploreSection
+                      type={entry.type}
+                      override={{ books: entry.books, isFallback: entry.isFallback }}
+                      params={buildParamsForEntry(entry, shelfDerived!)}
+                      titleKey={titleKeyForEntry(entry)}
+                      titleFallbackKey={entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback" : undefined}
+                      titleHighlight={titleHighlightForEntry(entry)}
+                      featured={FEATURED_SECTION_TYPES.has(entry.type)}
+                      onNavigate={handleNavigateToSection}
+                    />
                   )}
-                  <ExploreSection
-                    type={entry.type}
-                    override={{ books: entry.books, isFallback: entry.isFallback }}
-                    params={buildParamsForEntry(entry, shelfDerived!)}
-                    titleKey={titleKeyForEntry(entry)}
-                    titleFallbackKey={entry.type === "trending" ? "explore.sections.trendingFallback"
-                      : entry.type === "new-releases-for-you" ? "explore.sections.newReleasesFallback"
-                      : undefined}
-                    titleHighlight={titleHighlightForEntry(entry)}
-                    onNavigate={handleNavigateToSection}
-                  />
                 </Fragment>
               ))}
             </>
@@ -278,36 +349,19 @@ function ExplorePage() {
           {showGuestVersion && (
             <>
               <ExploreSection
-                type="top-rated"
-                titleKey="explore.sections.topRated"
+                type="acclaimed"
+                titleKey="explore.sections.acclaimed"
+                featured
                 onNavigate={handleNavigateToSection}
               />
-
-              <div className="explore-page__break" aria-hidden="true" />
 
               {isGuest && <ExploreConversionBanner />}
 
-              <ExploreSection
-                type="fiction"
-                titleKey="explore.sections.fiction"
-                onNavigate={handleNavigateToSection}
-              />
+              <GenreSection featuredGenre="Fiction" />
 
               <ExploreSection
-                type="non-fiction"
-                titleKey="explore.sections.nonFiction"
-                onNavigate={handleNavigateToSection}
-              />
-
-              <ExploreSection
-                type="new-releases"
-                titleKey="explore.sections.newReleases"
-                onNavigate={handleNavigateToSection}
-              />
-
-              <ExploreSection
-                type="quick-reads"
-                titleKey="explore.sections.quickReads"
+                type="more-author"
+                titleKey="explore.sections.moreAuthor"
                 onNavigate={handleNavigateToSection}
               />
             </>

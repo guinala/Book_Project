@@ -7,10 +7,11 @@ import { Search, X } from "lucide-react";
 type SearchBarProps = {
   onSearch?: (query: string, filter: SearchFilter) => void;
   placeholder?: string;
+  initialQuery?: string;
 }
 
-export default function SearchBar({ onSearch }: SearchBarProps) {
-  const [query, setQuery] = useState("");
+export default function SearchBar({ onSearch, initialQuery = "" }: SearchBarProps) {
+  const [query, setQuery] = useState(initialQuery);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
