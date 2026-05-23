@@ -164,11 +164,11 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
       setIsSubmitting(true);
       try {
         await updateProgress(
-          entry.book.key,
-          currentPage,
-          undefined,
-          rating || undefined,
-          review.trim() || undefined
+          entry.book.key, currentPage, 
+          {
+            rating: rating || undefined,
+            review: review.trim() || undefined,
+          }
         );
       } finally {
         setIsSubmitting(false);
@@ -182,7 +182,7 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
       }
       setIsSubmitting(true);
       try {
-        await updateProgress(entry.book.key, currentPage, note.trim() || undefined);
+        await updateProgress(entry.book.key, currentPage, {note: note.trim() || undefined});
       } finally {
         setIsSubmitting(false);
         onClose();

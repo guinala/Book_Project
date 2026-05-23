@@ -34,17 +34,19 @@
   &__cover-wrap {
     position: relative;
     width: 100%;
-    height: 300px;
+    max-width: 200px;        
+    aspect-ratio: 2 / 3;
+    margin: 0 auto;
     flex-shrink: 0;
-    align-self: auto;
     border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-cover);
 
     @include from($bp-md) {
       width: 250px;
-      height: auto;
-      align-self: stretch;
+      max-width: none;
+      margin: 0;
+      align-self: flex-start;
     }
   }
 
