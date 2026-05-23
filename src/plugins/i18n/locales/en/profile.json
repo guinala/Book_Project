@@ -87,6 +87,8 @@
       "loading": "Loading...",
       "emptyFollowers": "No followers yet",
       "emptyFollowing": "Not following anyone yet",
+      "emptyFollowersOther": "No followers yet",
+      "emptyFollowingOther": "Not following anyone yet",
       "closeAria": "Close"
     },
     "requests": {

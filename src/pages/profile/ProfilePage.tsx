@@ -204,6 +204,7 @@ export default function ProfilePage() {
         <FollowersModal
           userId={resolvedUserId}
           mode={followModal}
+          isOwnProfile={isOwnProfile}
           onClose={() => setFollowModal(null)}
         />
       )}
