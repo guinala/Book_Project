@@ -51,6 +51,7 @@ export type ExploreSectionsResult = {
 };
 
 const FETCH_LIMIT = 40;
+const ABOVE_FOLD = 6;
 
 async function buildSections(params: ExploreSectionsParams): Promise<SectionEntry[]> {
   const {
@@ -65,25 +66,44 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   const year = new Date().getFullYear();
   const entries: SectionEntry[] = [];
 
+  // Tracks keys of books occupying the first ABOVE_FOLD slots in already-built sections.
+  const globalVisibleKeys = new Set<string>();
+
   function offShelf(books: Book[]): Book[] {
     return books.filter(b => !userShelfKeys.has(b.key));
+  }
+
+  // Reorders books so unseen ones appear first, then registers the new first ABOVE_FOLD as visible.
+  function surfaceFresh(books: Book[]): Book[] {
+    const fresh = books.filter(b => !globalVisibleKeys.has(b.key));
+    const repeated = books.filter(b => globalVisibleKeys.has(b.key));
+    const reordered = [...fresh, ...repeated];
+    reordered.slice(0, ABOVE_FOLD).forEach(b => globalVisibleKeys.add(b.key));
+    return reordered;
   }
 
   // 1. Trending — no shelf filter: reflects platform popularity regardless of user's shelf
   const trendingBooks = await getTrendingBooks(lang, FETCH_LIMIT);
   if (trendingBooks.length > 0) {
+    // Register trending books as visible so subsequent sections surface different books first.
+    trendingBooks.slice(0, ABOVE_FOLD).forEach(b => globalVisibleKeys.add(b.key));
     entries.push({ id: "trending", type: "trending", books: trendingBooks, isFallback: false });
   } else {
     const fallback = await getTopRatedBooks(lang, FETCH_LIMIT);
+    fallback.slice(0, ABOVE_FOLD).forEach(b => globalVisibleKeys.add(b.key));
     entries.push({ id: "trending", type: "trending", books: fallback, isFallback: true });
   }
 
+  const usedReferenceKeys = new Set<string>();
+
   // 2. Because-liked
-  if (likedBook?.genre) {
-    const books = offShelf(
+  if (likedBook?.genre && !usedReferenceKeys.has(likedBook.key)) {
+    const raw = offShelf(
       await getRecommendationsByGenre(likedBook.genre, lang, likedBook.key, FETCH_LIMIT),
     ).filter(b => (b.rating ?? 0) >= 4);
+    const books = surfaceFresh(raw);
     if (books.length > 0) {
+      usedReferenceKeys.add(likedBook.key);
       entries.push({
         id: "because-liked",
         type: "because-liked",
@@ -97,11 +117,13 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   }
 
   // 3. Because-favorites
-  if (favoritesReferenceBook?.genre) {
-    const books = offShelf(
+  if (favoritesReferenceBook?.genre && !usedReferenceKeys.has(favoritesReferenceBook.key)) {
+    const raw = offShelf(
       await getRecommendationsByGenre(favoritesReferenceBook.genre, lang, favoritesReferenceBook.key, FETCH_LIMIT),
     ).filter(b => (b.rating ?? 0) >= 4);
+    const books = surfaceFresh(raw);
     if (books.length > 0) {
+      usedReferenceKeys.add(favoritesReferenceBook.key);
       entries.push({
         id: "because-favorites",
         type: "because-favorites",
@@ -118,11 +140,13 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   entries.push({ id: "genre-grid", type: "genre-grid", books: [], isFallback: false });
 
   // 5. Because-finished
-  if (finishedBook?.genre) {
-    const books = offShelf(
+  if (finishedBook?.genre && !usedReferenceKeys.has(finishedBook.key)) {
+    const raw = offShelf(
       await getRecommendationsByGenre(finishedBook.genre, lang, finishedBook.key, FETCH_LIMIT),
     ).filter(b => (b.rating ?? 0) >= 4);
+    const books = surfaceFresh(raw);
     if (books.length > 0) {
+      usedReferenceKeys.add(finishedBook.key);
       entries.push({
         id: "because-finished",
         type: "because-finished",
@@ -139,7 +163,8 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   const resolvedAuthorKey = fiveStarAuthorKey ?? favoriteAuthorKey;
   const resolvedAuthorName = fiveStarAuthorName ?? favoriteAuthorName;
   if (resolvedAuthorKey) {
-    const books = offShelf(await getTopAuthorBooks(resolvedAuthorKey, lang));
+    const raw = offShelf(await getTopAuthorBooks(resolvedAuthorKey, lang));
+    const books = surfaceFresh(raw);
     if (books.length > 0) {
       entries.push({
         id: "more-author",
@@ -154,7 +179,8 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
 
   // 7. More-genre
   if (favoriteGenre) {
-    const books = offShelf(await getBooksByGenre(favoriteGenre, lang, FETCH_LIMIT));
+    const raw = offShelf(await getBooksByGenre(favoriteGenre, lang, FETCH_LIMIT));
+    const books = surfaceFresh(raw);
     if (books.length > 0) {
       entries.push({
         id: "more-genre",
@@ -170,15 +196,16 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   // 8. Because-reading
   for (let i = 0; i < referenceBooks.length && i < 3; i++) {
     const book = referenceBooks[i];
-    if (!book.genre) continue;
-    const books = offShelf(
+    if (!book.genre || usedReferenceKeys.has(book.key)) continue;
+    const raw = offShelf(
       await getRecommendationsByGenre(book.genre, lang, book.key, FETCH_LIMIT),
     ).filter(b => (b.rating ?? 0) >= 4);
-    if (books.length === 0) continue;
+    if (raw.length === 0) continue;
+    usedReferenceKeys.add(book.key);
     entries.push({
       id: `because-reading-${i}`,
       type: "because-reading",
-      books,
+      books: surfaceFresh(raw),
       isFallback: false,
       referenceBookKey: book.key,
       referenceBookTitle: book.title,
@@ -202,11 +229,11 @@ async function buildSections(params: ExploreSectionsParams): Promise<SectionEntr
   }
   merged.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
   if (merged.length > 0) {
-    entries.push({ id: "new-releases-for-you", type: "new-releases-for-you", books: merged, isFallback: false });
+    entries.push({ id: "new-releases-for-you", type: "new-releases-for-you", books: surfaceFresh(merged), isFallback: false });
   } else {
     const fallback = offShelf(await getNewReleaseBooks(year, lang, FETCH_LIMIT));
     if (fallback.length > 0) {
-      entries.push({ id: "new-releases-for-you", type: "new-releases-for-you", books: fallback, isFallback: true });
+      entries.push({ id: "new-releases-for-you", type: "new-releases-for-you", books: surfaceFresh(fallback), isFallback: true });
     }
   }
 
