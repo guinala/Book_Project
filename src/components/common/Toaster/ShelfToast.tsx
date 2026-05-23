@@ -28,8 +28,8 @@ export default function ShelfToast({
         )}
       </div>
       <div className="shelf-toast__body">
-        <p className="shelf-toast__message">{message}</p>
         <p className="shelf-toast__title">{title}</p>
+        <p className="shelf-toast__message">{message}</p>
       </div>
       {actionLabel && onAction && (
         <button
