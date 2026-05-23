@@ -31,6 +31,7 @@ function LandingPage() {
   }, [isAuthenticated, loading, navigate]);
 
   const handleLogin = () => navigate("/auth");
+  const handleRegister = () => navigate("/auth", { state: { tab: "register" } });
   const handleGuest = () => navigate("/explore");
 
   if (loading) {
@@ -56,7 +57,7 @@ function LandingPage() {
           <h1 className="landing__hero-title">{t("landing.hero.title")}</h1>
           <p className="landing__hero-subtitle">{t("landing.hero.subtitle")}</p>
           <div className="landing__hero-cta">
-            <button type="button" className="landing__btn-primary" onClick={handleLogin}>
+            <button type="button" className="landing__btn-primary" onClick={handleRegister}>
               {t("landing.hero.cta")}
             </button>
             <button type="button" className="landing__btn-ghost" onClick={handleGuest}>
@@ -263,7 +264,7 @@ function LandingPage() {
         <h2 className="landing__cta-title">{t("landing.cta.title")}</h2>
         <p className="landing__cta-subtitle">{t("landing.cta.subtitle")}</p>
         <div className="landing__cta-buttons">
-          <button type="button" className="landing__btn-white" onClick={handleLogin}>
+          <button type="button" className="landing__btn-white" onClick={handleRegister}>
             {t("landing.cta.btn")}
           </button>
           <button type="button" className="landing__btn-ghost-white" onClick={handleGuest}>
