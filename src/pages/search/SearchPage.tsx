@@ -42,7 +42,9 @@ export default function SearchPage() {
     <div className="search-page">
       <div className="search-page__search-wrap">
         <form className="search-page__search-form" onSubmit={handleSubmit} role="search">
-          <Search size={18} className="search-page__search-icon" aria-hidden="true" />
+          <span className="search-page__search-icon" aria-hidden="true">
+            <Search size={18} />
+          </span>
           <input
             ref={inputRef}
             className="search-page__search-input"

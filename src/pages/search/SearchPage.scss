@@ -94,6 +94,9 @@
   }
 
   &__search-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding-bottom: var(--space-6);
 
     @include from($bp-md) {
@@ -119,10 +122,14 @@
   }
 
   &__search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
     padding: 0 var(--space-3);
     color: var(--color-text-tertiary);
     pointer-events: none;
+    transition: color var(--transition-fast);
 
     .search-page__search-form:focus-within & {
       color: var(--color-text-primary);
