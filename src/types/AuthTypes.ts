@@ -9,6 +9,7 @@ export interface RegisterFormValues {
   name: string;
   surname: string;
   birthDate: string;
+  acceptedTerms: boolean;
 }
 
 export type AuthScreen = "loading" | "login" | "register" | "user";
