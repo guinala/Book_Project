@@ -346,6 +346,28 @@
     }
   }
 
+  &__terms-row {
+    align-items: flex-start;
+
+    input[type="checkbox"] {
+      margin-top: 3px;
+    }
+
+    span {
+      line-height: 1.5;
+    }
+  }
+
+  &__terms-link {
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-brand-primary);
+    }
+  }
+
   &__hint {
     font-size: 11px;
     color: var(--color-text-tertiary);

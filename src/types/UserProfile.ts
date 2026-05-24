@@ -20,6 +20,8 @@ export type UserFullProfile = {
   followingCount: number;
   birthDate?: string;
   isPublic: boolean;
+  acceptedTermsAt?: string;
+  acceptedTermsVersion?: string;
 };
 
 export type UserMinimal = {
