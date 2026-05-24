@@ -14,6 +14,8 @@ import SettingsPage from "@/pages/settings/SettingsPage";
 import AuthRoute from "@/routes/AuthRoute";
 import AllListsPage from "@/pages/lists/AllListsPage";
 import ListDetailPage from "@/pages/lists/ListDetailPage";
+import TermsPage from "@/pages/legal/TermsPage";
+import PrivacyPage from "@/pages/legal/PrivacyPage";
 
 export const ROUTES = [
   {
@@ -76,6 +78,14 @@ export const ROUTES = [
             <SettingsPage />
           </AuthRoute>
         ),
+      },
+      { 
+        path: "legal/terms", 
+        element: <TermsPage /> 
+      },
+      { 
+        path: "legal/privacy", 
+        element: <PrivacyPage /> 
       },
     ],
   },

@@ -1,17 +1,18 @@
 import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { logoutUser, registerWithEmail, sendVerificationEmail, isEmailInUse } from "@/services/firebase/firebaseAuth";
 import type { RegisterFormValues } from "@/types/AuthTypes";
 import { createUserProfile } from "@/services/firebase/firebaseUsers";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import FormInput from "@/components/auth/form-components/FormInput";
 import GoogleFormInput from "@/components/auth/form-components/GoogleFormInput";
+import { CURRENT_TERMS_VERSION } from "@/services/legal/termsVersion";
 
 export default function RegisterForm() {
   const { t } = useTranslation();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
-    defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "" },
+    defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "", acceptedTerms: false },
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
@@ -32,7 +33,12 @@ export default function RegisterForm() {
       const credential = await registerWithEmail(data.email, data.password);
       try {
         await createUserProfile(credential.user.uid, {
-          email: data.email, name: data.name, surname: data.surname, birthDate: data.birthDate,
+          email: data.email, 
+          name: data.name, 
+          surname: data.surname, 
+          birthDate: data.birthDate,
+          acceptedTermsAt: new Date().toISOString(),
+          acceptedTermsVersion: CURRENT_TERMS_VERSION,
         });
       } catch (profileError) {
         await credential.user.delete();
@@ -119,6 +125,42 @@ export default function RegisterForm() {
             },
           })}
         />
+
+        <label className="auth__remember auth__terms-row">
+          <input
+            type="checkbox"
+            {...register("acceptedTerms", {
+              required: t("authErrors.terms-required"),
+            })}
+          />
+          <span>
+            <Trans
+              i18nKey="auth.acceptTermsLabel"
+              components={{
+                terms: (
+                  <a
+                    className="auth__terms-link"
+                    href="/legal/terms"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  />
+                ),
+                privacy: (
+                  <a
+                    className="auth__terms-link"
+                    href="/legal/privacy"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  />
+                ),
+              }}
+            />
+          </span>
+        </label>
+
+        {errors.acceptedTerms && (
+          <p className="auth__error" role="alert">{errors.acceptedTerms.message}</p>
+        )}
 
         <button className="auth__btn-primary" type="submit" disabled={isSubmitting}>
           {isSubmitting ? t("auth.registering") : t("auth.registerBtn")}

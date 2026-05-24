@@ -1,0 +1,98 @@
+@use '../../styles/lib' as *;
+
+.footer {
+  background-color: var(--color-bg-page);
+  // border-top: 1px solid var(--color-border-outline);
+  margin: 0 -2rem -2rem;
+  padding: var(--space-8) 0 0 var(--space-8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-10);
+  overflow: clip;
+
+  &__inner {
+    display: contents;
+  }
+
+  &__columns {
+    align-self: flex-start;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: var(--space-12);
+  }
+
+  &__column {
+    min-width: 0;
+  }
+
+  &__heading {
+    font-family: var(--font-editorial);
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-4);
+    line-height: 1.2;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  &__link {
+    font-family: var(--font-main);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-text-primary);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  }
+
+  &__brand-mark {
+    align-self: flex-end;
+    font-family: var(--font-editorial);
+    font-weight: var(--weight-bold);
+    color: rgba(68, 67, 64, 0.61);
+    font-size: clamp(96px, 18vw, 260px);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    user-select: none;
+    white-space: nowrap;
+    margin-right: -0.05em;
+    margin-bottom: -0.1em;
+  }
+
+  @media (max-width: 1024px) {
+    &__columns {
+      gap: var(--space-6) var(--space-10);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: var(--space-6) 0 0 var(--space-4);
+    gap: var(--space-8);
+
+    &__columns {
+      grid-template-columns: repeat(2, auto);
+      gap: var(--space-6) var(--space-10);
+    }
+
+    &__brand-mark {
+      font-size: clamp(80px, 28vw, 180px);
+    }
+  }
+}

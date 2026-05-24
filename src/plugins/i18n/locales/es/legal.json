@@ -1,0 +1,30 @@
+{
+  "legal": {
+    "lastUpdated": "Última actualización: {{date}}",
+    "terms": {
+      "title": "Términos de uso",
+      "sections": [
+        { "heading": "1. Objeto", "body": "El presente Aviso Legal regula el uso del servicio Trama (en adelante, \"el Servicio\") puesto a disposición de los usuarios. El acceso al Servicio implica la aceptación plena y sin reservas de los presentes términos." },
+        { "heading": "2. Aceptación de los términos", "body": "Al registrarte y utilizar el Servicio aceptas estos términos. Si no estás de acuerdo con alguno de ellos, debes abstenerte de utilizar el Servicio." },
+        { "heading": "3. Registro y cuenta", "body": "Para acceder a determinadas funcionalidades es necesario crear una cuenta facilitando datos veraces. Eres responsable de la confidencialidad de tus credenciales y de toda actividad realizada bajo tu cuenta." },
+        { "heading": "4. Uso del servicio", "body": "Te comprometes a utilizar el Servicio conforme a la ley, la moral y el orden público. Queda prohibido el uso del Servicio para fines ilícitos o que puedan dañar a terceros." },
+        { "heading": "5. Propiedad intelectual", "body": "Todos los contenidos del Servicio, incluyendo textos, imágenes y código, son propiedad de Trama o de terceros licenciantes. Su reproducción, distribución o transformación sin autorización está prohibida." },
+        { "heading": "6. Limitación de responsabilidad", "body": "Trama no se hace responsable de los daños directos o indirectos derivados del uso del Servicio, incluyendo pérdida de datos, interrupciones o accesos no autorizados, salvo en los casos previstos por la ley." },
+        { "heading": "7. Modificaciones", "body": "Trama se reserva el derecho a modificar estos términos en cualquier momento. Las modificaciones entrarán en vigor en el momento de su publicación. El uso continuado del Servicio implica la aceptación de los términos modificados." },
+        { "heading": "8. Legislación aplicable", "body": "Estos términos se rigen por la legislación española. Cualquier controversia será sometida a los Juzgados y Tribunales competentes." }
+      ]
+    },
+    "privacy": {
+      "title": "Política de privacidad",
+      "sections": [
+        { "heading": "1. Responsable del tratamiento", "body": "El responsable del tratamiento de tus datos personales es Trama. Puedes contactar con nosotros a través de los canales habilitados en el Servicio." },
+        { "heading": "2. Datos recogidos", "body": "Recogemos los datos que nos facilitas al registrarte (nombre, email, fecha de nacimiento), así como datos generados por el uso del Servicio (preferencias, libros añadidos, actividad)." },
+        { "heading": "3. Finalidad del tratamiento", "body": "Utilizamos tus datos para prestar el Servicio, gestionar tu cuenta, mejorar la experiencia y cumplir con nuestras obligaciones legales." },
+        { "heading": "4. Base legal", "body": "El tratamiento se basa en la ejecución del contrato derivado de la aceptación de los términos, en tu consentimiento y, en su caso, en el cumplimiento de obligaciones legales." },
+        { "heading": "5. Conservación", "body": "Conservamos tus datos mientras mantengas la cuenta activa y durante los plazos legalmente exigidos tras su baja." },
+        { "heading": "6. Derechos del usuario", "body": "Puedes ejercer los derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a nuestros canales de contacto." },
+        { "heading": "7. Contacto", "body": "Para cualquier consulta relacionada con la privacidad puedes contactarnos a través de los medios facilitados en el Servicio." }
+      ]
+    }
+  }
+}
