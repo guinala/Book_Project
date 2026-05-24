@@ -8,7 +8,7 @@ import "./ProfileMenu.scss";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
-interface ProfileMenuProps {
+type ProfileMenuProps = {
   onClose: () => void;
 }
 

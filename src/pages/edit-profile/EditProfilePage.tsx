@@ -1,17 +1,19 @@
-// src/pages/EditProfilePage/EditProfilePage.tsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
+import { FirebaseError } from "firebase/app";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserProfile, updateUserProfile } from "@/services/firebase/firebaseUsers";
 import { uploadProfilePhoto, uploadBannerImage } from "@/services/firebase/firebaseStorage";
-import type { UserFullProfile } from "@/types/UserProfile";
-import { Upload } from "lucide-react";
-import "./EditProfilePage.scss";
-import { FirebaseError } from "firebase/app";
-import { checkUsernameAvailable, isValidUsername, normalizeUsername, setUsername } from "@/services/firebase/firebaseUsernames";
-import { logger } from "@/utils/logger";
+import { normalizeUsername, setUsername } from "@/services/firebase/firebaseUsernames";
 import { useObjectUrl } from "@/hooks/useObjectUrl";
+import { logger } from "@/utils/logger";
+import type { UserFullProfile } from "@/types/UserProfile";
+import "./EditProfilePage.scss";
+import AvatarUploader from "./components/AvatarUploader";
+import BannerUploader from "./components/BannerUploader";
+import UsernameField from "./components/UsernameField";
+import BioField from "./components/BioField";
 
 type EditProfileForm = {
   name: string;
@@ -21,21 +23,15 @@ type EditProfileForm = {
   isPublic: boolean;
 };
 
+const BIO_MAX = 150;
+
 export default function EditProfilePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<EditProfileForm>();
 
-  const {
-    url: photoPreview,
-    setUrl: setPhotoPreview,
-    setFile: setPhotoPreviewFile,
-  } = useObjectUrl(null);
-  const {
-    url: bannerPreview,
-    setUrl: setBannerPreview,
-    setFile: setBannerPreviewFile,
-  } = useObjectUrl(null);
+  const photo = useObjectUrl(null);
+  const banner = useObjectUrl(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -44,54 +40,10 @@ export default function EditProfilePage() {
   const [bioSaveBlocked, setBioSaveBlocked] = useState(false);
   const [bioShaking, setBioShaking] = useState(false);
   const [originalUsername, setOriginalUsername] = useState("");
-  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "taken" | "available">("idle");
 
-  const BIO_MAX = 150;
   const bioValue = watch("bio") ?? "";
   const usernameValue = watch("username") ?? "";
   const isPublicProfile = watch("isPublic");
-  const bioOverLimit = bioValue.length > BIO_MAX;
-
-  const photoInputRef = useRef<HTMLInputElement>(null);
-  const bannerInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const normalized = normalizeUsername(usernameValue);
-
-    if (normalized === "" || normalized === normalizeUsername(originalUsername)) {
-      setUsernameStatus("idle");
-      return;
-    }
-
-    if (!isValidUsername(normalized)) {
-      setUsernameStatus("idle");
-      return;
-    }
-
-    setUsernameStatus("checking");
-    let cancelled = false;
-    const handle = setTimeout(() => {
-      void (async () => {
-        try {
-          const available = await checkUsernameAvailable(normalized, user.uid);
-          if (!cancelled) setUsernameStatus(available ? "available" : "taken");
-        } catch {
-          if (!cancelled) setUsernameStatus("idle");
-        }
-      })();
-    }, 400);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(handle);
-    };
-  }, [usernameValue, user, originalUsername]);
-
-  useEffect(() => {
-    if (bioSaveBlocked && !bioOverLimit) setBioSaveBlocked(false);
-  }, [bioValue, bioSaveBlocked, bioOverLimit]);
 
   useEffect(() => {
     if (!user) return;
@@ -106,30 +58,26 @@ export default function EditProfilePage() {
             isPublic: profile.isPublic ?? true,
           });
           setOriginalUsername(profile.username ?? "");
-          if (profile.profilePhotoUrl) setPhotoPreview(profile.profilePhotoUrl);
-          if (profile.bannerImageUrl) setBannerPreview(profile.bannerImageUrl);
+          if (profile.profilePhotoUrl) photo.setUrl(profile.profilePhotoUrl);
+          if (profile.bannerImageUrl) banner.setUrl(profile.bannerImageUrl);
         }
       })
       .finally(() => setLoadingProfile(false));
-  }, [user, reset, setPhotoPreview, setBannerPreview]);
+  }, [user, reset, photo, banner]);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handlePhotoSelected = (file: File) => {
     setPhotoFile(file);
-    setPhotoPreviewFile(file);
+    photo.setFile(file);
   };
 
-  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleBannerSelected = (file: File) => {
     setBannerFile(file);
-    setBannerPreviewFile(file);
+    banner.setFile(file);
   };
 
   const onSubmit = async (data: EditProfileForm) => {
     if (!user) return;
-    if (bioOverLimit) {
+    if (bioValue.length > BIO_MAX) {
       setBioSaveBlocked(true);
       setBioShaking(true);
       return;
@@ -144,14 +92,8 @@ export default function EditProfilePage() {
         bio: data.bio,
         isPublic: data.isPublic,
       };
-
-      if (photoFile) {
-        updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
-      }
-
-      if (bannerFile) {
-        updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
-      }
+      if (photoFile) updates.profilePhotoUrl = await uploadProfilePhoto(user.uid, photoFile);
+      if (bannerFile) updates.bannerImageUrl = await uploadBannerImage(user.uid, bannerFile);
 
       const normalizedNew = normalizeUsername(data.username);
       const normalizedOld = normalizeUsername(originalUsername);
@@ -168,20 +110,12 @@ export default function EditProfilePage() {
       }
 
       await updateUserProfile(user.uid, updates);
-
       navigate("/profile");
     } catch (err) {
       logger.error("[EditProfilePage] save failed:", err);
-
-      if (err instanceof FirebaseError) {
-        setSaveError(err.code);
-      } 
-      else if (err instanceof Error) {
-        setSaveError(err.message);
-      } 
-      else {
-        setSaveError("Error desconocido");
-      }
+      if (err instanceof FirebaseError) setSaveError(err.code);
+      else if (err instanceof Error) setSaveError(err.message);
+      else setSaveError("Error desconocido");
     } finally {
       setSaving(false);
     }
@@ -195,64 +129,15 @@ export default function EditProfilePage() {
     );
   }
 
+  if (!user) return null;
+
   return (
     <section className="edit-profile">
       <h2 className="edit-profile__title">Editar perfil</h2>
 
       <form className="edit-profile__form" onSubmit={handleSubmit(onSubmit)}>
-
-        <div className="edit-profile__field">
-          <span className="edit-profile__label">Foto de portada</span>
-          <div className="edit-profile__banner-upload">
-            <div
-              className="edit-profile__banner-preview"
-              style={bannerPreview ? { backgroundImage: `url(${bannerPreview})` } : undefined}
-              onClick={() => bannerInputRef.current?.click()}
-            >
-              {!bannerPreview && (
-                <span className="edit-profile__upload-hint">Subir portada</span>
-              )}
-              <div className="edit-profile__banner-overlay">
-                <Upload size={24} aria-hidden="true" />
-              </div>
-            </div>
-            <input
-              ref={bannerInputRef}
-              type="file"
-              accept="image/*"
-              className="edit-profile__file-input"
-              onChange={handleBannerChange}
-              aria-label="Subir imagen de portada"
-            />
-          </div>
-        </div>
-
-        <div className="edit-profile__field">
-          <span className="edit-profile__label">Foto de perfil</span>
-          <div className="edit-profile__photo-upload">
-            <div
-              className="edit-profile__photo-preview"
-              onClick={() => photoInputRef.current?.click()}
-            >
-              {photoPreview ? (
-                <img src={photoPreview} alt="Foto de perfil" className="edit-profile__photo-img" />
-              ) : (
-                <span className="edit-profile__upload-hint">Foto</span>
-              )}
-              <div className="edit-profile__photo-overlay">
-                <Upload size={20} aria-hidden="true" />
-              </div>
-            </div>
-            <input
-              ref={photoInputRef}
-              type="file"
-              accept="image/*"
-              className="edit-profile__file-input"
-              onChange={handlePhotoChange}
-              aria-label="Subir foto de perfil"
-            />
-          </div>
-        </div>
+        <BannerUploader previewUrl={banner.url} onFileSelected={handleBannerSelected} />
+        <AvatarUploader previewUrl={photo.url} onFileSelected={handlePhotoSelected} />
 
         <div className="edit-profile__fields">
           <div className="edit-profile__row">
@@ -264,11 +149,8 @@ export default function EditProfilePage() {
                 type="text"
                 {...register("name", { required: "El nombre es obligatorio" })}
               />
-              {errors.name && (
-                <p className="edit-profile__error">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="edit-profile__error">{errors.name.message}</p>}
             </div>
-
             <div className="edit-profile__field">
               <label className="edit-profile__label" htmlFor="surname">Apellido</label>
               <input
@@ -280,58 +162,23 @@ export default function EditProfilePage() {
             </div>
           </div>
 
-          <div className="edit-profile__field">
-            <label className="edit-profile__label" htmlFor="username">Nickname</label>
-            <div className="edit-profile__input-prefix-wrap">
-              <span className="edit-profile__prefix">@</span>
-              <input
-                id="username"
-                className="edit-profile__input edit-profile__input--with-prefix"
-                type="text"
-                {...register("username", {
-                  pattern: {
-                    value: /^[a-z0-9_]{3,20}$/,
-                    message: "Solo letras minúsculas, números y _, entre 3 y 20 caracteres",
-                  },
-                })}
-              />
-            </div>
-            {errors.username && (
-              <p className="edit-profile__error">{errors.username.message}</p>
-            )}
-            {usernameStatus === "checking" && (
-              <p className="edit-profile__hint">Comprobando disponibilidad...</p>
-            )}
-            {usernameStatus === "taken" && (
-              <p className="edit-profile__error">Este nombre ya está en uso</p>
-            )}
-            {usernameStatus === "available" && (
-              <p className="edit-profile__success">Disponible</p>
-            )}
-          </div>
+          <UsernameField
+            uid={user.uid}
+            register={register}
+            error={errors.username}
+            value={usernameValue}
+            originalUsername={originalUsername}
+          />
 
-          <div className="edit-profile__field">
-            <label className="edit-profile__label" htmlFor="bio">Biografía</label>
-            <textarea
-              id="bio"
-              className={[
-                "edit-profile__textarea",
-                bioSaveBlocked && bioOverLimit ? "edit-profile__textarea--error" : "",
-                bioShaking ? "edit-profile__textarea--shaking" : "",
-              ].filter(Boolean).join(" ")}
-              rows={4}
-              onAnimationEnd={() => setBioShaking(false)}
-              {...register("bio")}
-            />
-            <div className="edit-profile__bio-footer">
-              {bioSaveBlocked && bioOverLimit && (
-                <span className="edit-profile__bio-error">Demasiados caracteres</span>
-              )}
-              <span className={`edit-profile__bio-count${bioOverLimit ? " edit-profile__bio-count--over" : ""}`}>
-                {bioValue.length} / {BIO_MAX} caracteres
-              </span>
-            </div>
-          </div>
+          <BioField
+            register={register}
+            value={bioValue}
+            saveBlocked={bioSaveBlocked}
+            onClearBlock={() => setBioSaveBlocked(false)}
+            shaking={bioShaking}
+            onShakeEnd={() => setBioShaking(false)}
+          />
+
           <div className="edit-profile__field">
             <span className="edit-profile__label">Privacidad del perfil</span>
             <div className="edit-profile__privacy">
@@ -348,23 +195,13 @@ export default function EditProfilePage() {
           </div>
         </div>
 
-        {saveError && (
-          <p className="edit-profile__save-error">{saveError}</p>
-        )}
+        {saveError && <p className="edit-profile__save-error">{saveError}</p>}
 
         <div className="edit-profile__actions">
-          <button
-            type="button"
-            className="edit-profile__btn edit-profile__btn--cancel"
-            onClick={() => navigate("/profile")}
-          >
+          <button type="button" className="edit-profile__btn edit-profile__btn--cancel" onClick={() => navigate("/profile")}>
             Cancelar
           </button>
-          <button
-            type="submit"
-            className="edit-profile__btn edit-profile__btn--save"
-            disabled={saving}
-          >
+          <button type="submit" className="edit-profile__btn edit-profile__btn--save" disabled={saving}>
             {saving ? "Guardando..." : "Guardar cambios"}
           </button>
         </div>

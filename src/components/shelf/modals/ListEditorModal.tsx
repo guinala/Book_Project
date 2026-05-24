@@ -5,10 +5,9 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./ListEditorModal.scss";
-import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useLockScroll } from "@/hooks/useLockScroll";
-import { useDebouncedBookSearch } from "@/hooks/useDebouncedBookSearch";
+import BookSearchPicker from "@/components/book/search-picker/BookSearchPicker";
 
 const BOOKS_PER_PAGE = 4;
 
@@ -22,16 +21,13 @@ export default function ListEditorModal({
     existingList, onSubmit, onClose,
 }: ListEditorModalProps) {
     const { t } = useTranslation();
-    const { lang } = useCurrentLanguage();
     const isEdit = !!existingList;
 
     const [name, setName] = useState(existingList?.name ?? "");
     const [books, setBooks] = useState<ListBook[]>(existingList?.books ?? []);
     const [page, setPage] = useState(0);
-    const [query, setQuery] = useState("");
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
-    const { results, searching } = useDebouncedBookSearch(query, { lang });
 
     const totalPages = Math.max(1, Math.ceil(books.length / BOOKS_PER_PAGE));
     const safePage = Math.min(page, totalPages - 1);
@@ -44,14 +40,11 @@ export default function ListEditorModal({
     useLockScroll();
 
     const addBook = (book: Book) => {
-    if (books.length >= MAX_LIST_BOOKS) return;
-    if (books.some((b) => b.key === book.key)) return;
-    setBooks((prev) => [
-      ...prev,
-      { key: book.key, title: book.title, authors: book.authors, cover_url: book.cover_url },
-    ]);
-    setQuery("");
-  };
+      setBooks((prev) => [
+        ...prev,
+        { key: book.key, title: book.title, authors: book.authors, cover_url: book.cover_url },
+      ]);
+    };
 
   const removeBook = (key: string) => {
     setBooks((prev) => prev.filter((b) => b.key !== key));
@@ -162,50 +155,22 @@ export default function ListEditorModal({
 
         {books.length < MAX_LIST_BOOKS && (
           <>
-            <input
-              className="list-editor-modal__search"
-              type="text"
-              placeholder={t("myLibrary.listEditor.searchPlaceholder")}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+            <BookSearchPicker
+              selected={books}
+              max={MAX_LIST_BOOKS}
+              onAdd={addBook}
+              translationPrefix="myLibrary.listEditor"
+              classNames={{
+                search: "list-editor-modal__search",
+                searching: "list-editor-modal__searching",
+                noResults: "list-editor-modal__no-results",
+                results: "list-editor-modal__results",
+                resultItem: "list-editor-modal__result-item",
+                resultCover: "list-editor-modal__result-cover",
+                resultTitle: "list-editor-modal__result-title",
+                resultAuthor: "list-editor-modal__result-author",
+              }}
             />
-            {searching && (
-              <p className="list-editor-modal__searching">
-                {t("myLibrary.listEditor.searching")}
-              </p>
-            )}
-            {!searching && query.trim() && results.length === 0 && (
-              <p className="list-editor-modal__no-results">
-                {t("myLibrary.listEditor.noResults")}
-              </p>
-            )}
-            {results.length > 0 && (
-              <ul className="list-editor-modal__results">
-                {results.map((book) => (
-                  <li key={book.key}>
-                    <button
-                      type="button"
-                      className="list-editor-modal__result-item"
-                      onClick={() => addBook(book)}
-                      disabled={books.some((b) => b.key === book.key)}
-                    >
-                      {book.cover_url && (
-                        <img
-                          className="list-editor-modal__result-cover"
-                          src={book.cover_url}
-                          alt=""
-                          aria-hidden="true"
-                        />
-                      )}
-                      <div>
-                        <p className="list-editor-modal__result-title">{book.title}</p>
-                        <p className="list-editor-modal__result-author">{book.authors[0]}</p>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
           </>
         )}
 

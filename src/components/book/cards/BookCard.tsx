@@ -1,17 +1,12 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
-import type { ShelfStatus } from "@/types/BookDetail";
 import { resolveCoverSrc } from "@/utils/coverImage";
 import { useTranslation } from "react-i18next";
 import "./BookCard.scss";
-import { useShelf } from "@/hooks/useShelf";
-import { useAuth } from "@/hooks/useAuth";
 import { encodeKey } from "@/utils/bookPaths";
-import { BookOpen, Bookmark, Plus, Star } from "lucide-react";
-import { useClickOutsideMany } from "@/hooks/useClickOutside";
-
-const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
+import { BookOpen, Star } from "lucide-react";
+import ShelfDropdownButton from "@/components/book/shelf-dropdown/ShelfDropdownButton";
 
 type BookCardProps = {
   book: Book;
@@ -19,41 +14,12 @@ type BookCardProps = {
 };
 
 export default function BookCard({ book, rank }: BookCardProps) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
   const [coverFailed, setCoverFailed] = useState(false);
-  const { addBook, removeBook, getStatus } = useShelf();
-  const { isAuthenticated } = useAuth();
-  const saved = getStatus(book.key);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLUListElement>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  useClickOutsideMany([wrapperRef, dropdownRef], () => setDropdownOpen(false), dropdownOpen);
-
   const handleCardClick = () => {
     navigate(`/books/${encodeKey(book.key)}`, { state: { book } });
-  };
-
-  const handleSaveBtnClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!isAuthenticated) {
-      setTooltipVisible(true);
-      setTimeout(() => setTooltipVisible(false), 2000);
-      return;
-    }
-    setDropdownOpen((o) => !o);
-  };
-
-  const handleSelect = (e: React.MouseEvent, option: ShelfStatus) => {
-    e.stopPropagation();
-    if (saved === option) {
-      removeBook(book.key);
-    } else {
-      addBook(book, option);
-    }
-    setDropdownOpen(false);
   };
 
   const hasCover = (book.cover_url || book.cover_id) && !coverFailed;
@@ -62,7 +28,7 @@ export default function BookCard({ book, rank }: BookCardProps) {
 
   return (
     <article
-      className={`book-card${dropdownOpen ? " book-card--open" : ""}`}
+      className={`book-card`}
       onClick={handleCardClick}
     >
       <div className="book-card__cover-wrapper">
@@ -82,41 +48,18 @@ export default function BookCard({ book, rank }: BookCardProps) {
         {rank && <span className="book-card__rank">{rank}</span>}
       </div>
 
-      <div className="book-card__save-wrapper" ref={wrapperRef}>
-        {tooltipVisible && (
-          <span className="book-card__tooltip">
-            {t("explore.saveTooltip")}
-          </span>
-        )}
-
-        <button
-          className={`book-card__save-btn${dropdownOpen ? " book-card__save-btn--open" : ""}${saved && !dropdownOpen ? " book-card__save-btn--saved" : ""}`}
-          onClick={handleSaveBtnClick}
-          aria-label="Guardar libro"
-        >
-          {saved && !dropdownOpen ? (
-            <Bookmark className="book-card__save-icon" fill="currentColor" stroke="none" />
-          ) : (
-            <Plus className={`book-card__save-icon${dropdownOpen ? " book-card__save-icon--open" : ""}`} />
-          )}
-        </button>
-      </div>
-
-      {dropdownOpen && (
-        <ul className="book-card__dropdown" ref={dropdownRef} onClick={(e) => e.stopPropagation()}>
-          {SHELF_OPTIONS.map((opt) => (
-            <li key={opt}>
-              <button
-                className={`book-card__dropdown-item${saved === opt ? " book-card__dropdown-item--active" : ""}`}
-                onClick={(e) => handleSelect(e, opt)}
-              >
-                {saved === opt && <Bookmark size={16} />}
-                {t(`myLibrary.shelf.${opt}`)}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ShelfDropdownButton
+        book={book}
+        variant="compact"
+        classNames={{
+          root: "book-card__save-wrapper",
+          btn: "book-card__save-btn",
+          list: "book-card__dropdown",
+          item: "book-card__dropdown-item",
+          tooltip: "book-card__tooltip",
+          icon: "book-card__save-icon",
+        }}
+      />
 
       <div className="book-card__info">
         <div className="book-card__text">

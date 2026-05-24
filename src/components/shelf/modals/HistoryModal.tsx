@@ -99,6 +99,7 @@ export default function HistoryModal({
   onClose,
 }: HistoryModalProps) {
   const { user } = useAuth();
+  const uid = user?.uid;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -110,15 +111,15 @@ export default function HistoryModal({
   useClickOutside(panelRef, onClose);
 
   useEffect(() => {
-    if (!user) {
+    if (!uid) {
       return;
     }
     let cancelled = false;
-    getActivity(user.uid, 50)
+    getActivity(uid, 50)
       .then((all) => { if (!cancelled) setItems(all.filter((a) => a.bookId === bookId)); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [user, user?.uid, bookId]);
+  }, [uid, bookId]);
 
   const entries = computeDeltas(items, totalPages);
 

@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-export interface PreferencesContextValue {
+export type PreferencesContextValue = {
   miniNavEnabled: boolean;
   setMiniNavEnabled: (val: boolean) => void;
 }

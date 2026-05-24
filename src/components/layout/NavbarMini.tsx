@@ -4,10 +4,14 @@ import type { ReactNode } from "react";
 import { BookOpen, Search, Users } from "lucide-react";
 import "./NavbarMini.scss";
 
-interface NavItem {
+type NavItem = {
   labelKey: string;
   path: string;
   icon: ReactNode;
+}
+
+type NavbarMiniProps = {
+  visible: boolean;
 }
 
 const ITEMS: NavItem[] = [
@@ -20,10 +24,6 @@ const activeFromPath = (pathname: string) => {
   if (pathname.startsWith("/books/")) return "/explore";
   return pathname;
 };
-
-interface NavbarMiniProps {
-  visible: boolean;
-}
 
 export default function NavbarMini({ visible }: NavbarMiniProps) {
   const navigate = useNavigate();

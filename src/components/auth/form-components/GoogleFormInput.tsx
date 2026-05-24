@@ -1,6 +1,6 @@
 import { useState } from "react";
-import SignInGoogleButton from "@/components/auth/sign-in-buttons/SignInGoogleButton";
 import { useTranslation } from "react-i18next";
+import SocialSignInButton from "../sign-in-buttons/SocialSignInButton";
 
 type GoogleFormInputProps = {
   disabled: boolean;
@@ -12,7 +12,7 @@ export default function GoogleFormInput({ disabled }: GoogleFormInputProps) {
 
   return (
     <div className="auth__google-group">
-      <SignInGoogleButton disabled={disabled} onError={setGoogleError} />
+      <SocialSignInButton provider="google" disabled={disabled} onError={setGoogleError} />
       {googleError && <p className="auth__error">{googleError}</p>}
       <div className="auth__divider">{t("auth.dividerOr")}</div>
     </div>

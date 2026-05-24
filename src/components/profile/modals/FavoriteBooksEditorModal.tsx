@@ -1,4 +1,3 @@
-// src/components/FavoriteBooksEditorModal/FavoriteBooksEditorModal.tsx
 import { useState } from "react";
 import { saveFavorites } from "@/services/firebase/firebaseUsers";
 import type { FavoriteBook } from "@/types/UserProfile";
@@ -6,11 +5,10 @@ import type { Book } from "@/types/Book";
 import { X } from "lucide-react";
 import "./FavoriteBooksEditorModal.scss";
 import { useTranslation } from "react-i18next";
-import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import { MAX_FAVORITES } from "@/utils/bookListUtils";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useLockScroll } from "@/hooks/useLockScroll";
-import { useDebouncedBookSearch } from "@/hooks/useDebouncedBookSearch";
+import BookSearchPicker from "@/components/book/search-picker/BookSearchPicker";
 
 type FavoriteBooksEditorModalProps = {
   userId: string;
@@ -26,29 +24,18 @@ export default function FavoriteBooksEditorModal({
   onSave,
 }: FavoriteBooksEditorModalProps) {
   const [favorites, setFavorites] = useState<FavoriteBook[]>(currentFavorites);
-  const [query, setQuery] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const { t } = useTranslation();
-  const { lang } = useCurrentLanguage();
-  const { results, searching } = useDebouncedBookSearch(query, { lang });
 
   useEscapeKey(onClose);
   useLockScroll();
 
   const addFavorite = (book: Book) => {
-    if (favorites.length >= MAX_FAVORITES) return;
-    if (favorites.some((f) => f.key === book.key)) return;
     setFavorites((prev) => [
       ...prev,
-      {
-        key: book.key,
-        title: book.title,
-        authors: book.authors,
-        cover_url: book.cover_url,
-      },
+      { key: book.key, title: book.title, authors: book.authors, cover_url: book.cover_url },
     ]);
-    setQuery("");
   };
 
   const removeFavorite = (key: string) => {
@@ -119,54 +106,22 @@ export default function FavoriteBooksEditorModal({
 
         {favorites.length < MAX_FAVORITES && (
           <>
-            <input
-              className="fav-editor-modal__search"
-              type="text"
-              placeholder={t("profile.favorites.searchPlaceholder")}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+            <BookSearchPicker
+              selected={favorites}
+              max={MAX_FAVORITES}
+              onAdd={addFavorite}
+              translationPrefix="profile.favorites"
+              classNames={{
+                search: "fav-editor-modal__search",
+                searching: "fav-editor-modal__searching",
+                noResults: "fav-editor-modal__no-results",
+                results: "fav-editor-modal__results",
+                resultItem: "fav-editor-modal__result-item",
+                resultCover: "fav-editor-modal__result-cover",
+                resultTitle: "fav-editor-modal__result-title",
+                resultAuthor: "fav-editor-modal__result-author",
+              }}
             />
-            {searching && (
-              <p className="fav-editor-modal__searching">{t("profile.favorites.searching")}</p>
-            )}
-            
-            {!searching && query.trim() && results.length === 0 && (
-              <p className="fav-editor-modal__no-results">
-                {t("profile.favorites.noResults")}
-              </p>
-            )}
-
-            {results.length > 0 && (
-              <ul className="fav-editor-modal__results">
-                {results.map((book) => (
-                  <li key={book.key}>
-                    <button
-                      type="button"
-                      className="fav-editor-modal__result-item"
-                      onClick={() => addFavorite(book)}
-                      disabled={favorites.some((f) => f.key === book.key)}
-                    >
-                      {book.cover_url && (
-                        <img
-                          className="fav-editor-modal__result-cover"
-                          src={book.cover_url}
-                          alt=""
-                          aria-hidden="true"
-                        />
-                      )}
-                      <div>
-                        <p className="fav-editor-modal__result-title">
-                          {book.title}
-                        </p>
-                        <p className="fav-editor-modal__result-author">
-                          {book.authors[0]}
-                        </p>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
           </>
         )}
 
