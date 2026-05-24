@@ -37,7 +37,7 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
       if (result) setSynopsis(result);
     }).catch(() => {});
     return () => controller.abort();
-  }, [book.key, lang]);
+  }, [book, lang]);
 
   const handleCardClick = () => {
     navigate(`/books/${encodeKey(book.key)}`, { state: { book } });

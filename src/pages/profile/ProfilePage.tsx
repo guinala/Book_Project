@@ -18,6 +18,10 @@ import { lookupUidByUsername } from "@/services/firebase/firebaseUsernames";
 import FollowRequestsModal from "@/components/profile/modals/FollowRequestsModal";
 import ListEditorModal from "@/components/shelf/modals/ListEditorModal";
 import { useLists } from "@/hooks/useLists";
+import { useFollowActions } from "@/hooks/useFollowActions";
+import { useProfileShelf } from "@/hooks/useProfileShelf";
+import { useProfileActivity } from "@/hooks/useProfileActivity";
+import { useBlockActions } from "@/hooks/useBlockActions";
 
 export default function ProfilePage() {
   const { userId: paramUserId, username: paramUsername } = useParams<{
@@ -33,24 +37,15 @@ export default function ProfilePage() {
 
   const {
     profile,
-    shelf,
-    shelfLoading,
-    activity,
-    favorites,
     isOwnProfile,
-    isFollowing,
-    isBlocked,
     loading,
-    canViewFull,
-    hasPendingRequest,
-    follow,
-    unfollow,
-    cancelRequest,
-    block,
-    unblock,
-    incrementFollowers,
-    decrementFollowers,
   } = useProfile(resolvedUserId ?? "");
+  const profileIsPublic = profile?.isPublic !== false;
+  const { isFollowing, hasPendingRequest, follow, unfollow, cancelRequest } = useFollowActions(resolvedUserId ?? "", isOwnProfile, profileIsPublic);
+  const canViewFull = isOwnProfile || profileIsPublic || isFollowing;
+  const { shelf, loading: shelfLoading } = useProfileShelf(resolvedUserId ?? "", isOwnProfile, canViewFull);
+  const { activity, favorites } = useProfileActivity(resolvedUserId ?? "", canViewFull);
+  const { isBlocked, block, unblock } = useBlockActions(resolvedUserId ?? "", isOwnProfile)
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
@@ -195,12 +190,11 @@ export default function ProfilePage() {
           mode={followModal}
           isOwnProfile={isOwnProfile}
           onClose={() => setFollowModal(null)}
-          onFollowerRemoved={decrementFollowers}
         />
       )}
 
       {showRequests && (
-        <FollowRequestsModal onClose={() => setShowRequests(false)} onAccepted={incrementFollowers} />
+        <FollowRequestsModal onClose={() => setShowRequests(false)} />
       )}
 
       {showFavEditor && isOwnProfile && (
