@@ -1,15 +1,22 @@
 import { acceptFollowRequest, rejectFollowRequest } from "@/services/firebase/firebaseFollows";
 import { deleteNotification, markAllAsRead, subscribeToNotifications } from "@/services/firebase/firebaseNotifications";
 import type { Notification } from "@/types/UserProfile";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NotificationsContext } from "./notifications_init";
 import { useAuth } from "@/hooks/useAuth";
+import { logger } from "@/utils/logger";
 
 export function NotificationsProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuth();
     const uid = user?.uid ?? null;
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loadedUid, setLoadedUid] = useState<string | null>(null);
+    const notificationsRef = useRef<Notification[]>([]);
+    const unreadCountRef = useRef(0);
+
+    useEffect(() => {
+        notificationsRef.current = notifications;
+    }, [notifications]);
 
     useEffect(() => {
         if (!uid) {
@@ -34,56 +41,60 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         [list]
     );
 
-    const markAllRead = async () => {
-        if (!uid || unreadCount === 0) {
+    useEffect(() => {
+        unreadCountRef.current = unreadCount;
+    }, [unreadCount]);
+
+    const markAllRead = useCallback(async () => {
+        if (!uid || unreadCountRef.current === 0) {
             return;
         }
 
-        const rollback = notifications;
+        const rollback = notificationsRef.current;
         setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
 
         try {
             await markAllAsRead(uid);
         } catch (err) {
-            console.error("[notifications] markAllRead failed", err);
+            logger.error("[notifications] markAllRead failed", err);
             setNotifications(rollback);
         }
-    }
+    }, [uid]);
 
-    const remove = async (id: string) => {
+    const remove = useCallback(async (id: string) => {
         if (!uid) {
             return;
         }
 
-        const rollback = notifications;
+        const rollback = notificationsRef.current;
         setNotifications((prev) => prev.filter((n) => n.id !== id));
         
         try {
             await deleteNotification(uid, id);
         } catch (err) {
-            console.error("[notifications] remove failed", err);
+            logger.error("[notifications] remove failed", err);
             setNotifications(rollback);
         }
-    };
+    }, [uid]);
 
-    const acceptRequest = async (actorUid: string) => {
+    const acceptRequest = useCallback(async (actorUid: string) => {
         if (!uid) {
             return;
         }
         
-        const rollback = notifications;
+        const rollback = notificationsRef.current;
         setNotifications((prev) => prev.filter((n) => !(n.type === "follow_request" && n.actorUid === actorUid)));
         try {
             await acceptFollowRequest(actorUid);
         } catch (err) {
-            console.error("[notifications] acceptRequest failed", err);
+            logger.error("[notifications] acceptRequest failed", err);
             setNotifications(rollback);
         }
-  };
+  }, [uid]);
 
-  const rejectRequest = async (actorUid: string) => {
+  const rejectRequest = useCallback(async (actorUid: string) => {
     if (!uid) return;
-    const rollback = notifications;
+    const rollback = notificationsRef.current;
     setNotifications((prev) =>
       prev.filter(
         (n) => !(n.type === "follow_request" && n.actorUid === actorUid)
@@ -92,10 +103,10 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     try {
       await rejectFollowRequest(actorUid);
     } catch (err) {
-      console.error("[notifications] rejectRequest failed", err);
+      logger.error("[notifications] rejectRequest failed", err);
       setNotifications(rollback);
     }
-  };
+  }, [uid]);
 
   return (
     <NotificationsContext.Provider

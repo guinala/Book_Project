@@ -5,6 +5,9 @@ import type { UserMinimal } from "@/types/UserProfile";
 import ProfileCard from "@/components/profile/sections/ProfileCard";
 import { X, UserMinus } from "lucide-react";
 import "./FollowersModal.scss";
+import { logger } from "@/utils/logger";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useLockScroll } from "@/hooks/useLockScroll";
 
 type FollowersModalProps = {
   userId: string;
@@ -34,7 +37,7 @@ export default function FollowersModal({
       await removeFollower(followerUid);
       onFollowerRemoved?.();
     } catch {
-      console.error("[FollowersModal] removeFollower failed");
+      logger.error("[FollowersModal] removeFollower failed");
       if (removed) setUsers((prev) => [...prev, removed]);
     }
   };
@@ -45,13 +48,8 @@ export default function FollowersModal({
     setUsers([]);
   }
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [onClose]);
+  useEscapeKey(onClose);
+  useLockScroll();
 
   useEffect(() => {
     let cancelled = false;

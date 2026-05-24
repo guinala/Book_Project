@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "./useAuth";
 import { useShelf } from "./useShelf";
 import { getFavorites, getUserProfile, subscribeToProfileCounts } from "@/services/firebase/firebaseUsers";
@@ -17,6 +16,8 @@ import { getShelf } from "@/services/firebase/firebaseLibrary";
 import type { UserFullProfile, ActivityItem, FavoriteBook } from "@/types/UserProfile";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
+import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import { logger } from "@/utils/logger";
 
 const EMPTY_SHELF: Record<ShelfStatus, Book[]> = {
   wantToRead: [],
@@ -49,11 +50,11 @@ function entriesToShelf(
 
 export function useProfile(userId: string) {
   const { user } = useAuth();
+  const uid = user?.uid;
   const { shelfByStatus, loading: ownShelfLoading } = useShelf();
-  const { i18n } = useTranslation();
-  const lang = i18n.language.split('-')[0];
+  const { lang } = useCurrentLanguage();
 
-  const isOwnProfile = !!user && user.uid === userId;
+  const isOwnProfile = !!uid && uid === userId;
 
   const [profile, setProfile] = useState<UserFullProfile | null>(null);
   const [activity, setActivity] = useState<ActivityItem[]>(EMPTY_ACTIVITY);
@@ -84,22 +85,15 @@ export function useProfile(userId: string) {
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
-    const isOwn = !!user && user.uid === userId;
+    const isOwn = !!uid && uid === userId;
 
     const fetches: Promise<void>[] = [
       getUserProfile(userId).then((p) => { if (!cancelled) setProfile(p); }),
     ];
 
-    // if (user && !isOwn) {
-    //   fetches.push(
-    //     checkIsFollowing(user.uid, userId).then((f) => {
-    //       if (!cancelled) setIsFollowingState(f);
-    //     })
-    //   );
-    // }
-    if (user && !isOwn) {
+    if (uid && !isOwn) {
       fetches.push(
-        checkIsFollowing(user.uid, userId).then((f) => {
+        checkIsFollowing(uid, userId).then((f) => {
           if (!cancelled) setIsFollowingState(f);
         }),
         checkHasPendingRequest(userId).then((p) => {
@@ -113,7 +107,7 @@ export function useProfile(userId: string) {
 
     Promise.all(fetches).finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [userId, user]);
+  }, [userId, uid]);
 
   // Escucha cambios en tiempo real de followersCount / followingCount
   useEffect(() => {
@@ -129,21 +123,6 @@ export function useProfile(userId: string) {
     if (!userId || loading) return;
     if (!canViewFull) return;
     let cancelled = false;
-    // setBodyLoading(true);
-
-    // const fetches: Promise<void>[] = [
-    //   getActivity(userId, 10).then((a) => { if (!cancelled) setActivity(a); }),
-    // ];
-    // if (!isOwnProfile) {
-    //   fetches.push(
-    //     getShelf(userId).then((entries) => {
-    //       if (!cancelled) setPublicShelf(entriesToShelf(entries ?? [], lang));
-    //     })
-    //   );
-    // }
-
-    // Promise.all(fetches).finally(() => { if (!cancelled) setBodyLoading(false); });
-    // return () => { cancelled = true; };
 
     const load = async () => {
       setBodyLoading(true);
@@ -178,18 +157,8 @@ export function useProfile(userId: string) {
   const shelf = isOwnProfile ? shelfByStatus : publicShelf;
   const shelfLoading = isOwnProfile ? ownShelfLoading : bodyLoading;
 
-  // const follow = useCallback(async () => {
-  //   if (!user) return;
-  //   try {
-  //     await followUser(user.uid, userId);
-  //     setIsFollowingState(true);
-  //     setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
-  //   } catch {
-  //     console.error("[useProfile] follow failed");
-  //   }
-  // }, [user, userId]);
   const follow = useCallback(async () => {
-    if (!user || !profile) {
+    if (!uid || !profile) {
       return;
     }
     const isPrivate = profile.isPublic === false;
@@ -206,16 +175,11 @@ export function useProfile(userId: string) {
       if (isPrivate) {
         //Privado -> se manda solicitud
         await sendFollowRequest(userId);
-        ///setHasPendingRequest(true);
       } else {
         await followUser(userId);
-        // setIsFollowingState(true);
-        // setProfile((p) => 
-        //   p ? {...p, followersCount: p.followersCount + 1 } : p
-        // );
       }
     } catch {
-      console.error("[useProfile] follow failed");
+      logger.error("[useProfile] follow failed");
       if (isPrivate) {
         setHasPendingRequest(false);
       } else {
@@ -225,10 +189,10 @@ export function useProfile(userId: string) {
         );
       }
     }
-  }, [user, userId, profile]);
+  }, [uid, userId, profile]);
 
   const unfollow = useCallback(async () => {
-    if (!user) return;
+    if (!uid) return;
 
     // Actualizar ya
     setIsFollowingState(false);
@@ -236,55 +200,46 @@ export function useProfile(userId: string) {
 
     try {
       await unfollowUser(userId);
-      // setIsFollowingState(false);
-      // setProfile((p) => (p ? { ...p, followersCount: p.followersCount - 1 } : p));
-      // if (profile && profile.isPublic === false) {
-      //   setPublicShelf(EMPTY_SHELF);
-      //   setActivity(EMPTY_ACTIVITY);
-      // }
     } catch {
-      console.error("[useProfile] unfollow failed");
+      logger.error("[useProfile] unfollow failed");
       setIsFollowingState(true);
       setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));
     }
-  }, [user, userId]);
+  }, [uid, userId]);
 
   const cancelRequest = useCallback(async () => {
-    if (!user) return;
+    if (!uid) return;
     setHasPendingRequest(false);
 
     try {
       await cancelFollowRequest(userId);
-      //setHasPendingRequest(false);
     } catch {
-      console.error("[useProfile] cancelRequest failed");
+      logger.error("[useProfile] cancelRequest failed");
       setHasPendingRequest(true);
     }
-  }, [user, userId]);
+  }, [uid, userId]);
 
   const block = useCallback(async () => {
-    if (!user) return;
+    if (!uid) return;
     setIsBlockedState(true);
     try {
       await blockUser(userId);
-      //setIsBlockedState(true);
     } catch {
-      console.error("[useProfile] block failed");
+      logger.error("[useProfile] block failed");
       setIsBlockedState(false);
     }
-  }, [user, userId]);
+  }, [uid, userId]);
 
   const unblock = useCallback(async () => {
-    if (!user) return;
+    if (!uid) return;
     setIsBlockedState(false);
     try {
       await unblockUser(userId);
-      //setIsBlockedState(false);
     } catch {
-      console.error("[useProfile] unblock failed");
+      logger.error("[useProfile] unblock failed");
       setIsBlockedState(true);
     }
-  }, [user, userId]);
+  }, [uid, userId]);
 
   const incrementFollowers = useCallback(() => {
     setProfile((p) => (p ? { ...p, followersCount: p.followersCount + 1 } : p));

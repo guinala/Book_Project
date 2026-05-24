@@ -1,7 +1,8 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import "./SynopsisModal.scss";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useLockScroll } from "@/hooks/useLockScroll";
 
 type SynopsisModalProps = {
   text: string;
@@ -10,18 +11,8 @@ type SynopsisModalProps = {
 
 export default function SynopsisModal({ text, onClose }: SynopsisModalProps) {
   const { t } = useTranslation();
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
+  useEscapeKey(onClose);
+  useLockScroll();
 
   return (
     <div

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { getWikipediaSummary, fetchAuthorBooks, fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
-import { getCoverUrl } from "@/utils/coverImage";
+import { resolveCoverSrc } from "@/utils/coverImage";
 import type { AuthorInfo } from "@/types/BookDetail";
 import type { Book } from "@/types/Book";
 import { getAuthorFromDB, resolveBio, saveAuthorToDB, updateAuthorBioToDB } from "@/services/firebase/firebaseAuthors";
 import { getAuthorBooksFromDB, saveBooksToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
-import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
+import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 
 async function completeAuthorBookTitles(books: Book[], lang: string): Promise<Book[]> {
   const missing = books.filter(b => !b.titles?.[lang]);
@@ -55,8 +55,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
   authorInfo: AuthorInfo | null;
   loading: boolean;
 } {
-  const { i18n } = useTranslation();
-  const lang = i18n.language.split('-')[0];
+  const { lang } = useCurrentLanguage();
 
   const [authorInfo, setAuthorInfo] = useState<AuthorInfo | null>(null);
   const [loading, setLoading] = useState(!!authorName);
@@ -68,36 +67,6 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
 
     let cancelled = false;
 
-    // Promise.all([
-    //   getWikipediaSummary(authorName),
-    //   fetchAuthorBooks(authorName, 'es', 10),
-    // ])
-    //   .then(([wiki, books]) => {
-    //     if (cancelled) return;
-
-    //     const filteredBooks = books
-    //       .filter(b => b.cover_id !== null &&
-    //         b.title.toLowerCase() !== currentBookTitle.toLowerCase())
-    //       .slice(0, 4)
-    //       .map(b => ({
-    //         id: b.key,
-    //         cover_url: getCoverUrl(b.cover_id!),
-    //         title: b.title,
-    //         year: b.first_publish_year ? String(b.first_publish_year) : '',
-    //         rating: b.rating,
-    //         ratingCount: b.ratingCount,
-    //         isbn: b.isbn,
-    //         pages: b.pages,
-    //       }));
-
-
-    //     setAuthorInfo({
-    //       name: authorName,
-    //       photoUrl: wiki?.thumbnail?.source ?? '',
-    //       bio: wiki?.extract ?? '',
-    //       books: filteredBooks,
-    //     });
-    //   })
     const fetchAuthorData = async () => {
       //Biografia y foto
       let bio = '';
@@ -143,7 +112,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
           if (dbBooks.length >= 2) {
             books = dbBooks.slice(0, 4).map(b => ({
               id: b.key,
-              cover_url: b.cover_url ?? (b.cover_id ? getCoverUrl(b.cover_id) : ''),
+              cover_url: resolveCoverSrc(b) ?? '',
               title: b.title,
               year: b.first_publish_year ? String(b.first_publish_year) : '',
               rating: b.rating,
@@ -162,7 +131,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
                     .slice(0, 4)
                     .map(b => ({
                       id: b.key,
-                      cover_url: b.cover_url ?? (b.cover_id ? getCoverUrl(b.cover_id) : ''),
+                      cover_url: resolveCoverSrc(b) ?? '',
                       title: b.title,
                       year: b.first_publish_year ? String(b.first_publish_year) : '',
                       rating: b.rating,
@@ -188,7 +157,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
             .slice(0, 4)
             .map(b => ({
               id: b.key,
-              cover_url: getCoverUrl(b.cover_id!),
+              cover_url: resolveCoverSrc(b) ?? '',
               title: b.title,
               year: b.first_publish_year ? String(b.first_publish_year) : '',
               rating: b.rating,

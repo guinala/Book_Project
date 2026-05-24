@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { BookDetail, ShelfStatus } from "@/types/BookDetail";
 import type { Book } from "@/types/Book";
@@ -9,6 +9,7 @@ import { useShelf } from "@/hooks/useShelf";
 import { useAuth } from "@/hooks/useAuth";
 import { genreToI18nKey } from "@/utils/genreUtils";
 import { Share2, Bookmark, ChevronRight, ChevronDown } from "lucide-react";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -47,17 +48,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
   const shelfRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated } = useAuth();
 
-
-  useEffect(() => {
-    if (!shelfOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (shelfRef.current && !shelfRef.current.contains(e.target as Node)) {
-        setShelfOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [shelfOpen]);
+  useClickOutside(shelfRef, () => setShelfOpen(false), shelfOpen);
 
   const handleShelfSelect = (option: ShelfStatus) => {
     if (saved === option) {
@@ -122,7 +113,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
 
           <div className="book-info-card__info-row">
             <div className="book-info-card__rating-block">
-              <span className="book-info-card__rating-number">{parseFloat(book.rating.toFixed(1))}</span>
+              <span className="book-info-card__rating-number">{book.rating.toFixed(1)}</span>
               <div className="book-info-card__rating-group">
                 <StarRating rating={book.rating} size={15} />
                 <span className="book-info-card__rating-count">

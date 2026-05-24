@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { useShelf } from "@/hooks/useShelf";
-import { getCoverUrl } from "@/utils/coverImage";
+import { resolveCoverSrc } from "@/utils/coverImage";
 import UpdateProgressModal from "@/components/shelf/modals/UpdateProgressModal";
 import "./CurrentReadingCard.scss";
 import { encodeKey } from "@/utils/bookPaths";
@@ -52,7 +52,7 @@ function CurrentReadingCard() {
   const totalPages = book.pages ?? 0;
   const currentPage = entry.currentPage ?? 0;
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
-  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : undefined);
+  const coverSrc = resolveCoverSrc(book) ?? undefined;
 
   return (
     <>

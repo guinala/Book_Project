@@ -10,6 +10,7 @@ import { Upload } from "lucide-react";
 import "./EditProfilePage.scss";
 import { FirebaseError } from "firebase/app";
 import { checkUsernameAvailable, isValidUsername, normalizeUsername, setUsername } from "@/services/firebase/firebaseUsernames";
+import { logger } from "@/utils/logger";
 
 type EditProfileForm = {
   name: string;
@@ -185,7 +186,7 @@ export default function EditProfilePage() {
 
       navigate("/profile");
     } catch (err) {
-      console.error("[EditProfilePage] save failed:", err);
+      logger.error("[EditProfilePage] save failed:", err);
 
       if (err instanceof FirebaseError) {
         setSaveError(err.code);

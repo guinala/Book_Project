@@ -5,15 +5,6 @@ export function genreToI18nKey(genre: string): string {
     .replace(/[^a-z0-9_]/g, "");
 }
 
-// const FANTASY_SUBJECTS = [
-//   "Fantasy fiction",
-//   "Epic fantasy",
-//   "High fantasy",
-//   "Dark fantasy",
-//   "Magic",
-//   "Wizards",
-//   "Fairy tales",
-// ];
 const GENRE_MAP: Record<string, string[]> = {
   "Fantasy":                    ["fantasy", "fantasy fiction", "epic fantasy", "high fantasy", "dark fantasy", "wizards", "fairy tales", "Fiction, fantasy, epic", "magic", "witchcraft", "sorcery"],
   "Science Fiction":            ["science fiction", "sci-fi", "space opera", "cyberpunk"],
@@ -109,22 +100,3 @@ const MORE_GENRE_TITLE_KEYS: Record<string, string> = {
 export function moreGenreTitleKey(genre: string | undefined): string {
   return (genre && MORE_GENRE_TITLE_KEYS[genre]) ?? "explore.sections.moreGenre";
 }
-
-
-// export function handleFantasyGenre(subjects: string[] | undefined): string | undefined {
-//   if (!subjects || subjects.length === 0) return undefined;
-
-//   const hasFantasy = subjects.some(
-//     (s) => s.toLowerCase() === "fantasy"
-//   );
-
-//   if (hasFantasy) return "Fantasy";
-
-//   const hasFantasyEquivalent = subjects.some(
-//     (s) => FANTASY_SUBJECTS.map(f => f.toLowerCase()).includes(s.toLowerCase())
-//   );
-
-//   if (hasFantasyEquivalent) return "Fantasy";
-
-//   return subjects[0];
-// }

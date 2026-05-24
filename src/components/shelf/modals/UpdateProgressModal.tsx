@@ -1,11 +1,14 @@
-import { useId, useRef, useEffect, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
 import type { ShelfEntry } from "@/services/firebase/firebaseLibrary";
-import { getCoverUrl } from "@/utils/coverImage";
+import { resolveCoverSrc } from "@/utils/coverImage";
 import { X } from "lucide-react";
 import "./UpdateProgressModal.scss";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useLockScroll } from "@/hooks/useLockScroll";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 type UpdateProgressModalProps = {
   entry: ShelfEntry;
@@ -120,22 +123,9 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
   const pageChanged = currentPage !== (entry.currentPage ?? 0);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
-
-  const handleBackdropMouseDown = (e: React.MouseEvent) => {
-    if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-      onClose();
-    }
-  };
+  useEscapeKey(onClose);
+  useLockScroll();
+  useClickOutside(panelRef, onClose);
 
   const handlePageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "");
@@ -197,12 +187,11 @@ export default function UpdateProgressModal({ entry, onClose }: UpdateProgressMo
     removeBook(entry.book.key);
   };
 
-  const coverSrc = entry.book.cover_url ?? (entry.book.cover_id ? getCoverUrl(entry.book.cover_id) : undefined);
+  const coverSrc = resolveCoverSrc(entry.book);
 
   return createPortal(
     <div
       className="progress-modal"
-      onMouseDown={handleBackdropMouseDown}
       role="dialog"
       aria-modal="true"
       aria-label={t("myLibrary.updateProgressModal.title")}

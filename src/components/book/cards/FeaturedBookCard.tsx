@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import { getCoverUrl } from "@/utils/coverImage";
+import { resolveCoverSrc } from "@/utils/coverImage";
 import { useTranslation } from "react-i18next";
 import { useShelf } from "@/hooks/useShelf";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +11,8 @@ import { genreToI18nKey } from "@/utils/genreUtils";
 import { BookOpen, Bookmark, Star } from "lucide-react";
 import { fetchSynopsisRace } from "@/services/api/synopsisSources";
 import "./FeaturedBookCard.scss";
+import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
 
@@ -29,19 +31,10 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language.split("-")[0];
+  const { t } = useTranslation();
+  const { lang } = useCurrentLanguage();
 
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdownOpen]);
+  useClickOutside(wrapperRef, () => setDropdownOpen(false), dropdownOpen);
 
   useEffect(() => {
     return () => {
@@ -97,7 +90,8 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
   };
 
   const hasCover = (book.cover_url || book.cover_id) && !coverFailed;
-  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : "");
+  const coverSrc = resolveCoverSrc(book) ?? "";
+  const rating = book.rating ?? 0;
   const genreLabel = book.genre
     ? t(`book.genres.${genreToI18nKey(book.genre)}`, { defaultValue: book.genre })
     : null;
@@ -157,9 +151,9 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
           </p>
           <div className="featured-book-card__rating">
             <Star className="featured-book-card__star" size={13} fill="currentColor" stroke="none" />
-            {(book.rating ?? 0) > 0 ? (
+            {rating > 0 ? (
               <>
-                <span className="featured-book-card__rating-value">{book.rating!.toFixed(1)}</span>
+                <span className="featured-book-card__rating-value">{rating.toFixed(1)}</span>
                 {book.ratingCount && (
                   <span className="featured-book-card__rating-count">
                     ({book.ratingCount.toLocaleString()})

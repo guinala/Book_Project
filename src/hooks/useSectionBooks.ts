@@ -14,6 +14,7 @@ import {
 import { useExploreCache } from "./useExploreCache";
 import { useAuth } from "./useAuth";
 import type { ExploreCacheEntry } from "@/context/explore_cache_init";
+import { logger } from "@/utils/logger";
 
 export function useSectionBooks(
   type: ExploreSectionType,
@@ -86,7 +87,7 @@ export function useSectionBooks(
       })
       .catch(err => {
         if (cancelled) return;
-        console.error("[ExploreSection error]", err);
+        logger.error("[ExploreSection error]", err);
         setError("error");
       })
       .finally(() => {
@@ -120,7 +121,7 @@ export function useSectionBooks(
         setIsFallback(result.isFallback);
       })
       .catch(err => {
-        console.error("[ExploreSection error]", err);
+        logger.error("[ExploreSection error]", err);
         setError("error");
       })
       .finally(() => setLoading(false));

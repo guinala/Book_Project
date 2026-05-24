@@ -9,6 +9,9 @@ import {
 import type { FollowRequest } from "@/types/UserProfile";
 import { Check, X } from "lucide-react";
 import "./FollowRequestsModal.scss";
+import { logger } from "@/utils/logger";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useLockScroll } from "@/hooks/useLockScroll";
 
 type FollowRequestsModalProps = {
   onClose: () => void;
@@ -23,16 +26,9 @@ export default function FollowRequestsModal({
   const navigate = useNavigate();
   const [requests, setRequests] = useState<FollowRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  // uids con una acción en curso → desactiva sus botones para evitar doble clic.
-  //const [busy, setBusy] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [onClose]);
+  useEscapeKey(onClose);
+  useLockScroll();
 
   useEffect(() => {
     let cancelled = false;
@@ -49,19 +45,12 @@ export default function FollowRequestsModal({
     setRequests((rs) =>
       rs.filter((r) => r.requesterUid !== request.requesterUid)
     );
-    //setBusy((b) => new Set(b).add(requesterUid));
     try {
       await action(request.requesterUid);
       if (action === acceptFollowRequest) onAccepted?.();
-      //setRequests((rs) => rs.filter((r) => r.requesterUid !== requesterUid));
     } catch {
-      console.error("[FollowRequestsModal] acción fallida");
+      logger.error("[FollowRequestsModal] acción fallida");
       setRequests((rs) => [request, ...rs]); // rollback
-      // setBusy((b) => {
-      //   const next = new Set(b);
-      //   next.delete(requesterUid);
-      //   return next;
-      // });
     }
   };
 

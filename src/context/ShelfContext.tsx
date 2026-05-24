@@ -2,7 +2,6 @@ import { addToShelf, encodeKey, getShelf, removeFromShelf, updateReadingProgress
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { ShelfContext } from "./shelf_init";
 import { logger } from "@/utils/logger";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,6 +9,7 @@ import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
 import { updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { notifyProgressUpdated, notifyShelfAdded, notifyShelfRemoved, notifyShelfStatusChanged } from "@/utils/toast";
 import { useExploreCache } from "@/hooks/useExploreCache";
+import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 
 // Estantería "vacía" 
 const EMPTY_ENTRIES = new Map<string, ShelfEntry>();
@@ -18,8 +18,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const exploreCache = useExploreCache();
   const uid = user?.uid ?? null;
-  const { i18n } = useTranslation();
-  const lang = i18n.language.split('-')[0];
+  const { lang } = useCurrentLanguage();
   const [entries, setEntries] = useState<Map<string, ShelfEntry>>(new Map());
   // uid cuya estantería ya se cargó
   const [loadedUid, setLoadedUid] = useState<string | null>(null);
@@ -76,9 +75,9 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
         if (!result) return null;
 
         updateBookTitleToDB(book.key, result.title, lang, result.isbn)
-          .catch(err => console.warn('[ShelfEnrich] Books update failed:', err));
+          .catch(err => logger.warn('[ShelfEnrich] Books update failed:', err));
         updateShelfBookTitleToDB(uid, book.key, result.title, lang, result.isbn)
-          .catch(err => console.warn('[ShelfEnrich] Shelf update failed:', err));
+          .catch(err => logger.warn('[ShelfEnrich] Shelf update failed:', err));
 
         return { key: book.key, title: result.title, isbn: result.isbn };
       })

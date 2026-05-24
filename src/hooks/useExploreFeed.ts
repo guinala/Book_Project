@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Book } from "@/types/Book";
 import type { ExploreSectionType } from "@/types/ExploreTypes";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/services/firebase/firebaseBooks";
 import { useAuth } from "./useAuth";
 import { useExploreCache } from "./useExploreCache";
+import { logger } from "@/utils/logger";
 
 export type SectionEntry = {
   id: string;
@@ -257,14 +258,7 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
   const { user } = useAuth();
   const uid = user?.uid ?? null;
 
-  const cacheKey = useMemo(
-    () => "feed:" + JSON.stringify({
-      lang: params.lang,
-      uid,
-      favoritesReferenceBookKey: params.favoritesReferenceBook?.key ?? null,
-    }),
-    [params.lang, uid, params.favoritesReferenceBook?.key],
-  );
+  const cacheKey = `feed:${params.lang}|${uid ?? ""}|${params.favoritesReferenceBook?.key ?? ""}`;
 
   const initial = cache.getFeed(cacheKey);
   const [sections, setSections] = useState<SectionEntry[]>(() => initial ?? []);
@@ -295,8 +289,10 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
       const result = await buildSections(paramsRef.current);
       cache.setFeed(cacheKey, result);
       setSections(result);
-    } catch {
-      setError("error");
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      logger.error("[useExploreFeed] buildSections failed", err);
+      setError(err instanceof Error ? err.message : "unknown");
     } finally {
       setLoading(false);
     }

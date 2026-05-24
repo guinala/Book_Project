@@ -2,7 +2,6 @@ import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import type { Book } from "@/types/Book";
 import { fetchFantasyBooks, fetchWorkEditionByLang, getWork } from "@/services/api/openLibraryApi";
-// import { fetchGoogleCovers } from "@/services/api/googleBooksApi"; 
 import { getErrorMessage } from "@/utils/apiErrors";
 import { getExploreBooksFromDB, saveBooksToDB, saveGenreToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { detectGenre } from "@/utils/genreUtils";
@@ -45,7 +44,7 @@ async function completeTitles(books: Book[], lang: string): Promise<Book[]> {
       const result = await fetchWorkEditionByLang(book.key, lang);
       if (result) {
         updateBookTitleToDB(book.key, result.title, lang, result.isbn)
-          .catch(err => console.warn('[Enrich] Error guardando título:', err));
+          .catch(err => logger.warn('[Enrich] Error guardando título:', err));
       }
       return { key: book.key, result };
     })
@@ -124,14 +123,15 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
     }
 
     abortController.current?.abort();
-    abortController.current = new AbortController();
+    const controller = new AbortController();
+    abortController.current = controller;
 
     const fetchWithRetry = async (retried = false): Promise<void> => {
       try {
         setLoading(true);
         setError(null);
 
-        const mappedBooks = await fetchFantasyBooks(limit, lang, abortController.current!.signal);
+        const mappedBooks = await fetchFantasyBooks(limit, lang, controller.signal);
         const deduplicated = mappedBooks
           .sort((a, b) => {
             if (a.cover_id && !b.cover_id) return -1;
@@ -146,7 +146,6 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
 
         saveToStorage(deduplicated, lang);
         saveBooksToDB(deduplicated, lang);
-        // fetchCovers(mappedBooks); 
       } catch (err) {
         if (axios.isCancel(err)) return;
         if (!retried) {

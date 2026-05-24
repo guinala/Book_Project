@@ -10,5 +10,3 @@ export interface RegisterFormValues {
   surname: string;
   birthDate: string;
 }
-
-export type AuthScreen = "loading" | "login" | "register" | "user";

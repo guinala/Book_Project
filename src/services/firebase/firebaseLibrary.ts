@@ -4,6 +4,7 @@ import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { deleteActivitiesByTypeAndBook, deleteProgressActivitiesAbove, logActivity } from "./firebaseActivity";
 import { incrementBookAddCount } from "./firebaseBooks";
+import { logger } from "@/utils/logger";
 
 export type ShelfEntry = { 
   book: Book; 
@@ -56,20 +57,20 @@ export async function addToShelf(
 
   if (status === "wantToRead") {
     logActivity(uid, { type: "watchlist_add", ...base })
-      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+      .catch((err) => logger.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "reading") {
     deleteActivitiesByTypeAndBook(uid, "watchlist_add", book.key)
-      .catch((err) => console.warn("[addToShelf] deleteWatchlistAdd failed:", err));
+      .catch((err) => logger.warn("[addToShelf] deleteWatchlistAdd failed:", err));
     logActivity(uid, { type: "reading_started", ...base })
-      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+      .catch((err) => logger.warn("[addToShelf] logActivity failed:", err));
   } else if (status === "finished") {
     logActivity(uid, { type: "book_finished", ...base })
-      .catch((err) => console.warn("[addToShelf] logActivity failed:", err));
+      .catch((err) => logger.warn("[addToShelf] logActivity failed:", err));
   }
 
   if (!prevStatus) {
     incrementBookAddCount(book.key)
-      .catch((err) => console.warn("[addToShelf] incrementTrending failed:", err));
+      .catch((err) => logger.warn("[addToShelf] incrementTrending failed:", err));
   }
 }
 
@@ -109,20 +110,20 @@ export async function updateReadingProgress(
   if (pageChanged) {
     if (currentPage > prevPage) {
       logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
-        .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+        .catch((err) => logger.warn("[updateReadingProgress] logActivity failed:", err));
     } else {
       deleteProgressActivitiesAbove(uid, entry.book.key, currentPage)
-        .catch((err) => console.warn("[updateReadingProgress] deleteProgressActivities failed:", err));
+        .catch((err) => logger.warn("[updateReadingProgress] deleteProgressActivities failed:", err));
     }
   }
 
   if (isFinished) {
     logActivity(uid, { type: "book_finished", ...base })
-      .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+      .catch((err) => logger.warn("[updateReadingProgress] logActivity failed:", err));
     
     if (rating !== undefined) {
       logActivity(uid, { type: "book_rated", ...base, rating, ...(review !== undefined && { note: review }) })
-        .catch((err) => console.warn("[updateReadingProgress] logActivity failed:", err));
+        .catch((err) => logger.warn("[updateReadingProgress] logActivity failed:", err));
     }
   }
 }

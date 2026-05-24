@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { signInWithGoogle } from "@/services/firebase/firebaseAuth";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import { createUserProfile } from "@/services/firebase/firebaseUsers";
-import googleLogo from "../../../../public/google-logo.svg"
 
 type SignInGoogleButtonProps = {
   disabled?: boolean;
@@ -24,9 +23,8 @@ export default function SignInGoogleButton({ disabled, onError }: SignInGoogleBu
         name: firstName,
         surname: rest.join(" "),
       });
-    } catch (error: unknown) {
-      const firebaseError = error as { code?: string };
-      onError?.(getFirebaseErrorMessage(firebaseError.code ?? "unknown"));
+    } catch (error) {
+      onError?.(getFirebaseErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -40,7 +38,7 @@ export default function SignInGoogleButton({ disabled, onError }: SignInGoogleBu
       disabled={disabled || isLoading}
     >
       <img
-        src={googleLogo}
+        src="/google-logo.svg"
         alt="Google"
       />
       {t("auth.googleBtn")}

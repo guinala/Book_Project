@@ -10,13 +10,7 @@ import ShelfSection from "@/components/shelf/sections/ShelfSection";
 import ActivitySection from "@/components/profile/sections/ActivitySection";
 import ListsSection from "@/components/shelf/sections/ListsSection";
 import FollowersModal from "@/components/profile/modals/FollowersModal";
-//import type { ReadingList } from "@/components/shelf/cards/ListCard";
 import type { FavoriteBook } from "@/types/UserProfile";
-// import listCover1 from "@/assets/covers/shelf-1.jpg";
-// import listCover2 from "@/assets/covers/shelf-2.jpg";
-// import listCover3 from "@/assets/covers/shelf-3.jpg";
-// import listCover4 from "@/assets/covers/shelf-4.jpg";
-// import listCover5 from "@/assets/covers/shelf-5.jpg";
 import "./ProfilePage.scss";
 import LockedProfileNotice from "@/components/profile/sections/LockedProfileNotice";
 import BlockedProfileNotice from "@/components/profile/sections/BlockedProfileNotice";
@@ -24,12 +18,6 @@ import { lookupUidByUsername } from "@/services/firebase/firebaseUsernames";
 import FollowRequestsModal from "@/components/profile/modals/FollowRequestsModal";
 import ListEditorModal from "@/components/shelf/modals/ListEditorModal";
 import { useLists } from "@/hooks/useLists";
-
-// const READING_LISTS: ReadingList[] = [
-//   { id: "recommended", nameKey: "myLibrary.lists.recommended", count: 12, coverUrls: [listCover1, listCover3, listCover2, listCover5] },
-//   { id: "drama", nameKey: "myLibrary.lists.drama", count: 20, coverUrls: [listCover4, listCover5, listCover1, listCover3] },
-//   { id: "women", nameKey: "myLibrary.lists.women", count: 9, coverUrls: [listCover3, listCover1, listCover4, listCover5] },
-// ];
 
 export default function ProfilePage() {
   const { userId: paramUserId, username: paramUsername } = useParams<{

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { loginWithEmail, logoutUser, resetPassword, sendVerificationEmail } from "@/services/firebase/firebaseAuth";
 import type { LoginFormValues } from "@/types/AuthTypes";
-import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
+import { EmailNotVerifiedError, getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import FormInput from "@/components/auth/form-components/FormInput";
 import GoogleFormInput from "@/components/auth/form-components/GoogleFormInput";
 
@@ -31,12 +31,11 @@ export default function LoginForm() {
       if (!credential.user.emailVerified) {
         await sendVerificationEmail(credential.user);
         await logoutUser();
-        throw { code: "auth/email-not-verified" };
+        throw new EmailNotVerifiedError();
       }
       navigate("/explore", { replace: true });
-    } catch (error: unknown) {
-      const firebaseErr = error as { code?: string };
-      setFirebaseError(getFirebaseErrorMessage(firebaseErr.code ?? "unknown"));
+    } catch (error) {
+      setFirebaseError(getFirebaseErrorMessage(error));
     }
   }
 
@@ -47,9 +46,8 @@ export default function LoginForm() {
     try {
       await resetPassword(resetEmail);
       setResetSent(true);
-    } catch (error: unknown) {
-      const e = error as { code?: string };
-      setResetError(getFirebaseErrorMessage(e.code ?? "unknown"));
+    } catch (error) {
+      setResetError(getFirebaseErrorMessage(error));
     } finally {
       setResetLoading(false);
     }

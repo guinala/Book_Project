@@ -1,10 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { User, Settings, Moon, Sun, LogOut } from "lucide-react";
 import "./ProfileMenu.scss";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface ProfileMenuProps {
   onClose: () => void;
@@ -16,20 +18,8 @@ export default function ProfileMenu({ onClose }: ProfileMenuProps) {
   const { theme, toggleTheme } = useTheme();
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
+  useEscapeKey(onClose);
+  useClickOutside(ref, onClose);
 
   return (
     <div className="profile-menu" ref={ref}>

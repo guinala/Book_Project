@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
-import { getCoverUrl } from "@/utils/coverImage";
+import { resolveCoverSrc } from "@/utils/coverImage";
 import "./BookTile.scss";
 import { encodeKey } from "@/utils/bookPaths";
 
@@ -10,7 +10,7 @@ type BookTileProps = {
 }
 
 export default function BookTile({ book }: BookTileProps) {
-  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : null);
+  const coverSrc = resolveCoverSrc(book);
   const navigate = useNavigate();
   const [coverLoaded, setCoverLoaded] = useState(false);
 

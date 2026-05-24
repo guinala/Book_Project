@@ -7,22 +7,17 @@ import { encodeKey } from "@/utils/bookPaths";
 import type { ActivityItem } from "@/types/UserProfile";
 import { X } from "lucide-react";
 import "./HistoryModal.scss";
+import { useTranslation } from "react-i18next";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useLockScroll } from "@/hooks/useLockScroll";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
-const EVENT_LABELS: Record<string, string> = {
-  reading_started: "Empezaste a leer",
-  book_finished: "Terminaste de leer",
-  progress: "Actualizaste el progreso",
-  review: "Escribiste una reseña",
-  list_created: "Creaste una lista",
-  watchlist_add: "Añadiste a la lista",
-};
-
-function timeAgo(timestamp: { toDate: () => Date }): string {
+function timeAgo(timestamp: { toDate: () => Date }, t: (key: string, opts?: Record<string, unknown>) => string): string {
   const diff = Math.floor((Date.now() - timestamp.toDate().getTime()) / 1000);
-  if (diff < 60) return "hace unos segundos";
-  if (diff < 3600) return `hace ${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`;
-  return `hace ${Math.floor(diff / 86400)}d`;
+  if (diff < 60) return t("myLibrary.historyModal.timeAgo.seconds");
+  if (diff < 3600) return t("myLibrary.historyModal.timeAgo.minutes", { n: Math.floor(diff / 60) });
+  if (diff < 86400) return t("myLibrary.historyModal.timeAgo.hours", { n: Math.floor(diff / 3600) });
+  return t("myLibrary.historyModal.timeAgo.days", { n: Math.floor(diff / 86400) });
 }
 
 type EntryWithDelta = ActivityItem & {
@@ -50,23 +45,31 @@ function computeDeltas(items: ActivityItem[], totalPages: number): EntryWithDelt
 }
 
 
-function HistoryEntry({ item, totalPages }: { item: EntryWithDelta; totalPages: number }) {
+function HistoryEntry({ item, totalPages, t }: {
+  item: EntryWithDelta;
+  totalPages: number;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+}) {
   const hasPages = item.type === "progress" && typeof item.progress === "number";
+  const eventKey = `myLibrary.historyModal.events.${item.type}`;
+  const eventLabel = t(eventKey);
 
   return (
     <div className="history-entry">
       <div className="history-entry__header">
-        <span className="history-entry__event">{EVENT_LABELS[item.type] ?? item.type}</span>
-        <span className="history-entry__time">{timeAgo(item.createdAt)}</span>
+        <span className="history-entry__event">{eventLabel === eventKey ? item.type : eventLabel}</span>
+        <span className="history-entry__time">{timeAgo(item.createdAt, t)}</span>
       </div>
 
       {hasPages && (
         <div className="history-entry__pages">
           <span className="history-entry__pages-progress">
-            {item.progress}{totalPages > 0 ? `/${totalPages}` : ""} pág.
+            {totalPages > 0
+              ? t("myLibrary.historyModal.pageProgress", { current: item.progress, total: totalPages })
+              : t("myLibrary.historyModal.pageProgressNoTotal", { current: item.progress })}
           </span>
           {typeof item.addedPages === "number" && item.addedPages > 0 && (
-            <span className="history-entry__pages-added">+{item.addedPages} pág.</span>
+            <span className="history-entry__pages-added">{t("myLibrary.historyModal.pagesAdded", { count: item.addedPages })}</span>
           )}
         </div>
       )}
@@ -96,52 +99,43 @@ export default function HistoryModal({
   onClose,
 }: HistoryModalProps) {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
   const [items, setItems] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) return;
-    getActivity(user.uid, 50)
-      .then((all) => setItems(all.filter((a) => a.bookId === bookId)))
-      .finally(() => setLoading(false));
-  }, [user, bookId]);
+  useEscapeKey(onClose);
+  useLockScroll();
+  useClickOutside(panelRef, onClose);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
-
-  const handleBackdropMouseDown = (e: React.MouseEvent) => {
-    if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-      onClose();
+    if (!user) {
+      return;
     }
-  };
+    let cancelled = false;
+    getActivity(user.uid, 50)
+      .then((all) => { if (!cancelled) setItems(all.filter((a) => a.bookId === bookId)); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [user, user?.uid, bookId]);
 
   const entries = computeDeltas(items, totalPages);
 
   return createPortal(
     <div
       className="history-modal"
-      onMouseDown={handleBackdropMouseDown}
       role="dialog"
       aria-modal="true"
-      aria-label="Historial de actividad"
+      aria-label={t("myLibrary.historyModal.ariaLabel")}
     >
       <div className="history-modal__panel" ref={panelRef}>
         <div className="history-modal__header">
-          <h2 className="history-modal__title">Historial de actividad</h2>
+          <h2 className="history-modal__title">{t("myLibrary.historyModal.title")}</h2>
           <button
             className="history-modal__close"
             onClick={onClose}
-            aria-label="Cerrar"
+            aria-label={t("myLibrary.historyModal.closeAria")}
           >
             <X />
           </button>
@@ -170,16 +164,16 @@ export default function HistoryModal({
 
           <div className="history-modal__right">
             {loading && (
-              <p className="history-modal__empty">Cargando...</p>
+              <p className="history-modal__empty">{t("myLibrary.historyModal.loading")}</p>
             )}
             {!loading && entries.length === 0 && (
               <p className="history-modal__empty">
-                Sin actividad registrada para este libro.
+                {t("myLibrary.historyModal.empty")}
               </p>
             )}
             {!loading && entries.map((item, idx, arr) => (
               <div key={item.id}>
-                <HistoryEntry item={item} totalPages={totalPages} />
+                <HistoryEntry item={item} totalPages={totalPages} t={t} />
                 {idx < arr.length - 1 && (
                   <div className="history-modal__item-divider" />
                 )}

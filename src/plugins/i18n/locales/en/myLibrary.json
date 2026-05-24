@@ -103,5 +103,30 @@
       "historical": "Historical",
       "others": "Others"
     }
+  },
+  "historyModal": {
+    "title": "Activity history",
+    "ariaLabel": "Activity history",
+    "closeAria": "Close",
+    "loading": "Loading...",
+    "empty": "No activity registered for this book.",
+    "pageProgress": "{{current}}/{{total}} pp.",
+    "pageProgressNoTotal": "{{current}} pp.",
+    "pagesAdded": "+{{count}} pp.",
+    "events": {
+      "reading_started": "Started reading",
+      "book_finished": "Finished reading",
+      "progress": "Updated progress",
+      "review": "Wrote a review",
+      "list_created": "Created a list",
+      "watchlist_add": "Added to list"
+    },
+    "timeAgo": {
+      "seconds": "just now",
+      "minutes": "{{n}}m ago",
+      "hours": "{{n}}h ago",
+      "days": "{{n}}d ago"
+    }
   }
+
 }

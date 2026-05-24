@@ -23,9 +23,8 @@ export default function SignInAppleButton({ disabled, onError }: SignInAppleButt
         name: firstName,
         surname: rest.join(" "),
       });
-    } catch (error: unknown) {
-      const firebaseError = error as { code?: string };
-      onError?.(getFirebaseErrorMessage(firebaseError.code ?? "unknown"));
+    } catch (error) {
+      onError?.(getFirebaseErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

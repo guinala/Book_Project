@@ -42,9 +42,8 @@ export default function RegisterForm() {
       await logoutUser();
       setSentEmail(data.email);
       setVerificationSent(true);
-    } catch (error: unknown) {
-      const firebaseErr = error as { code?: string };
-      setFirebaseError(getFirebaseErrorMessage(firebaseErr.code ?? "unknown"));
+    } catch (error) {
+      setFirebaseError(getFirebaseErrorMessage(error));
     }
   }
 

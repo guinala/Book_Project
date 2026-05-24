@@ -1,14 +1,16 @@
 // src/components/FavoriteBooksEditorModal/FavoriteBooksEditorModal.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { saveFavorites } from "@/services/firebase/firebaseUsers";
 import type { FavoriteBook } from "@/types/UserProfile";
 import type { Book } from "@/types/Book";
 import { X } from "lucide-react";
 import "./FavoriteBooksEditorModal.scss";
 import { useTranslation } from "react-i18next";
-import { searchBooksWithFallback } from "@/services/firebase/firebaseBooks";
-
-const MAX_FAVORITES = 5;
+import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import { MAX_FAVORITES } from "@/utils/bookListUtils";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useLockScroll } from "@/hooks/useLockScroll";
+import { useDebouncedBookSearch } from "@/hooks/useDebouncedBookSearch";
 
 type FavoriteBooksEditorModalProps = {
   userId: string;
@@ -25,46 +27,14 @@ export default function FavoriteBooksEditorModal({
 }: FavoriteBooksEditorModalProps) {
   const [favorites, setFavorites] = useState<FavoriteBook[]>(currentFavorites);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Book[]>([]);
-  const [searching, setSearching] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language.split("-")[0];
+  const { t } = useTranslation();
+  const { lang } = useCurrentLanguage();
+  const { results, searching } = useDebouncedBookSearch(query, { lang });
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [onClose]);
-
-  useEffect(() => {
-    if (!query.trim()) {
-      setResults([]);
-      setSearching(false);
-      return;
-    }
-
-    let cancelled = false;
-
-    const timer = setTimeout(() => {
-      setSearching(true);
-      searchBooksWithFallback(query, lang, 8)
-        .then((books) => {
-          if (!cancelled) { setResults(books); setSearching(false); }
-        })
-        .catch(() => {
-          if (!cancelled) { setResults([]); setSearching(false); }
-        });
-    }, 400);
-
-    return () => { 
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [query, lang]);
+  useEscapeKey(onClose);
+  useLockScroll();
 
   const addFavorite = (book: Book) => {
     if (favorites.length >= MAX_FAVORITES) return;
@@ -79,7 +49,6 @@ export default function FavoriteBooksEditorModal({
       },
     ]);
     setQuery("");
-    setResults([]);
   };
 
   const removeFavorite = (key: string) => {
@@ -155,7 +124,7 @@ export default function FavoriteBooksEditorModal({
               type="text"
               placeholder={t("profile.favorites.searchPlaceholder")}
               value={query}
-              onChange={(e) => { setQuery(e.target.value); setSearching(true); }}
+              onChange={(e) => setQuery(e.target.value)}
             />
             {searching && (
               <p className="fav-editor-modal__searching">{t("profile.favorites.searching")}</p>

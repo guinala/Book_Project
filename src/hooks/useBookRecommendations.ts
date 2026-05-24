@@ -66,29 +66,6 @@ export function useBookRecommendations(genre: string, excludeKey: string) {
     return () => abortController.current?.abort();
   }, [genre, excludeKey, lang, pickNext]);
 
-  //   fetchBooksByGenre(genre, 30, lang, abortController.current.signal)
-  //     .then((results) => {
-  //       const deduplicated = results
-  //         .sort((a, b) => {
-  //           if (a.cover_id && !b.cover_id) return -1;
-  //           if (!a.cover_id && b.cover_id) return 1;
-  //           return (b.ratingCount ?? 0) - (a.ratingCount ?? 0);
-  //         })
-  //         .filter(
-  //           (book, i, self) => i === self.findIndex(b => b.title.toLowerCase().trim() === book.title.toLowerCase().trim())
-  //         );
-  //       const filtered = deduplicated.filter((b) => b.key !== excludeKey);
-  //       setPool(filtered);
-  //       setBooks(pickNext(filtered));
-  //       saveBooksToDB(deduplicated, lang);
-  //     })
-  //     .catch((err) => {
-  //       if (axios.isCancel(err)) return;
-  //     });
-    
-  //   return () => abortController.current?.abort();
-  // }, [genre, excludeKey, lang, pickNext]);
-
   const refresh = useCallback(() => {
     setBooks(pickNext(pool));
   }, [pool, pickNext]);

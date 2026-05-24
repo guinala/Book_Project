@@ -1,11 +1,14 @@
-import { searchBooksWithFallback } from "@/services/firebase/firebaseBooks";
 import type { Book } from "@/types/Book";
 import type { BookList, ListBook } from "@/types/BookList";
 import { isValidListName, MAX_LIST_BOOKS } from "@/utils/bookListUtils";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./ListEditorModal.scss";
+import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useLockScroll } from "@/hooks/useLockScroll";
+import { useDebouncedBookSearch } from "@/hooks/useDebouncedBookSearch";
 
 const BOOKS_PER_PAGE = 4;
 
@@ -18,18 +21,17 @@ type ListEditorModalProps = {
 export default function ListEditorModal({
     existingList, onSubmit, onClose,
 }: ListEditorModalProps) {
-    const { t, i18n } = useTranslation();
-    const lang = i18n.language.split("-")[0];
+    const { t } = useTranslation();
+    const { lang } = useCurrentLanguage();
     const isEdit = !!existingList;
 
     const [name, setName] = useState(existingList?.name ?? "");
     const [books, setBooks] = useState<ListBook[]>(existingList?.books ?? []);
     const [page, setPage] = useState(0);
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<Book[]>([]);
-    const [searching, setSearching] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
+    const { results, searching } = useDebouncedBookSearch(query, { lang });
 
     const totalPages = Math.max(1, Math.ceil(books.length / BOOKS_PER_PAGE));
     const safePage = Math.min(page, totalPages - 1);
@@ -38,23 +40,9 @@ export default function ListEditorModal({
         safePage * BOOKS_PER_PAGE + BOOKS_PER_PAGE,
     );
 
-    useEffect(() => {
-        const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-        document.addEventListener("keydown", handler);
-        return () => document.removeEventListener("keydown", handler);
-    }, [onClose]);
+    useEscapeKey(onClose);
+    useLockScroll();
 
-    useEffect(() => {
-        if (!query.trim()) { setResults([]); setSearching(false); return; }
-        let cancelled = false;
-        const timer = setTimeout(() => {
-        setSearching(true);
-        searchBooksWithFallback(query, lang, 8)
-            .then((b) => { if (!cancelled) { setResults(b); setSearching(false); } })
-            .catch(() => { if (!cancelled) { setResults([]); setSearching(false); } });
-        }, 400);
-        return () => { cancelled = true; clearTimeout(timer); };
-    }, [query, lang]);
     const addBook = (book: Book) => {
     if (books.length >= MAX_LIST_BOOKS) return;
     if (books.some((b) => b.key === book.key)) return;
@@ -63,7 +51,6 @@ export default function ListEditorModal({
       { key: book.key, title: book.title, authors: book.authors, cover_url: book.cover_url },
     ]);
     setQuery("");
-    setResults([]);
   };
 
   const removeBook = (key: string) => {
