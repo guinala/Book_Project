@@ -12,15 +12,13 @@ export function useDebouncedBookSearch(
   query: string,
   { lang, limit = 8, delayMs = 400 }: UseDebouncedBookSearchOptions
 ) {
+  const trimmed = query.trim();
   const [results, setResults] = useState<Book[]>([]);
   const [searching, setSearching] = useState(false);
+  const [searchedQuery, setSearchedQuery] = useState("");
 
   useEffect(() => {
-    const trimmed = query.trim();
-
     if (!trimmed) {
-      setResults([]);
-      setSearching(false);
       return;
     }
 
@@ -33,12 +31,14 @@ export function useDebouncedBookSearch(
         .then((books) => {
           if (!cancelled) {
             setResults(books);
+            setSearchedQuery(trimmed);
             setSearching(false);
           }
         })
         .catch(() => {
           if (!cancelled) {
             setResults([]);
+            setSearchedQuery(trimmed);
             setSearching(false);
           }
         });
@@ -48,7 +48,12 @@ export function useDebouncedBookSearch(
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [query, lang, limit, delayMs]);
+  }, [trimmed, lang, limit, delayMs]);
 
-  return { results, searching };
+  const hasFreshResults = searchedQuery === trimmed;
+
+  return {
+    results: trimmed && hasFreshResults ? results : [],
+    searching: !!trimmed && (!hasFreshResults || searching),
+  };
 }

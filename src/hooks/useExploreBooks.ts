@@ -20,11 +20,35 @@ type UseFantasyBooksHybridResult = {
 
 function loadFromStorage(lang: string): Book[] | null {
   try {
-    const data = localStorage.getItem(LOCAL_STORAGE_KEY(lang));
-    if (!data) return null;
-    const { books, ts } = JSON.parse(data) as { books: Book[]; ts: number };
-    if (Date.now() - ts > LOCAL_STORAGE_TTL) { localStorage.removeItem(LOCAL_STORAGE_KEY(lang)); return null; }
-    return books;
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY(lang));
+    if (!raw) return null;
+
+    const parsed: unknown = JSON.parse(raw);
+    if (
+      typeof parsed !== "object" ||
+      parsed === null ||
+      !("books" in parsed) ||
+      !("ts" in parsed) ||
+      typeof (parsed as { ts: unknown }).ts !== "number" ||
+      !Array.isArray((parsed as { books: unknown }).books)
+    ) {
+      return null;
+    }
+
+    const { books, ts } = parsed as { books: unknown[]; ts: number };
+    if (Date.now() - ts > LOCAL_STORAGE_TTL) {
+      localStorage.removeItem(LOCAL_STORAGE_KEY(lang));
+      return null;
+    }
+
+    const valid = books.filter((book): book is Book => (
+      typeof book === "object" &&
+      book !== null &&
+      typeof (book as Book).key === "string" &&
+      typeof (book as Book).title === "string"
+    ));
+
+    return valid.length > 0 ? valid : null;
   } catch { return null; }
 }
 

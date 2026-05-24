@@ -67,12 +67,13 @@ export function useSectionBooks(
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
 
-    fetchSection(type, params, lang, count)
+    fetchSection(type, params, lang, count, controller.signal)
       .then(result => {
+        if (controller.signal.aborted) return;
         const seen = new Set<string>();
         const unique = result.books.filter(b => {
           if (seen.has(b.key)) return false;
@@ -81,21 +82,20 @@ export function useSectionBooks(
         });
         const newEntry: ExploreCacheEntry = { books: unique, isFallback: result.isFallback };
         cache.set(cacheKey, newEntry);
-        if (cancelled) return;
         setBooks(unique);
         setIsFallback(result.isFallback);
       })
       .catch(err => {
-        if (cancelled) return;
+        if (err instanceof DOMException && err.name === "AbortError") return;
         logger.error("[ExploreSection error]", err);
         setError("error");
       })
       .finally(() => {
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
         setLoading(false);
       });
 
-    return () => { cancelled = true; };
+    return () => controller.abort();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey, disabled]);
 
@@ -106,8 +106,11 @@ export function useSectionBooks(
     setLoading(true);
     setError(null);
 
-    fetchSection(type, params, lang, count)
+    const controller = new AbortController();
+
+    fetchSection(type, params, lang, count, controller.signal)
       .then(result => {
+        if (controller.signal.aborted) return;
         const seen = new Set<string>();
         const unique = result.books.filter(b => {
           if (seen.has(b.key)) {
@@ -121,10 +124,13 @@ export function useSectionBooks(
         setIsFallback(result.isFallback);
       })
       .catch(err => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         logger.error("[ExploreSection error]", err);
         setError("error");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey, disabled]);
 
@@ -138,30 +144,31 @@ async function fetchSection(
   params: ExploreSectionParams,
   lang: string,
   count: number,
+  signal?: AbortSignal,
 ): Promise<FetchResult> {
   const year = new Date().getFullYear();
 
   switch (type) {
     case "trending": {
-      const raw = await getTrendingBooks(lang, count + 10);
+      const raw = await getTrendingBooks(lang, count + 10, signal);
       const books = raw.slice(0, count);
       if (books.length > 0) return { books, isFallback: false };
-      const fallbackRaw = await getTopRatedBooks(lang, count + 10);
+      const fallbackRaw = await getTopRatedBooks(lang, count + 10, signal);
       return { books: fallbackRaw.slice(0, count), isFallback: true };
     }
 
     case "acclaimed": {
-      const raw = await getTopRatedBooks(lang, count + 20);
+      const raw = await getTopRatedBooks(lang, count + 20, signal);
       const books = raw.filter(b => (b.rating ?? 0) >= 4.5).slice(0, count);
       return { books, isFallback: false };
     }
 
     case "top-rated":
-      return { books: await getTopRatedBooks(lang, count), isFallback: false };
+      return { books: await getTopRatedBooks(lang, count, signal), isFallback: false };
 
     case "because-reading": {
       if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10);
+      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10, signal);
       const books = raw
         .filter(b => (b.rating ?? 0) >= 4)
         .filter(b => !params.userShelfKeys?.has(b.key))
@@ -171,7 +178,7 @@ async function fetchSection(
 
     case "because-liked": {
       if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10);
+      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10, signal);
       const books = raw
         .filter(b => (b.rating ?? 0) >= 4)
         .filter(b => !params.userShelfKeys?.has(b.key))
@@ -181,7 +188,7 @@ async function fetchSection(
 
     case "because-finished": {
       if (!params.referenceBookKey || !params.referenceGenre) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10);
+      const raw = await getRecommendationsByGenre(params.referenceGenre, lang, params.referenceBookKey, count + 10, signal);
       const books = raw
         .filter(b => (b.rating ?? 0) >= 4)
         .filter(b => !params.userShelfKeys?.has(b.key))
@@ -193,7 +200,7 @@ async function fetchSection(
       const genre = params.favoritesReferenceBook?.genre ?? params.referenceGenre;
       const excludeKey = params.favoritesReferenceBook?.key ?? params.referenceBookKey;
       if (!genre || !excludeKey) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(genre, lang, excludeKey, count + 10);
+      const raw = await getRecommendationsByGenre(genre, lang, excludeKey, count + 10, signal);
       const books = raw
         .filter(b => (b.rating ?? 0) >= 4)
         .filter(b => !params.userShelfKeys?.has(b.key))
@@ -203,7 +210,7 @@ async function fetchSection(
 
     case "more-genre": {
       if (!params.favoriteGenre) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10);
+      const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10, signal);
       const books = raw
         .filter(b => !params.userShelfKeys?.has(b.key))
         .slice(0, count);
@@ -213,10 +220,10 @@ async function fetchSection(
     case "new-releases-for-you": {
       const [byAuthor, byGenre] = await Promise.all([
         params.userAuthorKeys?.length
-          ? getAuthorNewReleases(params.userAuthorKeys, year, lang, count + 10)
+          ? getAuthorNewReleases(params.userAuthorKeys, year, lang, count + 10, signal)
           : Promise.resolve([] as Book[]),
         params.favoriteGenre
-          ? getGenreNewReleases(params.favoriteGenre, year, lang, count + 10)
+          ? getGenreNewReleases(params.favoriteGenre, year, lang, count + 10, signal)
           : Promise.resolve([] as Book[]),
       ]);
       const seen = new Set<string>();
@@ -229,7 +236,7 @@ async function fetchSection(
       }
       merged.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
       if (merged.length > 0) return { books: merged.slice(0, count), isFallback: false };
-      return { books: await getNewReleaseBooks(year, lang, count), isFallback: true };
+      return { books: await getNewReleaseBooks(year, lang, count, signal), isFallback: true };
     }
 
     case "waiting": {
@@ -239,11 +246,11 @@ async function fetchSection(
 
     case "more-author": {
       if (params.favoriteAuthorKey) {
-        const raw = await getAuthorBooksFromDB(params.favoriteAuthorKey, "", lang);
+        const raw = await getAuthorBooksFromDB(params.favoriteAuthorKey, "", lang, signal);
         const books = raw.filter(b => !params.userShelfKeys?.has(b.key)).slice(0, count);
         return { books, isFallback: false };
       }
-      const popular = await getPopularAuthorWithBooks(lang);
+      const popular = await getPopularAuthorWithBooks(lang, signal);
       if (!popular) return { books: [], isFallback: false };
       return { books: popular.books.slice(0, count), isFallback: false };
     }
@@ -253,7 +260,7 @@ async function fetchSection(
 
     case "top-genre": {
       if (!params.favoriteGenre) return { books: [], isFallback: false };
-      const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10);
+      const raw = await getRecommendationsByGenre(params.favoriteGenre, lang, "", count + 10, signal);
       const books = raw
         .filter(b => (b.rating ?? 0) >= 4.3)
         .filter(b => !params.userShelfKeys?.has(b.key))

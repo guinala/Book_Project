@@ -12,7 +12,6 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loadedUid, setLoadedUid] = useState<string | null>(null);
     const notificationsRef = useRef<Notification[]>([]);
-    const unreadCountRef = useRef(0);
 
     useEffect(() => {
         notificationsRef.current = notifications;
@@ -23,6 +22,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
             return;
         }
         const unsub = subscribeToNotifications(uid, (items) => {
+        notificationsRef.current = items;
         setNotifications(items);
         setLoadedUid(uid);
         });
@@ -41,22 +41,21 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         [list]
     );
 
-    useEffect(() => {
-        unreadCountRef.current = unreadCount;
-    }, [unreadCount]);
-
     const markAllRead = useCallback(async () => {
-        if (!uid || unreadCountRef.current === 0) {
+        if (!uid || notificationsRef.current.every((n) => n.read)) {
             return;
         }
 
         const rollback = notificationsRef.current;
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+        const next = rollback.map((n) => ({ ...n, read: true }));
+        notificationsRef.current = next;
+        setNotifications(next);
 
         try {
             await markAllAsRead(uid);
         } catch (err) {
             logger.error("[notifications] markAllRead failed", err);
+            notificationsRef.current = rollback;
             setNotifications(rollback);
         }
     }, [uid]);
@@ -67,12 +66,15 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         }
 
         const rollback = notificationsRef.current;
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        const next = rollback.filter((n) => n.id !== id);
+        notificationsRef.current = next;
+        setNotifications(next);
         
         try {
             await deleteNotification(uid, id);
         } catch (err) {
             logger.error("[notifications] remove failed", err);
+            notificationsRef.current = rollback;
             setNotifications(rollback);
         }
     }, [uid]);
@@ -83,11 +85,14 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         }
         
         const rollback = notificationsRef.current;
-        setNotifications((prev) => prev.filter((n) => !(n.type === "follow_request" && n.actorUid === actorUid)));
+        const next = rollback.filter((n) => !(n.type === "follow_request" && n.actorUid === actorUid));
+        notificationsRef.current = next;
+        setNotifications(next);
         try {
             await acceptFollowRequest(actorUid);
         } catch (err) {
             logger.error("[notifications] acceptRequest failed", err);
+            notificationsRef.current = rollback;
             setNotifications(rollback);
         }
   }, [uid]);
@@ -95,15 +100,16 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   const rejectRequest = useCallback(async (actorUid: string) => {
     if (!uid) return;
     const rollback = notificationsRef.current;
-    setNotifications((prev) =>
-      prev.filter(
-        (n) => !(n.type === "follow_request" && n.actorUid === actorUid)
-      )
+    const next = rollback.filter(
+      (n) => !(n.type === "follow_request" && n.actorUid === actorUid)
     );
+    notificationsRef.current = next;
+    setNotifications(next);
     try {
       await rejectFollowRequest(actorUid);
     } catch (err) {
       logger.error("[notifications] rejectRequest failed", err);
+      notificationsRef.current = rollback;
       setNotifications(rollback);
     }
   }, [uid]);

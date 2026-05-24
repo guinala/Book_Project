@@ -11,6 +11,7 @@ import "./EditProfilePage.scss";
 import { FirebaseError } from "firebase/app";
 import { checkUsernameAvailable, isValidUsername, normalizeUsername, setUsername } from "@/services/firebase/firebaseUsernames";
 import { logger } from "@/utils/logger";
+import { useObjectUrl } from "@/hooks/useObjectUrl";
 
 type EditProfileForm = {
   name: string;
@@ -25,8 +26,16 @@ export default function EditProfilePage() {
   const navigate = useNavigate();
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<EditProfileForm>();
 
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const {
+    url: photoPreview,
+    setUrl: setPhotoPreview,
+    setFile: setPhotoPreviewFile,
+  } = useObjectUrl(null);
+  const {
+    url: bannerPreview,
+    setUrl: setBannerPreview,
+    setFile: setBannerPreviewFile,
+  } = useObjectUrl(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -45,24 +54,6 @@ export default function EditProfilePage() {
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
-
-  const photoPreviewRef = useRef<string | null>(null);
-  const bannerPreviewRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    photoPreviewRef.current = photoPreview;
-  }, [photoPreview]);
-
-  useEffect(() => {
-    bannerPreviewRef.current = bannerPreview;
-  }, [bannerPreview]);
-
-  useEffect(() => {
-    return () => {
-      if (photoPreviewRef.current?.startsWith("blob:")) URL.revokeObjectURL(photoPreviewRef.current);
-      if (bannerPreviewRef.current?.startsWith("blob:")) URL.revokeObjectURL(bannerPreviewRef.current);
-    };
-  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -120,26 +111,20 @@ export default function EditProfilePage() {
         }
       })
       .finally(() => setLoadingProfile(false));
-  }, [user, reset]);
+  }, [user, reset, setPhotoPreview, setBannerPreview]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setPhotoFile(file);
-    setPhotoPreview((prev) => {
-      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-      return URL.createObjectURL(file);
-    });
+    setPhotoPreviewFile(file);
   };
 
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setBannerFile(file);
-    setBannerPreview((prev) => {
-      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-      return URL.createObjectURL(file);
-    });
+    setBannerPreviewFile(file);
   };
 
   const onSubmit = async (data: EditProfileForm) => {

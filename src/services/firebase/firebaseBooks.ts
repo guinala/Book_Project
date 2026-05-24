@@ -15,6 +15,12 @@ function encodeKey(workKey: string): string {
   return workKey.split("/").at(-1) ?? workKey;
 }
 
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+}
+
 export async function getExploreBooksFromDB(
   lang: string,
   minCount = 48
@@ -84,7 +90,8 @@ export async function saveBooksToDB(
 export async function getAuthorBooksFromDB(
   authorKey: string,
   excludeTitle = "",
-  lang = "es"
+  lang = "es",
+  signal?: AbortSignal
 ): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -93,6 +100,7 @@ export async function getAuthorBooksFromDB(
     limit(10)
   );
   const books = await getDocs(q);
+  throwIfAborted(signal);
   
   return books.docs
   .map((d) => mapBookDoc(d.data(), lang))
@@ -207,7 +215,7 @@ function mapBookDoc(data: Record<string, any>, lang: string): Book {
 }
 
 // Queries para Explore
-export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]> {
+export async function getTrendingBooks(lang: string, count = 6, signal?: AbortSignal): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -216,13 +224,14 @@ export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]>
     limit(100),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
   return snap.docs
     .slice(0, count)
     .map(d => mapBookDoc(d.data(), lang));
 }
 
-export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]> {
+export async function getTopRatedBooks(lang: string, count = 6, signal?: AbortSignal): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -231,6 +240,7 @@ export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]>
     limit(300),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
@@ -238,15 +248,21 @@ export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]>
     .slice(0, count);
 }
 
-export async function getTopAuthorBooks(authorKey: string, lang: string, minCount = 4): Promise<Book[]> {
-  const books = await getAuthorBooksFromDB(authorKey, "", lang);
+export async function getTopAuthorBooks(
+  authorKey: string,
+  lang: string,
+  minCount = 4,
+  signal?: AbortSignal,
+): Promise<Book[]> {
+  const books = await getAuthorBooksFromDB(authorKey, "", lang, signal);
   return books.length < minCount ? [] : books;
 }
 
 export async function getPopularAuthorWithBooks(
   lang: string,
+  signal?: AbortSignal,
 ): Promise<{ authorKey: string; authorName: string; books: Book[] } | null> {
-  const trending = await getTrendingBooks(lang, 8);
+  const trending = await getTrendingBooks(lang, 8, signal);
   const candidates = trending.filter(
     b => b.authorKeys?.length && b.authors.length,
   );
@@ -254,14 +270,20 @@ export async function getPopularAuthorWithBooks(
     candidates.slice(0, 5).map(async b => {
       const authorKey = b.authorKeys![0];
       const authorName = b.authors[0];
-      const books = await getTopAuthorBooks(authorKey, lang, 4);
+      const books = await getTopAuthorBooks(authorKey, lang, 4, signal);
       return books.length >= 4 ? { authorKey, authorName, books } : null;
     }),
   );
+  throwIfAborted(signal);
   return results.find(r => r !== null) ?? null;
 }
 
-export async function getBooksByGenre(genre: string, lang: string, count = 6): Promise<Book[]> {
+export async function getBooksByGenre(
+  genre: string,
+  lang: string,
+  count = 6,
+  signal?: AbortSignal,
+): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -270,13 +292,19 @@ export async function getBooksByGenre(genre: string, lang: string, count = 6): P
     limit(count + 20),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .slice(0, count);
 }
 
-export async function getNewReleaseBooks(year: number, lang: string, count = 6): Promise<Book[]> {
+export async function getNewReleaseBooks(
+  year: number,
+  lang: string,
+  count = 6,
+  signal?: AbortSignal,
+): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -285,6 +313,7 @@ export async function getNewReleaseBooks(year: number, lang: string, count = 6):
     limit(150),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
@@ -313,6 +342,7 @@ export async function getAuthorNewReleases(
   year: number,
   lang: string,
   count = 6,
+  signal?: AbortSignal,
 ): Promise<Book[]> {
   if (authorKeys.length === 0) return [];
   const keys = authorKeys.slice(0, 10);
@@ -323,6 +353,7 @@ export async function getAuthorNewReleases(
     limit(100),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
@@ -335,6 +366,7 @@ export async function getGenreNewReleases(
   year: number,
   lang: string,
   count = 6,
+  signal?: AbortSignal,
 ): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -344,6 +376,7 @@ export async function getGenreNewReleases(
     limit(count + 30),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
@@ -356,6 +389,7 @@ export async function getRecommendationsByGenre(
   lang: string,
   excludeKey: string,
   count = 6,
+  signal?: AbortSignal,
 ): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -365,6 +399,7 @@ export async function getRecommendationsByGenre(
     limit(count + 10),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => b.key !== excludeKey)
