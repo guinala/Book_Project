@@ -269,7 +269,11 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
   const uid = user?.uid ?? null;
 
   const cacheKey = `feed:${params.lang}|${uid ?? ""}|${params.favoritesReferenceBook?.key ?? ""}`;
-
+  logger.log("[useExploreFeed] render", {
+    cacheKey,
+    hasInitial: !!cache.getFeed(cacheKey),
+    disabled,
+  });
   const initial = cache.getFeed(cacheKey);
   const [sections, setSections] = useState<SectionEntry[]>(() => initial ?? []);
   const [loading, setLoading] = useState<boolean>(() => !initial && !disabled);
@@ -279,7 +283,14 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
   useEffect(() => { paramsRef.current = params; });
 
   const fetch = useCallback(async (bypassCache = false, signal?: AbortSignal) => {
+    logger.log("[useExploreFeed] fetch invoked", {
+      cacheKey,
+      bypassCache,
+      hasEntry: !!cache.getFeed(cacheKey),
+      disabled,
+    });
     if (disabled) {
+      logger.log("[useExploreFeed] setLoading(false) path=disabled");
       setLoading(false);
       return;
     }
@@ -287,11 +298,13 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
       const entry = cache.getFeed(cacheKey);
       if (entry) {
         setSections(entry);
+        logger.log("[useExploreFeed] setLoading(false) path=cache-hit");
         setLoading(false);
         setError(null);
         return;
       }
     }
+    logger.log("[useExploreFeed] setLoading(TRUE) path=cache-miss");
     setLoading(true);
     setError(null);
     try {

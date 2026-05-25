@@ -4,27 +4,11 @@ import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import { getShelf } from "@/services/firebase/firebaseLibrary";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
+import { groupShelfByStatus } from "@/utils/shelf";
 
 const EMPTY_SHELF: Record<ShelfStatus, Book[]> = {
   wantToRead: [], reading: [], finished: [], didNotFinish: [],
 };
-
-function entriesToShelf(
-  entries: { book: Book; status: ShelfStatus }[],
-  lang: string,
-): Record<ShelfStatus, Book[]> {
-  const result: Record<ShelfStatus, Book[]> = {
-    wantToRead: [], reading: [], finished: [], didNotFinish: [],
-  };
-  for (const { book, status } of entries) {
-    result[status].push({
-      ...book,
-      title: book.titles?.[lang] ?? book.titles?.es ?? book.titles?.en ?? book.title ?? "",
-      isbn: book.isbns?.[lang] ?? book.isbns?.es ?? book.isbns?.en ?? book.isbn,
-    });
-  }
-  return result;
-}
 
 export function useProfileShelf(userId: string, isOwnProfile: boolean, canViewFull: boolean) {
   const { shelfByStatus, loading: ownShelfLoading } = useShelf();
@@ -46,7 +30,7 @@ export function useProfileShelf(userId: string, isOwnProfile: boolean, canViewFu
     }
     let cancelled = false;
     getShelf(userId)
-      .then((entries) => { if (!cancelled) setPublicShelf(entriesToShelf(entries ?? [], lang)); })
+      .then((entries) => { if (!cancelled) setPublicShelf(groupShelfByStatus(entries ?? [], lang)); })
       .finally(() => { if (!cancelled) setPublicLoading(false); });
     return () => { cancelled = true; };
   }, [userId, isOwnProfile, canViewFull, lang]);

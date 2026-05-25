@@ -2,33 +2,24 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import {
-  acceptFollowRequest,
-  getFollowRequests,
-  rejectFollowRequest,
+  acceptFollowRequest, getFollowRequests, rejectFollowRequest,
 } from "@/services/firebase/firebaseFollows";
 import type { FollowRequest } from "@/types/UserProfile";
 import { Check, X } from "lucide-react";
 import "./FollowRequestsModal.scss";
 import { logger } from "@/utils/logger";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
-import { useLockScroll } from "@/hooks/useLockScroll";
+import Modal from "@/components/common/Modal";
 
 type FollowRequestsModalProps = {
   onClose: () => void;
   onAccepted?: () => void;
 };
 
-export default function FollowRequestsModal({
-  onClose,
-  onAccepted,
-}: FollowRequestsModalProps) {
+export default function FollowRequestsModal({ onClose, onAccepted }: FollowRequestsModalProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [requests, setRequests] = useState<FollowRequest[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEscapeKey(onClose);
-  useLockScroll();
 
   useEffect(() => {
     let cancelled = false;
@@ -42,112 +33,88 @@ export default function FollowRequestsModal({
     request: FollowRequest,
     action: (uid: string) => Promise<void>,
   ) => {
-    setRequests((rs) =>
-      rs.filter((r) => r.requesterUid !== request.requesterUid)
-    );
+    setRequests((rs) => rs.filter((r) => r.requesterUid !== request.requesterUid));
     try {
       await action(request.requesterUid);
       if (action === acceptFollowRequest) onAccepted?.();
     } catch {
       logger.error("[FollowRequestsModal] acción fallida");
-      setRequests((rs) => [request, ...rs]); // rollback
+      setRequests((rs) => [request, ...rs]);
     }
   };
 
   return (
-    <div className="follow-requests-modal" role="dialog" aria-modal="true">
-      <div className="follow-requests-modal__backdrop" onClick={onClose} />
-      <div className="follow-requests-modal__box">
-        <div className="follow-requests-modal__header">
-          <h2 className="follow-requests-modal__title">
-            {t("profile.requests.title")}
-          </h2>
-          <button
-            type="button"
-            className="follow-requests-modal__close"
-            onClick={onClose}
-            aria-label={t("profile.requests.closeAria")}
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="follow-requests-modal__list">
-          {loading && (
-            <p className="follow-requests-modal__loading">
-              {t("profile.requests.loading")}
-            </p>
-          )}
-          {!loading && requests.length === 0 && (
-            <p className="follow-requests-modal__empty">
-              {t("profile.requests.empty")}
-            </p>
-          )}
-          {!loading &&
-            requests.map((r) => {
-              const displayName =
-                r.requesterName ||
-                r.requesterUsername ||
-                t("profile.userFallback");
-              return (
-                <div
-                  className="follow-requests-modal__row"
-                  key={r.requesterUid}
+    <Modal
+      title={t("profile.requests.title")}
+      closeAriaLabel={t("profile.requests.closeAria")}
+      onClose={onClose}
+      classNames={{
+        root: "follow-requests-modal",
+        backdrop: "follow-requests-modal__backdrop",
+        box: "follow-requests-modal__box",
+        header: "follow-requests-modal__header",
+        title: "follow-requests-modal__title",
+        close: "follow-requests-modal__close",
+      }}
+    >
+      <div className="follow-requests-modal__list">
+        {loading && (
+          <p className="follow-requests-modal__loading">{t("profile.requests.loading")}</p>
+        )}
+        {!loading && requests.length === 0 && (
+          <p className="follow-requests-modal__empty">{t("profile.requests.empty")}</p>
+        )}
+        {!loading &&
+          requests.map((r) => {
+            const displayName = r.requesterName || r.requesterUsername || t("profile.userFallback");
+            return (
+              <div className="follow-requests-modal__row" key={r.requesterUid}>
+                <button
+                  type="button"
+                  className="follow-requests-modal__user"
+                  onClick={() => { onClose(); navigate(`/profile/${r.requesterUid}`); }}
                 >
+                  {r.requesterPhotoUrl ? (
+                    <img
+                      className="follow-requests-modal__avatar"
+                      src={r.requesterPhotoUrl}
+                      alt={displayName}
+                    />
+                  ) : (
+                    <div className="follow-requests-modal__avatar follow-requests-modal__avatar--placeholder">
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="follow-requests-modal__info">
+                    <p className="follow-requests-modal__name">{displayName}</p>
+                    {r.requesterUsername && (
+                      <p className="follow-requests-modal__handle">@{r.requesterUsername}</p>
+                    )}
+                  </div>
+                </button>
+
+                <div className="follow-requests-modal__actions">
                   <button
                     type="button"
-                    className="follow-requests-modal__user"
-                    onClick={() => {
-                      onClose();
-                      navigate(`/profile/${r.requesterUid}`);
-                    }}
+                    className="follow-requests-modal__btn follow-requests-modal__btn--accept"
+                    onClick={() => resolve(r, acceptFollowRequest)}
+                    aria-label={t("profile.requests.acceptAria")}
                   >
-                    {r.requesterPhotoUrl ? (
-                      <img
-                        className="follow-requests-modal__avatar"
-                        src={r.requesterPhotoUrl}
-                        alt={displayName}
-                      />
-                    ) : (
-                      <div className="follow-requests-modal__avatar follow-requests-modal__avatar--placeholder">
-                        {displayName.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div className="follow-requests-modal__info">
-                      <p className="follow-requests-modal__name">
-                        {displayName}
-                      </p>
-                      {r.requesterUsername && (
-                        <p className="follow-requests-modal__handle">
-                          @{r.requesterUsername}
-                        </p>
-                      )}
-                    </div>
+                    <Check size={18} aria-hidden="true" />
                   </button>
-
-                  <div className="follow-requests-modal__actions">
-                    <button
-                      type="button"
-                      className="follow-requests-modal__btn follow-requests-modal__btn--accept"
-                      onClick={() => resolve(r, acceptFollowRequest)}
-                      aria-label={t("profile.requests.acceptAria")}
-                    >
-                      <Check size={18} aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      className="follow-requests-modal__btn follow-requests-modal__btn--reject"
-                      onClick={() => resolve(r, rejectFollowRequest)}
-                      aria-label={t("profile.requests.rejectAria")}
-                    >
-                      <X size={18} aria-hidden="true" />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="follow-requests-modal__btn follow-requests-modal__btn--reject"
+                    onClick={() => resolve(r, rejectFollowRequest)}
+                    aria-label={t("profile.requests.rejectAria")}
+                  >
+                    <X size={18} aria-hidden="true" />
+                  </button>
                 </div>
-              );
-            })}
-        </div>
+              </div>
+            );
+          })}
       </div>
-    </div>
+    </Modal>
   );
 }

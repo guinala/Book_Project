@@ -1,16 +1,12 @@
-import { useRef, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { getActivity } from "@/services/firebase/firebaseActivity";
 import { encodeKey } from "@/utils/bookPaths";
 import type { ActivityItem } from "@/types/UserProfile";
-import { X } from "lucide-react";
+import Modal from "@/components/common/Modal";
 import "./HistoryModal.scss";
-import { useTranslation } from "react-i18next";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
-import { useLockScroll } from "@/hooks/useLockScroll";
-import { useClickOutside } from "@/hooks/useClickOutside";
 
 function timeAgo(timestamp: { toDate: () => Date }, t: (key: string, opts?: Record<string, unknown>) => string): string {
   const diff = Math.floor((Date.now() - timestamp.toDate().getTime()) / 1000);
@@ -44,7 +40,6 @@ function computeDeltas(items: ActivityItem[], totalPages: number): EntryWithDelt
   return result.reverse();
 }
 
-
 function HistoryEntry({ item, totalPages, t }: {
   item: EntryWithDelta;
   totalPages: number;
@@ -74,9 +69,7 @@ function HistoryEntry({ item, totalPages, t }: {
         </div>
       )}
 
-      {item.note && (
-        <p className="history-entry__note">{item.note}</p>
-      )}
+      {item.note && <p className="history-entry__note">{item.note}</p>}
     </div>
   );
 }
@@ -91,29 +84,17 @@ type HistoryModalProps = {
 };
 
 export default function HistoryModal({
-  bookId,
-  bookTitle,
-  bookAuthor,
-  bookCoverUrl,
-  totalPages = 0,
-  onClose,
+  bookId, bookTitle, bookAuthor, bookCoverUrl, totalPages = 0, onClose,
 }: HistoryModalProps) {
   const { user } = useAuth();
   const uid = user?.uid;
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const panelRef = useRef<HTMLDivElement>(null);
   const [items, setItems] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEscapeKey(onClose);
-  useLockScroll();
-  useClickOutside(panelRef, onClose);
-
   useEffect(() => {
-    if (!uid) {
-      return;
-    }
+    if (!uid) return;
     let cancelled = false;
     getActivity(uid, 50)
       .then((all) => { if (!cancelled) setItems(all.filter((a) => a.bookId === bookId)); })
@@ -123,67 +104,57 @@ export default function HistoryModal({
 
   const entries = computeDeltas(items, totalPages);
 
-  return createPortal(
-    <div
-      className="history-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label={t("myLibrary.historyModal.ariaLabel")}
+  return (
+    <Modal
+      title={t("myLibrary.historyModal.title")}
+      ariaLabel={t("myLibrary.historyModal.ariaLabel")}
+      closeAriaLabel={t("myLibrary.historyModal.closeAria")}
+      onClose={onClose}
+      usePortal
+      classNames={{
+        root: "history-modal",
+        box: "history-modal__panel",
+        header: "history-modal__header",
+        title: "history-modal__title",
+        close: "history-modal__close",
+      }}
     >
-      <div className="history-modal__panel" ref={panelRef}>
-        <div className="history-modal__header">
-          <h2 className="history-modal__title">{t("myLibrary.historyModal.title")}</h2>
-          <button
-            className="history-modal__close"
-            onClick={onClose}
-            aria-label={t("myLibrary.historyModal.closeAria")}
-          >
-            <X />
-          </button>
+      <div className="history-modal__body">
+        <div className="history-modal__left">
+          <div className="history-modal__book-info">
+            <button
+              className="history-modal__cover-btn"
+              onClick={() => { onClose(); navigate(`/books/${encodeKey(bookId)}`); }}
+              aria-label={bookTitle}
+            >
+              {bookCoverUrl ? (
+                <img className="history-modal__cover" src={bookCoverUrl} alt="" />
+              ) : (
+                <div className="history-modal__cover history-modal__cover--placeholder" />
+              )}
+            </button>
+            <p className="history-modal__book-title">{bookTitle}</p>
+            <p className="history-modal__book-author">{bookAuthor}</p>
+          </div>
         </div>
 
-        <div className="history-modal__body">
-          <div className="history-modal__left">
-            <div className="history-modal__book-info">
-              <button
-                className="history-modal__cover-btn"
-                onClick={() => { onClose(); navigate(`/books/${encodeKey(bookId)}`); }}
-                aria-label={bookTitle}
-              >
-                {bookCoverUrl ? (
-                  <img className="history-modal__cover" src={bookCoverUrl} alt="" />
-                ) : (
-                  <div className="history-modal__cover history-modal__cover--placeholder" />
-                )}
-              </button>
-              <p className="history-modal__book-title">{bookTitle}</p>
-              <p className="history-modal__book-author">{bookAuthor}</p>
+        <div className="history-modal__divider" aria-hidden="true" />
+
+        <div className="history-modal__right">
+          {loading && (
+            <p className="history-modal__empty">{t("myLibrary.historyModal.loading")}</p>
+          )}
+          {!loading && entries.length === 0 && (
+            <p className="history-modal__empty">{t("myLibrary.historyModal.empty")}</p>
+          )}
+          {!loading && entries.map((item, idx, arr) => (
+            <div key={item.id}>
+              <HistoryEntry item={item} totalPages={totalPages} t={t} />
+              {idx < arr.length - 1 && <div className="history-modal__item-divider" />}
             </div>
-          </div>
-
-          <div className="history-modal__divider" aria-hidden="true" />
-
-          <div className="history-modal__right">
-            {loading && (
-              <p className="history-modal__empty">{t("myLibrary.historyModal.loading")}</p>
-            )}
-            {!loading && entries.length === 0 && (
-              <p className="history-modal__empty">
-                {t("myLibrary.historyModal.empty")}
-              </p>
-            )}
-            {!loading && entries.map((item, idx, arr) => (
-              <div key={item.id}>
-                <HistoryEntry item={item} totalPages={totalPages} t={t} />
-                {idx < arr.length - 1 && (
-                  <div className="history-modal__item-divider" />
-                )}
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
-    </div>,
-    document.body
+    </Modal>
   );
 }

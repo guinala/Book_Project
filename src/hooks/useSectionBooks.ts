@@ -16,6 +16,8 @@ import { useAuth } from "./useAuth";
 import type { ExploreCacheEntry } from "@/context/explore_cache_init";
 import { logger } from "@/utils/logger";
 
+type FetchResult = { books: Book[]; isFallback: boolean; authorName?: string };
+
 export function useSectionBooks(
   type: ExploreSectionType,
   params: ExploreSectionParams = {},
@@ -51,6 +53,7 @@ export function useSectionBooks(
   const [isFallback, setIsFallback] = useState<boolean>(() => initialEntry?.isFallback ?? false);
   const [loading, setLoading] = useState<boolean>(() => !initialEntry && !disabled);
   const [error, setError] = useState<string | null>(null);
+  const [authorName, setAuthorName] = useState<string | undefined>(initialEntry?.authorName);
 
   useEffect(() => {
     if (disabled) {
@@ -80,10 +83,11 @@ export function useSectionBooks(
           seen.add(b.key);
           return true;
         });
-        const newEntry: ExploreCacheEntry = { books: unique, isFallback: result.isFallback };
+        const newEntry: ExploreCacheEntry = { books: unique, isFallback: result.isFallback, authorName: result.authorName };
         cache.set(cacheKey, newEntry);
         setBooks(unique);
         setIsFallback(result.isFallback);
+        setAuthorName(result.authorName);
       })
       .catch(err => {
         if (err instanceof DOMException && err.name === "AbortError") return;
@@ -119,9 +123,10 @@ export function useSectionBooks(
           seen.add(b.key);
           return true;
         });
-        cache.set(cacheKey, { books: unique, isFallback: result.isFallback });
+        cache.set(cacheKey, { books: unique, isFallback: result.isFallback, authorName: result.authorName });
         setBooks(unique);
         setIsFallback(result.isFallback);
+        setAuthorName(result.authorName);
       })
       .catch(err => {
         if (err instanceof DOMException && err.name === "AbortError") return;
@@ -134,10 +139,8 @@ export function useSectionBooks(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey, disabled]);
 
-  return { books, loading, error, retry, isFallback };
+  return { books, loading, error, retry, isFallback, authorName };
 }
-
-type FetchResult = { books: Book[]; isFallback: boolean };
 
 async function fetchSection(
   type: ExploreSectionType,
@@ -247,12 +250,12 @@ async function fetchSection(
     case "more-author": {
       if (params.favoriteAuthorKey) {
         const raw = await getAuthorBooksFromDB(params.favoriteAuthorKey, "", lang, signal);
-        const books = raw.filter(b => !params.userShelfKeys?.has(b.key)).slice(0, count);
+        const books = raw.filter((b) => !params.userShelfKeys?.has(b.key)).slice(0, count);
         return { books, isFallback: false };
       }
       const popular = await getPopularAuthorWithBooks(lang, signal);
       if (!popular) return { books: [], isFallback: false };
-      return { books: popular.books.slice(0, count), isFallback: false };
+      return { books: popular.books.slice(0, count), isFallback: false, authorName: popular.authorName };
     }
 
     case "genre-grid":

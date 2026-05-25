@@ -1,15 +1,14 @@
-import { addToShelf, encodeKey, getShelf, removeFromShelf, updateReadingProgress, updateShelfBookTitleToDB, type ShelfEntry } from "@/services/firebase/firebaseLibrary";
+import { addToShelf, encodeKey, getShelf, removeFromShelf, updateReadingProgress, type ShelfEntry } from "@/services/firebase/firebaseLibrary";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShelfContext } from "./shelf_init";
-import { logger } from "@/utils/logger";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
-import { updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
 import { notifyProgressUpdated, notifyShelfAdded, notifyShelfRemoved, notifyShelfStatusChanged } from "@/utils/toast";
 import { useExploreCache } from "@/hooks/useExploreCache";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import { groupShelfByStatus, localizeBook } from "@/utils/shelf";
+import { useShelfLangComplete } from "@/hooks/useShelfLangComplete";
 
 // Estantería "vacía" 
 const EMPTY_ENTRIES = new Map<string, ShelfEntry>();
@@ -57,56 +56,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     [ready, entries]
   );
 
-  useEffect(() => {
-    if (!uid || !ready || entries.size === 0) {
-      return;
-    }
-
-    const missing = [...entries.values()].filter(e => !e.book.titles?.[lang]);
-    if (missing.length === 0) {
-      return;
-    }
-
-    let cancelled = false;
-
-    Promise.all(
-      missing.map(async ({ book }) => {
-        const result = await fetchWorkEditionByLang(book.key, lang);
-        if (!result) return null;
-
-        updateBookTitleToDB(book.key, result.title, lang, result.isbn)
-          .catch(err => logger.warn('[ShelfEnrich] Books update failed:', err));
-        updateShelfBookTitleToDB(uid, book.key, result.title, lang, result.isbn)
-          .catch(err => logger.warn('[ShelfEnrich] Shelf update failed:', err));
-
-        return { key: book.key, title: result.title, isbn: result.isbn };
-      })
-    ).then(results => {
-      if (cancelled) return;
-      const completed = results.filter(Boolean) as { key: string; title: string; isbn?: string }[];
-      if (completed.length === 0) return;
-
-      setEntries(prev => {
-        const next = new Map(prev);
-        for (const { key, title, isbn } of completed) {
-          const encoded = encodeKey(key);
-          const entry = next.get(encoded);
-          if (!entry) continue;
-          next.set(encoded, {
-            ...entry,
-            book: {
-              ...entry.book,
-              titles: { ...(entry.book.titles ?? {}), [lang]: title },
-              ...(isbn ? { isbns: { ...(entry.book.isbns ?? {}), [lang]: isbn } } : {}),
-            },
-          });
-        }
-        return next;
-      });
-    }).catch(() => {});
-
-    return () => { cancelled = true; };
-  }, [uid, ready, entries.size, lang]);
+  useShelfLangComplete({ uid, ready, entries, lang, setEntries });
 
   const addBook = async (book: Book, status: ShelfStatus, opts?: { silent?: boolean }) => {
     if (!uid) return;
@@ -177,14 +127,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
   const getEntry = (bookKey: string): ShelfEntry | null => {
     const entry = visibleEntries.get(encodeKey(bookKey));
     if (!entry) return null;
-    return {
-      ...entry,
-      book: {
-        ...entry.book,
-        title: entry.book.titles?.[lang] ?? entry.book.title,
-        isbn: entry.book.isbns?.[lang] ?? entry.book.isbn,
-      },
-    };
+    return { ...entry, book: localizeBook(entry.book, lang) };
   };
 
   const updateProgress = async (
@@ -251,20 +194,10 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const shelfByStatus = useMemo(() => {
-    const result: Record<ShelfStatus, Book[]> = {
-      wantToRead: [], reading: [], finished: [], didNotFinish: [],
-    };
-    for (const { book, status } of visibleEntries.values()) {
-      result[status].push({
-        ...book,
-        title: book.titles?.[lang] ?? book.title,
-        isbn: book.isbns?.[lang] ?? book.isbn,
-      });
-    }
-    logger.log(result);
-    return result;
-  }, [visibleEntries, lang]);
+  const shelfByStatus = useMemo(
+    () => groupShelfByStatus(visibleEntries.values(), lang),
+    [visibleEntries, lang]
+  );
 
   return (
     <ShelfContext.Provider

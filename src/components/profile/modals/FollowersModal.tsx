@@ -3,11 +3,10 @@ import { useTranslation } from "react-i18next";
 import { getFollowers, getFollowing, removeFollower } from "@/services/firebase/firebaseFollows";
 import type { UserMinimal } from "@/types/UserProfile";
 import ProfileCard from "@/components/profile/sections/ProfileCard";
-import { X, UserMinus } from "lucide-react";
+import { UserMinus } from "lucide-react";
 import "./FollowersModal.scss";
 import { logger } from "@/utils/logger";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
-import { useLockScroll } from "@/hooks/useLockScroll";
+import Modal from "@/components/common/Modal";
 
 type FollowersModalProps = {
   userId: string;
@@ -18,11 +17,7 @@ type FollowersModalProps = {
 };
 
 export default function FollowersModal({
-  userId,
-  mode,
-  isOwnProfile = false,
-  onClose,
-  onFollowerRemoved,
+  userId, mode, isOwnProfile = false, onClose, onFollowerRemoved,
 }: FollowersModalProps) {
   const { t } = useTranslation();
   const [users, setUsers] = useState<UserMinimal[]>([]);
@@ -41,15 +36,13 @@ export default function FollowersModal({
       if (removed) setUsers((prev) => [...prev, removed]);
     }
   };
+
   const [prevDeps, setPrevDeps] = useState({ userId, mode });
   if (userId !== prevDeps.userId || mode !== prevDeps.mode) {
     setPrevDeps({ userId, mode });
     setLoading(true);
     setUsers([]);
   }
-
-  useEscapeKey(onClose);
-  useLockScroll();
 
   useEffect(() => {
     let cancelled = false;
@@ -60,59 +53,54 @@ export default function FollowersModal({
     return () => { cancelled = true; };
   }, [userId, mode]);
 
-  return (
-    <div className="followers-modal" role="dialog" aria-modal="true">
-      <div className="followers-modal__backdrop" onClick={onClose} />
-      <div className="followers-modal__box">
-        <div className="followers-modal__header">
-          <h2 className="followers-modal__title">
-            {mode === "followers"
-              ? t("profile.followList.followersTitle")
-              : t("profile.followList.followingTitle")}
-          </h2>
-          <button
-            type="button"
-            className="followers-modal__close"
-            onClick={onClose}
-            aria-label={t("profile.followList.closeAria")}
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-        </div>
+  const title = mode === "followers"
+    ? t("profile.followList.followersTitle")
+    : t("profile.followList.followingTitle");
 
-        <div className="followers-modal__list">
-          {loading && (
-            <p className="followers-modal__loading">
-              {t("profile.followList.loading")}
-            </p>
+  return (
+    <Modal
+      title={title}
+      closeAriaLabel={t("profile.followList.closeAria")}
+      onClose={onClose}
+      classNames={{
+        root: "followers-modal",
+        backdrop: "followers-modal__backdrop",
+        box: "followers-modal__box",
+        header: "followers-modal__header",
+        title: "followers-modal__title",
+        close: "followers-modal__close",
+      }}
+    >
+      <div className="followers-modal__list">
+        {loading && (
+          <p className="followers-modal__loading">{t("profile.followList.loading")}</p>
+        )}
+        {!loading && users.length === 0 && (
+          <p className="followers-modal__empty">
+            {mode === "followers"
+              ? t(isOwnProfile ? "profile.followList.emptyFollowers" : "profile.followList.emptyFollowersOther")
+              : t(isOwnProfile ? "profile.followList.emptyFollowing" : "profile.followList.emptyFollowingOther")}
+          </p>
+        )}
+        {!loading &&
+          users.map((u) =>
+            canRemove ? (
+              <div key={u.uid} className="followers-modal__item">
+                <ProfileCard user={u} onClose={onClose} />
+                <button
+                  type="button"
+                  className="followers-modal__remove"
+                  onClick={() => handleRemove(u.uid)}
+                  aria-label={t("profile.followList.removeAria")}
+                >
+                  <UserMinus size={16} aria-hidden="true" />
+                </button>
+              </div>
+            ) : (
+              <ProfileCard key={u.uid} user={u} onClose={onClose} />
+            )
           )}
-          {!loading && users.length === 0 && (
-            <p className="followers-modal__empty">
-              {mode === "followers"
-                ? t(isOwnProfile ? "profile.followList.emptyFollowers" : "profile.followList.emptyFollowersOther")
-                : t(isOwnProfile ? "profile.followList.emptyFollowing" : "profile.followList.emptyFollowingOther")}
-            </p>
-          )}
-          {!loading &&
-            users.map((u) =>
-              canRemove ? (
-                <div key={u.uid} className="followers-modal__item">
-                  <ProfileCard user={u} onClose={onClose} />
-                  <button
-                    type="button"
-                    className="followers-modal__remove"
-                    onClick={() => handleRemove(u.uid)}
-                    aria-label={t("profile.followList.removeAria")}
-                  >
-                    <UserMinus size={16} aria-hidden="true" />
-                  </button>
-                </div>
-              ) : (
-                <ProfileCard key={u.uid} user={u} onClose={onClose} />
-              )
-            )}
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback } from "react";
 import axios from "axios";
 import type { Book } from "@/types/Book";
-import { fetchFantasyBooks, fetchWorkEditionByLang, getWork } from "@/services/api/openLibraryApi";
+import { fetchFantasyBooks, getWork } from "@/services/api/openLibraryApi";
 import { getErrorMessage } from "@/utils/apiErrors";
-import { getExploreBooksFromDB, saveBooksToDB, saveGenreToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
+import { getExploreBooksFromDB, saveBooksToDB, saveGenreToDB } from "@/services/firebase/firebaseBooks";
 import { detectGenre } from "@/utils/genreUtils";
 import { logger } from "@/utils/logger";
+import { completeBookTitles } from "@/services/api/bookComplete";
+import { dedupByNormalizedTitle, sortByCoverAndRating } from "@/utils/bookDedup";
 
 const LOCAL_STORAGE_KEY = (lang: string) => `trama_cache_${lang}`;
 const LOCAL_STORAGE_TTL = 24 * 60 * 60 * 1000; // 24 horas (1 día)
@@ -59,41 +61,6 @@ function saveToStorage(books: Book[], lang: string): void {
   catch { /* storage lleno */ }
 }
 
-async function completeTitles(books: Book[], lang: string): Promise<Book[]> {
-  const missing = books.filter(b => !b.titles?.[lang]);
-  if (missing.length === 0) return books;
-
-  const results = await Promise.all(
-    missing.map(async (book) => {
-      const result = await fetchWorkEditionByLang(book.key, lang);
-      if (result) {
-        updateBookTitleToDB(book.key, result.title, lang, result.isbn)
-          .catch(err => logger.warn('[Enrich] Error guardando título:', err));
-      }
-      return { key: book.key, result };
-    })
-  );
-
-  const completedMap = new Map(
-    results
-      .filter(r => r.result !== null)
-      .map(r => [r.key, r.result!])
-  );
-
-  if (completedMap.size === 0) return books;
-
-  return books.map(book => {
-    const completed = completedMap.get(book.key);
-    if (!completed) return book;
-    return {
-      ...book,
-      title: completed.title,
-      titles: { ...(book.titles ?? {}), [lang]: completed.title },
-      ...(completed.isbn ? { isbns: { ...(book.isbns ?? {}), [lang]: completed.isbn } } : {}),
-    };
-  });
-}
-
 export function useExploreBooks(): UseFantasyBooksHybridResult {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,7 +87,7 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
         setLoading(false);
         saveToStorage(dbBooks, lang);
 
-        completeTitles(dbBooks, lang)
+        completeBookTitles(dbBooks, lang)
           .then(completed => {
             if(completed !== dbBooks) {
               setBooks(completed);
@@ -156,15 +123,7 @@ export function useExploreBooks(): UseFantasyBooksHybridResult {
         setError(null);
 
         const mappedBooks = await fetchFantasyBooks(limit, lang, controller.signal);
-        const deduplicated = mappedBooks
-          .sort((a, b) => {
-            if (a.cover_id && !b.cover_id) return -1;
-            if (!a.cover_id && b.cover_id) return 1;
-            return (b.ratingCount ?? 0) - (a.ratingCount ?? 0);
-          })
-          .filter(
-            (book, i, self) => i === self.findIndex(b => b.title.toLowerCase().trim() === book.title.toLowerCase().trim())
-          );
+        const deduplicated = dedupByNormalizedTitle(sortByCoverAndRating(mappedBooks))
         setBooks(deduplicated);
         setLoading(false);
 

@@ -1,44 +1,12 @@
 import { useState, useEffect } from "react";
-import { getWikipediaSummary, fetchAuthorBooks, fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
+import { getWikipediaSummary, fetchAuthorBooks } from "@/services/api/openLibraryApi";
 import { resolveCoverSrc } from "@/utils/coverImage";
 import type { AuthorInfo } from "@/types/BookDetail";
-import type { Book } from "@/types/Book";
 import { getAuthorFromDB, resolveBio, saveAuthorToDB, updateAuthorBioToDB } from "@/services/firebase/firebaseAuthors";
-import { getAuthorBooksFromDB, saveBooksToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
+import { getAuthorBooksFromDB, saveBooksToDB } from "@/services/firebase/firebaseBooks";
 import { logger } from "@/utils/logger";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
-
-async function completeAuthorBookTitles(books: Book[], lang: string): Promise<Book[]> {
-  const missing = books.filter(b => !b.titles?.[lang]);
-  if (missing.length === 0) return books;
-
-  const results = await Promise.all(
-    missing.map(async (book) => {
-      const result = await fetchWorkEditionByLang(book.key, lang);
-      if (result) {
-        updateBookTitleToDB(book.key, result.title, lang, result.isbn).catch(() => {});
-      }
-      return { key: book.key, result };
-    })
-  );
-
-  const completedMap = new Map(
-    results.filter(r => r.result !== null).map(r => [r.key, r.result!])
-  );
-
-  if (completedMap.size === 0) return books;
-
-  return books.map(book => {
-    const completed = completedMap.get(book.key);
-    if (!completed) return book;
-    return {
-      ...book,
-      title: completed.title,
-      titles: { ...(book.titles ?? {}), [lang]: completed.title },
-      ...(completed.isbn ? { isbn: completed.isbn, isbns: { ...(book.isbns ?? {}), [lang]: completed.isbn } } : {}),
-    };
-  });
-}
+import { completeBookTitles } from "@/services/api/bookComplete";
 
 async function fetchBioFromWikipedia(
   authorName: string,
@@ -123,7 +91,7 @@ export function useAuthorData(authorName: string, currentBookTitle = "", authorK
 
             // Obtener titulos faltantes en el idioma actual
             if (dbBooks.some(b => !b.titles?.[lang])) {
-              completeAuthorBookTitles(dbBooks, lang)
+              completeBookTitles(dbBooks, lang)
                 .then(completed => {
                   if (cancelled || completed === dbBooks) return;
                   const completedBooks = completed

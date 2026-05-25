@@ -5,6 +5,7 @@ import type { SectionEntry } from "@/hooks/useExploreFeed";
 export type ExploreCacheEntry = {
   books: Book[];
   isFallback: boolean;
+  authorName?: string;
 };
 
 export type ExploreCacheContextValue = {

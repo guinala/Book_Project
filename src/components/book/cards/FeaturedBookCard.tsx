@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "@/types/Book";
 import { resolveCoverSrc } from "@/utils/coverImage";
@@ -6,10 +6,10 @@ import { useTranslation } from "react-i18next";
 import { encodeKey } from "@/utils/bookPaths";
 import { genreToI18nKey } from "@/utils/genreUtils";
 import { BookOpen, Star } from "lucide-react";
-import { fetchSynopsisRace } from "@/services/api/synopsisSources";
 import "./FeaturedBookCard.scss";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import ShelfDropdownButton from "@/components/book/shelf-dropdown/ShelfDropdownButton";
+import { useBookSynopsis } from "@/hooks/useBookSynopsis";
 
 type FeaturedBookCardProps = {
   book: Book;
@@ -17,34 +17,15 @@ type FeaturedBookCardProps = {
 
 export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
   const [coverFailed, setCoverFailed] = useState(false);
-  const [synopsis, setSynopsis] = useState(book.synopsis ?? "");
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
+  const synopsis = useBookSynopsis(book, lang);
 
   const [prevBookKey, setPrevBookKey] = useState(book.key);
   if (book.key !== prevBookKey) {
     setPrevBookKey(book.key);
-    setSynopsis(book.synopsis ?? "");
   }
-
-  useEffect(() => {
-    if (book.synopsis) {
-      return;
-    }
-    const controller = new AbortController();
-    fetchSynopsisRace({
-      title: book.title,
-      isbn: book.isbn,
-      author: book.authors[0],
-      lang,
-      signal: controller.signal,
-      workKey: book.key,
-    }).then((result) => {
-      if (result) setSynopsis(result);
-    }).catch(() => {});
-    return () => controller.abort();
-  }, [book.key, book.synopsis, book.title, book.isbn, book.authors, lang]);
 
   const handleCardClick = () => {
     navigate(`/books/${encodeKey(book.key)}`, { state: { book } });

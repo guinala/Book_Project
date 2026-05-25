@@ -62,14 +62,14 @@ export default function ExploreSection({
   const { lang } = useCurrentLanguage();
   const navigate = useNavigate();
   const result = useSectionBooks(type, params, lang, featured ? 4 : 15, !!override);
-  const { books, loading, error, retry, isFallback } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback } : result
+  const { books, loading, error, retry, isFallback, authorName } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback, authorName: undefined } : result
 
   const resolvedTitleKey = isFallback && titleFallbackKey ? titleFallbackKey : titleKey;
   const title = resolvedTitleKey
     ? t(resolvedTitleKey, {
         title: params.referenceBookTitle,
         genre: params.favoriteGenreLabel ?? params.favoriteGenre,
-        author: params.favoriteAuthorName,
+        author: params.favoriteAuthorName ?? authorName,
       })
     : "";
 

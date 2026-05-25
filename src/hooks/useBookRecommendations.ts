@@ -1,9 +1,11 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import axios from "axios";
 import type { Book } from "@/types/Book";
-import { fetchBooksByGenre, fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
+import { fetchBooksByGenre } from "@/services/api/openLibraryApi";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
-import { getRecommendationsFromDB, saveBooksToDB, updateBookTitleToDB } from "@/services/firebase/firebaseBooks";
+import { getRecommendationsFromDB, saveBooksToDB } from "@/services/firebase/firebaseBooks";
+import { completeBookTitles } from "@/services/api/bookComplete";
+import { dedupBestByTitle } from "@/utils/bookDedup";
 
 const PAGE_SIZE = 6;
 const MIN_DB_BOOKS = 20;
@@ -39,18 +41,18 @@ export function useBookRecommendations(genre: string, excludeKey: string) {
       const dbBooks = await getRecommendationsFromDB(genre, lang, excludeKey, MIN_DB_BOOKS);
 
       if(dbBooks) {
-        const sortedBooks = sortAndDeduplicate(dbBooks);
+        const sortedBooks = dedupBestByTitle(dbBooks);
         setPool(sortedBooks);
         setBooks(pickNext(sortedBooks));
 
         //Obtener titulos en otro idioma
-        completeOtherLangTitles(sortedBooks, lang);
+        completeBookTitles(sortedBooks, lang);
         return;
       }
 
       //Fallback => API
       const results = await fetchBooksByGenre(genre, 30, lang, signal);
-      const deduplicatedBooks = sortAndDeduplicate(results);
+      const deduplicatedBooks = dedupBestByTitle(results);
       const filteredBooks = deduplicatedBooks.filter((b) => b.key !== excludeKey);
       setPool(filteredBooks);
       setBooks(pickNext(filteredBooks));
@@ -71,32 +73,4 @@ export function useBookRecommendations(genre: string, excludeKey: string) {
   }, [pool, pickNext]);
 
   return { books, refresh };
-}
-
-function sortAndDeduplicate(books: Book[]): Book[] {
-   return books
-      .sort((a, b) => {
-        if (a.cover_id && !b.cover_id) return -1;
-        if (!a.cover_id && b.cover_id) return 1;
-        return (b.ratingCount ?? 0) - (a.ratingCount ?? 0);
-      })
-      .filter(
-        (book, i, self) =>
-          i === self.findIndex((b) => b.title.toLowerCase().trim() === book.title.toLowerCase().trim())
-      );
-}
-
-function completeOtherLangTitles(books: Book[], lang: string): void {
-  const otherLang = lang === "es" ? "en" : "es";
-  const missing = books.filter((b) => !b.titles?.[otherLang]);
-  if (missing.length === 0) return;
-
-  Promise.all(
-    missing.map(async (book) => {
-      const edition = await fetchWorkEditionByLang(book.key, otherLang);
-      if (edition) {
-        await updateBookTitleToDB(book.key, edition.title, otherLang, edition.isbn);
-      }
-    })
-  ).catch(() => {});
 }

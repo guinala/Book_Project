@@ -6,6 +6,7 @@ import { searchBooks } from "@/services/api/openLibraryApi";
 import { getErrorMessage } from "@/utils/apiErrors";
 import { getSearchParams } from "@/utils/searchParams";
 import { saveBooksToDB, searchBooksInDB } from "@/services/firebase/firebaseBooks";
+import { dedupBestByTitle } from "@/utils/bookDedup";
 
 type UseBookSearchResult = {
   books: Book[];
@@ -15,23 +16,6 @@ type UseBookSearchResult = {
   fetchBooks: (query: string, filter: SearchFilter, limit?: number, lang?: string) => Promise<void>;
   resetBookResults: () => void;
 }
-
-function dedupBestByTitle(books: Book[]): Book[] {
-  const isBetter = (a: Book, b: Book) =>
-    (!!a.cover_id && !b.cover_id) ||
-    (!!a.cover_id === !!b.cover_id && (a.ratingCount ?? 0) > (b.ratingCount ?? 0));
-
-  const bestByTitle = new Map<string, Book>();
-  for (const book of books) {
-    const key = book.title.toLowerCase().trim();
-    const existing = bestByTitle.get(key);
-    if (!existing || isBetter(book, existing)) {
-      bestByTitle.set(key, book);
-    }
-  }
-  return [...bestByTitle.values()];
-}
-
 
 export function useBookSearch(): UseBookSearchResult {
   const [books, setBooks] = useState<Book[]>([]);
