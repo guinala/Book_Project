@@ -323,16 +323,21 @@ export function useExploreFeed(params: ExploreSectionsParams, disabled = false):
     }
   }, [cache, cacheKey, disabled]);
 
+  // useEffect(() => {
+  //   const controller = new AbortController();
+  //   void fetch(false, controller.signal);
+  //   return () => controller.abort();
+  // }, [fetch]);
+
+  // const retry = useCallback(() => {
+  //   const controller = new AbortController();
+  //   void fetch(true, controller.signal);
+  // }, [fetch]);
   useEffect(() => {
-    const controller = new AbortController();
-    void fetch(false, controller.signal);
-    return () => controller.abort();
+   fetch();
   }, [fetch]);
 
-  const retry = useCallback(() => {
-    const controller = new AbortController();
-    void fetch(true, controller.signal);
-  }, [fetch]);
+  const retry = useCallback(() => fetch(true), [fetch]);
 
   return { sections, loading, error, retry };
 }
