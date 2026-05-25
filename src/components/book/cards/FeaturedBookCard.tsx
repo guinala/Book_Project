@@ -22,9 +22,16 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
 
-  useEffect(() => {
+  const [prevBookKey, setPrevBookKey] = useState(book.key);
+  if (book.key !== prevBookKey) {
+    setPrevBookKey(book.key);
     setSynopsis(book.synopsis ?? "");
-    if (book.synopsis) return;
+  }
+
+  useEffect(() => {
+    if (book.synopsis) {
+      return;
+    }
     const controller = new AbortController();
     fetchSynopsisRace({
       title: book.title,
@@ -37,7 +44,7 @@ export default function FeaturedBookCard({ book }: FeaturedBookCardProps) {
       if (result) setSynopsis(result);
     }).catch(() => {});
     return () => controller.abort();
-  }, [book, lang]);
+  }, [book.key, book.synopsis, book.title, book.isbn, book.authors, lang]);
 
   const handleCardClick = () => {
     navigate(`/books/${encodeKey(book.key)}`, { state: { book } });

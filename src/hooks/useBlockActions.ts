@@ -7,21 +7,33 @@ export function useBlockActions(userId: string, isOwnProfile: boolean) {
   const { user } = useAuth();
   const uid = user?.uid;
   const [isBlocked, setIsBlocked] = useState(false);
+  const [prevKey, setPrevKey] = useState({ uid, userId, isOwnProfile });
+
+  if (prevKey.uid !== uid || prevKey.userId !== userId || prevKey.isOwnProfile !== isOwnProfile) {
+    setPrevKey({ uid, userId, isOwnProfile });
+    setIsBlocked(false);
+  }
 
   useEffect(() => {
     if (!uid || !userId || isOwnProfile) {
-      setIsBlocked(false);
       return;
     }
+
     let cancelled = false;
+
     checkIsBlocked(userId).then((b) => { if (!cancelled) setIsBlocked(b); });
     return () => { cancelled = true; };
   }, [uid, userId, isOwnProfile]);
 
   const block = useCallback(async () => {
-    if (!uid) return;
+    if (!uid) {
+      return;
+    }
+
     setIsBlocked(true);
-    try { await blockUser(userId); }
+    try { 
+      await blockUser(userId); 
+    }
     catch (err) {
       logger.error("[useBlockActions] block failed", err);
       setIsBlocked(false);

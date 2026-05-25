@@ -29,12 +29,16 @@ function CurrentReadingCard() {
   const index = savedIndex >= 0 ? savedIndex : 0;
   const book = readingBooks[index] ?? null;
 
+  const [prevBookKey, setPrevBookKey] = useState(book?.key ?? null);
+  if (book && book.key !== prevBookKey) {
+    setPrevBookKey(book.key);
+    setSelectedKey(book.key);
+  }
+
   useEffect(() => {
-    if (book && book.key !== selectedKey) {
-      setSelectedKey(book.key);
-      localStorage.setItem(STORAGE_KEY, book.key);
-    }
-  }, [book, selectedKey]);
+    if (selectedKey) localStorage.setItem(STORAGE_KEY, selectedKey);
+  }, [selectedKey]);
+
   const entry = book ? getEntry(book.key) : null;
 
   if (loading) {

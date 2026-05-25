@@ -15,7 +15,7 @@ import BannerUploader from "./components/BannerUploader";
 import UsernameField from "./components/UsernameField";
 import BioField from "./components/BioField";
 
-type EditProfileForm = {
+export type EditProfileForm = {
   name: string;
   surname: string;
   username: string;

@@ -5,11 +5,11 @@ import {
   isValidUsername,
   normalizeUsername,
 } from "@/services/firebase/firebaseUsernames";
+import type { EditProfileForm } from "../EditProfilePage";
 
 type UsernameFieldProps = {
   uid: string;
-  // Solo necesitamos register("username", ...) y errors.username
-  register: UseFormRegister<{ username: string } & Record<string, unknown>>;
+  register: UseFormRegister<EditProfileForm>;
   error: FieldError | undefined;
   value: string;
   originalUsername: string;

@@ -31,20 +31,26 @@ export function useProfileShelf(userId: string, isOwnProfile: boolean, canViewFu
   const { lang } = useCurrentLanguage();
   const [publicShelf, setPublicShelf] = useState<Record<ShelfStatus, Book[]>>(EMPTY_SHELF);
   const [publicLoading, setPublicLoading] = useState(false);
+  const [prevKey, setPrevKey] = useState({ userId, isOwnProfile, canViewFull });
+
+  if (prevKey.userId !== userId || prevKey.isOwnProfile !== isOwnProfile || prevKey.canViewFull !== canViewFull) {
+    setPrevKey({ userId, isOwnProfile, canViewFull });
+    setPublicShelf(EMPTY_SHELF);
+    const enabled = !!userId && !isOwnProfile && canViewFull;
+    setPublicLoading(enabled);
+  }
 
   useEffect(() => {
     if (!userId || isOwnProfile || !canViewFull) {
-      setPublicShelf(EMPTY_SHELF);
-      setPublicLoading(false);
       return;
     }
     let cancelled = false;
-    setPublicLoading(true);
     getShelf(userId)
       .then((entries) => { if (!cancelled) setPublicShelf(entriesToShelf(entries ?? [], lang)); })
       .finally(() => { if (!cancelled) setPublicLoading(false); });
     return () => { cancelled = true; };
   }, [userId, isOwnProfile, canViewFull, lang]);
+
 
   return {
     shelf: isOwnProfile ? shelfByStatus : publicShelf,

@@ -8,21 +8,26 @@ export function useProfile(userId: string) {
   const uid = user?.uid;
   const [profile, setProfile] = useState<UserFullProfile | null>(null);
   const [loading, setLoading] = useState(() => !!userId);
+  const [prevUserId, setPrevUserId] = useState(userId);
 
+  if (userId !== prevUserId) {
+    setPrevUserId(userId);
+    setProfile(null);
+    setLoading(!!userId);
+  }
+  
   const isOwnProfile = !!uid && uid === userId;
 
   useEffect(() => {
     if (!userId) {
-      setProfile(null);
-      setLoading(false);
       return;
     }
     let cancelled = false;
-    setLoading(true);
-    setProfile(null);
+
     getUserProfile(userId)
       .then((p) => { if (!cancelled) setProfile(p); })
       .finally(() => { if (!cancelled) setLoading(false); });
+
     return () => { cancelled = true; };
   }, [userId]);
 

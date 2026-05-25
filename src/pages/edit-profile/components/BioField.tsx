@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import type { UseFormRegister } from "react-hook-form";
+import type { EditProfileForm } from "../EditProfilePage";
 
 const BIO_MAX = 150;
 
 type BioFieldProps = {
-  register: UseFormRegister<{ bio: string } & Record<string, unknown>>;
+  register: UseFormRegister<EditProfileForm>;
   value: string;
   saveBlocked: boolean;
   onClearBlock: () => void;

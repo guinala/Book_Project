@@ -15,13 +15,16 @@ export function useFollowActions(userId: string, isOwnProfile: boolean, profileI
   const uid = user?.uid;
   const [isFollowing, setIsFollowing] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
+  const [prevKey, setPrevKey] = useState({ uid, userId, isOwnProfile });
+
+  if (prevKey.uid !== uid || prevKey.userId !== userId || prevKey.isOwnProfile !== isOwnProfile) {
+    setPrevKey({ uid, userId, isOwnProfile });
+    setIsFollowing(false);
+    setHasPendingRequest(false);
+  }
 
   useEffect(() => {
-    if (!uid || !userId || isOwnProfile) {
-      setIsFollowing(false);
-      setHasPendingRequest(false);
-      return;
-    }
+    if (!uid || !userId || isOwnProfile) return;
     let cancelled = false;
     Promise.all([
       checkIsFollowing(uid, userId),

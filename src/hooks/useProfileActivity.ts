@@ -10,16 +10,18 @@ export function useProfileActivity(userId: string, canViewFull: boolean) {
   const [activity, setActivity] = useState<ActivityItem[]>(EMPTY_ACTIVITY);
   const [favorites, setFavorites] = useState<FavoriteBook[]>(EMPTY_FAVORITES);
   const [loading, setLoading] = useState(false);
+  const [prevKey, setPrevKey] = useState({ userId, canViewFull });
+
+  if (prevKey.userId !== userId || prevKey.canViewFull !== canViewFull) {
+    setPrevKey({ userId, canViewFull });
+    setActivity(EMPTY_ACTIVITY);
+    setFavorites(EMPTY_FAVORITES);
+    setLoading(!!userId && canViewFull);
+  }
 
   useEffect(() => {
-    if (!userId || !canViewFull) {
-      setActivity(EMPTY_ACTIVITY);
-      setFavorites(EMPTY_FAVORITES);
-      setLoading(false);
-      return;
-    }
+    if (!userId || !canViewFull) return;
     let cancelled = false;
-    setLoading(true);
     Promise.all([
       getActivity(userId, 10).then((a) => { if (!cancelled) setActivity(a); }),
       getFavorites(userId).then((f) => { if (!cancelled) setFavorites(f); }),
