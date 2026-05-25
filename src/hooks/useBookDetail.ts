@@ -10,6 +10,7 @@ import { toWorkKey } from "@/utils/bookPaths";
 import { fetchWorkEditionByLang } from "@/services/api/openLibraryApi";
 import { fetchSynopsisRace } from "@/services/api/synopsisSources";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import { FALLBACK_REVIEWS } from "@/utils/bookDetailData";
 
 export function useBookDetail(id: string): {
   book: BookDetail | null;
@@ -98,7 +99,7 @@ export function useBookDetail(id: string): {
           bookFromState?.isbn ??
           '',
         synopsis,
-        reviews: [],
+        reviews: FALLBACK_REVIEWS,
         authorInfo: { name: '', photoUrl: '', bio: '', books: [] },
         recommendations: [],
       });
