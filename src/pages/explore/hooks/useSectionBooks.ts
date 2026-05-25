@@ -12,7 +12,7 @@ import {
   getTrendingBooks,
 } from "@/services/firebase/firebaseBooks";
 import { useExploreCache } from "../../../context/explore-cache/useExploreCache";
-import { useAuth } from "../context/auth/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import type { ExploreCacheEntry } from "@/context/explore-cache/explore_cache_init";
 import { logger } from "@/utils/logger";
 

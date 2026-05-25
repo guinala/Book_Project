@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import BookCard from "@/components/book/cards/BookCard";
 import FeaturedBookCard from "@/components/book/cards/FeaturedBookCard";
 import ExploreGridSkeleton from "./ExploreGridSkeleton";
-import { useSectionBooks } from "@/hooks/useSectionBooks";
+import { useSectionBooks } from "@/pages/explore/hooks/useSectionBooks";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import { ChevronRight } from "lucide-react";
 import "./ExploreSection.scss";
-import type { SectionEntry } from "@/hooks/useExploreFeed";
+import type { SectionEntry } from "@/pages/explore/hooks/useExploreFeed";
 
 type ExploreSectionProps = {
   type: ExploreSectionType;

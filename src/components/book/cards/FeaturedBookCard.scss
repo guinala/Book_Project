@@ -10,7 +10,6 @@
   box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: box-shadow var(--transition-base);
-  overflow: hidden;
 
   &:hover {
     box-shadow: var(--shadow-card-hover);

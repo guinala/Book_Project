@@ -1,14 +1,14 @@
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
-import { useSectionBooks } from "@/hooks/useSectionBooks";
+import { useSectionBooks } from "../hooks/useSectionBooks";
 import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import { moreGenreTitleKey } from "@/utils/genreUtils";
 import { ChevronLeft } from "lucide-react";
 import "./ExploreSectionPage.scss";
-import { useExploreCache } from "@/hooks/useExploreCache";
+import { useExploreCache } from "@/context/explore-cache/useExploreCache";
 import { useEffect } from "react";
 
 const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
