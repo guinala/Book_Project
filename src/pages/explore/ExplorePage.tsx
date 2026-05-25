@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { getFavorites } from "@/services/firebase/firebaseUsers";
 import { getBookFromDB } from "@/services/firebase/firebaseBooks";
-import { useBookSearch } from "@/hooks/useBookSearch";
+import { useBookSearch } from "@/pages/explore/hooks/useBookSearch";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import SearchBar from "@/components/common/Searchbar";
 import type { ExploreSectionParams } from "@/types/ExploreTypes";

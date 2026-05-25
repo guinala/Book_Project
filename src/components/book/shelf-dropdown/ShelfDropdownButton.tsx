@@ -1,6 +1,6 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { useClickOutside } from "@/hooks/useClickOutside";
-import { useShelf } from "@/hooks/useShelf";
+import { useShelf } from "@/context/shelf/useShelf";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { bem } from "@/utils/className";

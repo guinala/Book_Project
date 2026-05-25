@@ -3,7 +3,7 @@ import { deleteNotification, markAllAsRead, subscribeToNotifications } from "@/s
 import type { Notification } from "@/types/UserProfile";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NotificationsContext } from "./notifications_init";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { logger } from "@/utils/logger";
 
 export function NotificationsProvider({ children }: { children: React.ReactNode }) {

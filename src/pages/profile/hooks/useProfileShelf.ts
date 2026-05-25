@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useShelf } from "./useShelf";
+import { useShelf } from "../../../context/shelf/useShelf";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import { getShelf } from "@/services/firebase/firebaseLibrary";
 import type { Book } from "@/types/Book";

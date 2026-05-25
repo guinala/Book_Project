@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ShelfContext, type ShelfContextType } from "@/context/shelf_init";
+import { ShelfContext, type ShelfContextType } from "@/context/shelf/shelf_init";
 
 export function useShelf(): ShelfContextType {
   const context = useContext(ShelfContext);

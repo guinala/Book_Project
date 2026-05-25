@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { useShelf } from "@/hooks/useShelf";
+import { useShelf } from "@/context/shelf/useShelf";
 import { resolveCoverSrc } from "@/utils/coverImage";
 import UpdateProgressModal from "@/components/shelf/modals/UpdateProgressModal";
 import "./CurrentReadingCard.scss";

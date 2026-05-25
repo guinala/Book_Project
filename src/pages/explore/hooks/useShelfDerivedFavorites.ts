@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../context/auth/useAuth";
 import { useShelf } from "./useShelf";
 import { genreToI18nKey } from "@/utils/genreUtils";
 import type { Book } from "@/types/Book";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, Plus } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { useLists } from "@/hooks/useLists";
 import ListCard from "@/components/shelf/cards/ListCard";
 import ListEditorModal from "@/components/shelf/modals/ListEditorModal";

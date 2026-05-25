@@ -1,4 +1,4 @@
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications } from "@/context/notifications/useNotifications";
 import type { Notification } from "@/types/UserProfile";
 import type { TFunction } from "i18next";
 import { Check, X } from "lucide-react";

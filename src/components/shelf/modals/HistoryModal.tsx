@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { getActivity } from "@/services/firebase/firebaseActivity";
 import { encodeKey } from "@/utils/bookPaths";
 import type { ActivityItem } from "@/types/UserProfile";

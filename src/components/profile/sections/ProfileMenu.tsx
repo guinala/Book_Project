@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
-import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/context/auth/useAuth";
+import { useTheme } from "@/context/theme/useTheme";
 import { User, Settings, Moon, Sun, LogOut } from "lucide-react";
 import "./ProfileMenu.scss";
 import { useEscapeKey } from "@/hooks/useEscapeKey";

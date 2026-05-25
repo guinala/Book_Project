@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../context/auth/useAuth";
 import {
   cancelFollowRequest,
   checkHasPendingRequest,

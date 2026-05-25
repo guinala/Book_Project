@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useShelf } from "@/hooks/useShelf";
+import { useShelf } from "@/context/shelf/useShelf";
 import type { ShelfEntry } from "@/services/firebase/firebaseLibrary";
 import { resolveCoverSrc } from "@/utils/coverImage";
 import "./UpdateProgressModal.scss";

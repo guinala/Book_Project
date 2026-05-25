@@ -4,11 +4,11 @@ import CurrentReadingCard from "@/components/shelf/sections/CurrentReadingCard";
 import ShelfSection from "@/components/shelf/sections/ShelfSection";
 import ListsSection from "@/components/shelf/sections/ListsSection";
 import ProgressSection from "@/components/shelf/sections/ProgressSection";
-import { useShelf } from "@/hooks/useShelf";
+import { useShelf } from "@/context/shelf/useShelf";
 import "./MyLibraryPage.scss";
 import { useLists } from "@/hooks/useLists";
 import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import ListEditorModal from "@/components/shelf/modals/ListEditorModal";
 import RegisterForm from "@/components/auth/forms/RegisterForm";
 

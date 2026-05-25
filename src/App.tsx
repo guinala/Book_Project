@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import { Outlet } from "react-router";
 import Navbar from "@/components/layout/Navbar";
 import NavbarMini from "@/components/layout/NavbarMini";
-import { AuthProvider } from "@/context/AuthContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { PreferencesProvider } from "@/context/PreferencesContext";
-import { usePreferences } from "@/hooks/usePreferences";
+import { AuthProvider } from "@/context/auth/AuthContext";
+import { ThemeProvider } from "@/context/theme/ThemeContext";
+import { PreferencesProvider } from "@/context/preferences/PreferencesContext";
+import { usePreferences } from "@/context/preferences/usePreferences";
 import "./App.scss"
-import { ShelfProvider } from "./context/ShelfContext";
+import { ShelfProvider } from "./context/shelf/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
 import ErrorBoundary from "./components/common/ErrorBoundary";
-import { NotificationsProvider } from "./context/NotificationsContext";
+import { NotificationsProvider } from "./context/notifications/NotificationsContext";
 import AppToaster from "./components/common/Toaster/AppToaster";
-import { ExploreCacheProvider } from "./context/ExploreCacheContext";
+import { ExploreCacheProvider } from "./context/explore-cache/ExploreCacheContext";
 
 const SCROLL_THRESHOLD = 80;
 

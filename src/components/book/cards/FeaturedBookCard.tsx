@@ -9,7 +9,7 @@ import { BookOpen, Star } from "lucide-react";
 import "./FeaturedBookCard.scss";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import ShelfDropdownButton from "@/components/book/shelf-dropdown/ShelfDropdownButton";
-import { useBookSynopsis } from "@/hooks/useBookSynopsis";
+import { useBookSynopsis } from "@/pages/book-detail/hooks/useBookSynopsis";
 
 type FeaturedBookCardProps = {
   book: Book;

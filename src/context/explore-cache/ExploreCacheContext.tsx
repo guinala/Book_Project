@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from "react";
 import { ExploreCacheContext, type ExploreCacheEntry } from "./explore_cache_init";
-import type { SectionEntry } from "@/hooks/useExploreFeed";
+import type { SectionEntry } from "@/pages/explore/hooks/useExploreFeed";
 
 export function ExploreCacheProvider({ children }: { children: React.ReactNode }) {
   const sectionCacheRef = useRef<Map<string, ExploreCacheEntry>>(new Map());

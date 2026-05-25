@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../../../context/auth/useAuth";
 import { getUserProfile, subscribeToProfileCounts } from "@/services/firebase/firebaseUsers";
 import type { UserFullProfile } from "@/types/UserProfile";
 

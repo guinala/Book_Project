@@ -11,8 +11,8 @@ import {
   getTopRatedBooks,
   getTrendingBooks,
 } from "@/services/firebase/firebaseBooks";
-import { useAuth } from "./useAuth";
-import { useExploreCache } from "./useExploreCache";
+import { useAuth } from "../context/auth/useAuth";
+import { useExploreCache } from "../../../context/explore-cache/useExploreCache";
 import { logger } from "@/utils/logger";
 
 export type SectionEntry = {

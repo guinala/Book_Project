@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { ExploreCacheProvider } from "./ExploreCacheContext";
-import { useExploreCache } from "@/hooks/useExploreCache";
+import { useExploreCache } from "./useExploreCache";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <ExploreCacheProvider>{children}</ExploreCacheProvider>

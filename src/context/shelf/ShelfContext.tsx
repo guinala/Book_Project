@@ -3,12 +3,12 @@ import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShelfContext } from "./shelf_init";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { notifyProgressUpdated, notifyShelfAdded, notifyShelfRemoved, notifyShelfStatusChanged } from "@/utils/toast";
-import { useExploreCache } from "@/hooks/useExploreCache";
+import { useExploreCache } from "../explore-cache/useExploreCache";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import { groupShelfByStatus, localizeBook } from "@/utils/shelf";
-import { useShelfLangComplete } from "@/hooks/useShelfLangComplete";
+import { useShelfLangComplete } from "@/pages/profile/hooks/useShelfLangComplete";
 
 // Estantería "vacía" 
 const EMPTY_ENTRIES = new Map<string, ShelfEntry>();

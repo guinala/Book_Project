@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { useTranslation } from "react-i18next";
 import ProfileMenu from "@/components/profile/sections/ProfileMenu";
 import { Search, X, User } from "lucide-react";

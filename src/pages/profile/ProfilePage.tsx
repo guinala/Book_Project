@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
-import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/context/auth/useAuth";
+import { useProfile } from "@/pages/profile/hooks/useProfile";
 import ProfileHeader from "@/components/profile/sections/ProfileHeader";
 import FavoriteBooksSection from "@/components/profile/sections/FavoriteBooksSection";
 import FavoriteBooksEditorModal from "@/components/profile/modals/FavoriteBooksEditorModal";
@@ -19,8 +19,8 @@ import FollowRequestsModal from "@/components/profile/modals/FollowRequestsModal
 import ListEditorModal from "@/components/shelf/modals/ListEditorModal";
 import { useLists } from "@/hooks/useLists";
 import { useFollowActions } from "@/hooks/useFollowActions";
-import { useProfileShelf } from "@/hooks/useProfileShelf";
-import { useProfileActivity } from "@/hooks/useProfileActivity";
+import { useProfileShelf } from "@/pages/profile/hooks/useProfileShelf";
+import { useProfileActivity } from "@/pages/profile/hooks/useProfileActivity";
 import { useBlockActions } from "@/hooks/useBlockActions";
 
 export default function ProfilePage() {

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ExploreCacheContext } from "@/context/explore_cache_init";
+import { ExploreCacheContext } from "@/context/explore-cache/explore_cache_init";
 
 export function useExploreCache() {
   const ctx = useContext(ExploreCacheContext);

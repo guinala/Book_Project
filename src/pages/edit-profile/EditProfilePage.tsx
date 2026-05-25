@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { FirebaseError } from "firebase/app";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { getUserProfile, updateUserProfile } from "@/services/firebase/firebaseUsers";
 import { uploadProfilePhoto, uploadBannerImage } from "@/services/firebase/firebaseStorage";
 import { normalizeUsername, setUsername } from "@/services/firebase/firebaseUsernames";

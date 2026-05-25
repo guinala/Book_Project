@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import NotificationItem from "./NotificationItem";
 import { useTranslation } from "react-i18next";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications } from "@/context/notifications/useNotifications";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
