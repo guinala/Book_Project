@@ -1,0 +1,11 @@
+Rule: react-doctor/no-uncontrolled-input
+Severity: warning
+Category: Correctness
+Count: 1
+
+<input value={...}> with no `onChange` or `readOnly` — React renders this as a silently read-only field
+
+Suggestion: Pass an explicit initial value to `useState` (e.g. `useState("")` instead of `useState()`), add `onChange` (or `readOnly` to opt out) when you supply `value`, and drop `defaultValue` on controlled inputs — React ignores it
+
+Files:
+  src/pages/style-guide/StyleGuide.tsx:89

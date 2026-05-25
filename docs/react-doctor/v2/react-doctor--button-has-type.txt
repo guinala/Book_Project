@@ -1,0 +1,34 @@
+Rule: react-doctor/button-has-type
+Severity: warning
+Category: Correctness
+Count: 24
+
+`<button>` elements must have an explicit `type` attribute.
+
+Suggestion: Set `type="button"` (or `"submit"` / `"reset"`) explicitly on every `<button>`.
+
+Files:
+  src/components/profile/sections/ActivityItem.tsx:38
+  src/components/explore/ExploreSearchResults.tsx:26
+  src/components/shelf/sections/CurrentReadingCard.tsx:66
+  src/components/shelf/sections/CurrentReadingCard.tsx:109
+  src/components/shelf/sections/CurrentReadingCard.tsx:110
+  src/components/shelf/sections/CurrentReadingCard.tsx:121
+  src/components/shelf/modals/components/ProgressPageInput.tsx:82
+  src/components/shelf/modals/components/AbandonConfirmDialog.tsx:21
+  src/components/shelf/modals/components/AbandonConfirmDialog.tsx:24
+  src/components/shelf/modals/UpdateProgressModal.tsx:193
+  src/components/shelf/modals/UpdateProgressModal.tsx:196
+  src/components/book/info/BookInfoCard.tsx:63
+  src/components/book/info/BookInfoCard.tsx:116
+  src/components/book/info/ReviewCard.tsx:34
+  src/components/book/info/ReviewCard.tsx:38
+  src/components/common/Toaster/ShelfToast.tsx:35
+  src/pages/book-detail/BookDetailPage.tsx:56
+  src/pages/style-guide/StyleGuide.tsx:78
+  src/components/book/info/RecommendationsSection.tsx:28
+  src/components/shelf/modals/HistoryModal.tsx:125
+  src/pages/settings/SettingsPage.tsx:21
+  src/components/layout/NavbarMini.tsx:37
+  src/components/shelf/sections/ShelfSection.tsx:58
+  src/components/shelf/sections/ShelfSection.tsx:123
