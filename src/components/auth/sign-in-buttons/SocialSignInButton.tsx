@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { UserCredential } from "firebase/auth";
-import { signInWithApple, signInWithGoogle } from "@/services/firebase/firebaseAuth";
+import {
+  signInWithApple,
+  signInWithGoogle,
+  logoutUser,
+  getIsNewUser,
+} from "@/services/firebase/firebaseAuth";
 import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
-import { createUserProfile } from "@/services/firebase/firebaseUsers";
+import { createUserProfile, userProfileExists } from "@/services/firebase/firebaseUsers";
+import { CURRENT_TERMS_VERSION } from "@/services/legal/termsVersion";
+import TermsConsentModal from "@/components/auth/TermsConsentModal";
 
 type Provider = "google" | "apple";
 
@@ -39,9 +46,18 @@ type SocialSignInButtonProps = {
   onError?: (message: string) => void;
 };
 
+type PendingUser = {
+  uid: string;
+  email: string;
+  firstName: string;
+  surname: string;
+};
+
 export default function SocialSignInButton({ provider, disabled, onError }: SocialSignInButtonProps) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const [pending, setPending] = useState<PendingUser | null>(null);
+  const [accepting, setAccepting] = useState(false);
   const config = PROVIDER_CONFIG[provider];
 
   async function handleSignIn() {
@@ -49,12 +65,18 @@ export default function SocialSignInButton({ provider, disabled, onError }: Soci
     try {
       const credential = await config.signIn();
       const [firstName = "", ...rest] = (credential.user.displayName ?? "").split(" ");
+      const profileExists = await userProfileExists(credential.user.uid);
+      const isFirstSignIn = getIsNewUser(credential) || !profileExists;
 
-      await createUserProfile(credential.user.uid, {
-        email: credential.user.email ?? "",
-        name: firstName,
-        surname: rest.join(" "),
-      });
+      if (isFirstSignIn) {
+        setPending({
+          uid: credential.user.uid,
+          email: credential.user.email ?? "",
+          firstName,
+          surname: rest.join(" "),
+        });
+        return;
+      }
     } catch (error) {
       onError?.(getFirebaseErrorMessage(error));
     } finally {
@@ -62,15 +84,51 @@ export default function SocialSignInButton({ provider, disabled, onError }: Soci
     }
   }
 
+  async function handleAccept() {
+    if (!pending) return;
+    setAccepting(true);
+    try {
+      await createUserProfile(pending.uid, {
+        email: pending.email,
+        name: pending.firstName,
+        surname: pending.surname,
+        acceptedTermsAt: new Date().toISOString(),
+        acceptedTermsVersion: CURRENT_TERMS_VERSION,
+      });
+      setPending(null);
+    } catch (error) {
+      onError?.(getFirebaseErrorMessage(error));
+    } finally {
+      setAccepting(false);
+    }
+  }
+
+  async function handleCancel() {
+    setPending(null);
+    try {
+      await logoutUser();
+    } catch {
+      // El usuario sigue logueado pero sin perfil.
+    }
+  }
+
   return (
-    <button
-      className={config.className}
-      type="button"
-      onClick={handleSignIn}
-      disabled={disabled || isLoading}
-    >
-      {config.icon}
-      {t(config.labelKey)}
-    </button>
+    <>
+      <button
+        className={config.className}
+        type="button"
+        onClick={handleSignIn}
+        disabled={disabled || isLoading}
+      >
+        {config.icon}
+        {t(config.labelKey)}
+      </button>
+      <TermsConsentModal
+        open={pending !== null}
+        isProcessing={accepting}
+        onAccept={handleAccept}
+        onCancel={handleCancel}
+      />
+    </>
   );
 }

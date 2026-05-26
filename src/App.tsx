@@ -6,6 +6,7 @@ import { AuthProvider } from "@/context/auth/AuthContext";
 import { ThemeProvider } from "@/context/theme/ThemeContext";
 import { PreferencesProvider } from "@/context/preferences/PreferencesContext";
 import { usePreferences } from "@/context/preferences/usePreferences";
+import Footer from "@/components/layout/Footer";
 import "./App.scss"
 import { ShelfProvider } from "./context/shelf/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
@@ -37,6 +38,7 @@ function AppShell() {
       <main>
         <Outlet />
       </main>
+      <Footer />
       <AppToaster />
     </>
   );

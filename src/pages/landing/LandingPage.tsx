@@ -30,7 +30,7 @@ function LandingPage() {
     }
   }, [isAuthenticated, loading, navigate]);
 
-  const handleLogin = () => navigate("/auth");
+  // const handleLogin = () => navigate("/auth");
   const handleRegister = () => navigate("/auth", { state: { tab: "register" } });
   const handleGuest = () => navigate("/explore");
 
@@ -272,19 +272,6 @@ function LandingPage() {
           </button>
         </div>
       </section>
-
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="landing__footer">
-        <div className="landing__footer-top">
-          <span className="landing__footer-logo">Trama</span>
-          <div className="landing__footer-links">
-            <button type="button" className="landing__footer-link" onClick={handleGuest}>{t("landing.footer.explore")}</button>
-            <button type="button" className="landing__footer-link" onClick={handleLogin}>{t("landing.footer.login")}</button>
-          </div>
-        </div>
-        <p className="landing__footer-copy">{t("landing.footer.copyright")}</p>
-      </footer>
-
     </div>
   );
 }

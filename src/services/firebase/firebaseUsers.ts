@@ -7,6 +7,8 @@ export type UserProfileData = {
   name?: string;
   surname?: string;
   birthDate?: string;
+  acceptedTermsAt?: string;
+  acceptedTermsVersion?: string;
 };
 
 export async function updatePrivateInfo(
@@ -20,18 +22,27 @@ export async function createUserProfile(
   uid: string, 
   data: UserProfileData
 ): Promise<void> {
-  const { email, birthDate, ...publicData } = data;
+  const { email, birthDate, acceptedTermsAt, acceptedTermsVersion, ...publicData } = data;
   const userRef = doc(db, "Users", uid);
 
   const existing = await getDoc(userRef);
   if (!existing.exists()) {
-    await setDoc(userRef, {
+    const publicDoc: Record<string, unknown> = {
       ...publicData,
       isPublic: true,
       followersCount: 0,
       followingCount: 0,
       createdAt: new Date().toISOString(),
-    });
+    };
+    if (acceptedTermsAt !== undefined) {
+      publicDoc.acceptedTermsAt = acceptedTermsAt;
+    }
+
+    if (acceptedTermsVersion !== undefined) {
+      publicDoc.acceptedTermsVersion = acceptedTermsVersion;
+    }
+
+    await setDoc(userRef, publicDoc);
   }
 
   if (email !== undefined || birthDate !== undefined) {
@@ -116,4 +127,10 @@ export function subscribeToProfileCounts(
     });
   });
 }
+
+export async function userProfileExists(uid: string): Promise<boolean> {
+  const snap = await getDoc(doc(db, "Users", uid));
+  return snap.exists();
+}
+
 

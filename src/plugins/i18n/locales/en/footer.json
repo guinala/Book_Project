@@ -1,32 +1,28 @@
 {
   "footer": {
-    "brandName": "Trama",
-    "tagline": "Your reading companion. Discover, organize and share the books that shape your world.",
+    "brandMark": "trama",
     "copyright": "© {{year}} Trama · All rights reserved",
-    "language": "English",
+    "aria": {
+      "nav": "Footer"
+    },
     "columns": {
-      "discover": "Discover",
-      "community": "Community",
+      "social": "Social",
       "company": "Company",
-      "legal": "Legal"
+      "legal": "Legal",
+      "support": "Support"
     },
     "links": {
-      "exploreBooks": "Explore books",
-      "genres": "Genres",
-      "popularLists": "Popular lists",
-      "trending": "Trending",
-      "recentReviews": "Recent reviews",
-      "bookClubs": "Book clubs",
-      "readingChallenges": "Reading challenges",
-      "forum": "Forum",
-      "about": "About us",
-      "blog": "Blog",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "x": "X",
       "contact": "Contact",
-      "press": "Press",
-      "privacy": "Privacy",
-      "terms": "Terms of use",
-      "cookies": "Cookies",
-      "accessibility": "Accessibility"
+      "about": "About us",
+      "privacy": "Privacy policy",
+      "legalNotice": "Legal notice",
+      "cookies": "Cookie policy",
+      "supportContact": "Contact",
+      "sponsorship": "Sponsorship"
     }
   }
 }
