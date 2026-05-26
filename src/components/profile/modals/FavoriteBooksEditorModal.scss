@@ -84,6 +84,22 @@
     padding: var(--space-2);
     border-radius: var(--radius-md);
     background: var(--color-bg-section);
+    transition: outline var(--transition-fast);
+    outline: 2px solid transparent;
+
+    &--drag-over {
+      outline-color: var(--color-text-primary);
+    }
+  }
+
+  &__fav-drag {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--color-text-tertiary);
+    cursor: grab;
+
+    &:active { cursor: grabbing; }
   }
 
   &__fav-cover {
