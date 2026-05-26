@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import AuthLayout from "@/layouts/AuthLayout";
 import LoginForm from "@/components/auth/forms/LoginForm";
 import RegisterForm from "@/components/auth/forms/RegisterForm";

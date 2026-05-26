@@ -18,19 +18,6 @@ export async function updatePrivateInfo(
   await setDoc(doc(db, "Users", uid, "private", "info"), data, { merge: true });
 }
 
-// export async function createUserProfile(
-//   uid: string,
-//   data: UserProfileData
-// ): Promise<void> {
-//   const userRef = doc(db, "Users", uid);
-//   await setDoc(userRef, {
-//     ...data,
-//     followersCount: 0,
-//     followingCount: 0,
-//     favoriteBooks: [],
-//     createdAt: new Date().toISOString(),
-//   }, { merge: true });
-// }
 export async function createUserProfile(
   uid: string, 
   data: UserProfileData
@@ -63,41 +50,10 @@ export async function createUserProfile(
   }
 }
 
-
-// export async function getUserProfile(uid: string): Promise<UserFullProfile | null> {
-//   const snap = await getDoc(doc(db, "Users", uid));
-//   if (!snap.exists()) return null;
-//   const d = snap.data();
-//   return {
-//     uid,
-//     email: d.email ?? "",
-//     name: d.name ?? "",
-//     surname: d.surname ?? "",
-//     username: d.username ?? "",
-//     bio: d.bio ?? "",
-//     profilePhotoUrl: d.profilePhotoUrl ?? "",
-//     bannerImageUrl: d.bannerImageUrl ?? "",
-//     favoriteBooks: d.favoriteBooks ?? [],
-//     followersCount: d.followersCount ?? 0,
-//     followingCount: d.followingCount ?? 0,
-//     birthDate: d.birthDate,
-//   };
-// }
-
 export async function getUserProfile(uid: string): Promise<UserFullProfile | null> {
   const snap = await getDoc(doc(db, "Users", uid));
   if (!snap.exists()) return null;
   const d = snap.data();
-
-  // const privFetch = auth.currentUser?.uid === uid
-  //   ? getDoc(doc(db, "Users", uid, "private", "info"))
-  //   : Promise.resolve(null);
-
-  // const [followingCountSnap, followersCountSnap, privSnap] = await Promise.all([
-  //   getCountFromServer(collection(db, "Users", uid, "following")),
-  //   getCountFromServer(collection(db, "Users", uid, "followers")),
-  //   privFetch,
-  // ]);
 
   let email = "";
   let birthDate: string | undefined;

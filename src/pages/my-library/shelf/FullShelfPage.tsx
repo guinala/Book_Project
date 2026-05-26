@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router";
 import { useTranslation, Trans } from "react-i18next";
-import { useShelf } from "@/hooks/useShelf";
+import { useShelf } from "@/context/shelf/useShelf";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
 import { Search, Filter, X, ChevronLeft } from "lucide-react";

@@ -1,0 +1,11 @@
+Rule: react-doctor/interactive-supports-focus
+Severity: warning
+Category: Accessibility
+Count: 1
+
+Element with the 'button' interactive role must be tabbable — add `tabIndex={0}`.
+
+Suggestion: Add `tabIndex` to elements that have interactive roles and event handlers.
+
+Files:
+  src/components/shelf/sections/ShelfSection.tsx:69

@@ -33,4 +33,5 @@ export type UseSectionResult = {
   error: string | null;
   retry: () => void;
   isFallback: boolean;
+  authorName?: string;
 };

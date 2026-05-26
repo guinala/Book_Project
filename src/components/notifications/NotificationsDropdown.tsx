@@ -1,37 +1,26 @@
 import { useEffect, useRef } from "react";
 import NotificationItem from "./NotificationItem";
 import { useTranslation } from "react-i18next";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications } from "@/context/notifications/useNotifications";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 type NotificationsDropdownProps = {
   onClose: () => void;
 };
 
 export default function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   const { notifications, loading, markAllRead } = useNotifications();
   const ref = useRef<HTMLDivElement>(null);
 
+  useEscapeKey(onClose);
+  useClickOutside(ref, onClose);
+
   // Marcar todas como leídas al abrir.
   useEffect(() => {
-    markAllRead();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, [onClose]);
+    void markAllRead();
+  }, [markAllRead]);
 
   return (
     <div className="notifications-dropdown" ref={ref} role="menu">

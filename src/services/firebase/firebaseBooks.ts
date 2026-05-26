@@ -15,6 +15,12 @@ function encodeKey(workKey: string): string {
   return workKey.split("/").at(-1) ?? workKey;
 }
 
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+}
+
 export async function getExploreBooksFromDB(
   lang: string,
   minCount = 48
@@ -28,26 +34,6 @@ export async function getExploreBooksFromDB(
   const books = await getDocs(q);
   if (books.size < minCount) return null;
 
-  // return books.docs.map((d) => {
-  //   const data = d.data();
-  //   return {
-  //     key: data.key,
-  //     title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-  //     titles: data.titles ?? {},
-  //     authors: data.authors,
-  //     authorKeys: data.authorKeys ?? undefined,
-  //     first_publish_year: data.first_publish_year,
-  //     cover_id: data.cover_id,
-  //     cover_url: data.cover_url ?? undefined,
-  //     edition_count: data.edition_count,
-  //     genre: data.genre ?? undefined,
-  //     rating: data.rating ?? undefined,
-  //     ratingCount: data.ratingCount ?? undefined,
-  //     isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-  //     isbns: data.isbns ?? undefined,
-  //     pages: data.pages ?? undefined,
-  //   } as Book;
-  // });
   return books.docs.map((d) => mapBookDoc(d.data(), lang));
 }
 
@@ -104,7 +90,8 @@ export async function saveBooksToDB(
 export async function getAuthorBooksFromDB(
   authorKey: string,
   excludeTitle = "",
-  lang = "es"
+  lang = "es",
+  signal?: AbortSignal
 ): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -113,28 +100,8 @@ export async function getAuthorBooksFromDB(
     limit(10)
   );
   const books = await getDocs(q);
-  // return books.docs
-  //   .map(d => {
-  //     const data = d.data();
-  //     return {
-  //       key: data.key,
-  //       title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-  //       authors: data.authors,
-  //       authorKeys: data.authorKeys ?? undefined,
-  //       first_publish_year: data.first_publish_year,
-  //       cover_id: data.cover_id,
-  //       cover_url: data.cover_url ?? undefined,
-  //       edition_count: data.edition_count,
-  //       genre: data.genre ?? undefined,
-  //       rating: data.rating ?? undefined,
-  //       ratingCount: data.ratingCount ?? undefined,
-  //       isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-  //       pages: data.pages ?? undefined,
-  //       titles: data.titles ?? {},
-  //       isbns: data.isbns ?? undefined,
-  //     } as Book;
-  //   })
-  //   .filter(b => b.title.toLowerCase() !== excludeTitle.toLowerCase());
+  throwIfAborted(signal);
+  
   return books.docs
   .map((d) => mapBookDoc(d.data(), lang))
   .filter((b) => b.title.toLowerCase() !== excludeTitle.toLowerCase());
@@ -215,28 +182,6 @@ export async function getRecommendationsFromDB(
   );
 
   const doc = await getDocs(q);
-  // const books = doc.docs
-  //   .map((d) => {
-  //     const data = d.data();
-  //     return {
-  //       key: data.key,
-  //       title: data.titles?.[lang] ?? data.titles?.es ?? data.titles?.en ?? data.title ?? "",
-  //       titles: data.titles ?? {},
-  //       authors: data.authors,
-  //       authorKeys: data.authorKeys ?? undefined,
-  //       first_publish_year: data.first_publish_year,
-  //       cover_id: data.cover_id,
-  //       cover_url: data.cover_url ?? undefined,
-  //       edition_count: data.edition_count,
-  //       genre: data.genre ?? undefined,
-  //       rating: data.rating ?? undefined,
-  //       ratingCount: data.ratingCount ?? undefined,
-  //       isbn: data.isbns?.[lang] ?? data.isbns?.es ?? data.isbns?.en ?? data.isbn ?? undefined,
-  //       isbns: data.isbns ?? undefined,
-  //       pages: data.pages ?? undefined,
-  //     } as Book;
-  //   })
-  //   .filter((b) => b.key !== excludeKey);
   const books = doc.docs
   .map((d) => mapBookDoc(d.data(), lang))
   .filter((b) => b.key !== excludeKey);
@@ -270,7 +215,7 @@ function mapBookDoc(data: Record<string, any>, lang: string): Book {
 }
 
 // Queries para Explore
-export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]> {
+export async function getTrendingBooks(lang: string, count = 6, signal?: AbortSignal): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -279,14 +224,14 @@ export async function getTrendingBooks(lang: string, count = 6): Promise<Book[]>
     limit(100),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
-  // Antes en el return habia .sort((a, b) => (b.data().addCount ?? 0) - (a.data().addCount ?? 0))
   return snap.docs
     .slice(0, count)
     .map(d => mapBookDoc(d.data(), lang));
 }
 
-export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]> {
+export async function getTopRatedBooks(lang: string, count = 6, signal?: AbortSignal): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -295,23 +240,29 @@ export async function getTopRatedBooks(lang: string, count = 6): Promise<Book[]>
     limit(300),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
-  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => (b.ratingCount ?? 0) >= 10)
     .slice(0, count);
 }
 
-export async function getTopAuthorBooks(authorKey: string, lang: string, minCount = 4): Promise<Book[]> {
-  const books = await getAuthorBooksFromDB(authorKey, "", lang);
+export async function getTopAuthorBooks(
+  authorKey: string,
+  lang: string,
+  minCount = 4,
+  signal?: AbortSignal,
+): Promise<Book[]> {
+  const books = await getAuthorBooksFromDB(authorKey, "", lang, signal);
   return books.length < minCount ? [] : books;
 }
 
 export async function getPopularAuthorWithBooks(
   lang: string,
+  signal?: AbortSignal,
 ): Promise<{ authorKey: string; authorName: string; books: Book[] } | null> {
-  const trending = await getTrendingBooks(lang, 8);
+  const trending = await getTrendingBooks(lang, 8, signal);
   const candidates = trending.filter(
     b => b.authorKeys?.length && b.authors.length,
   );
@@ -319,14 +270,20 @@ export async function getPopularAuthorWithBooks(
     candidates.slice(0, 5).map(async b => {
       const authorKey = b.authorKeys![0];
       const authorName = b.authors[0];
-      const books = await getTopAuthorBooks(authorKey, lang, 4);
+      const books = await getTopAuthorBooks(authorKey, lang, 4, signal);
       return books.length >= 4 ? { authorKey, authorName, books } : null;
     }),
   );
+  throwIfAborted(signal);
   return results.find(r => r !== null) ?? null;
 }
 
-export async function getBooksByGenre(genre: string, lang: string, count = 6): Promise<Book[]> {
+export async function getBooksByGenre(
+  genre: string,
+  lang: string,
+  count = 6,
+  signal?: AbortSignal,
+): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -335,14 +292,19 @@ export async function getBooksByGenre(genre: string, lang: string, count = 6): P
     limit(count + 20),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
 
-  //Antes en el return habia .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .slice(0, count);
 }
 
-export async function getNewReleaseBooks(year: number, lang: string, count = 6): Promise<Book[]> {
+export async function getNewReleaseBooks(
+  year: number,
+  lang: string,
+  count = 6,
+  signal?: AbortSignal,
+): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
     where("langs", "array-contains", lang),
@@ -351,7 +313,8 @@ export async function getNewReleaseBooks(year: number, lang: string, count = 6):
     limit(150),
   );
   const snap = await getDocs(q);
-  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+  throwIfAborted(signal);
+
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => (b.first_publish_year ?? 0) >= year && (b.rating ?? 0) >= 3)
@@ -367,7 +330,7 @@ export async function getQuickAndGoodBooks(lang: string, count = 6): Promise<Boo
     limit(80),
   );
   const snap = await getDocs(q);
-  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => b.pages !== undefined && b.pages > 0 && b.pages < 300)
@@ -379,6 +342,7 @@ export async function getAuthorNewReleases(
   year: number,
   lang: string,
   count = 6,
+  signal?: AbortSignal,
 ): Promise<Book[]> {
   if (authorKeys.length === 0) return [];
   const keys = authorKeys.slice(0, 10);
@@ -389,7 +353,8 @@ export async function getAuthorNewReleases(
     limit(100),
   );
   const snap = await getDocs(q);
-  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+  throwIfAborted(signal);
+
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => (b.first_publish_year ?? 0) >= year - 2)
@@ -401,6 +366,7 @@ export async function getGenreNewReleases(
   year: number,
   lang: string,
   count = 6,
+  signal?: AbortSignal,
 ): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -410,7 +376,8 @@ export async function getGenreNewReleases(
     limit(count + 30),
   );
   const snap = await getDocs(q);
-  //.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+  throwIfAborted(signal);
+
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => (b.first_publish_year ?? 0) >= year - 2)
@@ -422,6 +389,7 @@ export async function getRecommendationsByGenre(
   lang: string,
   excludeKey: string,
   count = 6,
+  signal?: AbortSignal,
 ): Promise<Book[]> {
   const q = query(
     collection(db, BOOKS_COLLECTION),
@@ -431,6 +399,7 @@ export async function getRecommendationsByGenre(
     limit(count + 10),
   );
   const snap = await getDocs(q);
+  throwIfAborted(signal);
   return snap.docs
     .map(d => mapBookDoc(d.data(), lang))
     .filter(b => b.key !== excludeKey)
@@ -442,32 +411,6 @@ export async function incrementBookAddCount(bookKey: string): Promise<void> {
   await setDoc(ref, { addCount: increment(1) }, { merge: true });
 }
 
-// export async function searchBooksFromDB(
-//   queryText: string,
-//   lang: string,
-//   maxResults = 8
-// ): Promise<Book[]> {
-//   const words = normalizeTitleForSearch(queryText)
-//     .split(/\s+/)
-//     .filter(Boolean);
-//   if (words.length === 0) return [];
-
-//   const collectionRef = collection(db, BOOKS_COLLECTION);
-//   const tokenField = `titleTokens.${lang}`;
-//   const constraints =
-//     words.length === 1
-//       ? [
-//           where(tokenField, "array-contains", words[0]),
-//           limit(maxResults),
-//         ]
-//       : [
-//           where(tokenField, "array-contains-any", words.slice(0, 10)),
-//           limit(maxResults),
-//         ];
-
-//   const snap = await getDocs(query(collectionRef, ...constraints));
-//   return snap.docs.map((d) => mapBookDoc(d.data(), lang));
-// }
 export async function searchBooksFromDB(
   queryText: string,
   lang: string,
@@ -537,12 +480,6 @@ export async function searchBooksWithFallback(
   const remaining = maxResults - fromDb.length;
   const effectiveSignal = signal ?? new AbortController().signal;
 
-  // const { books: fromApi } = await searchBooks(
-  //   { q: queryText },
-  //   remaining + dbKeys.size, // pedir de más por si hay solapamiento con BBDD
-  //   lang,
-  //   effectiveSignal
-  // );
   let fromApi: Book[] = [];
   try {
     const res = await searchBooks(

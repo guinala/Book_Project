@@ -1,4 +1,4 @@
-import { usePreferences } from "@/hooks/usePreferences";
+import { usePreferences } from "@/context/preferences/usePreferences";
 import "./SettingsPage.scss";
 
 export default function SettingsPage() {

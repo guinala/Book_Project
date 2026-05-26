@@ -1,9 +1,9 @@
-export interface LoginFormValues {
+export type LoginFormValues = {
   email: string;
   password: string;
 }
 
-export interface RegisterFormValues {
+export type RegisterFormValues = {
   email: string;
   password: string;
   name: string;
@@ -11,5 +11,3 @@ export interface RegisterFormValues {
   birthDate: string;
   acceptedTerms: boolean;
 }
-
-export type AuthScreen = "loading" | "login" | "register" | "user";

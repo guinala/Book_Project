@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { useShelf } from "@/hooks/useShelf";
-import { getCoverUrl } from "@/utils/coverImage";
+import { useShelf } from "@/context/shelf/useShelf";
+import { resolveCoverSrc } from "@/utils/coverImage";
 import UpdateProgressModal from "@/components/shelf/modals/UpdateProgressModal";
 import "./CurrentReadingCard.scss";
 import { encodeKey } from "@/utils/bookPaths";
@@ -29,12 +29,16 @@ function CurrentReadingCard() {
   const index = savedIndex >= 0 ? savedIndex : 0;
   const book = readingBooks[index] ?? null;
 
+  const [prevBookKey, setPrevBookKey] = useState(book?.key ?? null);
+  if (book && book.key !== prevBookKey) {
+    setPrevBookKey(book.key);
+    setSelectedKey(book.key);
+  }
+
   useEffect(() => {
-    if (book && book.key !== selectedKey) {
-      setSelectedKey(book.key);
-      localStorage.setItem(STORAGE_KEY, book.key);
-    }
-  }, [book, selectedKey]);
+    if (selectedKey) localStorage.setItem(STORAGE_KEY, selectedKey);
+  }, [selectedKey]);
+
   const entry = book ? getEntry(book.key) : null;
 
   if (loading) {
@@ -52,7 +56,7 @@ function CurrentReadingCard() {
   const totalPages = book.pages ?? 0;
   const currentPage = entry.currentPage ?? 0;
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
-  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : undefined);
+  const coverSrc = resolveCoverSrc(book) ?? undefined;
 
   return (
     <>

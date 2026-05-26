@@ -1,0 +1,13 @@
+Rule: react-doctor/no-derived-useState
+Severity: warning
+Category: State & Effects
+Count: 3
+
+useState initialized from prop "hidden" — if this value should stay in sync with the prop, derive it during render instead
+
+Suggestion: Remove useState and compute the value inline: `const value = transform(propName)`
+
+Files:
+  src/components/layout/Navbar.tsx:27
+  src/components/book/cards/FeaturedBookCard.tsx:25
+  src/components/profile/modals/FavoriteBooksEditorModal.tsx:23

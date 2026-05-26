@@ -1,5 +1,5 @@
 import { Navigate } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { useTranslation } from "react-i18next";
 
 type ProtectedRouteProps = {

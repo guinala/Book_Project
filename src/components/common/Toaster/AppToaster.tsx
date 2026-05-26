@@ -1,5 +1,5 @@
 import { Toaster } from "sonner";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/context/theme/useTheme";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import "./AppToaster.scss";
 

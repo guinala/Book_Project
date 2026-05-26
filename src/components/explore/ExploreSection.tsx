@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import BookCard from "@/components/book/cards/BookCard";
 import FeaturedBookCard from "@/components/book/cards/FeaturedBookCard";
 import ExploreGridSkeleton from "./ExploreGridSkeleton";
-import { useSectionBooks } from "@/hooks/useSectionBooks";
+import { useSectionBooks } from "@/pages/explore/hooks/useSectionBooks";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
 import { ChevronRight } from "lucide-react";
 import "./ExploreSection.scss";
-import type { SectionEntry } from "@/hooks/useExploreFeed";
+import type { SectionEntry } from "@/pages/explore/hooks/useExploreFeed";
 
 type ExploreSectionProps = {
   type: ExploreSectionType;
@@ -62,14 +62,14 @@ export default function ExploreSection({
   const { lang } = useCurrentLanguage();
   const navigate = useNavigate();
   const result = useSectionBooks(type, params, lang, featured ? 4 : 15, !!override);
-  const { books, loading, error, retry, isFallback } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback } : result
+  const { books, loading, error, retry, isFallback, authorName } = override ? { books: override.books, loading: false, error: null, retry: () => {}, isFallback: override.isFallback, authorName: undefined } : result
 
   const resolvedTitleKey = isFallback && titleFallbackKey ? titleFallbackKey : titleKey;
   const title = resolvedTitleKey
     ? t(resolvedTitleKey, {
         title: params.referenceBookTitle,
         genre: params.favoriteGenreLabel ?? params.favoriteGenre,
-        author: params.favoriteAuthorName,
+        author: params.favoriteAuthorName ?? authorName,
       })
     : "";
 

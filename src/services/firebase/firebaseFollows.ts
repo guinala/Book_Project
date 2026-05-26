@@ -15,6 +15,7 @@ import type { FollowRequest, UserMinimal } from "@/types/UserProfile";
 import { getUserMinimal } from "./firebaseUsers";
 import { httpsCallable } from "firebase/functions";
 import { createFollowRequestNotification, deleteOwnFollowRequestNotifFrom } from "./firebaseNotifications";
+import { logger } from "@/utils/logger";
 
 // --- Callable Cloud Functions ---------------------------------------------
 // Operaciones que escriben sobre documentos de OTRO usuario (aristas +
@@ -76,7 +77,7 @@ export async function sendFollowRequest(targetUid: string): Promise<void> {
     await createFollowRequestNotification(targetUid, profile);
   }
   catch (err) {
-    console.warn("[sendFollowRequest] notif create failed", err);
+    logger.warn("[sendFollowRequest] notif create failed", err);
   }
 }
 
@@ -95,7 +96,7 @@ export async function rejectFollowRequest(requesterUid: string): Promise<void> {
   try {
     await deleteOwnFollowRequestNotifFrom(me, requesterUid);
   } catch (err) {
-    console.warn("[rejectFollowRequest] notif cleanup failed", err);
+    logger.warn("[rejectFollowRequest] notif cleanup failed", err);
   }
 }
 

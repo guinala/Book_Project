@@ -1,0 +1,15 @@
+Rule: react-doctor/no-static-element-interactions
+Severity: warning
+Category: Accessibility
+Count: 5
+
+Static HTML elements with event handlers require a role — add `role="…"` or use a semantic HTML element instead.
+
+Suggestion: Static HTML elements with event handlers require a role, or use a semantic HTML element instead.
+
+Files:
+  src/pages/edit-profile/components/BannerUploader.tsx:21
+  src/pages/edit-profile/components/AvatarUploader.tsx:21
+  src/pages/lists/ListDetailPage.tsx:90
+  src/components/profile/sections/ProfileHeader.tsx:60
+  src/components/profile/sections/ProfileHeader.tsx:79

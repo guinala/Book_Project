@@ -1,0 +1,14 @@
+Rule: react-doctor/no-noninteractive-element-interactions
+Severity: warning
+Category: Accessibility
+Count: 4
+
+Non-interactive element `<article>` should not have interactive event handlers — convert to a semantic interactive element or add an interactive role.
+
+Suggestion: Move interactions to a semantic interactive element / add an interactive role.
+
+Files:
+  src/components/shelf/cards/BookTile.tsx:18
+  src/components/book/cards/BookCard.tsx:30
+  src/components/book/cards/FeaturedBookCard.tsx:47
+  src/components/book/shelf-dropdown/ShelfDropdownButton.tsx:109

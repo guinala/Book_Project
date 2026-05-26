@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useBookSearch } from "@/hooks/useBookSearch";
+import { useBookSearch } from "@/pages/explore/hooks/useBookSearch";
 import BookCard from "@/components/book/cards/BookCard";
 import { Search, X } from "lucide-react";
 import "./SearchPage.scss";

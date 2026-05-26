@@ -1,0 +1,11 @@
+Rule: react-doctor/jsx-key
+Severity: error
+Category: Correctness
+Count: 1
+
+Missing `key` prop for element in array.
+
+Suggestion: Add a `key={...}` prop to each element produced inside `.map` / array literal.
+
+Files:
+  src/components/notifications/NotificationItem.tsx:77

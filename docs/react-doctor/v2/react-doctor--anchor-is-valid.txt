@@ -1,0 +1,13 @@
+Rule: react-doctor/anchor-is-valid
+Severity: warning
+Category: Accessibility
+Count: 3
+
+`<a>` element has invalid `href` (`#`, `javascript:`, or empty) — provide a real destination.
+
+Suggestion: Anchors must have a valid destination — use `<button>` for in-page actions.
+
+Files:
+  src/components/book/info/ReviewsSection.tsx:17
+  src/pages/style-guide/StyleGuide.tsx:80
+  src/components/shelf/sections/ShelfSection.tsx:69

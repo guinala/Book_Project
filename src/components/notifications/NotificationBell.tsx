@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell } from "lucide-react";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications } from "@/context/notifications/useNotifications";
 import NotificationsDropdown from "./NotificationsDropdown";
 import "./Notifications.scss";
 

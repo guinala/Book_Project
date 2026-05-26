@@ -1,0 +1,13 @@
+Rule: react-doctor/no-adjust-state-on-prop-change
+Severity: warning
+Category: State & Effects
+Count: 3
+
+Avoid adjusting state when a prop changes. Instead, adjust the state directly during render, or refactor your state to avoid this need entirely.
+
+Suggestion: Adjust the state inline during render instead of via a useEffect, or refactor the state to avoid the need entirely. See https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+
+Files:
+  src/pages/edit-profile/components/UsernameField.tsx:33
+  src/pages/edit-profile/components/UsernameField.tsx:37
+  src/pages/edit-profile/components/UsernameField.tsx:41

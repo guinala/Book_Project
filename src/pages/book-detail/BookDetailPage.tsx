@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useBookDetail } from "@/hooks/useBookDetail";
+import { useBookDetail } from "@/pages/book-detail/hooks/useBookDetail";
 import BookInfoCard from "@/components/book/info/BookInfoCard";
 import ReviewsSection from "@/components/book/info/ReviewsSection";
 import AuthorSection from "@/components/book/info/AuthorSection";
@@ -8,8 +8,8 @@ import RecommendationsSection from "@/components/book/info/RecommendationsSectio
 import BookInfoCardSkeleton from "@/components/book/info/BookInfoCardSkeleton";
 import AuthorSectionSkeleton from "@/components/book/info/AuthorSectionSkeleton";
 import "./BookDetailPage.scss";
-import { useAuthorData } from "@/hooks/useAuthorData";
-import { useBookRecommendations } from "@/hooks/useBookRecommendations";
+import { useAuthorData } from "@/pages/book-detail/hooks/useAuthorData";
+import { useBookRecommendations } from "@/pages/book-detail/hooks/useBookRecommendations";
 import { useEffect } from "react";
 import { toWorkKey } from "@/utils/bookPaths";
 import { ChevronLeft } from "lucide-react";

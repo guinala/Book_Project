@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import BookCard from "@/components/book/cards/BookCard";
 import ExploreGridSkeleton from "./ExploreGridSkeleton";
-import { useSectionBooks } from "@/hooks/useSectionBooks";
+import { useSectionBooks } from "@/pages/explore/hooks/useSectionBooks";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import type { ExploreSectionParams } from "@/types/ExploreTypes";
 import type { Book } from "@/types/Book";

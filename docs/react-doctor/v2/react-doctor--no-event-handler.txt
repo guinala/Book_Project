@@ -1,0 +1,13 @@
+Rule: react-doctor/no-event-handler
+Severity: warning
+Category: State & Effects
+Count: 3
+
+Avoid using state and effects as an event handler. Instead, call the event handling code directly when the event occurs.
+
+Suggestion: Move the side effect into the event handler that triggers it, instead of guarding on its state inside a useEffect. See https://react.dev/learn/you-might-not-need-an-effect#sharing-logic-between-event-handlers
+
+Files:
+  src/components/shelf/sections/CurrentReadingCard.tsx:39
+  src/pages/edit-profile/components/BioField.tsx:27
+  src/pages/edit-profile/components/BioField.tsx:24

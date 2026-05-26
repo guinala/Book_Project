@@ -1,4 +1,4 @@
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications } from "@/context/notifications/useNotifications";
 import type { Notification } from "@/types/UserProfile";
 import type { TFunction } from "i18next";
 import { Check, X } from "lucide-react";
@@ -74,7 +74,7 @@ export default function NotificationItem({ notification, onClose }: Notification
             <Trans
               i18nKey={`notifications.types.${notification.type}`}
               values={{ name: displayName }}
-              components={[<strong />]}
+              components={[<strong key="b" />]}
             />
           </p>
           <span className="notification-item__time">

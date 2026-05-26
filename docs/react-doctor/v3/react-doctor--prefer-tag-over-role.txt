@@ -1,0 +1,15 @@
+Rule: react-doctor/prefer-tag-over-role
+Severity: warning
+Category: Accessibility
+Count: 5
+
+Prefer the semantic `<search>` element over `role="search"` on a generic tag.
+
+Suggestion: Replace `role` with the semantic HTML element when one exists.
+
+Files:
+  src/components/layout/Navbar.tsx:55
+  src/pages/lists/ListDetailPage.tsx:89
+  src/components/common/EditableStarRating.tsx:44
+  src/components/common/EditableStarRating.tsx:53
+  src/components/common/Modal.tsx:46

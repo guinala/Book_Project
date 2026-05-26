@@ -1,16 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { BookDetail, ShelfStatus } from "@/types/BookDetail";
+import type { BookDetail } from "@/types/BookDetail";
 import type { Book } from "@/types/Book";
 import StarRating from "@/components/common/StarRating";
 import SynopsisModal from "@/components/book/info/SynopsisModal";
 import "./BookInfoCard.scss";
-import { useShelf } from "@/hooks/useShelf";
-import { useAuth } from "@/hooks/useAuth";
 import { genreToI18nKey } from "@/utils/genreUtils";
-import { Share2, Bookmark, ChevronRight, ChevronDown } from "lucide-react";
-
-const SHELF_OPTIONS: ShelfStatus[] = ["wantToRead", "reading", "finished", "didNotFinish"];
+import { Share2, ChevronDown } from "lucide-react";
+import ShelfDropdownButton from "@/components/book/shelf-dropdown/ShelfDropdownButton";
 
 function formatCount(n: number): string {
   if (n >= 1000) {
@@ -26,9 +23,6 @@ type BookInfoCardProps = {
 
 export default function BookInfoCard({ book }: BookInfoCardProps) {
   const { t } = useTranslation();
-  const [shelfOpen, setShelfOpen] = useState(false);
-  const { addBook, removeBook, getStatus } = useShelf();
-  const saved = getStatus(book.key);
 
   const bookForShelf: Book = {
     key: book.key,
@@ -42,41 +36,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
     pages: book.pages,
     isbn: book.isbn,
   };
-  const [tooltipVisible, setTooltipVisible] = useState(false);
   const [synopsisOpen, setSynopsisOpen] = useState(false);
-  const shelfRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated } = useAuth();
-
-
-  useEffect(() => {
-    if (!shelfOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (shelfRef.current && !shelfRef.current.contains(e.target as Node)) {
-        setShelfOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [shelfOpen]);
-
-  const handleShelfSelect = (option: ShelfStatus) => {
-    if (saved === option) {
-      removeBook(book.key);
-    } else {
-      addBook(bookForShelf, option);
-      setShelfOpen(false);
-    }
-  };
-
-  const handleSaveBtnClick = () => {
-    if (!isAuthenticated) {
-      setTooltipVisible(true);
-      setTimeout(() => setTooltipVisible(false), 2000);
-      return;
-    }
-    setShelfOpen((o) => !o);
-  };
-
 
   return (
     <>
@@ -86,11 +46,6 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
 
       <div className="book-info-card">
         <div className="book-info-card__cover-wrap">
-          {/* <img
-            className="book-info-card__cover"
-            src={book.cover_url}
-            alt={t("book.coverAlt", { title: book.title })}
-          /> */}
           {book.cover_url ? (
             <img
               className="book-info-card__cover"
@@ -122,7 +77,7 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
 
           <div className="book-info-card__info-row">
             <div className="book-info-card__rating-block">
-              <span className="book-info-card__rating-number">{parseFloat(book.rating.toFixed(1))}</span>
+              <span className="book-info-card__rating-number">{book.rating.toFixed(1)}</span>
               <div className="book-info-card__rating-group">
                 <StarRating rating={book.rating} size={15} />
                 <span className="book-info-card__rating-count">
@@ -174,51 +129,18 @@ export default function BookInfoCard({ book }: BookInfoCardProps) {
           )}
 
           <div className="book-info-card__footer">
-            <div ref={shelfRef} className="book-info-card__save-wrapper">
-              {tooltipVisible && (
-                <span className="book-info-card__tooltip">
-                  {t("explore.saveTooltip")}
-                </span>
-              )}
-
-              <button
-                className={[
-                  "book-info-card__save-btn",
-                  saved && !shelfOpen ? "book-info-card__save-btn--saved" : "",
-                  shelfOpen ? "book-info-card__save-btn--open" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-                onClick={handleSaveBtnClick}
-              >
-                {saved && !shelfOpen && (
-                  <Bookmark className="book-info-card__save-check" />
-                )}
-                {saved ? t(`myLibrary.shelf.${saved}`) : t("bookDetail.saveBook")}
-                <ChevronRight className="book-info-card__save-chevron" />
-              </button>
-
-              {shelfOpen && (
-                <ul className="book-info-card__dropdown">
-                  {SHELF_OPTIONS.map((opt) => (
-                    <li key={opt}>
-                      <button
-                        className={[
-                          "book-info-card__dropdown-item",
-                          saved === opt ? "book-info-card__dropdown-item--active" : "",
-                        ]
-                          .filter(Boolean)
-                          .join(" ")}
-                        onClick={() => handleShelfSelect(opt)}
-                      >
-                        {saved === opt && <Bookmark size={16} />}
-                        {t(`myLibrary.shelf.${opt}`)}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <ShelfDropdownButton
+              book={bookForShelf}
+              variant="detail"
+              classNames={{
+                root: "book-info-card__save-wrapper",
+                btn: "book-info-card__save-btn",
+                list: "book-info-card__dropdown",
+                item: "book-info-card__dropdown-item",
+                tooltip: "book-info-card__tooltip",
+                icon: "book-info-card__save-check",
+              }}
+            />
           </div>
         </div>
       </div>
