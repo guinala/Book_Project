@@ -57,7 +57,7 @@ export default function AllListsPage() {
       {editorOpen && isOwner && (
         <ListEditorModal
           onClose={() => setEditorOpen(false)}
-          onSubmit={async ({ name, books }) => { await createList(name, books); }}
+          onSubmit={async ({ name, description, books }) => { await createList(name, books, description); }}
         />
       )}
     </div>

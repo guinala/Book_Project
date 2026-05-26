@@ -11,7 +11,7 @@
   &__header {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-5);
   }
 
   &__back {
@@ -31,6 +31,19 @@
     svg { width: 15px; height: 15px; flex-shrink: 0; }
 
     &:hover { color: var(--color-text-primary); }
+  }
+
+  &__title-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  &__description {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
   }
 
   &__title {
@@ -68,7 +81,8 @@
 
     &--danger {
       color: var(--color-error);
-      &:hover { border-color: var(--color-error); color: var(--color-error); }
+      border-color: var(--color-error-border);
+      &:hover { border-color: var(--color-error); color: var(--color-error); background: var(--color-error-bg); }
     }
   }
 
@@ -131,13 +145,23 @@
   &__confirm-text {
     margin: 0;
     font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
+    text-align: center;
+  }
+
+  &__confirm-subtitle {
+    margin: calc(-1 * var(--space-2)) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+    text-align: center;
   }
 
   &__confirm-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: var(--space-3);
+    margin-top: var(--space-4);
   }
 
   &__confirm-btn {
@@ -154,11 +178,11 @@
     &:hover { border-color: var(--color-text-primary); }
 
     &--danger {
-      background: var(--color-error);
-      border-color: var(--color-error);
-      color: var(--color-btn-primary-fg);
+      background: none;
+      border-color: var(--color-error-border);
+      color: var(--color-error);
 
-      &:hover { opacity: 0.9; }
+      &:hover { border-color: var(--color-error); background: var(--color-error-bg); }
     }
   }
 }

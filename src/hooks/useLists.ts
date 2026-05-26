@@ -27,21 +27,21 @@ export function useLists(userId: string | undefined) {
     }, [userId]);
 
     const createList = useCallback(
-        async (name: string, books: ListBook[]) => {
+        async (name: string, books: ListBook[], description?: string) => {
             if (!userId) {
                 return;
             }
-            const id = await createListDB(userId, name, books);
+            const id = await createListDB(userId, name, books, description);
             const date = new Date().toISOString();
             setLists((prev) => [
-                { id, name, books, createdAt: date, updatedAt: date},
+                { id, name, description, books, createdAt: date, updatedAt: date},
                 ...prev
             ])
-        }, 
+        },
     [userId]);
 
     const updateList = useCallback(
-        async (listId: string, content: { name?: string; books?: ListBook[] }) => {
+        async (listId: string, content: { name?: string; description?: string; books?: ListBook[] }) => {
             if (!userId) {
                 return;
             }

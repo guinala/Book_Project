@@ -1,6 +1,6 @@
 import type { Book } from "@/types/Book";
 import type { BookList, ListBook } from "@/types/BookList";
-import { isValidListName, MAX_LIST_BOOKS } from "@/utils/bookListUtils";
+import { isValidListName, MAX_LIST_BOOKS, MAX_LIST_DESCRIPTION } from "@/utils/bookListUtils";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,7 +12,7 @@ const BOOKS_PER_PAGE = 4;
 
 type ListEditorModalProps = {
   existingList?: BookList;
-  onSubmit: (data: { name: string; books: ListBook[] }) => Promise<void>;
+  onSubmit: (data: { name: string; description: string; books: ListBook[] }) => Promise<void>;
   onClose: () => void;
 };
 
@@ -23,6 +23,7 @@ export default function ListEditorModal({
   const isEdit = !!existingList;
 
   const [name, setName] = useState(existingList?.name ?? "");
+  const [description, setDescription] = useState(existingList?.description ?? "");
   const [books, setBooks] = useState<ListBook[]>(existingList?.books ?? []);
   const [page, setPage] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -51,7 +52,7 @@ export default function ListEditorModal({
     setSaving(true);
     setSaveError(null);
     try {
-      await onSubmit({ name: name.trim(), books });
+      await onSubmit({ name: name.trim(), description: description.trim(), books });
       onClose();
     } catch {
       setSaveError(t("myLibrary.listEditor.saveError"));
@@ -90,6 +91,24 @@ export default function ListEditorModal({
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+      </div>
+
+      <div className="list-editor-modal__description-field">
+        <label className="list-editor-modal__description-label" htmlFor="list-description">
+          {t("myLibrary.listEditor.descriptionLabel")}
+        </label>
+        <textarea
+          id="list-description"
+          className="list-editor-modal__description"
+          placeholder={t("myLibrary.listEditor.descriptionPlaceholder")}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          maxLength={MAX_LIST_DESCRIPTION}
+          rows={3}
+        />
+        <span className={`list-editor-modal__desc-counter${description.length >= MAX_LIST_DESCRIPTION ? " list-editor-modal__desc-counter--limit" : ""}`}>
+          {description.length}/{MAX_LIST_DESCRIPTION}
+        </span>
       </div>
 
       <div className="list-editor-modal__search-field">
