@@ -75,7 +75,7 @@ export default function UsernameField({
         />
       </div>
       {error && <p className="edit-profile__error">{error.message}</p>}
-      {status === "checking" && <p className="edit-profile__hint">Comprobando disponibilidad...</p>}
+      {status === "checking" && <p className="edit-profile__hint">Comprobando disponibilidad…</p>}
       {status === "taken" && <p className="edit-profile__error">Este nombre ya está en uso</p>}
       {status === "available" && <p className="edit-profile__success">Disponible</p>}
     </div>
