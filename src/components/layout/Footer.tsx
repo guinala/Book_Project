@@ -16,8 +16,8 @@ const COMPANY_LINKS = [
 ] as const;
 
 const LEGAL_LINKS = [
-  { key: "legalNotice", href: "/legal/terms", internal: true },
-  { key: "cookies", href: "#", internal: false },
+  { key: "legalNotice", href: "/legal/terms", internal: true, scrollTop: true },
+  { key: "cookies", href: "#", internal: false, scrollTop: false },
 ] as const;
 
 const SUPPORT_LINKS = [
@@ -72,10 +72,14 @@ export default function Footer() {
           <section className="footer__column">
             <h3 className="footer__heading">{t("footer.columns.legal")}</h3>
             <ul className="footer__list">
-              {LEGAL_LINKS.map(({ key, href, internal }) => (
+              {LEGAL_LINKS.map(({ key, href, internal, scrollTop }) => (
                 <li key={key}>
                   {internal ? (
-                    <Link className="footer__link" to={href}>
+                    <Link
+                      className="footer__link"
+                      to={href}
+                      onClick={scrollTop ? () => window.scrollTo(0, 0) : undefined}
+                    >
                       {t(`footer.links.${key}`)}
                     </Link>
                   ) : (
