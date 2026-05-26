@@ -177,6 +177,7 @@ export default function ProfilePage() {
               userId={resolvedUserId}
               isOwner={isOwnProfile}
               onCreateList={() => setListEditorOpen(true)}
+              column
             />
           </div>
         </>

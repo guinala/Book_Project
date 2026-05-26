@@ -78,17 +78,46 @@ export default function ListEditorModal({
         close: "list-editor-modal__close",
       }}
     >
-      <input
-        className="list-editor-modal__name"
-        type="text"
-        placeholder={t("myLibrary.listEditor.namePlaceholder")}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+      <div className="list-editor-modal__name-field">
+        <label className="list-editor-modal__name-label" htmlFor="list-name">
+          {t("myLibrary.listEditor.nameLabel")}
+        </label>
+        <input
+          id="list-name"
+          className="list-editor-modal__name"
+          type="text"
+          placeholder={t("myLibrary.listEditor.namePlaceholder")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
 
-      <p className="list-editor-modal__counter">
-        {t("myLibrary.listEditor.counter", { count: books.length, max: MAX_LIST_BOOKS })}
-      </p>
+      <div className="list-editor-modal__search-field">
+        <p className="list-editor-modal__add-books-label">
+          {t("myLibrary.listEditor.addBooksLabel")}
+        </p>
+        <div className="list-editor-modal__search-area">
+          <BookSearchPicker
+            selected={books}
+            max={MAX_LIST_BOOKS}
+            onAdd={addBook}
+            translationPrefix="myLibrary.listEditor"
+            classNames={{
+              search: "list-editor-modal__search",
+              searching: "list-editor-modal__searching",
+              noResults: "list-editor-modal__no-results",
+              results: "list-editor-modal__results",
+              resultItem: "list-editor-modal__result-item",
+              resultCover: "list-editor-modal__result-cover",
+              resultTitle: "list-editor-modal__result-title",
+              resultAuthor: "list-editor-modal__result-author",
+            }}
+          />
+          <span className="list-editor-modal__counter" aria-live="polite">
+            {books.length}/{MAX_LIST_BOOKS}
+          </span>
+        </div>
+      </div>
 
       <div className="list-editor-modal__current">
         {books.length === 0 && (
@@ -146,23 +175,6 @@ export default function ListEditorModal({
           </button>
         </div>
       )}
-
-      <BookSearchPicker
-        selected={books}
-        max={MAX_LIST_BOOKS}
-        onAdd={addBook}
-        translationPrefix="myLibrary.listEditor"
-        classNames={{
-          search: "list-editor-modal__search",
-          searching: "list-editor-modal__searching",
-          noResults: "list-editor-modal__no-results",
-          results: "list-editor-modal__results",
-          resultItem: "list-editor-modal__result-item",
-          resultCover: "list-editor-modal__result-cover",
-          resultTitle: "list-editor-modal__result-title",
-          resultAuthor: "list-editor-modal__result-author",
-        }}
-      />
 
       <div className="list-editor-modal__footer">
         {saveError && (
