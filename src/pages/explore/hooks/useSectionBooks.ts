@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Book } from "@/types/Book";
 import type { ExploreSectionParams, ExploreSectionType, UseSectionResult } from "@/types/ExploreTypes";
 import {
@@ -29,24 +29,16 @@ export function useSectionBooks(
   const { user } = useAuth();
   const uid = user?.uid ?? null;
 
-  const cacheKey = useMemo(
-    () => JSON.stringify({
-      type, lang, count, uid,
-      referenceBookKey: params.referenceBookKey,
-      referenceGenre: params.referenceGenre,
-      favoriteGenre: params.favoriteGenre,
-      favoriteAuthorKey: params.favoriteAuthorKey,
-      favoriteGenreLabel: params.favoriteGenreLabel,
-      userAuthorKeys: params.userAuthorKeys?.join(",") ?? "",
-      favoritesReferenceBookKey: params.favoritesReferenceBook?.key,
-    }),
-    [
-      type, lang, count, uid,
-      params.referenceBookKey, params.referenceGenre,
-      params.favoriteGenre, params.favoriteAuthorKey, params.favoriteGenreLabel,
-      params.userAuthorKeys, params.favoritesReferenceBook?.key,
-    ],
-  );
+  const cacheKey = JSON.stringify({
+    type, lang, count, uid,
+    referenceBookKey: params.referenceBookKey,
+    referenceGenre: params.referenceGenre,
+    favoriteGenre: params.favoriteGenre,
+    favoriteAuthorKey: params.favoriteAuthorKey,
+    favoriteGenreLabel: params.favoriteGenreLabel,
+    userAuthorKeys: params.userAuthorKeys?.join(",") ?? "",
+    favoritesReferenceBookKey: params.favoritesReferenceBook?.key,
+  });
 
   const initialEntry = cache.get(cacheKey);
   const [books, setBooks] = useState<Book[]>(() => initialEntry?.books ?? []);

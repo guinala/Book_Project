@@ -74,7 +74,7 @@ export default function NotificationItem({ notification, onClose }: Notification
             <Trans
               i18nKey={`notifications.types.${notification.type}`}
               values={{ name: displayName }}
-              components={[<strong />]}
+              components={[<strong key="b" />]}
             />
           </p>
           <span className="notification-item__time">

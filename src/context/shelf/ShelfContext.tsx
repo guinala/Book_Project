@@ -72,10 +72,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
       exploreCache.markDirty();
 
       if (!opts?.silent) {
-        const localizedBook = {
-          ...book,
-          title: book.titles?.[lang] ?? book.title,
-        };
+        const localizedBook = localizeBook(book, lang);
         if (prevStatus === null) {
           notifyShelfAdded(localizedBook, status, () =>
             removeBook(book.key, { silent: true }),
@@ -109,10 +106,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
       exploreCache.markDirty();
 
       if (!opts?.silent) {
-        const localizedBook = {
-          ...prev.book,
-          title: prev.book.titles?.[lang] ?? prev.book.title,
-        };
+        const localizedBook = localizeBook(prev.book, lang);
         notifyShelfRemoved(localizedBook, prev.status, () =>
           addBook(prev.book, prev.status, { silent: true }),
         );
@@ -174,10 +168,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
       exploreCache.markDirty();
       
       if (!opts?.silent) {
-        const localizedBook = {
-          ...existing.book,
-          title: existing.book.titles?.[lang] ?? existing.book.title,
-        };
+        const localizedBook = localizeBook(existing.book, lang);
         if (newStatus !== prevStatus && newStatus === "finished") {
           notifyShelfStatusChanged(localizedBook, prevStatus, "finished", () =>
             updateProgress(bookKey, prevPage, {

@@ -124,7 +124,7 @@ export default function EditProfilePage() {
   if (loadingProfile) {
     return (
       <div className="edit-profile edit-profile--loading">
-        <p>Cargando...</p>
+        <p>Cargando…</p>
       </div>
     );
   }

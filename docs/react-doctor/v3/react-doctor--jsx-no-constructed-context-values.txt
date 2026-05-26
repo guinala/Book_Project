@@ -1,0 +1,15 @@
+Rule: react-doctor/jsx-no-constructed-context-values
+Severity: warning
+Category: Performance
+Count: 5
+
+Context `value` prop is constructed inline — wrap with `useMemo`/`useCallback` or hoist a constant to avoid re-renders.
+
+Suggestion: Memoize the context value (`useMemo`) or hoist it outside the render.
+
+Files:
+  src/context/preferences/PreferencesContext.tsx:16
+  src/context/shelf/ShelfContext.tsx:195
+  src/context/notifications/NotificationsContext.tsx:119
+  src/context/theme/ThemeContext.tsx:22
+  src/context/auth/AuthContext.tsx:41
