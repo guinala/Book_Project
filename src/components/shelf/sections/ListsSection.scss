@@ -81,7 +81,7 @@
   &__create-icon {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     border: 1.5px dashed currentColor;
     display: flex;
     align-items: center;
@@ -89,9 +89,9 @@
     flex-shrink: 0;
 
     .lists-section__create--column & {
-      width: 62px;
-      height: 62px;
-      border-radius: var(--radius-sm);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-pill);
     }
   }
 

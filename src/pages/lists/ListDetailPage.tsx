@@ -39,29 +39,31 @@ export default function ListDetailPage() {
           {t("explore.backBtn")}
         </button>
         {list && (
-          <div className="list-detail-page__title-block">
-            <h2 className="list-detail-page__title">{list.name}</h2>
-            {list.description && (
-              <p className="list-detail-page__description">{list.description}</p>
+          <div className="list-detail-page__header-row">
+            <div className="list-detail-page__title-block">
+              <h2 className="list-detail-page__title">{list.name}</h2>
+              {list.description && (
+                <p className="list-detail-page__description">{list.description}</p>
+              )}
+            </div>
+            {isOwner && (
+              <div className="list-detail-page__actions">
+                <button
+                  type="button"
+                  className="list-detail-page__action"
+                  onClick={() => setEditorOpen(true)}
+                >
+                  <Pencil size={16} aria-hidden="true" /> {t("myLibrary.listDetail.edit")}
+                </button>
+                <button
+                  type="button"
+                  className="list-detail-page__action list-detail-page__action--danger"
+                  onClick={() => setConfirmOpen(true)}
+                >
+                  <Trash2 size={16} aria-hidden="true" /> {t("myLibrary.listDetail.delete")}
+                </button>
+              </div>
             )}
-          </div>
-        )}
-        {list && isOwner && (
-          <div className="list-detail-page__actions">
-            <button
-              type="button"
-              className="list-detail-page__action"
-              onClick={() => setEditorOpen(true)}
-            >
-              <Pencil size={16} aria-hidden="true" /> {t("myLibrary.listDetail.edit")}
-            </button>
-            <button
-              type="button"
-              className="list-detail-page__action list-detail-page__action--danger"
-              onClick={() => setConfirmOpen(true)}
-            >
-              <Trash2 size={16} aria-hidden="true" /> {t("myLibrary.listDetail.delete")}
-            </button>
           </div>
         )}
       </div>

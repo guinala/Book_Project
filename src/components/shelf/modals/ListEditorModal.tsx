@@ -112,9 +112,14 @@ export default function ListEditorModal({
       </div>
 
       <div className="list-editor-modal__search-field">
-        <p className="list-editor-modal__add-books-label">
-          {t("myLibrary.listEditor.addBooksLabel")}
-        </p>
+        <div className="list-editor-modal__search-header">
+          <p className="list-editor-modal__add-books-label">
+            {t("myLibrary.listEditor.addBooksLabel")}
+          </p>
+          <span className="list-editor-modal__counter" aria-live="polite">
+            {books.length}/{MAX_LIST_BOOKS}
+          </span>
+        </div>
         <div className="list-editor-modal__search-area">
           <BookSearchPicker
             selected={books}
@@ -132,9 +137,6 @@ export default function ListEditorModal({
               resultAuthor: "list-editor-modal__result-author",
             }}
           />
-          <span className="list-editor-modal__counter" aria-live="polite">
-            {books.length}/{MAX_LIST_BOOKS}
-          </span>
         </div>
       </div>
 

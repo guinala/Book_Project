@@ -61,7 +61,7 @@
 
   &__name-label {
     font-size: var(--text-md);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-regular);
     color: var(--color-text-primary);
   }
 
@@ -90,8 +90,8 @@
   &__counter {
     font-size: var(--text-xs);
     color: var(--color-text-tertiary);
-    align-self: flex-end;
     line-height: 1;
+    flex-shrink: 0;
   }
 
   &__current {
@@ -137,7 +137,7 @@
     display: block;
     font-family: var(--font-editorial);
     font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-regular);
     color: var(--color-text-primary);
     @include text-truncate;
   }
@@ -199,7 +199,7 @@
 
   &__description-label {
     font-size: var(--text-md);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-regular);
     color: var(--color-text-primary);
   }
 
@@ -238,9 +238,16 @@
     gap: var(--space-2);
   }
 
+  &__search-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
   &__add-books-label {
     font-size: var(--text-md);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-regular);
     color: var(--color-text-primary);
     margin: 0;
   }
@@ -311,7 +318,7 @@
   &__result-title {
     font-family: var(--font-editorial);
     font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-regular);
     color: var(--color-text-primary);
     margin: 0;
     @include text-truncate;
