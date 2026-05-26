@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router";
+import { Outlet, ScrollRestoration } from "react-router";
 import Navbar from "@/components/layout/Navbar";
 import NavbarMini from "@/components/layout/NavbarMini";
 import { AuthProvider } from "@/context/auth/AuthContext";
@@ -40,6 +40,7 @@ function AppShell() {
       </main>
       <Footer />
       <AppToaster />
+      <ScrollRestoration />
     </>
   );
 }
