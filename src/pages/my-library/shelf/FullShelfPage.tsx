@@ -4,7 +4,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useShelf } from "@/context/shelf/useShelf";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import { Search, Filter, X, ChevronLeft } from "lucide-react";
+import { Search, ListFilter, X, ChevronLeft } from "lucide-react";
 import BookTile from "@/components/shelf/cards/BookTile";
 import "./FullShelfPage.scss";
 
@@ -91,7 +91,7 @@ export default function FullShelfPage() {
         </div>
 
         <button type="button" className="full-shelf__filter-btn" disabled aria-label="Filtros">
-          <Filter aria-hidden="true" />
+          <ListFilter aria-hidden="true" />
         </button>
       </div>
 
