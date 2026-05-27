@@ -41,6 +41,7 @@ export default function SearchPage() {
   return (
     <div className="search-page">
       <div className="search-page__search-wrap">
+        <h2 className="search-page__search-title">{t("explore.searchTitle")}</h2>
         <form className="search-page__search-form" onSubmit={handleSubmit} role="search">
           <span className="search-page__search-icon" aria-hidden="true">
             <Search size={18} />
