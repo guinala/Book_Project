@@ -29,7 +29,7 @@ export default function FullShelfPage() {
         const q = searchQuery.toLowerCase();
         return (
           b.title.toLowerCase().includes(q) ||
-          b.authors.some(a => a.toLowerCase().includes(q))
+          (b.authors ?? []).some(a => a.toLowerCase().includes(q))
         );
       })
     : shelfByStatus[activeStatus];

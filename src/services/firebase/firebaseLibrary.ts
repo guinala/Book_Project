@@ -80,14 +80,17 @@ export async function updateReadingProgress(
   currentPage: number,
   note?: string,
   rating?: number,
-  review?: string
+  review?: string,
+  statusOverride?: ShelfStatus
 ): Promise<void> {
   const totalPages = entry.book.pages ?? 0;
   const isFinished = totalPages > 0 && currentPage === totalPages;
   const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(entry.book.key));
 
   const update: Record<string, unknown> = { currentPage };
-  if (isFinished) {
+  if (statusOverride !== undefined) {
+    update.status = statusOverride;
+  } else if (isFinished) {
     update.status = "finished";
     if (rating !== undefined) {
       update.rating = rating;
