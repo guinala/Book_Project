@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/auth/useAuth";
 import { getFavorites } from "@/services/firebase/firebaseUsers";
 import { getBookFromDB } from "@/services/firebase/firebaseBooks";
@@ -22,7 +22,7 @@ function ExplorePage() {
   const { clearIfDirty } = useExploreCache();
   const { lang } = useCurrentLanguage();
   const { isAuthenticated, isGuest, user } = useAuth();
-  const search = useBookSearch();
+  const { books, loading, error, totalResults, fetchBooks, resetBookResults } = useBookSearch();
   const shelfDerived = useShelfDerivedFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [favoritesReferenceBook, setFavoritesReferenceBook] = useState<Book | null>(null);
@@ -95,16 +95,16 @@ function ExplorePage() {
       !(isLoggedIn && shelfDerived?.hasBooks)
   );
 
-  const handleSearch = (query: string, filter: SearchFilter) => {
+  const handleSearch = useCallback((query: string, filter: SearchFilter) => {
     setSearchQuery(query);
-    if (query.trim()) search.fetchBooks(query, filter, 20, lang);
-    else search.resetBookResults();
-  };
+    if (query.trim()) fetchBooks(query, filter, 20, lang);
+    else resetBookResults();
+  }, [fetchBooks, resetBookResults, lang]);
 
-  const handleClearSearch = () => {
+  const handleClearSearch = useCallback(() => {
     setSearchQuery("");
-    search.resetBookResults();
-  };
+    resetBookResults();
+  }, [resetBookResults]);
 
   const showGuestVersion = !isLoggedIn || (shelfDerived !== null && !shelfDerived.hasBooks);
 
@@ -118,10 +118,10 @@ function ExplorePage() {
 
       {isSearching ? (
         <ExploreSearchResults
-          loading={search.loading}
-          error={search.error}
-          books={search.books}
-          totalResults={search.totalResults}
+          loading={loading}
+          error={error}
+          books={books}
+          totalResults={totalResults}
           onClear={handleClearSearch}
         />
       ) : (
