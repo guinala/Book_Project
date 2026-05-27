@@ -6,7 +6,9 @@
   color: inherit;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4);
+  padding: var(--space-3);
+  height: 82px;
+  box-sizing: border-box;
   background: transparent;
   border: 1px solid var(--color-border-outline);
   border-radius: var(--radius-xl);
@@ -25,9 +27,9 @@
     gap: 2px;
     width: 62px;
     height: 62px;
+    flex-shrink: 0;
     border-radius: var(--radius-sm);
     overflow: hidden;
-    flex-shrink: 0;
   }
 
   &__mosaic-cell {

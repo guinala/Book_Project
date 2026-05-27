@@ -45,6 +45,10 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-3);
+
+    &--column {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__create {
@@ -65,17 +69,30 @@
       border-color: var(--color-text-primary);
       color: var(--color-text-primary);
     }
+
+    &--column {
+      flex-direction: row;
+      background: transparent;
+      border-width: 1px;
+      text-align: left;
+    }
   }
 
   &__create-icon {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     border: 1.5px dashed currentColor;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+
+    .lists-section__create--column & {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-pill);
+    }
   }
 
   &__create-text {

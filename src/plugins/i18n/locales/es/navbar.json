@@ -6,7 +6,7 @@
     "logout": "Cerrar Sesión",
     "notifications": "Notificaciones",
     "profile": "Perfil",
-    "search": "Buscar libros, autores..."
+    "search": "Busca por título, autor o ISBN"
   },
   "nav": {
     "myLibrary": "Mi Biblioteca",

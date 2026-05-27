@@ -3,6 +3,7 @@ import type { ListBook } from "@/types/BookList";
 
 export const MAX_LIST_BOOKS = 100;
 export const MAX_FAVORITES = 5;
+export const MAX_LIST_DESCRIPTION = 200;
 
 export function getListCoverUrls(books: ListBook[]): string[] {
     return books

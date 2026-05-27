@@ -4,9 +4,9 @@ import ExploreSection from "@/components/explore/ExploreSection";
 import TrendingSection from "@/components/explore/TrendingSection";
 import ExploreGridSkeleton from "@/components/explore/ExploreGridSkeleton";
 import GenreSection from "@/components/explore/GenreSection";
-import type { SectionEntry } from "@/hooks/useExploreFeed";
+import type { SectionEntry } from "@/pages/explore/hooks/useExploreFeed";
 import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTypes";
-import type { ShelfDerived } from "@/hooks/useShelfDerivedFavorites";
+import type { ShelfDerived } from "@/pages/explore/hooks/useShelfDerivedFavorites";
 
 const FEATURED_SECTION_TYPES = new Set<ExploreSectionType>([
   "because-liked", "because-finished", "new-releases-for-you",

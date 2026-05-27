@@ -69,10 +69,16 @@
   &__number {
     font-family: var(--font-editorial);
     font-size: 120px;
+    font-weight: var(--weight-semibold);
     line-height: 1;
-    color: var(--color-accent);
-    opacity: 0.54;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-border-medium);
+    user-select: none;
 
+    [data-theme="dark"] & {
+      -webkit-text-stroke-color: var(--color-text-primary);
+    }
   }
 
   &__cover-wrap {

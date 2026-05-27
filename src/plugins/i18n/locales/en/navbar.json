@@ -6,7 +6,7 @@
     "logout": "Sign Out",
     "notifications": "Notifications",
     "profile": "Profile",
-    "search": "Search books, authors..."
+    "search": "Search by title, author or ISBN"
   },
   "nav": {
     "myLibrary": "My Library",

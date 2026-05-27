@@ -9,6 +9,7 @@ import { moreGenreTitleKey } from "@/utils/genreUtils";
 import { ChevronLeft } from "lucide-react";
 import "./ExploreSectionPage.scss";
 import { useExploreCache } from "@/context/explore-cache/useExploreCache";
+import { useShelfDerivedFavorites } from "@/pages/explore/hooks/useShelfDerivedFavorites";
 import { useEffect } from "react";
 
 const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
@@ -53,6 +54,7 @@ export default function ExploreSectionPage() {
   const navigate = useNavigate();
 
   const sectionType = type as ExploreSectionType;
+  const shelfDerived = useShelfDerivedFavorites();
 
   const favoriteGenreLabel = searchParams.get("genreLabel") ?? undefined;
 
@@ -65,14 +67,20 @@ export default function ExploreSectionPage() {
     favoriteAuthorKey: searchParams.get("authorKey") ?? undefined,
     favoriteAuthorName: searchParams.get("authorName") ?? undefined,
     userAuthorKeys: searchParams.get("authorKeys")?.split(",").filter(Boolean) ?? undefined,
+    wantToReadBooks: sectionType === "waiting" ? (shelfDerived?.wantToReadBooks ?? []) : undefined,
   };
 
-  const { books, loading, error, retry, isFallback } = useSectionBooks(
+  const isWaiting = sectionType === "waiting";
+  const { books: fetchedBooks, loading: fetchLoading, error, retry, isFallback } = useSectionBooks(
     sectionType,
     params,
     lang,
     24,
+    isWaiting,
   );
+
+  const books = isWaiting ? (shelfDerived?.wantToReadBooks ?? []) : fetchedBooks;
+  const loading = isWaiting ? shelfDerived === null : fetchLoading;
 
   const titleKey = isFallback && SECTION_FALLBACK_KEYS[sectionType]
     ? SECTION_FALLBACK_KEYS[sectionType]!

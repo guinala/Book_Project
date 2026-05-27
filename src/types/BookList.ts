@@ -8,6 +8,7 @@ export type ListBook = {
 export type BookList = {
   id: string;
   name: string;
+  description?: string;
   books: ListBook[];
   createdAt: string;
   updatedAt: string;

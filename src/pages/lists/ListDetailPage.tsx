@@ -38,23 +38,32 @@ export default function ListDetailPage() {
           <ChevronLeft aria-hidden="true" />
           {t("explore.backBtn")}
         </button>
-        {list && <h2 className="list-detail-page__title">{list.name}</h2>}
-        {list && isOwner && (
-          <div className="list-detail-page__actions">
-            <button
-              type="button"
-              className="list-detail-page__action"
-              onClick={() => setEditorOpen(true)}
-            >
-              <Pencil size={16} aria-hidden="true" /> {t("myLibrary.listDetail.edit")}
-            </button>
-            <button
-              type="button"
-              className="list-detail-page__action list-detail-page__action--danger"
-              onClick={() => setConfirmOpen(true)}
-            >
-              <Trash2 size={16} aria-hidden="true" /> {t("myLibrary.listDetail.delete")}
-            </button>
+        {list && (
+          <div className="list-detail-page__header-row">
+            <div className="list-detail-page__title-block">
+              <h2 className="list-detail-page__title">{list.name}</h2>
+              {list.description && (
+                <p className="list-detail-page__description">{list.description}</p>
+              )}
+            </div>
+            {isOwner && (
+              <div className="list-detail-page__actions">
+                <button
+                  type="button"
+                  className="list-detail-page__action"
+                  onClick={() => setEditorOpen(true)}
+                >
+                  <Pencil size={16} aria-hidden="true" /> {t("myLibrary.listDetail.edit")}
+                </button>
+                <button
+                  type="button"
+                  className="list-detail-page__action list-detail-page__action--danger"
+                  onClick={() => setConfirmOpen(true)}
+                >
+                  <Trash2 size={16} aria-hidden="true" /> {t("myLibrary.listDetail.delete")}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -79,8 +88,8 @@ export default function ListDetailPage() {
         <ListEditorModal
           existingList={list}
           onClose={() => setEditorOpen(false)}
-          onSubmit={async ({ name, books }) => {
-            await updateList(list.id, { name, books });
+          onSubmit={async ({ name, description, books }) => {
+            await updateList(list.id, { name, description, books });
           }}
         />
       )}
@@ -95,20 +104,23 @@ export default function ListDetailPage() {
             <p className="list-detail-page__confirm-text">
               {t("myLibrary.listDetail.confirmDelete")}
             </p>
+            <p className="list-detail-page__confirm-subtitle">
+              {t("myLibrary.listDetail.confirmDeleteSubtitle")}
+            </p>
             <div className="list-detail-page__confirm-actions">
-              <button
-                type="button"
-                className="list-detail-page__confirm-btn"
-                onClick={() => setConfirmOpen(false)}
-              >
-                {t("myLibrary.listDetail.confirmDeleteNo")}
-              </button>
               <button
                 type="button"
                 className="list-detail-page__confirm-btn list-detail-page__confirm-btn--danger"
                 onClick={handleDelete}
               >
                 {t("myLibrary.listDetail.confirmDeleteYes")}
+              </button>
+              <button
+                type="button"
+                className="list-detail-page__confirm-btn"
+                onClick={() => setConfirmOpen(false)}
+              >
+                {t("myLibrary.listDetail.confirmDeleteNo")}
               </button>
             </div>
           </div>

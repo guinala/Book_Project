@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import type { Book } from "@/types/Book";
-import type { SectionEntry } from "@/hooks/useExploreFeed";
+import type { SectionEntry } from "@/pages/explore/hooks/useExploreFeed";
 
 export type ExploreCacheEntry = {
   books: Book[];

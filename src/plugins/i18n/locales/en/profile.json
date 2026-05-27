@@ -51,7 +51,7 @@
     "favorites": {
       "modalTitle": "Edit favorite books",
       "hint": "{{selected}}/{{max}} books selected",
-      "searchPlaceholder": "Search book...",
+      "searchPlaceholder": "Add book...",
       "searching": "Searching...",
       "noResults": "No books in the catalog match that search. Try another word or look them up in Explore first.",
       "save": "Save",

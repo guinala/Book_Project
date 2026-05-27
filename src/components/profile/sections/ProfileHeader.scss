@@ -266,6 +266,10 @@
     margin: var(--space-5) 0 0;
     overflow-wrap: break-word;
 
+    [data-theme="dark"] & {
+      color: var(--color-text-primary);
+    }
+
     @include from($bp-md) {
       padding-left: calc(96px + var(--space-5));
       max-width: 680px;

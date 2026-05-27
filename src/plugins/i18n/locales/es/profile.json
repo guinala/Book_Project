@@ -51,7 +51,7 @@
     "favorites": {
       "modalTitle": "Editar libros favoritos",
       "hint": "{{selected}}/{{max}} libros seleccionados",
-      "searchPlaceholder": "Buscar libro...",
+      "searchPlaceholder": "Añadir libro...",
       "searching": "Buscando...",
       "noResults": "No hay libros en el catálogo con esa búsqueda. Prueba otra palabra o búscalos antes en Explorar.",
       "save": "Guardar",

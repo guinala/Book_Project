@@ -65,7 +65,7 @@ export default function BookCard({ book, rank }: BookCardProps) {
         <div className="book-card__text">
           <h3 className="book-card__title">{book.title}</h3>
           <p className="book-card__author">
-            {book.authors.length > 0 ? book.authors.join(", ") : "Autor desconocido"}
+            {book.authors.length > 0 ? book.authors.join(", ") : t("book.unknownAuthor")}
           </p>
         </div>
         <div className="book-card__rating">
@@ -78,7 +78,7 @@ export default function BookCard({ book, rank }: BookCardProps) {
               )}
             </>
           ) : (
-            <span className="book-card__rating-count">Sin valorar</span>
+            <span className="book-card__rating-count">{t("book.noRating")}</span>
           )}
         </div>
       </div>
