@@ -3,6 +3,7 @@
     "heading": "Currently reading...",
     "noCurrentReading": "You're not reading any book",
     "nextBook": "Next reading book",
+    "prevBook": "View previous book",
     "readingProgress": "Progress",
     "pages": "{{current}}/{{total}} pgs.",
     "shelfTitle": "Bookshelf",

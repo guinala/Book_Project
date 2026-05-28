@@ -12,6 +12,8 @@ export type ShelfEntry = {
   currentPage?: number;
   rating?: number;
   review?: string; 
+  addedAt?: string;
+  lastProgressAt?: string;
 };
 
 export function encodeKey(bookKey: string): string {
@@ -26,11 +28,17 @@ export async function addToShelf(
 ): Promise<void> {
   const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(book.key));
   const { titles, isbns, ...bookData } = book;
-  await setDoc(shelfRef, {
+  
+  const nowDate = new Date().toISOString();
+  const data: Record<string, unknown> = {
     ...bookData,
     status,
-    addedAt: new Date().toISOString(),
-  }, { merge: true });
+    addedAt: nowDate,
+  };
+  if (status === "reading") {
+    data.lastProgressAt = nowDate;
+  }
+  await setDoc(shelfRef, data, { merge: true });
 
   // Escribir titles/isbns con estilo dot-notation para mantener otros idiomas
   if (titles && Object.keys(titles).length > 0) {
@@ -87,7 +95,13 @@ export async function updateReadingProgress(
   const isFinished = totalPages > 0 && currentPage === totalPages;
   const shelfRef = doc(db, "Users", uid, "Shelf", encodeKey(entry.book.key));
 
+  const prevPage = entry.currentPage ?? 0;
+  const pageChanged = currentPage !== prevPage;
+
   const update: Record<string, unknown> = { currentPage };
+  if (pageChanged) {
+    update.lastProgressAt = new Date().toISOString();
+  }
   if (statusOverride !== undefined) {
     update.status = statusOverride;
   } else if (isFinished) {
@@ -108,8 +122,6 @@ export async function updateReadingProgress(
     bookAuthor: entry.book.authors[0],
   };
 
-  const prevPage = entry.currentPage ?? 0;
-  const pageChanged = currentPage !== prevPage;
   if (pageChanged) {
     if (currentPage > prevPage) {
       logActivity(uid, { type: "progress", ...base, progress: currentPage, ...(note !== undefined && { note }) })
@@ -168,6 +180,8 @@ export async function getShelf(uid: string): Promise<ShelfEntry[] | null> {
           currentPage: data.currentPage ?? undefined,
           rating: data.rating ?? undefined,
           review: data.review ?? undefined,
+          addedAt: data.addedAt ?? undefined,
+          lastProgressAt: data.lastProgressAt ?? undefined,
         };
     });
 }
