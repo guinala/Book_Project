@@ -14,6 +14,7 @@
     "synopsis": "Synopsis",
     "synopsisAriaLabel": "Full synopsis",
     "close": "Close",
+    "yourReviewTitle": "Your review",
     "reviewsTitle": "Community reviews",
     "reviewsSeeMore": "See more",
     "likeAriaLabel": "Likes ({{count}})",

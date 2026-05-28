@@ -13,6 +13,7 @@ import { useBookRecommendations } from "@/pages/book-detail/hooks/useBookRecomme
 import { useEffect } from "react";
 import { toWorkKey } from "@/utils/bookPaths";
 import { ChevronLeft } from "lucide-react";
+import UserReviewSection from "@/components/book/info/UserReviewSection";
 
 export default function BookDetailPage() {
   const { bookId = "" } = useParams<{ bookId: string }>();
@@ -68,6 +69,7 @@ export default function BookDetailPage() {
         <BookInfoCard book={book} />
       </section>
 
+      <UserReviewSection bookKey={book.key} />
       <ReviewsSection reviews={book.reviews} />
 
       {authorLoading

@@ -1,0 +1,111 @@
+@use '../../../styles/lib' as *;
+
+.user-review-section {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  gap: var(--space-4);
+
+  &__title {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  &__card {
+    background: transparent;
+    border: 1px solid var(--color-border-outline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+
+    @include from($bp-md) {
+      padding: var(--space-7);
+      gap: var(--space-5);
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+    flex-shrink: 0;
+
+    &--placeholder {
+      background: var(--color-accent);
+      color: var(--color-text-on-brand);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-bold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @include from($bp-md) {
+      width: 56px;
+      height: 56px;
+    }
+  }
+
+  &__user {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: var(--text-md);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    @include text-truncate;
+  }
+
+  &__handle {
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    font-weight: var(--weight-medium);
+  }
+
+  &__rating {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-1);
+    flex-shrink: 0;
+  }
+
+  &__rating-value {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    font-weight: var(--weight-medium);
+  }
+
+  &__text-box {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+  }
+
+  &__text {
+    font-size: var(--text-md);
+    line-height: 1.7;
+    color: var(--color-text-primary);
+    margin: 0;
+    white-space: pre-wrap;
+  }
+}
