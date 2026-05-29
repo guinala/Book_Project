@@ -4,6 +4,7 @@
     "noCurrentReading": "No estás leyendo ningún libro",
     "nextBook": "Ver siguiente libro leyendo",
     "prevBook": "Ver libro anterior",
+    "readingCount": "{{current}}/{{total}} libros leyendo",
     "readingProgress": "Progreso",
     "pages": "{{current}}/{{total}} págs.",
     "shelfTitle": "Estantería",

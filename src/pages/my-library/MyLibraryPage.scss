@@ -19,15 +19,18 @@
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
     width: 100vw;
-    background: var(--color-bg-medium);
+    min-height: 480px;
+    background: radial-gradient(120% 130% at 50% 118%, #fff 45%, var(--color-bg-darkest) 88%);
     padding: var(--space-6) var(--space-5);
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: var(--space-3);
 
     @include from($bp-md) {
       margin-top: calc(-1 * (var(--space-10) + var(--space-2) + 2rem));
+      min-height: 580px;
       padding: var(--space-8) var(--space-7);
     }
   }

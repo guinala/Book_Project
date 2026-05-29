@@ -17,7 +17,7 @@ import "swiper/css/effect-cards";
 import "./CurrentReadingCard.scss";
 
 const STORAGE_KEY = "currentReadingBookKey";
-const MAX_VISIBLE = 4;
+const MAX_VISIBLE = 6;
 
 function sortByRecency(a: ShelfEntry, b: ShelfEntry): number {
   const aTime = a.lastProgressAt ?? a.addedAt ?? "";
@@ -114,7 +114,7 @@ function CurrentReadingCard() {
     if (selectedKey) localStorage.setItem(STORAGE_KEY, selectedKey);
   }, [selectedKey]);
 
-  const initialSlide = useMemo(() => {
+  const currentIndex = useMemo(() => {
     if (!selectedKey) return 0;
     const idx = topReading.findIndex((e) => e.book.key === selectedKey);
     return idx >= 0 ? idx : 0;
@@ -135,7 +135,14 @@ function CurrentReadingCard() {
         aria-roledescription="carousel"
         aria-label={t("myLibrary.heading")}
       >
-        <h2 className="reading-carousel__heading">{t("myLibrary.heading")}</h2>
+        <div className="reading-carousel__header">
+          <h2 className="reading-carousel__heading">{t("myLibrary.heading")}</h2>
+          {hasBooks && (
+            <span className="reading-carousel__count">
+              {t("myLibrary.readingCount", { current: currentIndex + 1, total: topReading.length })}
+            </span>
+          )}
+        </div>
 
         {!hasBooks && (
           <div className="reading-card__empty-state">
@@ -170,7 +177,7 @@ function CurrentReadingCard() {
               rewind={topReading.length > 1}
               grabCursor
               keyboard={{ enabled: true, onlyInViewport: true }}
-              initialSlide={initialSlide}
+              initialSlide={currentIndex}
               onSwiper={(s) => { swiperRef.current = s; }}
               onSlideChange={(s) => {
                 const next = topReading[s.realIndex];

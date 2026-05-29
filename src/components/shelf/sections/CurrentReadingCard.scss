@@ -25,6 +25,24 @@
     color: var(--color-text-on-dark);
   }
 
+  &__header {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  &__count {
+    flex-shrink: 0;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.02em;
+    color: var(--color-text-on-dark);
+  }
+
   &__stage {
     display: flex;
     align-items: center;
