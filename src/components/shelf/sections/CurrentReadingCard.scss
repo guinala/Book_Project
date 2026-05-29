@@ -9,15 +9,11 @@
   width: 100%;
   max-width: 860px;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  background: var(--color-bg-medium);
-  border-radius: var(--radius-xl);
 
   @include from($bp-md) {
-    padding: var(--space-8) var(--space-7);
     gap: var(--space-6);
   }
 
@@ -40,20 +36,24 @@
     flex: 1;
     min-width: 0;
     max-width: 720px;
-    margin: 0 auto;
+    margin: 0 auto;        
   }
 
   &__slide {
     display: flex;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
   }
 
   &__chevron {
+    position: relative;
+    z-index: 2;
     flex-shrink: 0;
     width: 36px;
     height: 36px;
     border-radius: var(--radius-pill);
     border: 1.5px solid rgba(245, 243, 240, 0.4);
-    background: transparent;
+    background: var(--color-bg-medium);
     color: var(--color-text-on-dark);
     display: flex;
     align-items: center;

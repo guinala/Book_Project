@@ -29,6 +29,56 @@ function CurrentReadingCard() {
   const { t } = useTranslation();
   const { shelfByStatus, loading, getEntry } = useShelf();
   const swiperRef = useRef<SwiperClass | null>(null);
+  const isSwiping = useRef(false);
+
+  const simulateSwipe = (dir: "next" | "prev") => {
+    const swiper = swiperRef.current;
+    if (!swiper || isSwiping.current || swiper.animating) return;
+
+    if (dir === "next" && swiper.isEnd) { swiper.slideNext(); return; }
+    if (dir === "prev" && swiper.isBeginning) { swiper.slidePrev(); return; }
+
+    const el = swiper.wrapperEl;
+    const rect = el.getBoundingClientRect();
+    const y = rect.top + rect.height / 2;
+    const startX = rect.left + rect.width / 2;
+    const totalDx = (dir === "next" ? -1 : 1) * rect.width * 0.6;
+    const frames = 12;
+
+    const fire = (type: string, x: number) =>
+      el.dispatchEvent(
+        new PointerEvent(type, {
+          pointerId: 1,
+          pointerType: "touch",
+          isPrimary: true,
+          button: 0,
+          buttons: type === "pointerup" ? 0 : 1,
+          bubbles: true,
+          cancelable: true,
+          clientX: x,
+          clientY: y,
+        })
+      );
+
+    isSwiping.current = true;
+    fire("pointerdown", startX);
+
+    let frame = 0;
+    const step = () => {
+      frame += 1;
+      fire("pointermove", startX + (totalDx * frame) / frames);
+      if (frame < frames) {
+        requestAnimationFrame(step);
+      } else {
+        fire("pointerup", startX + totalDx);
+        isSwiping.current = false;
+      }
+    };
+    requestAnimationFrame(step);
+  };
+
+  const goNext = () => simulateSwipe("next");
+  const goPrev = () => simulateSwipe("prev");
 
   const topReading = useMemo(() => {
     const entries: ShelfEntry[] = [];
@@ -101,7 +151,7 @@ function CurrentReadingCard() {
               <button
                 type="button"
                 className="reading-carousel__chevron reading-carousel__chevron--prev"
-                onClick={() => swiperRef.current?.slidePrev()}
+                onClick={goPrev}
                 aria-label={t("myLibrary.prevBook")}
               >
                 <ChevronLeft />
@@ -112,12 +162,12 @@ function CurrentReadingCard() {
               modules={[EffectCards, Keyboard]}
               effect="cards"
               cardsEffect={{
-                perSlideOffset: 8,
-                perSlideRotate: 2,
+                perSlideOffset: 4,
+                perSlideRotate: 3,
                 rotate: true,
-                slideShadows: false,
+                slideShadows: true,
               }}
-              loop={topReading.length > 1}
+              rewind={topReading.length > 1}
               grabCursor
               keyboard={{ enabled: true, onlyInViewport: true }}
               initialSlide={initialSlide}
@@ -128,6 +178,7 @@ function CurrentReadingCard() {
               }}
               className="reading-carousel__swiper"
             >
+
               {topReading.map((entry) => (
                 <SwiperSlide key={entry.book.key} className="reading-carousel__slide">
                   <ReadingCardContent
@@ -149,7 +200,7 @@ function CurrentReadingCard() {
               <button
                 type="button"
                 className="reading-carousel__chevron reading-carousel__chevron--next"
-                onClick={() => swiperRef.current?.slideNext()}
+                onClick={goNext}
                 aria-label={t("myLibrary.nextBook")}
               >
                 <ChevronRight />

@@ -83,9 +83,9 @@ export const ROUTES = [
         path: "legal/terms", 
         element: <TermsPage /> 
       },
-      { 
-        path: "legal/privacy", 
-        element: <PrivacyPage /> 
+      {
+        path: "legal/privacy",
+        element: <PrivacyPage />
       },
     ],
   },
