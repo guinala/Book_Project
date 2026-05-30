@@ -20,6 +20,12 @@ const SCROLL_THRESHOLD = 80;
 function AppShell() {
   const { miniNavEnabled } = usePreferences();
   const [scrolled, setScrolled] = useState(false);
+  const [reloadCount, setReloadCount] = useState(0);
+
+  const reloadCurrent = () => {
+    setReloadCount((c) => c + 1);
+    window.scrollTo({ top: 0});
+  };
 
   useEffect(() => {
     if (!miniNavEnabled) {
@@ -33,10 +39,10 @@ function AppShell() {
 
   return (
     <>
-      <Navbar hidden={scrolled} />
-      <NavbarMini visible={scrolled} />
+      <Navbar hidden={scrolled} onActiveClick={reloadCurrent}/>
+      <NavbarMini visible={scrolled} onActiveClick={reloadCurrent}/>
       <main>
-        <Outlet />
+        <Outlet key={reloadCount}/>
       </main>
       <Footer />
       <AppToaster />

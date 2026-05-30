@@ -82,7 +82,7 @@
       "wantToRead": "Quiero leer",
       "reading": "Leyendo",
       "finished": "Acabado",
-      "didNotFinish": "No acabado"
+      "didNotFinish": "Abandonado"
     },
     "progress": {
       "title": "Progresos",

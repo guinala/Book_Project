@@ -20,7 +20,7 @@
     margin-right: calc(50% - 50vw);
     width: 100vw;
     min-height: 480px;
-    background: radial-gradient(120% 130% at 50% 118%, #fff 45%, var(--color-bg-darkest) 88%);
+    background: radial-gradient(circle 500px at 50% 50%, var(--color-bg-darkest) 35%, #fff 100%);
     padding: var(--space-6) var(--space-5);
     display: flex;
     flex-direction: column;

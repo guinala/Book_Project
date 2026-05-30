@@ -9,5 +9,6 @@ export type RegisterFormValues = {
   name: string;
   surname: string;
   birthDate: string;
+  username: string;
   acceptedTerms: boolean;
 }

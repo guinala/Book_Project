@@ -11,6 +11,8 @@ import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import { createUserProfile, userProfileExists } from "@/services/firebase/firebaseUsers";
 import { CURRENT_TERMS_VERSION } from "@/services/legal/termsVersion";
 import TermsConsentModal from "@/components/auth/TermsConsentModal";
+import { setUsername } from "@/services/firebase/firebaseUsernames";
+import UsernameSetupModal from "../UsernameSetupModal";
 
 type Provider = "google" | "apple";
 
@@ -57,7 +59,9 @@ export default function SocialSignInButton({ provider, disabled, onError }: Soci
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [pending, setPending] = useState<PendingUser | null>(null);
-  const [accepting, setAccepting] = useState(false);
+  const [step, setStep] = useState<"terms" | "username">("terms");
+  const [processing, setProcessing] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
   const config = PROVIDER_CONFIG[provider];
 
   async function handleSignIn() {
@@ -69,6 +73,8 @@ export default function SocialSignInButton({ provider, disabled, onError }: Soci
       const isFirstSignIn = getIsNewUser(credential) || !profileExists;
 
       if (isFirstSignIn) {
+        setStep("terms");
+        setUsernameError("");
         setPending({
           uid: credential.user.uid,
           email: credential.user.email ?? "",
@@ -84,9 +90,18 @@ export default function SocialSignInButton({ provider, disabled, onError }: Soci
     }
   }
 
-  async function handleAccept() {
-    if (!pending) return;
-    setAccepting(true);
+  function handleAcceptTerms() {
+    setUsernameError("");
+    setStep("username");
+  }
+
+  async function handleSubmitUsername(username: string) {
+    if (!pending) {
+      return;
+    }
+    setProcessing(true);
+    setUsernameError("");
+
     try {
       await createUserProfile(pending.uid, {
         email: pending.email,
@@ -95,16 +110,22 @@ export default function SocialSignInButton({ provider, disabled, onError }: Soci
         acceptedTermsAt: new Date().toISOString(),
         acceptedTermsVersion: CURRENT_TERMS_VERSION,
       });
+      await setUsername(pending.uid, username);
       setPending(null);
     } catch (error) {
-      onError?.(getFirebaseErrorMessage(error));
+      if (error instanceof Error && error.message === "USERNAME_TAKEN") {
+        setUsernameError(t("authErrors.username-taken"));
+      } else {
+        onError?.(getFirebaseErrorMessage(error));
+      }
     } finally {
-      setAccepting(false);
+      setProcessing(false);
     }
   }
 
   async function handleCancel() {
     setPending(null);
+    setUsernameError("");
     try {
       await logoutUser();
     } catch {
@@ -124,9 +145,17 @@ export default function SocialSignInButton({ provider, disabled, onError }: Soci
         {t(config.labelKey)}
       </button>
       <TermsConsentModal
-        open={pending !== null}
-        isProcessing={accepting}
-        onAccept={handleAccept}
+        open={pending !== null && step === "terms"}
+        isProcessing={false}
+        onAccept={handleAcceptTerms}
+        onCancel={handleCancel}
+      />
+      <UsernameSetupModal
+        open={pending !== null && step === "username"}
+        uid={pending?.uid ?? ""}
+        isProcessing={processing}
+        error={usernameError}
+        onSubmit={handleSubmitUsername}
         onCancel={handleCancel}
       />
     </>

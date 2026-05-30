@@ -13,7 +13,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       const isEmailPasswordUser = firebaseUser?.providerData[0]?.providerId === "password";
       if (firebaseUser && isEmailPasswordUser && !firebaseUser.emailVerified) {
-        void signOut(auth);
         setUser(null);
       } else {
         setUser(firebaseUser);

@@ -4,12 +4,13 @@
   width: 100%;
   margin: 0 auto;
   padding: 2rem;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
 main {
   padding-top: calc(var(--navbar-height) + var(--space-2));
+  padding-bottom: var(--space-40);
   flex: 1;
 }

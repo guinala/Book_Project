@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
 import { logoutUser, registerWithEmail, sendVerificationEmail, isEmailInUse } from "@/services/firebase/firebaseAuth";
@@ -8,14 +8,18 @@ import { getFirebaseErrorMessage } from "@/services/firebase/firebaseErrors";
 import FormInput from "@/components/auth/form-components/FormInput";
 import GoogleFormInput from "@/components/auth/form-components/GoogleFormInput";
 import { CURRENT_TERMS_VERSION } from "@/services/legal/termsVersion";
+import { useUsernameAvailability } from "@/hooks/useUsernameAvailability";
+import { setUsername } from "@/services/firebase/firebaseUsernames";
 
 export default function RegisterForm() {
   const { t } = useTranslation();
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
-    defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "", acceptedTerms: false },
+  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
+    defaultValues: { email: "", password: "", name: "", surname: "", birthDate: "", username: "", acceptedTerms: false },
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
+  const usernameValue = watch("username");
+  const usernameStatus = useUsernameAvailability(usernameValue);
   const [firebaseError, setFirebaseError] = useState("");
 
   const maxBirthDate = useMemo(() => {
@@ -27,19 +31,26 @@ export default function RegisterForm() {
   const [verificationSent, setVerificationSent] = useState(false);
   const [sentEmail, setSentEmail] = useState("");
 
+  useEffect(() => {
+    if (verificationSent) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [verificationSent]);
+
   async function onSubmit(data: RegisterFormValues) {
     setFirebaseError("");
     try {
       const credential = await registerWithEmail(data.email, data.password);
       try {
         await createUserProfile(credential.user.uid, {
-          email: data.email, 
-          name: data.name, 
-          surname: data.surname, 
+          email: data.email,
+          name: data.name,
+          surname: data.surname,
           birthDate: data.birthDate,
           acceptedTermsAt: new Date().toISOString(),
           acceptedTermsVersion: CURRENT_TERMS_VERSION,
         });
+        await setUsername(credential.user.uid, data.username);
       } catch (profileError) {
         await credential.user.delete();
         throw profileError;
@@ -49,7 +60,11 @@ export default function RegisterForm() {
       setSentEmail(data.email);
       setVerificationSent(true);
     } catch (error) {
-      setFirebaseError(getFirebaseErrorMessage(error));
+      if (error instanceof Error && error.message === "USERNAME_TAKEN") {
+        setFirebaseError(t("authErrors.username-taken"));
+      } else {
+        setFirebaseError(getFirebaseErrorMessage(error));
+      }
     }
   }
 
@@ -82,6 +97,30 @@ export default function RegisterForm() {
             error={errors.surname}
             registration={register("surname", { required: t("authErrors.fieldRequired") })}
           />
+        </div>
+        <div className="auth__field-group">
+          <FormInput
+            type="text"
+            label={t("auth.usernamePlaceholder")}
+            required
+            error={errors.username}
+            registration={register("username", {
+              required: t("authErrors.username-required"),
+              pattern: {
+                value: /^[a-z0-9_]{3,20}$/,
+                message: t("authErrors.username-invalid"),
+              },
+            })}
+          />
+          {usernameStatus === "checking" && (
+            <p className="auth__hint">{t("auth.usernameChecking")}</p>
+          )}
+          {usernameStatus === "taken" && (
+            <p className="auth__error">{t("authErrors.username-taken")}</p>
+          )}
+          {usernameStatus === "available" && (
+            <p className="auth__success">{t("auth.usernameAvailable")}</p>
+          )}
         </div>
         <FormInput
           type="date"
@@ -161,7 +200,11 @@ export default function RegisterForm() {
           <p className="auth__error" role="alert">{errors.acceptedTerms.message}</p>
         )}
 
-        <button className="auth__btn-primary" type="submit" disabled={isSubmitting}>
+        <button
+          className="auth__btn-primary"
+          type="submit"
+          disabled={isSubmitting || usernameStatus === "checking" || usernameStatus === "taken"}
+        >
           {isSubmitting ? t("auth.registering") : t("auth.registerBtn")}
         </button>
 

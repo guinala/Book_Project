@@ -82,7 +82,7 @@
       "wantToRead": "Want to read",
       "reading": "Reading",
       "finished": "Finished",
-      "didNotFinish": "Did not finish"
+      "didNotFinish": "Abandoned"
     },
     "progress": {
       "title": "Progress",
