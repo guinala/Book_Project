@@ -1,0 +1,19 @@
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-6) 0;
+
+  &__btn {
+    padding: var(--space-3) var(--space-6);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    color: var(--color-text-primary);
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+  }
+}

@@ -5,17 +5,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ShelfContext } from "./shelf_init";
 import { useAuth } from "@/context/auth/useAuth";
 import { notifyProgressUpdated, notifyShelfAdded, notifyShelfRemoved, notifyShelfStatusChanged } from "@/utils/toast";
-import { useExploreCache } from "../explore-cache/useExploreCache";
 import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
 import { groupShelfByStatus, localizeBook } from "@/utils/shelf";
 import { useShelfLangComplete } from "@/pages/profile/hooks/useShelfLangComplete";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Estantería "vacía" 
 const EMPTY_ENTRIES = new Map<string, ShelfEntry>();
 
 export function ShelfProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const exploreCache = useExploreCache();
+  const queryClient = useQueryClient();
   const uid = user?.uid ?? null;
   const { lang } = useCurrentLanguage();
   const [entries, setEntries] = useState<Map<string, ShelfEntry>>(new Map());
@@ -74,7 +74,10 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await addToShelf(uid, book, status, prevStatus);
-      exploreCache.markDirty();
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === "section" || q.queryKey[0] === "explore-feed",
+        refetchType: "none",
+      });
 
       if (!opts?.silent) {
         const localizedBook = localizeBook(book, lang);
@@ -91,7 +94,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     } catch {
       setEntries(rollback);
     }
-  }, [uid, lang, exploreCache]);
+  }, [uid, lang, queryClient]);
 
   const removeBook =  useCallback(async (bookKey: string, opts?: { silent?: boolean }) => {
     if (!uid) return;
@@ -108,7 +111,10 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await removeFromShelf(uid, bookKey);
-      exploreCache.markDirty();
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === "section" || q.queryKey[0] === "explore-feed",
+        refetchType: "none",
+      });
 
       if (!opts?.silent) {
         const localizedBook = localizeBook(prev.book, lang);
@@ -119,7 +125,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     } catch {
       setEntries(rollback);
     }
-  }, [uid, lang, exploreCache]);
+  }, [uid, lang, queryClient]);
 
   const getStatus = useCallback(
     (bookKey: string) => visibleEntries.get(encodeKey(bookKey))?.status ?? null,
@@ -176,7 +182,10 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await updateReadingProgress(uid, existing, currentPage, opts?.note, opts?.rating, opts?.review, opts?.status);
-      exploreCache.markDirty();
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === "section" || q.queryKey[0] === "explore-feed",
+        refetchType: "none",
+      });
       
       if (!opts?.silent) {
         const localizedBook = localizeBook(existing.book, lang);
@@ -194,7 +203,7 @@ export function ShelfProvider({ children }: { children: React.ReactNode }) {
     } catch {
       setEntries(rollback);
     }
-  },[uid, lang, exploreCache]);
+  },[uid, lang, queryClient]);
 
   useEffect(() => {
     apiRef.current = { addBook, removeBook, updateProgress };

@@ -8,9 +8,9 @@ import type { ExploreSectionParams, ExploreSectionType } from "@/types/ExploreTy
 import { moreGenreTitleKey } from "@/utils/genreUtils";
 import { ChevronLeft } from "lucide-react";
 import "./ExploreSectionPage.scss";
-import { useExploreCache } from "@/context/explore-cache/useExploreCache";
 import { useShelfDerivedFavorites } from "@/pages/explore/hooks/useShelfDerivedFavorites";
-import { useEffect } from "react";
+import { useState } from "react";
+import LoadMoreSentinel from "@/components/common/LoadMoreSentinel";
 
 const SECTION_TITLE_KEYS: Record<ExploreSectionType, string> = {
   "trending": "explore.sections.trending",
@@ -47,7 +47,6 @@ function renderTitle(title: string, highlight: string | undefined) {
 
 export default function ExploreSectionPage() {
   const { type } = useParams<{ type: string }>();
-  const { clearIfDirty } = useExploreCache();
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   const { lang } = useCurrentLanguage();
@@ -75,12 +74,16 @@ export default function ExploreSectionPage() {
     sectionType,
     params,
     lang,
-    24,
+    100,
     isWaiting,
   );
 
   const books = isWaiting ? (shelfDerived?.wantToReadBooks ?? []) : fetchedBooks;
   const loading = isWaiting ? shelfDerived === null : fetchLoading;
+  const PAGE = 24;
+  const [visibleCount, setVisibleCount] = useState(PAGE);
+  const visibleBooks = books.slice(0, visibleCount);
+  const hasMore = visibleCount < books.length;
 
   const titleKey = isFallback && SECTION_FALLBACK_KEYS[sectionType]
     ? SECTION_FALLBACK_KEYS[sectionType]!
@@ -102,11 +105,6 @@ export default function ExploreSectionPage() {
     sectionType === "more-genre" ? (params.favoriteGenreLabel ?? params.favoriteGenre) :
     sectionType === "more-author" ? params.favoriteAuthorName :
     undefined;
-
-
-  useEffect(() => {
-    clearIfDirty();
-  }, [clearIfDirty]);
 
   return (
     <div className="section-page">
@@ -134,11 +132,21 @@ export default function ExploreSectionPage() {
       )}
 
       {!loading && !error && (
-        <div className="section-page__grid">
-          {books.map(book => (
-            <BookCard key={book.key} book={book} />
-          ))}
-        </div>
+        <>
+          <div className="section-page__grid">
+            {visibleBooks.map(book => (
+              <BookCard key={book.key} book={book} />
+            ))}
+          </div>
+          <LoadMoreSentinel
+            hasMore={hasMore}
+            loading={false}
+            onLoadMore={() => setVisibleCount(c => c + PAGE)}
+          />
+          {!hasMore && books.length > PAGE && (
+            <p className="section-page__end">{t("explore.noMoreResults")}</p>
+          )}
+        </>
       )}
     </div>
   );

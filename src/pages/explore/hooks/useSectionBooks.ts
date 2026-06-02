@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import type { Book } from "@/types/Book";
 import type { ExploreSectionParams, ExploreSectionType, UseSectionResult } from "@/types/ExploreTypes";
 import {
@@ -11,12 +10,19 @@ import {
   getTopRatedBooks,
   getTrendingBooks,
 } from "@/services/firebase/firebaseBooks";
-import { useExploreCache } from "../../../context/explore-cache/useExploreCache";
 import { useAuth } from "@/context/auth/useAuth";
-import type { ExploreCacheEntry } from "@/context/explore-cache/explore_cache_init";
-import { logger } from "@/utils/logger";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 type FetchResult = { books: Book[]; isFallback: boolean; authorName?: string };
+
+function dedupByKey(books: Book[]): Book[] {
+  const seen = new Set<string>();
+  return books.filter(b => {
+    if (seen.has(b.key)) return false;
+    seen.add(b.key);
+    return true;
+  });
+}
 
 export function useSectionBooks(
   type: ExploreSectionType,
@@ -25,12 +31,10 @@ export function useSectionBooks(
   count = 6,
   disabled = false,
 ): UseSectionResult {
-  const cache = useExploreCache();
   const { user } = useAuth();
   const uid = user?.uid ?? null;
 
-  const cacheKey = JSON.stringify({
-    type, lang, count, uid,
+  const normalizedParams = {
     referenceBookKey: params.referenceBookKey,
     referenceGenre: params.referenceGenre,
     favoriteGenre: params.favoriteGenre,
@@ -38,100 +42,23 @@ export function useSectionBooks(
     favoriteGenreLabel: params.favoriteGenreLabel,
     userAuthorKeys: params.userAuthorKeys?.join(",") ?? "",
     favoritesReferenceBookKey: params.favoritesReferenceBook?.key,
+  };
+
+  const query = useQuery({
+    queryKey: ["section", type, lang, count, uid, normalizedParams],
+    queryFn: ({ signal }) => fetchSection(type, params, lang, count, signal),
+    enabled: !disabled,
+    placeholderData: keepPreviousData,
   });
 
-  const initialEntry = cache.get(cacheKey);
-  const [books, setBooks] = useState<Book[]>(() => initialEntry?.books ?? []);
-  const [isFallback, setIsFallback] = useState<boolean>(() => initialEntry?.isFallback ?? false);
-  const [loading, setLoading] = useState<boolean>(() => !initialEntry && !disabled);
-  const [error, setError] = useState<string | null>(null);
-  const [authorName, setAuthorName] = useState<string | undefined>(initialEntry?.authorName);
-
-  useEffect(() => {
-    if (disabled) {
-      setLoading(false);
-      return;
-    }
-
-    const entry = cache.get(cacheKey);
-    if (entry) {
-      setBooks(entry.books);
-      setIsFallback(entry.isFallback);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
-    const controller = new AbortController();
-    setLoading(true);
-    setError(null);
-
-    fetchSection(type, params, lang, count, controller.signal)
-      .then(result => {
-        if (controller.signal.aborted) return;
-        const seen = new Set<string>();
-        const unique = result.books.filter(b => {
-          if (seen.has(b.key)) return false;
-          seen.add(b.key);
-          return true;
-        });
-        const newEntry: ExploreCacheEntry = { books: unique, isFallback: result.isFallback, authorName: result.authorName };
-        cache.set(cacheKey, newEntry);
-        setBooks(unique);
-        setIsFallback(result.isFallback);
-        setAuthorName(result.authorName);
-      })
-      .catch(err => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        logger.error("[ExploreSection error]", err);
-        setError("error");
-      })
-      .finally(() => {
-        if (controller.signal.aborted) return;
-        setLoading(false);
-      });
-
-    return () => controller.abort();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cacheKey, disabled]);
-
-  const retry = useCallback(async () => {
-    if (disabled) {
-      return;
-    }
-    setLoading(true);
-    setError(null);
-
-    const controller = new AbortController();
-
-    fetchSection(type, params, lang, count, controller.signal)
-      .then(result => {
-        if (controller.signal.aborted) return;
-        const seen = new Set<string>();
-        const unique = result.books.filter(b => {
-          if (seen.has(b.key)) {
-            return false;
-          }
-          seen.add(b.key);
-          return true;
-        });
-        cache.set(cacheKey, { books: unique, isFallback: result.isFallback, authorName: result.authorName });
-        setBooks(unique);
-        setIsFallback(result.isFallback);
-        setAuthorName(result.authorName);
-      })
-      .catch(err => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        logger.error("[ExploreSection error]", err);
-        setError("error");
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cacheKey, disabled]);
-
-  return { books, loading, error, retry, isFallback, authorName };
+  return {
+    books: dedupByKey(query.data?.books ?? []),
+    loading: query.isPending && !disabled,
+    error: query.error ? "error" : null,
+    retry: () => { query.refetch(); },
+    isFallback: query.data?.isFallback ?? false,
+    authorName: query.data?.authorName,
+  };
 }
 
 async function fetchSection(

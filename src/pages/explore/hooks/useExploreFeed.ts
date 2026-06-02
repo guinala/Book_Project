@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import type { Book } from "@/types/Book";
 import type { ExploreSectionType } from "@/types/ExploreTypes";
 import {
@@ -12,8 +11,7 @@ import {
   getTrendingBooks,
 } from "@/services/firebase/firebaseBooks";
 import { useAuth } from "@/context/auth/useAuth";
-import { useExploreCache } from "../../../context/explore-cache/useExploreCache";
-import { logger } from "@/utils/logger";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export type SectionEntry = {
   id: string;
@@ -85,7 +83,6 @@ async function buildSections(
     return books.filter(b => !userShelfKeys.has(b.key));
   }
 
-  // Reorders books so unseen ones appear first, then registers the new first ABOVE_FOLD as visible.
   function surfaceFresh(books: Book[]): Book[] {
     const fresh = books.filter(b => !globalVisibleKeys.has(b.key));
     const repeated = books.filter(b => globalVisibleKeys.has(b.key));
@@ -94,10 +91,9 @@ async function buildSections(
     return reordered;
   }
 
-  // 1. Trending — no shelf filter: reflects platform popularity regardless of user's shelf
+  // 1. Trending
   const trendingBooks = await getTrendingBooks(lang, FETCH_LIMIT, signal);
   if (trendingBooks.length > 0) {
-    // Register trending books as visible so subsequent sections surface different books first.
     trendingBooks.slice(0, ABOVE_FOLD).forEach(b => globalVisibleKeys.add(b.key));
     entries.push({ id: "trending", type: "trending", books: trendingBooks, isFallback: false });
   } else {
@@ -264,80 +260,20 @@ async function buildSections(
 }
 
 export function useExploreFeed(params: ExploreSectionsParams, disabled = false): ExploreSectionsResult {
-  const cache = useExploreCache();
   const { user } = useAuth();
   const uid = user?.uid ?? null;
 
-  const cacheKey = `feed:${params.lang}|${uid ?? ""}|${params.favoritesReferenceBook?.key ?? ""}`;
-  logger.log("[useExploreFeed] render", {
-    cacheKey,
-    hasInitial: !!cache.getFeed(cacheKey),
-    disabled,
+  const query = useQuery({
+    queryKey: ["explore-feed", params.lang, uid, params.favoritesReferenceBook?.key ?? ""],
+    queryFn: ({ signal }) => buildSections(params, signal),
+    enabled: !disabled,
+    placeholderData: keepPreviousData,
   });
-  const initial = cache.getFeed(cacheKey);
-  const [sections, setSections] = useState<SectionEntry[]>(() => initial ?? []);
-  const [loading, setLoading] = useState<boolean>(() => !initial && !disabled);
-  const [error, setError] = useState<string | null>(null);
 
-  const paramsRef = useRef(params);
-  useEffect(() => { paramsRef.current = params; });
-
-  const fetch = useCallback(async (bypassCache = false, signal?: AbortSignal) => {
-    logger.log("[useExploreFeed] fetch invoked", {
-      cacheKey,
-      bypassCache,
-      hasEntry: !!cache.getFeed(cacheKey),
-      disabled,
-    });
-    if (disabled) {
-      logger.log("[useExploreFeed] setLoading(false) path=disabled");
-      setLoading(false);
-      return;
-    }
-    if (!bypassCache) {
-      const entry = cache.getFeed(cacheKey);
-      if (entry) {
-        setSections(entry);
-        logger.log("[useExploreFeed] setLoading(false) path=cache-hit");
-        setLoading(false);
-        setError(null);
-        return;
-      }
-    }
-    logger.log("[useExploreFeed] setLoading(TRUE) path=cache-miss");
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await buildSections(paramsRef.current, signal);
-      if (signal?.aborted) return;
-      cache.setFeed(cacheKey, result);
-      setSections(result);
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      logger.error("[useExploreFeed] buildSections failed", err);
-      setError(err instanceof Error ? err.message : "unknown");
-    } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
-    }
-  }, [cache, cacheKey, disabled]);
-
-  // useEffect(() => {
-  //   const controller = new AbortController();
-  //   void fetch(false, controller.signal);
-  //   return () => controller.abort();
-  // }, [fetch]);
-
-  // const retry = useCallback(() => {
-  //   const controller = new AbortController();
-  //   void fetch(true, controller.signal);
-  // }, [fetch]);
-  useEffect(() => {
-   fetch();
-  }, [fetch]);
-
-  const retry = useCallback(() => fetch(true), [fetch]);
-
-  return { sections, loading, error, retry };
+  return {
+    sections: query.data ?? [],
+    loading: query.isPending && !disabled,
+    error: query.error ? (query.error instanceof Error ? query.error.message : "unknown") : null,
+    retry: () => { query.refetch(); },
+  };
 }
