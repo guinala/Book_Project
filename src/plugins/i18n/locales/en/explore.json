@@ -10,6 +10,8 @@
     "saveTooltip": "Sign in to save",
     "seeMore": "See more",
     "retry": "Retry",
+    "loadMore": "Load more",
+    "noMoreResults": "No more results",
     "sectionError": "Could not load this section",
     "sections": {
       "trending": "Trending this week",

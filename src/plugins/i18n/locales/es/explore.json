@@ -10,6 +10,8 @@
     "saveTooltip": "Inicia sesión para guardar",
     "seeMore": "Ver más",
     "retry": "Reintentar",
+    "loadMore": "Cargar más",
+    "noMoreResults": "No hay más resultados",
     "sectionError": "No se pudo cargar esta sección",
     "sections": {
       "trending": "Tendencias esta semana",
