@@ -81,8 +81,10 @@
 
   // Save button + dropdown 
   &__save-wrapper {
-    position: relative;
-    z-index: 2;
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    z-index: 20;
   }
 
   &__save-btn {

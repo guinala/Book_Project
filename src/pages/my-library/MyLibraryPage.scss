@@ -21,7 +21,7 @@
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
     width: 100vw;
-    min-height: 480px;
+    min-height: 620px;
     padding: var(--space-6) var(--space-5);
     display: flex;
     flex-direction: column;
@@ -34,9 +34,10 @@
       position: absolute;
       inset: 0;
       margin: auto;
-      width: 360px;
+      width: 550px;
       aspect-ratio: 1;
-      background: var(--color-border-strong);
+      //background: var(--color-border-strong);
+      background: #f9dbc1;
       z-index: -1;
 
       mask:
@@ -47,31 +48,30 @@
       -webkit-mask-composite: source-in;
 
       @include from($bp-md) {
-        width: 460px;
+        width: 680px;
       }
     }
 
-    // Núcleo gris sólido (encima del halo): tapa el grano del centro
-    // y deja solo el borde con puntitos. Se desvanece suave en su orilla.
     &::after {
       content: "";
       position: absolute;
       inset: 0;
       margin: auto;
-      width: 280px;
+      width: 445px;
       aspect-ratio: 1;
-      background: var(--color-border-strong);
+      //background: var(--color-border-strong);
+      background: #f9dbc1;
       mask: radial-gradient(circle closest-side, #000 82%, transparent 100%);
       z-index: -1;
 
       @include from($bp-md) {
-        width: 380px;
+        width: 575px;
       }
     }
 
     @include from($bp-md) {
       margin-top: calc(-1 * (var(--space-10) + var(--space-2) + 2rem));
-      min-height: 580px;
+      min-height: 720px;
       padding: var(--space-8) var(--space-7);
     }
   }
