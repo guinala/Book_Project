@@ -13,7 +13,9 @@ import i18n from "./plugins/i18n/i18n";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { NotificationsProvider } from "./context/notifications/NotificationsContext";
 import AppToaster from "./components/common/Toaster/AppToaster";
-import { ExploreCacheProvider } from "./context/explore-cache/ExploreCacheContext";
+import { queryClient } from "./services/lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const SCROLL_THRESHOLD = 80;
 
@@ -61,19 +63,20 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <PreferencesProvider>
-          <AuthProvider>
-            <ExploreCacheProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <PreferencesProvider>
+            <AuthProvider>
               <ShelfProvider>
                 <NotificationsProvider>
                   <AppShell />
                 </NotificationsProvider>
               </ShelfProvider>
-            </ExploreCacheProvider>
-          </AuthProvider>
-        </PreferencesProvider>
-      </ThemeProvider>
+            </AuthProvider>
+          </PreferencesProvider>
+        </ThemeProvider>
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

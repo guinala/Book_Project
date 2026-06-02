@@ -81,7 +81,8 @@ export async function searchBooks(
   params: Record<string, string>,
   limit: number,
   lang: string,
-  signal: AbortSignal
+  signal: AbortSignal,
+  page = 1,
 ): Promise<{ books: Book[]; totalResults: number }> {
   const langCode = getLangIso3Letters(lang);
   const unknownAuthor = i18n.t("book.unknownAuthor");
@@ -92,6 +93,7 @@ export async function searchBooks(
       fields: SEARCH_FIELDS,
       limit,
       lang,
+      page,
     },
     signal,
   });

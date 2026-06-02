@@ -1,32 +1,27 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useBookSearch } from "@/pages/explore/hooks/useBookSearch";
 import BookCard from "@/components/book/cards/BookCard";
 import { Search, X } from "lucide-react";
 import "./SearchPage.scss";
+import { useBookSearchInfinite } from "@/hooks/useBookSearchInfinite";
+import { useCurrentLanguage } from "@/plugins/i18n/useCurrentLanguage";
+import LoadMoreSentinel from "@/components/common/LoadMoreSentinel";
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { lang } = useCurrentLanguage();
   const q = searchParams.get("q") ?? "";
 
   const [inputValue, setInputValue] = useState(q);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { books, loading, error, totalResults, fetchBooks, resetBookResults } = useBookSearch();
+  const { books, loading, error, totalResults, hasNextPage, isFetchingNextPage, fetchNextPage } = useBookSearchInfinite(q, "todo", lang);
 
   useEffect(() => {
     setInputValue(q);
   }, [q]);
-
-  useEffect(() => {
-    if (q.trim()) {
-      fetchBooks(q.trim(), "todo");
-    } else {
-      resetBookResults();
-    }
-  }, [q, fetchBooks, resetBookResults]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,6 +99,11 @@ export default function SearchPage() {
                 <BookCard key={book.key} book={book} />
               ))}
             </div>
+            <LoadMoreSentinel
+              hasMore={hasNextPage}
+              loading={isFetchingNextPage}
+              onLoadMore={fetchNextPage}
+            />
           </>
         )}
       </div>
