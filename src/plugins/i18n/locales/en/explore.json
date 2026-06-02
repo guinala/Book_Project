@@ -58,6 +58,7 @@
     "clearLabel": "Clear search",
     "searchBtnLabel": "Search",
     "emptyPrompt": "Type something to search for books",
-    "noResultsSubtitle": "Try a different search"
+    "noResultsSubtitle": "Try a different search",
+    "seeAllResults": "See all results"
   }
 }
