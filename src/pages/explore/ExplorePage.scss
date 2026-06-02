@@ -1,60 +1,10 @@
 @use '../../styles/lib' as *;
 
 .explore-page {
-  &__search-status {
-    @include container;
-    padding-top: var(--space-3);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: var(--text-sm);
-
-    @include from($bp-md) {
-      padding-top: var(--space-4);
-      font-size: var(--text-md);
-    }
-
-    p { margin: 0; }
-  }
-
-  &__clear-btn {
-    background: none;
-    border: none;
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    padding: 4px 0;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    transition: color var(--transition-fast);
-
-    svg { width: 15px; height: 15px; flex-shrink: 0; }
-
-    &:hover { color: var(--color-text-primary); }
-  }
-
   &__section {
     @include container;
     padding-top: var(--space-6);
     padding-bottom: var(--space-16);
-  }
-
-  &__search-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
-    align-items: start;
-
-    @include from($bp-md) {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    @include from($bp-lg) {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: var(--space-4);
-    }
   }
 
   &__sections {

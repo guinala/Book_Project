@@ -58,6 +58,7 @@
     "clearLabel": "Borrar Búsqueda",
     "searchBtnLabel": "Buscar",
     "emptyPrompt": "Escribe algo para buscar libros",
-    "noResultsSubtitle": "Prueba con otra búsqueda"
+    "noResultsSubtitle": "Prueba con otra búsqueda",
+    "seeAllResults": "Ver más resultados"
   }
 }

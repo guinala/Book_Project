@@ -1,44 +1,37 @@
 import { useState, useRef, useEffect } from "react";
-import type { SearchFilter } from "@/types/Search";
 import "./Searchbar.scss";
 import { useTranslation } from "react-i18next";
 import { Search, X } from "lucide-react";
+import { useNavigate } from "react-router";
 
 type SearchBarProps = {
-  onSearch?: (query: string, filter: SearchFilter) => void;
   placeholder?: string;
   initialQuery?: string;
   debounceMs?: number;
-}
+};
 
-export default function SearchBar({ onSearch, initialQuery = "", debounceMs = 400 }: SearchBarProps) {
+export default function SearchBar({ initialQuery = "", debounceMs = 400 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  useEffect(() => {
+ useEffect(() => {
     const trimmed = query.trim();
-
-    if (!trimmed) {
-      onSearch?.("", "todo");
-      return;
-    }
+    if (trimmed.length < 3) return;
 
     const timer = window.setTimeout(() => {
-      onSearch?.(trimmed, "todo");
+      navigate(`/search?q=${encodeURIComponent(trimmed)}`);
     }, debounceMs);
 
     return () => window.clearTimeout(timer);
-  }, [query, debounceMs, onSearch]);
-
+  }, [query, debounceMs, navigate]);
 
   const inputRowClass = [
     "searchbar__input-row",
     isFocused ? "searchbar__input-row--focused" : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ].filter(Boolean).join(" ");
 
   return (
     <div className="searchbar">
