@@ -4,7 +4,7 @@
     "noCurrentReading": "No estás leyendo ningún libro",
     "nextBook": "Ver siguiente libro leyendo",
     "prevBook": "Ver libro anterior",
-    "readingCount": "{{current}}/{{total}} libros leyendo",
+    "readingCount": "{{current}}/{{total}}",
     "readingProgress": "Progreso",
     "pages": "{{current}}/{{total}} págs.",
     "shelfTitle": "Estantería",
@@ -109,31 +109,30 @@
       "drama": "Drama",
       "historical": "Histórica",
       "others": "Otros"
-    }
-  },
-  "historyModal": {
-    "title": "Historial de actividad",
-    "ariaLabel": "Historial de actividad",
-    "closeAria": "Cerrar",
-    "loading": "Cargando...",
-    "empty": "Sin actividad registrada para este libro.",
-    "pageProgress": "{{current}}/{{total}} pág.",
-    "pageProgressNoTotal": "{{current}} pág.",
-    "pagesAdded": "+{{count}} pág.",
-    "events": {
-      "reading_started": "Empezaste a leer",
-      "book_finished": "Terminaste de leer",
-      "progress": "Actualizaste el progreso",
-      "review": "Escribiste una reseña",
-      "list_created": "Creaste una lista",
-      "watchlist_add": "Añadiste a la lista"
     },
-    "timeAgo": {
-      "seconds": "hace unos segundos",
-      "minutes": "hace {{n}}m",
-      "hours": "hace {{n}}h",
-      "days": "hace {{n}}d"
+    "historyModal": {
+      "title": "Historial de actividad",
+      "ariaLabel": "Historial de actividad",
+      "closeAria": "Cerrar",
+      "loading": "Cargando...",
+      "empty": "Sin actividad registrada para este libro.",
+      "pageProgress": "{{current}}/{{total}} pág.",
+      "pageProgressNoTotal": "{{current}} pág.",
+      "pagesAdded": "+{{count}} pág.",
+      "events": {
+        "reading_started": "Empezaste a leer",
+        "book_finished": "Terminaste de leer",
+        "progress": "Actualizaste el progreso",
+        "review": "Escribiste una reseña",
+        "list_created": "Creaste una lista",
+        "watchlist_add": "Añadiste a la lista"
+      },
+      "timeAgo": {
+        "seconds": "hace unos segundos",
+        "minutes": "hace {{n}}m",
+        "hours": "hace {{n}}h",
+        "days": "hace {{n}}d"
+      }
     }
   }
-
 }

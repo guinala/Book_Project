@@ -57,7 +57,9 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-3);
-    padding: var(--space-4);
+    padding: var(--space-3);
+    height: 82px;
+    box-sizing: border-box;
     background: var(--color-bg-card);
     border: 1.5px dashed var(--color-border-medium);
     border-radius: var(--radius-xl);

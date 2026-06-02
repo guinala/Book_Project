@@ -22,7 +22,7 @@
     font-weight: var(--weight-semibold);
     margin: 0;
     letter-spacing: -0.01em;
-    color: var(--color-text-on-dark);
+    color: var(--color-text-primary);
   }
 
   &__header {
@@ -40,7 +40,7 @@
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
     letter-spacing: 0.02em;
-    color: var(--color-text-on-dark);
+    color: var(--color-text-primary);
   }
 
   &__stage {
