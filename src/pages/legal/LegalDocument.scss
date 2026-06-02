@@ -1,0 +1,48 @@
+@use '../../styles/lib' as *;
+
+.legal-document {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--page-padding-y) var(--page-padding-x);
+
+  &__title {
+    font-family: var(--font-editorial);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2);
+    line-height: 1.2;
+  }
+
+  &__updated {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+    margin: 0 0 var(--space-10);
+  }
+
+  &__section {
+    margin-bottom: var(--space-8);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-heading {
+    font-family: var(--font-editorial);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-3);
+    line-height: 1.3;
+  }
+
+  &__section-body {
+    font-family: var(--font-main);
+    font-size: var(--text-md);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin: 0;
+  }
+}

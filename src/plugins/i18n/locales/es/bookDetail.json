@@ -14,12 +14,13 @@
     "synopsis": "Sinopsis",
     "synopsisAriaLabel": "Sinopsis completa",
     "close": "Cerrar",
+    "yourReviewTitle": "Tu reseña",
     "reviewsTitle": "Reseñas de la comunidad",
     "reviewsSeeMore": "Ver más",
     "likeAriaLabel": "Me gusta ({{count}})",
     "commentAriaLabel": "Comentarios ({{count}})",
     "authorTitle": "Más sobre el autor",
-    "recsTitle": "Recomendaciones basadas en {{title}}",
+    "recsTitle": "También te puede gustar",
     "recsTitlePrefix": "Porque has leído",
     "recsCta": "Generar más"
   }

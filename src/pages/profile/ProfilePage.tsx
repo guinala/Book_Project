@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
-import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/context/auth/useAuth";
+import { useProfile } from "@/pages/profile/hooks/useProfile";
 import ProfileHeader from "@/components/profile/sections/ProfileHeader";
 import FavoriteBooksSection from "@/components/profile/sections/FavoriteBooksSection";
 import FavoriteBooksEditorModal from "@/components/profile/modals/FavoriteBooksEditorModal";
@@ -10,24 +10,18 @@ import ShelfSection from "@/components/shelf/sections/ShelfSection";
 import ActivitySection from "@/components/profile/sections/ActivitySection";
 import ListsSection from "@/components/shelf/sections/ListsSection";
 import FollowersModal from "@/components/profile/modals/FollowersModal";
-import type { ReadingList } from "@/components/shelf/cards/ListCard";
 import type { FavoriteBook } from "@/types/UserProfile";
-import listCover1 from "@/assets/covers/shelf-1.jpg";
-import listCover2 from "@/assets/covers/shelf-2.jpg";
-import listCover3 from "@/assets/covers/shelf-3.jpg";
-import listCover4 from "@/assets/covers/shelf-4.jpg";
-import listCover5 from "@/assets/covers/shelf-5.jpg";
 import "./ProfilePage.scss";
 import LockedProfileNotice from "@/components/profile/sections/LockedProfileNotice";
 import BlockedProfileNotice from "@/components/profile/sections/BlockedProfileNotice";
 import { lookupUidByUsername } from "@/services/firebase/firebaseUsernames";
 import FollowRequestsModal from "@/components/profile/modals/FollowRequestsModal";
-
-const READING_LISTS: ReadingList[] = [
-  { id: "recommended", nameKey: "myLibrary.lists.recommended", count: 12, coverUrls: [listCover1, listCover3, listCover2, listCover5] },
-  { id: "drama", nameKey: "myLibrary.lists.drama", count: 20, coverUrls: [listCover4, listCover5, listCover1, listCover3] },
-  { id: "women", nameKey: "myLibrary.lists.women", count: 9, coverUrls: [listCover3, listCover1, listCover4, listCover5] },
-];
+import ListEditorModal from "@/components/shelf/modals/ListEditorModal";
+import { useLists } from "@/hooks/useLists";
+import { useFollowActions } from "@/hooks/useFollowActions";
+import { useProfileShelf } from "@/pages/profile/hooks/useProfileShelf";
+import { useProfileActivity } from "@/pages/profile/hooks/useProfileActivity";
+import { useBlockActions } from "@/hooks/useBlockActions";
 
 export default function ProfilePage() {
   const { userId: paramUserId, username: paramUsername } = useParams<{
@@ -43,29 +37,23 @@ export default function ProfilePage() {
 
   const {
     profile,
-    shelf,
-    shelfLoading,
-    activity,
-    favorites,
     isOwnProfile,
-    isFollowing,
-    isBlocked,
     loading,
-    canViewFull,
-    hasPendingRequest,
-    follow,
-    unfollow,
-    cancelRequest,
-    block,
-    unblock,
-    incrementFollowers,
   } = useProfile(resolvedUserId ?? "");
+  const profileIsPublic = profile?.isPublic !== false;
+  const { isFollowing, hasPendingRequest, follow, unfollow, cancelRequest } = useFollowActions(resolvedUserId ?? "", isOwnProfile, profileIsPublic);
+  const canViewFull = isOwnProfile || profileIsPublic || isFollowing;
+  const { shelf, loading: shelfLoading } = useProfileShelf(resolvedUserId ?? "", isOwnProfile, canViewFull);
+  const { activity, favorites } = useProfileActivity(resolvedUserId ?? "", canViewFull);
+  const { isBlocked, block, unblock } = useBlockActions(resolvedUserId ?? "", isOwnProfile)
 
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [showFavEditor, setShowFavEditor] = useState(false);
   const [localFavorites, setLocalFavorites] = useState<FavoriteBook[]>(favorites);
   const [prevFavorites, setPrevFavorites] = useState(favorites);
   const [showRequests, setShowRequests] = useState(false);
+  const { lists, createList } = useLists(resolvedUserId ?? undefined);
+  const [listEditorOpen, setListEditorOpen] = useState(false);
 
   if (favorites !== prevFavorites) {
     setPrevFavorites(favorites);
@@ -184,7 +172,13 @@ export default function ProfilePage() {
 
           <div className="profile-page__bottom-row">
             <ActivitySection activity={activity} />
-            <ListsSection lists={READING_LISTS} />
+            <ListsSection
+              lists={lists}
+              userId={resolvedUserId}
+              isOwner={isOwnProfile}
+              onCreateList={() => setListEditorOpen(true)}
+              column
+            />
           </div>
         </>
       ) : (
@@ -195,12 +189,13 @@ export default function ProfilePage() {
         <FollowersModal
           userId={resolvedUserId}
           mode={followModal}
+          isOwnProfile={isOwnProfile}
           onClose={() => setFollowModal(null)}
         />
       )}
 
       {showRequests && (
-        <FollowRequestsModal onClose={() => setShowRequests(false)} onAccepted={incrementFollowers} />
+        <FollowRequestsModal onClose={() => setShowRequests(false)} />
       )}
 
       {showFavEditor && isOwnProfile && (
@@ -209,6 +204,13 @@ export default function ProfilePage() {
           currentFavorites={localFavorites}
           onClose={() => setShowFavEditor(false)}
           onSave={handleFavSave}
+        />
+      )}
+
+      {listEditorOpen && isOwnProfile && (
+        <ListEditorModal
+          onClose={() => setListEditorOpen(false)}
+          onSubmit={async ({ name, description, books }) => { await createList(name, books, description); }}
         />
       )}
     </section>

@@ -1,0 +1,22 @@
+Rule: jsx-a11y/no-static-element-interactions
+Severity: warning
+Category: Accessibility
+Count: 10
+
+Static HTML elements with event handlers require a role.
+
+Suggestion: Add a role attribute to this element, or use a semantic HTML element instead.
+
+Docs: https://oxc.rs/docs/guide/usage/linter/rules/jsx_a11y/no-static-element-interactions.html
+
+Files:
+  src/components/profile/sections/ProfileHeader.tsx:60
+  src/components/profile/sections/ProfileHeader.tsx:79
+  src/pages/edit-profile/EditProfilePage.tsx:221
+  src/pages/edit-profile/EditProfilePage.tsx:247
+  src/components/book/info/SynopsisModal.tsx:34
+  src/components/profile/modals/FollowersModal.tsx:49
+  src/components/profile/modals/FollowRequestsModal.tsx:70
+  src/pages/lists/ListDetailPage.tsx:90
+  src/components/profile/modals/FavoriteBooksEditorModal.tsx:105
+  src/components/shelf/modals/ListEditorModal.tsx:89

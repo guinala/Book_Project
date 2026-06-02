@@ -1,143 +1,236 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import { useShelf } from "@/hooks/useShelf";
-import { getCoverUrl } from "@/utils/coverImage";
+import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperClass } from "swiper";
+import { EffectCards, Keyboard } from "swiper/modules";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { useShelf } from "@/context/shelf/useShelf";
+import type { ShelfEntry } from "@/services/firebase/firebaseLibrary";
 import UpdateProgressModal from "@/components/shelf/modals/UpdateProgressModal";
-import "./CurrentReadingCard.scss";
-import { encodeKey } from "@/utils/bookPaths";
 import HistoryModal from "@/components/shelf/modals/HistoryModal";
-import { ChevronRight } from "lucide-react";
+import { resolveCoverSrc } from "@/utils/coverImage";
+import ReadingCardContent from "./ReadingCardContent";
+
+import "swiper/css";
+import "swiper/css/effect-cards";
+import "./CurrentReadingCard.scss";
 
 const STORAGE_KEY = "currentReadingBookKey";
+const MAX_VISIBLE = 6;
+
+function sortByRecency(a: ShelfEntry, b: ShelfEntry): number {
+  const aTime = a.lastProgressAt ?? a.addedAt ?? "";
+  const bTime = b.lastProgressAt ?? b.addedAt ?? "";
+  return bTime.localeCompare(aTime);
+}
 
 function CurrentReadingCard() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { shelfByStatus, loading, getEntry } = useShelf();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const swiperRef = useRef<SwiperClass | null>(null);
+  const isSwiping = useRef(false);
+
+  const simulateSwipe = (dir: "next" | "prev") => {
+    const swiper = swiperRef.current;
+    if (!swiper || isSwiping.current || swiper.animating) return;
+
+    if (dir === "next" && swiper.isEnd) { swiper.slideNext(); return; }
+    if (dir === "prev" && swiper.isBeginning) { swiper.slidePrev(); return; }
+
+    const el = swiper.wrapperEl;
+    const rect = el.getBoundingClientRect();
+    const y = rect.top + rect.height / 2;
+    const startX = rect.left + rect.width / 2;
+    const totalDx = (dir === "next" ? -1 : 1) * rect.width * 0.6;
+    const frames = 12;
+
+    const fire = (type: string, x: number) =>
+      el.dispatchEvent(
+        new PointerEvent(type, {
+          pointerId: 1,
+          pointerType: "touch",
+          isPrimary: true,
+          button: 0,
+          buttons: type === "pointerup" ? 0 : 1,
+          bubbles: true,
+          cancelable: true,
+          clientX: x,
+          clientY: y,
+        })
+      );
+
+    isSwiping.current = true;
+    fire("pointerdown", startX);
+
+    let frame = 0;
+    const step = () => {
+      frame += 1;
+      fire("pointermove", startX + (totalDx * frame) / frames);
+      if (frame < frames) {
+        requestAnimationFrame(step);
+      } else {
+        fire("pointerup", startX + totalDx);
+        isSwiping.current = false;
+      }
+    };
+    requestAnimationFrame(step);
+  };
+
+  const goNext = () => simulateSwipe("next");
+  const goPrev = () => simulateSwipe("prev");
+
+  const topReading = useMemo(() => {
+    const entries: ShelfEntry[] = [];
+    for (const book of shelfByStatus.reading) {
+      const entry = getEntry(book.key);
+      if (entry) entries.push(entry);
+    }
+    return entries.sort(sortByRecency).slice(0, MAX_VISIBLE);
+  }, [shelfByStatus.reading, getEntry]);
+
   const [selectedKey, setSelectedKey] = useState<string | null>(
     () => localStorage.getItem(STORAGE_KEY)
   );
+  
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
-  const readingBooks = shelfByStatus.reading;
-
-  const savedIndex = selectedKey
-    ? readingBooks.findIndex((b) => b.key === selectedKey)
-    : -1;
-  const index = savedIndex >= 0 ? savedIndex : 0;
-  const book = readingBooks[index] ?? null;
+  const activeEntry: ShelfEntry | null = useMemo(() => {
+    if (topReading.length === 0) return null;
+    const found = selectedKey
+      ? topReading.find((e) => e.book.key === selectedKey)
+      : undefined;
+    return found ?? topReading[0];
+  }, [topReading, selectedKey]);
 
   useEffect(() => {
-    if (book && book.key !== selectedKey) {
-      setSelectedKey(book.key);
-      localStorage.setItem(STORAGE_KEY, book.key);
+    if (activeEntry && activeEntry.book.key !== selectedKey) {
+      setSelectedKey(activeEntry.book.key);
     }
-  }, [book, selectedKey]);
-  const entry = book ? getEntry(book.key) : null;
+  }, [activeEntry, selectedKey]);
+
+  useEffect(() => {
+    if (selectedKey) localStorage.setItem(STORAGE_KEY, selectedKey);
+  }, [selectedKey]);
+
+  const currentIndex = useMemo(() => {
+    if (!selectedKey) return 0;
+    const idx = topReading.findIndex((e) => e.book.key === selectedKey);
+    return idx >= 0 ? idx : 0;
+  }, [topReading, selectedKey]);
 
   if (loading) {
     return <div className="reading-card reading-card--skeleton" />;
   }
 
-  if (!book || !entry) {
-    return <p className="reading-card__empty">{t("myLibrary.noCurrentReading")}</p>;
-  }
-
-  const totalPages = book.pages ?? 0;
-  const currentPage = entry.currentPage ?? 0;
-  const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
-  const coverSrc = book.cover_url ?? (book.cover_id ? getCoverUrl(book.cover_id) : undefined);
+  const hasBooks = topReading.length > 0;
+  const showChevrons = topReading.length > 1;
 
   return (
     <>
-      <div className="reading-card__wrapper">
-        <article className="reading-card">
-          <button
-            className="reading-card__cover-btn"
-            onClick={() => navigate(`/books/${encodeKey(book.key)}`, { state: { book } })}
-            aria-label={t("book.coverAlt", { title: book.title })}
-          >
-            {coverSrc ? (
-              <img
-                className="reading-card__cover-img"
-                src={coverSrc}
-                alt=""
-              />
-            ) : (
-              <div className="reading-card__cover-placeholder" />
-            )}
-          </button>
+      <section
+        className="reading-carousel"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label={t("myLibrary.heading")}
+      >
+        <div className="reading-carousel__header">
+          <h2 className="reading-carousel__heading">{t("myLibrary.heading")}</h2>
+          {hasBooks && (
+            <span className="reading-carousel__count">
+              {t("myLibrary.readingCount", { current: currentIndex + 1, total: topReading.length })}
+            </span>
+          )}
+        </div>
 
-          <div className="reading-card__body">
-            <div className="reading-card__header">
-              <div>
-                <h3 className="reading-card__title">{book.title}</h3>
-                <p className="reading-card__author">{book.authors.join(", ")}</p>
-              </div>
-            </div>
-
-            <div className="reading-card__progress-box">
-              <div className="reading-card__progress-labels">
-                <span className="reading-card__progress-label">
-                  {t("myLibrary.readingProgress")}:{" "}
-                  <span className="reading-card__progress-percent">{progressPercent}%</span>
-                </span>
-                <span className="reading-card__progress-pages">
-                  {t("myLibrary.pages", { current: currentPage, total: totalPages })}
-                </span>
-              </div>
-              <div className="reading-card__progress-bar">
-                <div
-                  className="reading-card__progress-fill"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="reading-card__actions">
-              <button className="reading-card__btn-outline" onClick={() => setIsHistoryModalOpen(true)}>{t("myLibrary.viewHistory")}</button>
-              <button
-                className="reading-card__btn-fill"
-                onClick={() => setIsUpdateModalOpen(true)}
-              >
-                {t("myLibrary.updateProgress")}
-              </button>
-            </div>
+        {!hasBooks && (
+          <div className="reading-card__empty-state">
+            <p className="reading-card__empty-state-text">
+              {t("myLibrary.noCurrentReading")}
+            </p>
           </div>
-        </article>
-
-        {readingBooks.length > 1 && (
-          <button
-            className="reading-card__chevron"
-            onClick={() => {
-              const nextIndex = (index + 1) % readingBooks.length;
-              const nextKey = readingBooks[nextIndex].key;
-              setSelectedKey(nextKey);
-              localStorage.setItem(STORAGE_KEY, nextKey);
-            }}
-            aria-label={t("myLibrary.nextBook")}
-          >
-            <ChevronRight />
-          </button>
         )}
-      </div>
 
-      {isUpdateModalOpen && (
+        {hasBooks && (
+          <div className="reading-carousel__stage">
+            {showChevrons && (
+              <button
+                type="button"
+                className="reading-carousel__chevron reading-carousel__chevron--prev"
+                onClick={goPrev}
+                aria-label={t("myLibrary.prevBook")}
+              >
+                <ChevronLeft />
+              </button>
+            )}
+
+            <Swiper
+              modules={[EffectCards, Keyboard]}
+              effect="cards"
+              cardsEffect={{
+                perSlideOffset: 4,
+                perSlideRotate: 3,
+                rotate: true,
+                slideShadows: true,
+              }}
+              rewind={topReading.length > 1}
+              grabCursor
+              keyboard={{ enabled: true, onlyInViewport: true }}
+              initialSlide={currentIndex}
+              onSwiper={(s) => { swiperRef.current = s; }}
+              onSlideChange={(s) => {
+                const next = topReading[s.realIndex];
+                if (next) setSelectedKey(next.book.key);
+              }}
+              className="reading-carousel__swiper"
+            >
+
+              {topReading.map((entry) => (
+                <SwiperSlide key={entry.book.key} className="reading-carousel__slide">
+                  <ReadingCardContent
+                    entry={entry}
+                    onOpenHistory={() => {
+                      setSelectedKey(entry.book.key);
+                      setIsHistoryModalOpen(true);
+                    }}
+                    onOpenUpdate={() => {
+                      setSelectedKey(entry.book.key);
+                      setIsUpdateModalOpen(true);
+                    }}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {showChevrons && (
+              <button
+                type="button"
+                className="reading-carousel__chevron reading-carousel__chevron--next"
+                onClick={goNext}
+                aria-label={t("myLibrary.nextBook")}
+              >
+                <ChevronRight />
+              </button>
+            )}
+          </div>
+        )}
+      </section>
+
+      {isUpdateModalOpen && activeEntry && (
         <UpdateProgressModal
-          entry={entry}
+          entry={activeEntry}
           onClose={() => setIsUpdateModalOpen(false)}
         />
       )}
 
-      {isHistoryModalOpen && (
+      {isHistoryModalOpen && activeEntry && (
         <HistoryModal
-          bookId={book.key}
-          bookTitle={book.title}
-          bookAuthor={book.authors.join(", ")}
-          bookCoverUrl={coverSrc}
-          totalPages={totalPages}
+          bookId={activeEntry.book.key}
+          bookTitle={activeEntry.book.title}
+          bookAuthor={activeEntry.book.authors.join(", ")}
+          bookCoverUrl={resolveCoverSrc(activeEntry.book) ?? undefined}
+          totalPages={activeEntry.book.pages ?? 0}
           onClose={() => setIsHistoryModalOpen(false)}
         />
       )}

@@ -4,10 +4,15 @@ import type { ReactNode } from "react";
 import { BookOpen, Search, Users } from "lucide-react";
 import "./NavbarMini.scss";
 
-interface NavItem {
+type NavItem = {
   labelKey: string;
   path: string;
   icon: ReactNode;
+}
+
+type NavbarMiniProps = {
+  visible: boolean;
+  onActiveClick?: () => void;
 }
 
 const ITEMS: NavItem[] = [
@@ -21,11 +26,7 @@ const activeFromPath = (pathname: string) => {
   return pathname;
 };
 
-interface NavbarMiniProps {
-  visible: boolean;
-}
-
-export default function NavbarMini({ visible }: NavbarMiniProps) {
+export default function NavbarMini({ visible, onActiveClick }: NavbarMiniProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -37,7 +38,10 @@ export default function NavbarMini({ visible }: NavbarMiniProps) {
         <button
           key={path}
           className={`navbar-mini__item${active === path ? " navbar-mini__item--active" : ""}`}
-          onClick={() => navigate(path)}
+          onClick={() => {
+            if (pathname === path) onActiveClick?.();  
+            else navigate(path);                        
+          }}
           aria-label={t(labelKey)}
         >
           {icon}

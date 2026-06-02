@@ -5,6 +5,7 @@ import type { AuthorBook, AuthorInfo } from "@/types/BookDetail";
 import "./AuthorSection.scss";
 import type { Book } from "@/types/Book";
 import { encodeKey } from "@/utils/bookPaths";
+import { UserRound } from "lucide-react";
 
 type AuthorSectionProps = {
   authorInfo: AuthorInfo;
@@ -12,8 +13,8 @@ type AuthorSectionProps = {
 
 export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
   const { t } = useTranslation();
-  //const [photoError, setPhotoError] = useState(false);
-  const [photoError, setPhotoError] = useState(false)
+  const [photoError, setPhotoError] = useState(false);
+  const hasPhoto = Boolean(authorInfo.photoUrl) && !photoError;
 
   const toBookState = (book: AuthorBook): Book => ({
     key: book.id,
@@ -29,19 +30,13 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
     pages: book.pages,
   });
 
-  const initials = authorInfo.name
-    .split(" ")
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("");
-
   return (
     <section className="author-section">
       <h2 className="author-section__title">{t("bookDetail.authorTitle")}</h2>
 
       <div className="author-section__card">
         <div className="author-section__photo-wrap">
-          {!photoError ? (
+          {hasPhoto ? (
             <img
               className="author-section__photo"
               src={authorInfo.photoUrl}
@@ -50,7 +45,7 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
             />
           ) : (
             <div className="author-section__photo-fallback" aria-hidden="true">
-              {initials}
+              <UserRound size={60} strokeWidth={1.5} />
             </div>
           )}
         </div>
@@ -61,25 +56,25 @@ export default function AuthorSection({ authorInfo }: AuthorSectionProps) {
             <p className="author-section__bio">{authorInfo.bio}</p>
           </div>
         </div>
-      </div>
 
-      <div className="author-section__books-row">
-        {authorInfo.books.map((book) => (
-          <Link
-            key={book.id}
-            to={`/books/${encodeKey(book.id)}`}
-            state={{ book: toBookState(book) }}
-            className="author-section__book"
-          >
-            <img
-              className="author-section__book-cover"
-              src={book.cover_url}
-              alt={t("book.coverAlt", { title: book.title })}
-            />
-            <p className="author-section__book-title">{book.title}</p>
-            <p className="author-section__book-year">{book.year}</p>
-          </Link>
-        ))}
+        <div className="author-section__books-row">
+          {authorInfo.books.map((book) => (
+            <Link
+              key={book.id}
+              to={`/books/${encodeKey(book.id)}`}
+              state={{ book: toBookState(book) }}
+              className="author-section__book"
+            >
+              <img
+                className="author-section__book-cover"
+                src={book.cover_url}
+                alt={t("book.coverAlt", { title: book.title })}
+              />
+              <p className="author-section__book-title">{book.title}</p>
+              <p className="author-section__book-year">{book.year}</p>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

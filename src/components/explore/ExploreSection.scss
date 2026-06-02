@@ -3,7 +3,7 @@
 .explore-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
 
   &__header {
     display: flex;
@@ -46,19 +46,69 @@
     &:hover { color: var(--color-text-primary); }
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
-    align-items: start;
+  &__scroll {
+    display: flex;
+    gap: var(--space-6);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-top: var(--space-2);
+    margin-top: calc(-1 * var(--space-2));
+    padding-bottom: var(--space-2);
+    padding-left: $padding-horizontal;
+    scroll-padding-left: $padding-horizontal;
+    width: 100vw;
+    margin-left: -$padding-horizontal;
+    margin-right: -$padding-horizontal;
 
-    @include from($bp-md) {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    &::-webkit-scrollbar { display: none; }
+
+    .book-card {
+      flex-shrink: 0;
+      width: calc(50% - var(--space-4));
+      scroll-snap-align: start;
+
+      @include from($bp-md) { width: calc(25% - var(--space-4)); }
+      @include from($bp-lg) { width: calc(100% / 6 - var(--space-4)); }
     }
 
-    @include from($bp-lg) {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: var(--space-4);
+    .featured-book-card {
+      flex-shrink: 0;
+      width: 320px;
+      scroll-snap-align: start;
+      overflow: hidden;
+
+      .featured-book-card__cover-wrapper {
+        width: 100%;
+        height: 200px;
+        flex-shrink: 0;
+      }
+
+      .featured-book-card__cover,
+      .featured-book-card__cover-placeholder {
+        height: 100%;
+        aspect-ratio: unset;
+      }
+
+      @include from($bp-md) {
+        width: 580px;
+
+        .featured-book-card__cover-wrapper {
+          width: 220px;
+          height: 100%;
+        }
+      }
+
+      @include from($bp-lg) {
+        width: 660px;
+
+        .featured-book-card__cover-wrapper {
+          width: 260px;
+          height: 100%;
+        }
+      }
     }
   }
 

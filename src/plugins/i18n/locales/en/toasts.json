@@ -1,0 +1,13 @@
+{
+  "toasts": {
+    "shelf": {
+      "added": "You added \"{{title}}\" to {{shelf}}",
+      "statusChanged": "You moved \"{{title}}\" to {{shelf}}",
+      "removed": "You removed \"{{title}}\" from your library",
+      "progressUpdated": "You updated the progress of \"{{title}}\"",
+      "finished": "You finished \"{{title}}\"",
+      "didNotFinish": "You marked \"{{title}}\" as did not finish",
+      "undo": "Undo"
+    }
+  }
+}

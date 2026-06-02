@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { Component, type ReactNode } from "react";
 
 type Props = { children: ReactNode; fallback?: ReactNode };
@@ -11,7 +12,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error("ErrorBoundary caught:", error, info);
+    logger.error("ErrorBoundary caught:", error, info);
     // aquí iría envío a Sentry / un endpoint de logging
   }
 

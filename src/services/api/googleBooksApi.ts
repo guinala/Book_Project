@@ -38,30 +38,6 @@ export async function fetchGoogleCover(
   return normalizeCoverUrl(data.items?.[0]?.volumeInfo?.imageLinks) ?? null;
 }
 
-
-// export async function fetchGoogleCovers(
-//   books: Book[],
-//   signal: AbortSignal
-// ): Promise<(string | null)[]> {
-//   const covers: (string | null)[] = [];
-
-//   for (const book of books) {
-//     try {
-//       const cover = await fetchGoogleCover(book.title, book.authors[0] ?? "", signal);
-//       covers.push(cover);
-//     } catch (err) {
-//       if (axios.isCancel(err)) throw err;
-//       if (axios.isAxiosError(err) && err.response?.status === 503) throw err;
-//       covers.push(null);
-//     }
-//     if (covers.length < books.length) {
-//       await new Promise(resolve => setTimeout(resolve, 100));
-//     }
-//   }
-
-//   return covers;
-// }
-
 async function fetchGoogleCoverWithRetry(
   title: string,
   author: string,
@@ -86,23 +62,6 @@ async function fetchGoogleCoverWithRetry(
   }
   return null;
 }
-
-// export async function fetchGoogleCovers(
-//   books: Book[],
-//   signal: AbortSignal
-// ): Promise<(string | null)[]> {
-//   const covers: (string | null)[] = [];
-
-//   for (const book of books) {
-//     const cover = await fetchGoogleCoverWithRetry(book.title, book.authors[0] ?? "", signal);
-//     covers.push(cover);
-//     if (covers.length < books.length) {
-//       await new Promise(resolve => setTimeout(resolve, 100)); 
-//     }
-//   }
-
-//   return covers;
-// }
 
 export async function fetchGoogleCovers(
   books: Book[],
@@ -203,9 +162,7 @@ export async function fetchGoogleSynopsis(
       },
       signal,
     });
-    // const synopsis2 = extractDescription(data2);
-    // logger.log(`[Synopsis] Intento 2 (título+autor ${lang.toUpperCase()}):`, synopsis2 ? `OK (${synopsis2.length} chars, (${lang}, ${isbn})))` : 'vacío');
-    // if (synopsis2.trim().length > 50) return synopsis2;
+    
     const match = data2.items?.find(
       item => item.volumeInfo.language === lang
         && (item.volumeInfo.description ?? item.searchInfo?.textSnippet ?? '').trim().length > 50
@@ -233,7 +190,7 @@ export async function fetchGoogleSynopsis(
     return synopsis3;
 
   } catch (err) {
-    console.error('[Synopsis] Error inesperado — se cortó el flujo:', err);
+    logger.error('[Synopsis] Error inesperado — se cortó el flujo:', err);
     return '';
   }
 }

@@ -25,7 +25,7 @@
     box-shadow: var(--shadow-modal);
     width: 100%;
     max-width: 520px;
-    max-height: 80vh;
+    max-height: 90vh;
     overflow-y: auto;
     padding: var(--space-6);
     display: flex;
@@ -84,6 +84,22 @@
     padding: var(--space-2);
     border-radius: var(--radius-md);
     background: var(--color-bg-section);
+    transition: outline var(--transition-fast);
+    outline: 2px solid transparent;
+
+    &--drag-over {
+      outline-color: var(--color-text-primary);
+    }
+  }
+
+  &__fav-drag {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--color-text-tertiary);
+    cursor: grab;
+
+    &:active { cursor: grabbing; }
   }
 
   &__fav-cover {
@@ -162,8 +178,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    max-height: 240px;
-    overflow-y: auto;
   }
 
   &__result-item {
@@ -223,7 +237,7 @@
 
   &__footer-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: var(--space-3);
   }
 

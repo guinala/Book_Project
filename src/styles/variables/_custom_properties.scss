@@ -79,7 +79,7 @@
 
   // ─── TEXTO ─────────────────────────────────────────────
   --color-text-primary: #444340;
-  --color-text-secondary: #838178;
+  --color-text-secondary: #76746e;
   --color-text-tertiary: #9a988b;
   --color-text-on-brand: #fff;
   --color-text-on-dark: #faf6f1;
@@ -91,6 +91,7 @@
   --color-border-strong: #c4c2ba;
   --color-border-warm: rgba(0, 0, 0, 0.12);
   --color-border-outline: #eee;
+  --color-border-card: #e3e3e3;
   --color-border-input: #e1dddd;
 
   // ─── GÉNEROS ───────────────────────────────────────────
@@ -110,8 +111,20 @@
   --radius-pill: 9999px;
 
   // ─── BOTÓN PRIMARIO ────────────────────────────────────
+  --color-btn-primary-bg: #232323;
   --color-btn-primary-fg: var(--color-bg-page);
   --color-btn-primary-hover: var(--color-bg-darkest);
+
+  // ─── TOOLTIP ───────────────────────────────────────────
+  --color-tooltip-bg: rgba(0, 0, 0, 0.75);
+  --color-tooltip-fg: var(--color-text-on-dark);
+
+  // ─── DESPLEGABLES ──────────────────────────────────────
+  --color-dropdown-bg: #fff;
+  --color-dropdown-fg: #232323;
+  --color-dropdown-hover: rgba(0, 0, 0, 0.07);
+  --color-dropdown-active: rgba(0, 0, 0, 0.12);
+  --color-dropdown-border: #000;
 
   // ─── SOMBRAS ───────────────────────────────────────────
   --shadow-card:
@@ -172,13 +185,21 @@
   --color-border-strong: rgba(255, 255, 255, 0.22);
   --color-border-warm: rgba(255, 255, 255, 0.10);
   --color-border-outline: rgba(255, 255, 255, 0.10);
+  --color-border-card: rgba(255, 255, 255, 0.10);
 
   --color-neutral-alpha-light: rgba(255, 255, 255, 0.03);
   --color-neutral-alpha-subtle: rgba(255, 255, 255, 0.05);
   --color-neutral-alpha-muted: rgba(255, 255, 255, 0.08);
   --color-neutral-alpha-medium: rgba(255, 255, 255, 0.13);
 
+  --color-btn-primary-bg: var(--color-text-on-dark);
   --color-btn-primary-hover: #cfcbc5;
+
+  --color-dropdown-bg: var(--color-bg-card);
+  --color-dropdown-fg: var(--color-text-primary);
+  --color-dropdown-hover: var(--color-neutral-alpha-muted);
+  --color-dropdown-active: var(--color-neutral-alpha-medium);
+  --color-dropdown-border: var(--color-border-card);
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 6px rgba(0, 0, 0, 0.12);

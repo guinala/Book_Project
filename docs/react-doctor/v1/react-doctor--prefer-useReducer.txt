@@ -1,0 +1,16 @@
+Rule: react-doctor/prefer-useReducer
+Severity: warning
+Category: State & Effects
+Count: 6
+
+Component "ProfilePage" has 8 useState calls — consider useReducer for related state
+
+Suggestion: Group related state: `const [state, dispatch] = useReducer(reducer, { field1, field2, ... })`
+
+Files:
+  src/pages/profile/ProfilePage.tsx:34
+  src/pages/edit-profile/EditProfilePage.tsx:22
+  src/components/shelf/modals/UpdateProgressModal.tsx:91
+  src/components/auth/forms/LoginForm.tsx:11
+  src/components/profile/modals/FavoriteBooksEditorModal.tsx:25
+  src/components/shelf/modals/ListEditorModal.tsx:20

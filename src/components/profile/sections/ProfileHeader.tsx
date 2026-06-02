@@ -99,6 +99,7 @@ export default function ProfileHeader({
             </div>
           </div>
 
+          <div className="profile-header__mid">
           <div className="profile-header__identity">
             <h2 className="profile-header__name">{displayName}</h2>
             {profile.username && (
@@ -144,6 +145,7 @@ export default function ProfileHeader({
                 {t("profile.header.booksRead", { count: booksReadCount })}
               </span>
             </button>
+          </div>
           </div>
 
           <div className="profile-header__actions">

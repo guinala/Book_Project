@@ -1,0 +1,19 @@
+Rule: react-doctor/click-events-have-key-events
+Severity: warning
+Category: Accessibility
+Count: 9
+
+Visible non-interactive elements with click handlers must have a corresponding keyboard listener (`onKeyUp`, `onKeyDown`, or `onKeyPress`).
+
+Suggestion: Pair `onClick` with `onKeyUp` / `onKeyDown` / `onKeyPress` for keyboard users.
+
+Files:
+  src/pages/edit-profile/components/BannerUploader.tsx:21
+  src/pages/edit-profile/components/AvatarUploader.tsx:21
+  src/components/book/cards/BookCard.tsx:30
+  src/pages/lists/ListDetailPage.tsx:90
+  src/components/shelf/sections/ShelfSection.tsx:69
+  src/components/profile/sections/ProfileHeader.tsx:60
+  src/components/profile/sections/ProfileHeader.tsx:79
+  src/components/book/cards/FeaturedBookCard.tsx:47
+  src/components/shelf/cards/BookTile.tsx:18

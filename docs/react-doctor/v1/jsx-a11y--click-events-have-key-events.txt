@@ -1,0 +1,27 @@
+Rule: jsx-a11y/click-events-have-key-events
+Severity: warning
+Category: Accessibility
+Count: 15
+
+Enforce a clickable non-interactive element has at least one keyboard event listener.
+
+Suggestion: Visible, non-interactive elements with click handlers must have one of `keyup`, `keydown`, or `keypress` listener.
+
+Docs: https://oxc.rs/docs/guide/usage/linter/rules/jsx_a11y/click-events-have-key-events.html
+
+Files:
+  src/components/shelf/sections/ShelfSection.tsx:68
+  src/components/profile/sections/ProfileHeader.tsx:60
+  src/components/profile/sections/ProfileHeader.tsx:79
+  src/pages/edit-profile/EditProfilePage.tsx:221
+  src/pages/edit-profile/EditProfilePage.tsx:247
+  src/components/book/cards/BookCard.tsx:70
+  src/components/book/cards/BookCard.tsx:111
+  src/components/book/info/SynopsisModal.tsx:27
+  src/components/book/info/SynopsisModal.tsx:34
+  src/components/profile/modals/FollowersModal.tsx:49
+  src/components/profile/modals/FollowRequestsModal.tsx:70
+  src/pages/lists/ListDetailPage.tsx:90
+  src/components/profile/modals/FavoriteBooksEditorModal.tsx:105
+  src/components/shelf/cards/BookTile.tsx:18
+  src/components/shelf/modals/ListEditorModal.tsx:89

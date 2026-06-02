@@ -14,7 +14,8 @@ export type Book = {
   rating?: number;       
   ratingCount?: number;
   isbn?: string;
-  isbns?: Record<string, string>; 
+  isbns?: Record<string, string>;
   pages?: number;
+  synopsis?: string;
   shelfCategory?: string;
 }

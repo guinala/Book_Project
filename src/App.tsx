@@ -1,21 +1,31 @@
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router";
+import { Outlet, ScrollRestoration } from "react-router";
 import Navbar from "@/components/layout/Navbar";
 import NavbarMini from "@/components/layout/NavbarMini";
-import { AuthProvider } from "@/context/AuthContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { PreferencesProvider } from "@/context/PreferencesContext";
-import { usePreferences } from "@/hooks/usePreferences";
+import { AuthProvider } from "@/context/auth/AuthContext";
+import { ThemeProvider } from "@/context/theme/ThemeContext";
+import { PreferencesProvider } from "@/context/preferences/PreferencesContext";
+import { usePreferences } from "@/context/preferences/usePreferences";
+import Footer from "@/components/layout/Footer";
 import "./App.scss"
-import { ShelfProvider } from "./context/ShelfContext";
+import { ShelfProvider } from "./context/shelf/ShelfContext";
 import i18n from "./plugins/i18n/i18n";
 import ErrorBoundary from "./components/common/ErrorBoundary";
+import { NotificationsProvider } from "./context/notifications/NotificationsContext";
+import AppToaster from "./components/common/Toaster/AppToaster";
+import { ExploreCacheProvider } from "./context/explore-cache/ExploreCacheContext";
 
 const SCROLL_THRESHOLD = 80;
 
 function AppShell() {
   const { miniNavEnabled } = usePreferences();
   const [scrolled, setScrolled] = useState(false);
+  const [reloadCount, setReloadCount] = useState(0);
+
+  const reloadCurrent = () => {
+    setReloadCount((c) => c + 1);
+    window.scrollTo({ top: 0});
+  };
 
   useEffect(() => {
     if (!miniNavEnabled) {
@@ -29,11 +39,14 @@ function AppShell() {
 
   return (
     <>
-      <Navbar hidden={scrolled} />
-      <NavbarMini visible={scrolled} />
+      <Navbar hidden={scrolled} onActiveClick={reloadCurrent}/>
+      <NavbarMini visible={scrolled} onActiveClick={reloadCurrent}/>
       <main>
-        <Outlet />
+        <Outlet key={reloadCount}/>
       </main>
+      <Footer />
+      <AppToaster />
+      <ScrollRestoration />
     </>
   );
 }
@@ -51,9 +64,13 @@ export default function App() {
       <ThemeProvider>
         <PreferencesProvider>
           <AuthProvider>
-            <ShelfProvider>
-              <AppShell />
-            </ShelfProvider>
+            <ExploreCacheProvider>
+              <ShelfProvider>
+                <NotificationsProvider>
+                  <AppShell />
+                </NotificationsProvider>
+              </ShelfProvider>
+            </ExploreCacheProvider>
           </AuthProvider>
         </PreferencesProvider>
       </ThemeProvider>

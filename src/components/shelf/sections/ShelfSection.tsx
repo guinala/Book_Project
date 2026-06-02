@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
+import { Link } from "react-router";
 import BookTile from "@/components/shelf/cards/BookTile";
 import type { Book } from "@/types/Book";
 import "./ShelfSection.scss";
@@ -9,9 +10,10 @@ import { ChevronRight, ChevronLeft, Plus } from "lucide-react";
 const SHELF_FILTER_KEYS = ["wantToRead", "reading", "finished", "didNotFinish"] as const;
 type ShelfFilterKey = (typeof SHELF_FILTER_KEYS)[number];
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 14;
+const COLUMNS = 7;
 
-type Slot = { type: "book"; book: Book } | { type: "add" } | { type: "spacer" };
+type Slot = { type: "book"; book: Book } | { type: "add" };
 
 type ShelfSectionProps = {
   books: Record<ShelfStatus, Book[]>;
@@ -31,12 +33,24 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
   const totalPages = Math.ceil((categoryBooks.length + (readOnly ? 0 : 1)) / PAGE_SIZE);
   const isLastPage = page === totalPages - 1;
 
-  const slots: Slot[] = useMemo(() => Array.from({ length: PAGE_SIZE }, (_, i) => {
-    const idx = page * PAGE_SIZE + i;
-    if (idx < categoryBooks.length) return { type: "book", book: categoryBooks[idx] };
-    if (!readOnly && idx === categoryBooks.length) return { type: "add" };
-    return { type: "spacer" };
-  }), [categoryBooks, page, readOnly]);
+  const slots: Slot[] = useMemo(() => {
+    const result: Slot[] = [];
+    for (let i = 0; i < PAGE_SIZE; i++) {
+      const idx = page * PAGE_SIZE + i;
+      if (idx < categoryBooks.length) {
+        result.push({ type: "book", book: categoryBooks[idx] });
+      } else if (!readOnly && idx === categoryBooks.length) {
+        result.push({ type: "add" });
+        break;
+      } else {
+        break;
+      }
+    }
+    return result;
+  }, [categoryBooks, page, readOnly]);
+
+  // Durante loading mostramos las 2 filas de skeletons; si no, se adapta a los slots reales
+  const singleRow = !loading && slots.length <= COLUMNS;
 
   function handleFilterChange(key: ShelfFilterKey) {
     setActiveFilter(key);
@@ -78,21 +92,29 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
 
       <div className="shelf-section__card">
         {!loading && categoryBooks.length === 0 && readOnly ? (
-          <p className="shelf-section__empty-readonly">Sin libros en esta estantería</p>
+          <p className="shelf-section__empty-readonly">{t("myLibrary.emptyShelfReadonly")}</p>
+        ) : !loading && categoryBooks.length === 0 ? (
+          <div className="shelf-section__empty-state">
+            <p className="shelf-section__empty-state-text">
+              <Trans i18nKey="myLibrary.emptyShelfCategory">
+                Esta categoría está vacía. ¡Añade libros desde <Link to="/explore">Explorar</Link>!
+              </Trans>
+            </p>
+          </div>
         ) : (
           <>
-            <div className="shelf-section__track">
+            <div className={`shelf-section__track ${singleRow ? "shelf-section__track--single-row" : ""}`}>
               {loading
                 ? Array.from({ length: PAGE_SIZE }).map((_, i) => (
                     <div key={i} className="shelf-section__item shelf-section__item--skeleton" />
                   ))
-                : slots.map((slot, i) => {
+                : slots.map((slot) => {
                     if (slot.type === "book") return (
                       <div key={slot.book.key} className="shelf-section__item">
                         <BookTile book={slot.book} />
                       </div>
                     );
-                    if (slot.type === "add") return (
+                    return (
                       <div key="add" className="shelf-section__item">
                         <div className="shelf-section__add-book">
                           <div className="shelf-section__add-book-cover">
@@ -105,7 +127,6 @@ export default function ShelfSection({ books, loading = false, readOnly = false,
                         </div>
                       </div>
                     );
-                    return <div key={`spacer-${i}`} className="shelf-section__item shelf-section__item--spacer" />;
                   })
               }
             </div>

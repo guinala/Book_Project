@@ -1,0 +1,24 @@
+Rule: react-doctor/control-has-associated-label
+Severity: warning
+Category: Accessibility
+Count: 14
+
+A control must be associated with a text label — add visible text, `aria-label`, or `aria-labelledby`.
+
+Suggestion: Every interactive control must have an accessible label.
+
+Files:
+  src/components/book/search-picker/BookSearchPicker.tsx:46
+  src/components/shelf/modals/components/ProgressPageInput.tsx:53
+  src/components/shelf/modals/components/ProgressPageInput.tsx:82
+  src/components/auth/forms/LoginForm.tsx:83
+  src/components/auth/forms/LoginForm.tsx:109
+  src/pages/style-guide/StyleGuide.tsx:15
+  src/pages/style-guide/StyleGuide.tsx:20
+  src/pages/style-guide/StyleGuide.tsx:25
+  src/pages/style-guide/StyleGuide.tsx:30
+  src/pages/style-guide/StyleGuide.tsx:89
+  src/pages/style-guide/StyleGuide.tsx:106
+  src/components/shelf/modals/ListEditorModal.tsx:81
+  src/pages/my-library/shelf/FullShelfPage.tsx:75
+  src/components/common/TextArea.tsx:43

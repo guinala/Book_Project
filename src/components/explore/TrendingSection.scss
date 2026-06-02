@@ -1,0 +1,115 @@
+@use '../../styles/lib' as *;
+
+.trending-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  &__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+
+    @include from($bp-md) {
+      font-size: var(--text-2xl);
+    }
+  }
+
+  &__scroll {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: var(--space-24);
+    padding-top: var(--space-2);
+    margin-top: calc(-1 * var(--space-2));
+    padding-bottom: var(--space-2);
+    padding-left: 50px;
+    scroll-padding-left: 50px;
+    width: 100vw;
+    margin-left: -60px;
+    margin-right: -$padding-horizontal;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar { display: none; }
+
+    @include from($bp-md) {
+      padding-left: 65px;
+      scroll-padding-left: 65px;
+    }
+  }
+
+  &__item {
+    position: relative;
+    flex-shrink: 0;
+    width: 214px;
+    scroll-snap-align: start;
+    overflow: visible;
+
+    .book-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    &:nth-child(n+10) {
+      margin-left: var(--space-10);
+    }
+  }
+
+  &__rank {
+    position: absolute;
+    left: 0;
+    transform: translateX(-80%);
+    bottom: 8px;
+    font-family: var(--font-editorial);
+    font-size: 120px;
+    font-weight: var(--weight-semibold);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-border-medium);
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+
+    @include from($bp-md) {
+      font-size: 160px;
+      -webkit-text-stroke: 2px var(--color-border-medium);
+    }
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-6) 0;
+  }
+
+  &__error-text {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  &__retry {
+    @include ghost-button;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-brand-primary);
+    padding: 0;
+    border: none;
+
+    &:hover { opacity: 0.75; }
+  }
+}

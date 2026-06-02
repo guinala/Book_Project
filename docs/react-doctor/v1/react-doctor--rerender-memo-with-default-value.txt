@@ -1,0 +1,11 @@
+Rule: react-doctor/rerender-memo-with-default-value
+Severity: warning
+Category: Performance
+Count: 1
+
+Default prop value {} creates a new object reference every render — extract to a module-level constant
+
+Suggestion: Move to module scope: `const EMPTY_ITEMS: Item[] = []` then use as the default value
+
+Files:
+  src/components/explore/ExploreSection.tsx:51

@@ -3,6 +3,18 @@
     "unknownAuthor": "Unknown author",
     "coverAlt": "Cover of {{title}}",
     "starRatingLabel": "Rating: {{rating}} out of 5",
+    "meta": {
+      "genre": "Genre",
+      "pages": "Pages",
+      "year": "Year"
+    },
+    "viewPage": "View page",
+    "save": "Save",
+    "saved": "Saved",
+    "add": "Add",
+    "addToList": "Add to list",
+    "noLists": "You have no lists yet",
+    "noRating": "Unrated",
     "genres": {
       "fantasy": "Fantasy",
       "fantasy_fiction": "Fantasy",

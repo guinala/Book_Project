@@ -3,6 +3,8 @@
     "heading": "Currently reading...",
     "noCurrentReading": "You're not reading any book",
     "nextBook": "Next reading book",
+    "prevBook": "View previous book",
+    "readingCount": "{{current}}/{{total}} books reading",
     "readingProgress": "Progress",
     "pages": "{{current}}/{{total}} pgs.",
     "shelfTitle": "Bookshelf",
@@ -14,43 +16,67 @@
     "noResults": "Oops! We couldn't find the book you're looking for",
     "clearSearch": "Hide search",
     "emptyShelf": "Add books",
+    "emptyShelfCategory": "This category is empty. Add books from <1>Explore</1>!",
+    "emptyShelfReadonly": "No books in this shelf yet",
     "viewHistory": "View history",
     "updateProgress": "Update progress",
     "updateProgressModal": {
       "title": "Update progress",
       "currentPage": "Current page",
       "of": "of",
-      "finished": "Have you finished the book?",
-      "notes": "Quote",
-      "notesPlaceholder": "Add a quote from the book...",
-      "abandon": "Mark as abandoned",
-      "abandonConfirm": {
-        "title": "Are you sure you want to remove this book from your library?",
-        "subtitle": "This action cannot be undone.",
-        "confirm": "Accept",
-        "cancel": "Cancel"
-      },
-      "save": "Save reading",
+      "note": "Note",
+      "notePlaceholder": "What do you think of the book so far? Tell everyone about the plot.",
+      "save": "Save",
       "close": "Close",
       "noteTooLong": "You've exceeded the maximum character limit",
       "characters": "characters",
-      "rateBook": "Your rating",
+      "rateBook": "Rating",
       "review": "Review",
-      "reviewPlaceholder": "Tell us what you thought of the book. Would you recommend it?"
+      "reviewPlaceholder": "What did you think of the book? Would you recommend it?",
+      "statusMessage": "Press 'Save' to move the book to this shelf.",
+      "percentageLabel": "Reading percentage"
     },
     "createList": "Create new list",
     "listsTitle": "Lists",
     "listsCount": "{{count}} books",
-    "lists": {
-      "recommended": "Very recommended",
-      "drama": "Drama",
-      "women": "Written by Women"
+    "allListsTitle": "Lists",
+    "listEditor": {
+      "createTitle": "Create list",
+      "editTitle": "Edit list",
+      "closeAria": "Close",
+      "nameLabel": "Name",
+      "namePlaceholder": "Write a name for your list",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Add an optional description...",
+      "counter": "{{count}}/{{max}} books",
+      "empty": "You haven't added any books yet",
+      "addBooksLabel": "Add books",
+      "searchPlaceholder": "Search by title, author or ISBN",
+      "searching": "Searching...",
+      "noResults": "No results",
+      "removeAria": "Remove {{title}}",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "saveError": "Could not save the list"
+    },
+    "listDetail": {
+      "empty": "This list has no books",
+      "notFound": "List not available",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete this list?",
+      "confirmDeleteSubtitle": "This action cannot be undone.",
+      "confirmDeleteYes": "Delete",
+      "confirmDeleteNo": "Cancel"
     },
     "shelf": {
       "wantToRead": "Want to read",
       "reading": "Reading",
       "finished": "Finished",
-      "didNotFinish": "Did not finish"
+      "didNotFinish": "Abandoned"
     },
     "progress": {
       "title": "Progress",
@@ -78,5 +104,30 @@
       "historical": "Historical",
       "others": "Others"
     }
+  },
+  "historyModal": {
+    "title": "Activity history",
+    "ariaLabel": "Activity history",
+    "closeAria": "Close",
+    "loading": "Loading...",
+    "empty": "No activity registered for this book.",
+    "pageProgress": "{{current}}/{{total}} pp.",
+    "pageProgressNoTotal": "{{current}} pp.",
+    "pagesAdded": "+{{count}} pp.",
+    "events": {
+      "reading_started": "Started reading",
+      "book_finished": "Finished reading",
+      "progress": "Updated progress",
+      "review": "Wrote a review",
+      "list_created": "Created a list",
+      "watchlist_add": "Added to list"
+    },
+    "timeAgo": {
+      "seconds": "just now",
+      "minutes": "{{n}}m ago",
+      "hours": "{{n}}h ago",
+      "days": "{{n}}d ago"
+    }
   }
+
 }

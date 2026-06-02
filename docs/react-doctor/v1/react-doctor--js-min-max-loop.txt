@@ -1,0 +1,12 @@
+Rule: react-doctor/js-min-max-loop
+Severity: warning
+Category: Performance
+Count: 2
+
+array.sort()[0] for min/max — use Math.min(...array) instead (O(n) vs O(n log n))
+
+Suggestion: Use `Math.min(...array)` / `Math.max(...array)` instead of sorting just to read the first or last element
+
+Files:
+  src/pages/explore/ExplorePage.tsx:121
+  src/pages/explore/ExplorePage.tsx:132

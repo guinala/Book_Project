@@ -1,0 +1,30 @@
+{
+  "legal": {
+    "lastUpdated": "Last updated: {{date}}",
+    "terms": {
+      "title": "Terms of use",
+      "sections": [
+        { "heading": "1. Purpose", "body": "These Terms of Use govern the use of the Trama service (hereinafter, \"the Service\") made available to users. Accessing the Service implies full and unconditional acceptance of these terms." },
+        { "heading": "2. Acceptance of terms", "body": "By registering and using the Service you accept these terms. If you do not agree with any of them, you must refrain from using the Service." },
+        { "heading": "3. Registration and account", "body": "To access certain features, you must create an account by providing accurate information. You are responsible for the confidentiality of your credentials and for all activity carried out under your account." },
+        { "heading": "4. Use of the service", "body": "You agree to use the Service in accordance with the law, morality and public order. Use of the Service for unlawful purposes or in a way that could harm third parties is prohibited." },
+        { "heading": "5. Intellectual property", "body": "All contents of the Service, including text, images and code, are the property of Trama or of third-party licensors. Their reproduction, distribution or transformation without authorization is prohibited." },
+        { "heading": "6. Limitation of liability", "body": "Trama is not liable for direct or indirect damages arising from the use of the Service, including data loss, interruptions or unauthorized access, except in cases provided for by law." },
+        { "heading": "7. Modifications", "body": "Trama reserves the right to modify these terms at any time. Modifications will take effect upon publication. Continued use of the Service implies acceptance of the modified terms." },
+        { "heading": "8. Applicable law", "body": "These terms are governed by Spanish law. Any dispute will be submitted to the competent courts." }
+      ]
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "sections": [
+        { "heading": "1. Data controller", "body": "The controller of your personal data is Trama. You may contact us through the channels available in the Service." },
+        { "heading": "2. Data collected", "body": "We collect the data you provide at registration (name, email, date of birth), as well as data generated through your use of the Service (preferences, books added, activity)." },
+        { "heading": "3. Purpose of processing", "body": "We use your data to provide the Service, manage your account, improve the experience and comply with our legal obligations." },
+        { "heading": "4. Legal basis", "body": "Processing is based on the execution of the contract arising from acceptance of the terms, on your consent and, where applicable, on compliance with legal obligations." },
+        { "heading": "5. Retention", "body": "We retain your data for as long as your account is active and for the periods legally required after its termination." },
+        { "heading": "6. User rights", "body": "You may exercise your rights of access, rectification, erasure, objection, restriction and portability by writing to our contact channels." },
+        { "heading": "7. Contact", "body": "For any privacy-related inquiry you may contact us through the means provided in the Service." }
+      ]
+    }
+  }
+}

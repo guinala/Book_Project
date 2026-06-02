@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "react-router";
+import { useAuth } from "@/context/auth/useAuth";
 import AuthLayout from "@/layouts/AuthLayout";
 import LoginForm from "@/components/auth/forms/LoginForm";
 import RegisterForm from "@/components/auth/forms/RegisterForm";
@@ -11,7 +12,9 @@ type FormScreen = "login" | "register";
 export default function AuthForm() {
   const { t } = useTranslation();
   const { loading } = useAuth();
-  const [screen, setScreen] = useState<FormScreen>("login");
+  const location = useLocation();
+  const initialTab: FormScreen = (location.state as { tab?: FormScreen } | null)?.tab ?? "login";
+  const [screen, setScreen] = useState<FormScreen>(initialTab);
   const [slideDir, setSlideDir] = useState<"left" | "right">("right");
 
   function goToLogin() {

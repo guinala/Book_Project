@@ -1,0 +1,15 @@
+Rule: jsx-a11y/anchor-is-valid
+Severity: warning
+Category: Accessibility
+Count: 3
+
+Missing `href` attribute for the `a` element.
+
+Suggestion: Provide the `href` attribute for the `a` element.
+
+Docs: https://oxc.rs/docs/guide/usage/linter/rules/jsx_a11y/anchor-is-valid.html
+
+Files:
+  src/components/shelf/sections/ShelfSection.tsx:68
+  src/components/book/info/ReviewsSection.tsx:17
+  src/pages/style-guide/StyleGuide.tsx:80

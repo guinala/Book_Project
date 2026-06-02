@@ -10,6 +10,7 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   fetchSignInMethodsForEmail,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import type { User, UserCredential } from "firebase/auth";
 import { OAuthProvider } from "firebase/auth";
@@ -61,4 +62,8 @@ export async function resetPassword(email: string): Promise<void> {
 export async function isEmailInUse(email: string): Promise<boolean> {
   const methods = await fetchSignInMethodsForEmail(auth, email);
   return methods.length > 0;
+}
+
+export function getIsNewUser(credential: UserCredential): boolean {
+  return getAdditionalUserInfo(credential)?.isNewUser ?? false;
 }

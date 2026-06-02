@@ -1,4 +1,4 @@
-import { collection, doc, getCountFromServer, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db, auth } from "./firebaseInit";
 import type { FavoriteBook, UserFullProfile, UserMinimal } from "@/types/UserProfile";
 
@@ -7,6 +7,8 @@ export type UserProfileData = {
   name?: string;
   surname?: string;
   birthDate?: string;
+  acceptedTermsAt?: string;
+  acceptedTermsVersion?: string;
 };
 
 export async function updatePrivateInfo(
@@ -16,78 +18,52 @@ export async function updatePrivateInfo(
   await setDoc(doc(db, "Users", uid, "private", "info"), data, { merge: true });
 }
 
-// export async function createUserProfile(
-//   uid: string,
-//   data: UserProfileData
-// ): Promise<void> {
-//   const userRef = doc(db, "Users", uid);
-//   await setDoc(userRef, {
-//     ...data,
-//     followersCount: 0,
-//     followingCount: 0,
-//     favoriteBooks: [],
-//     createdAt: new Date().toISOString(),
-//   }, { merge: true });
-// }
 export async function createUserProfile(
   uid: string, 
   data: UserProfileData
 ): Promise<void> {
-  const { email, birthDate, ...publicData } = data;
-  await setDoc(doc(db, "Users", uid), {
-    ...publicData,
-    isPublic: true,
-    followersCount: 0,
-    followingCount: 0,
-    createdAt: new Date().toISOString(),
-  }, { merge: true });
+  const { email, birthDate, acceptedTermsAt, acceptedTermsVersion, ...publicData } = data;
+  const userRef = doc(db, "Users", uid);
+
+  const existing = await getDoc(userRef);
+  if (!existing.exists()) {
+    const publicDoc: Record<string, unknown> = {
+      ...publicData,
+      isPublic: true,
+      followersCount: 0,
+      followingCount: 0,
+      createdAt: new Date().toISOString(),
+    };
+    if (acceptedTermsAt !== undefined) {
+      publicDoc.acceptedTermsAt = acceptedTermsAt;
+    }
+
+    if (acceptedTermsVersion !== undefined) {
+      publicDoc.acceptedTermsVersion = acceptedTermsVersion;
+    }
+
+    await setDoc(userRef, publicDoc);
+  }
+
   if (email !== undefined || birthDate !== undefined) {
     await updatePrivateInfo(uid, { email, birthDate });
   }
 }
-
-
-// export async function getUserProfile(uid: string): Promise<UserFullProfile | null> {
-//   const snap = await getDoc(doc(db, "Users", uid));
-//   if (!snap.exists()) return null;
-//   const d = snap.data();
-//   return {
-//     uid,
-//     email: d.email ?? "",
-//     name: d.name ?? "",
-//     surname: d.surname ?? "",
-//     username: d.username ?? "",
-//     bio: d.bio ?? "",
-//     profilePhotoUrl: d.profilePhotoUrl ?? "",
-//     bannerImageUrl: d.bannerImageUrl ?? "",
-//     favoriteBooks: d.favoriteBooks ?? [],
-//     followersCount: d.followersCount ?? 0,
-//     followingCount: d.followingCount ?? 0,
-//     birthDate: d.birthDate,
-//   };
-// }
 
 export async function getUserProfile(uid: string): Promise<UserFullProfile | null> {
   const snap = await getDoc(doc(db, "Users", uid));
   if (!snap.exists()) return null;
   const d = snap.data();
 
-  const privFetch = auth.currentUser?.uid === uid
-    ? getDoc(doc(db, "Users", uid, "private", "info"))
-    : Promise.resolve(null);
-
-  const [followingCountSnap, followersCountSnap, privSnap] = await Promise.all([
-    getCountFromServer(collection(db, "Users", uid, "following")),
-    getCountFromServer(collection(db, "Users", uid, "followers")),
-    privFetch,
-  ]);
-
   let email = "";
   let birthDate: string | undefined;
-  if (privSnap?.exists()) {
-    const p = privSnap.data();
-    email = p.email ?? "";
-    birthDate = p.birthDate;
+  if (auth.currentUser?.uid === uid) {
+    const privSnap = await getDoc(doc(db, "Users", uid, "private", "info"));
+    if (privSnap.exists()) {
+      const p = privSnap.data();
+      email = p.email ?? "";
+      birthDate = p.birthDate;
+    }
   }
 
   return {
@@ -100,8 +76,8 @@ export async function getUserProfile(uid: string): Promise<UserFullProfile | nul
     bio: d.bio ?? "",
     profilePhotoUrl: d.profilePhotoUrl ?? "",
     bannerImageUrl: d.bannerImageUrl ?? "",
-    followersCount: followersCountSnap.data().count,
-    followingCount: followingCountSnap.data().count,
+    followersCount: d.followersCount ?? 0,
+    followingCount: d.followingCount ?? 0,
     isPublic: d.isPublic ?? true,
   };
 }
@@ -120,7 +96,7 @@ export async function getUserMinimal(uid: string): Promise<UserMinimal | null> {
 
 export async function updateUserProfile(
   uid: string,
-  data: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate" | "username">>
+  data: Partial<Omit<UserFullProfile, "uid" | "email" | "birthDate" | "username" | "followersCount" | "followingCount">>
 ): Promise<void> {
   await updateDoc(doc(db, "Users", uid), data);
 }
@@ -137,4 +113,24 @@ export async function saveFavorites(
 ): Promise<void> {
   await setDoc(doc(db, "Users", uid, "favorites", "list"), { books });
 }
+
+export function subscribeToProfileCounts(
+  uid: string,
+  onUpdate: (counts: { followersCount: number; followingCount: number }) => void
+): () => void {
+  return onSnapshot(doc(db, "Users", uid), (snap) => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    onUpdate({
+      followersCount: d.followersCount ?? 0,
+      followingCount: d.followingCount ?? 0,
+    });
+  });
+}
+
+export async function userProfileExists(uid: string): Promise<boolean> {
+  const snap = await getDoc(doc(db, "Users", uid));
+  return snap.exists();
+}
+
 

@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useState, useRef } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
+import { useAuth } from "@/context/auth/useAuth";
 import { useTranslation } from "react-i18next";
 import ProfileMenu from "@/components/profile/sections/ProfileMenu";
-import { Search, Plus, Bell, User } from "lucide-react";
+import { Search, X, User } from "lucide-react";
 import "./Navbar.scss";
+import NotificationsBell from "../notifications/NotificationBell";
 
 const NAV_LINKS = [
   { path: "/my-library", labelKey: "nav.myLibrary" },
@@ -12,15 +13,21 @@ const NAV_LINKS = [
   { path: "/community",  labelKey: "nav.community" },
 ];
 
-interface NavbarProps {
+type NavbarProps = {
   hidden?: boolean;
+  onActiveClick?: () => void;
 }
 
-export default function Navbar({ hidden = false }: NavbarProps) {
+export default function Navbar({ hidden = false, onActiveClick }: NavbarProps) {
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [prevHidden, setPrevHidden] = useState(hidden);
+  
   if (hidden !== prevHidden) {
     setPrevHidden(hidden);
     if (hidden) setMenuOpen(false);
@@ -37,33 +44,53 @@ export default function Navbar({ hidden = false }: NavbarProps) {
           >
             <span className="navbar__brand-name">Trama</span>
           </Link>
-          <form className="navbar__search" role="search">
-            <Search size={14} className="navbar__search-icon" aria-hidden="true" />
-            <input
-              className="navbar__search-input"
-              type="search"
-              aria-label={t("navbar.search")}
-              placeholder={t("navbar.search")}
-            />
-          </form>
         </div>
 
         <nav className="navbar__nav">
           {NAV_LINKS.map(({ path, labelKey }) => (
-            <NavLink key={path} to={path} className="navbar__link">
+            <NavLink key={path} to={path} className="navbar__link" onClick={(e) => {
+              if(pathname === path) {
+                e.preventDefault();
+                onActiveClick?.();
+              }
+            }}>
               {t(labelKey)}
             </NavLink>
           ))}
         </nav>
 
         <div className="navbar__actions">
-          <button className="navbar__btn-register" type="button" aria-label={t("navbar.register")}>
-            <Plus />
-            <span className="navbar__btn-register-text" aria-hidden="true">{t("navbar.register")}</span>
-          </button>
-          <button className="navbar__btn-icon" type="button" aria-label={t("navbar.notifications")}>
-            <Bell />
-          </button>
+          <div className="navbar__search-wrap" role="search">
+            <Search size={20} className="navbar__search-wrap-icon" aria-hidden="true" />
+            <input
+              ref={searchInputRef}
+              className="navbar__search-field-input"
+              type="search"
+              aria-label={t("navbar.search")}
+              placeholder={t("navbar.search")}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onBlur={() => setSearchValue("")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && searchValue.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+                }
+              }}
+            />
+            <button
+              className={`navbar__search-clear-btn${searchValue ? " navbar__search-clear-btn--visible" : ""}`}
+              type="button"
+              aria-label="Cerrar búsqueda"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setSearchValue("");
+                searchInputRef.current?.blur();
+              }}
+            >
+              <X size={16} />
+            </button>
+          </div>
+          {isAuthenticated && <NotificationsBell />}
           <div className="navbar__avatar-wrap">
             {isAuthenticated ? (
               <button

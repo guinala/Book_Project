@@ -12,6 +12,9 @@ import enErrors from "./locales/en/errors.json";
 import enFooter from "./locales/en/footer.json";
 import enBookDetail from "./locales/en/bookDetail.json";
 import enProfile from "./locales/en/profile.json";
+import enNotifications from "./locales/en/notifications.json";
+import enToasts from "./locales/en/toasts.json";
+import enLegal from "./locales/en/legal.json";
 
 import esNavbar from "./locales/es/navbar.json";
 import esLanding from "./locales/es/landing.json";
@@ -23,6 +26,9 @@ import esErrors from "./locales/es/errors.json";
 import esFooter from "./locales/es/footer.json";
 import esBookDetail from "./locales/es/bookDetail.json";
 import esProfile from "./locales/es/profile.json";
+import esNotifications from "./locales/es/notifications.json";
+import esToasts from "./locales/es/toasts.json";
+import esLegal from "./locales/es/legal.json";
 
 i18n
   .use(LanguageDetector)
@@ -41,6 +47,9 @@ i18n
           ...enFooter,
           ...enBookDetail,
           ...enProfile,
+          ...enNotifications,
+          ...enToasts,
+          ...enLegal,
         },
       },
       es: {
@@ -55,6 +64,9 @@ i18n
           ...esFooter,
           ...esBookDetail,
           ...esProfile,
+          ...esNotifications,
+          ...esToasts,
+          ...esLegal,
         },
       },
     },

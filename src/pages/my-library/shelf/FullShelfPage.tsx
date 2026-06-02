@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router";
-import { useTranslation } from "react-i18next";
-import { useShelf } from "@/hooks/useShelf";
+import { useNavigate, useLocation, Link } from "react-router";
+import { useTranslation, Trans } from "react-i18next";
+import { useShelf } from "@/context/shelf/useShelf";
 import type { Book } from "@/types/Book";
 import type { ShelfStatus } from "@/types/BookDetail";
-import { Search, Filter, X, ChevronLeft } from "lucide-react";
+import { Search, ListFilter, X, ChevronLeft } from "lucide-react";
 import BookTile from "@/components/shelf/cards/BookTile";
 import "./FullShelfPage.scss";
 
@@ -29,7 +29,7 @@ export default function FullShelfPage() {
         const q = searchQuery.toLowerCase();
         return (
           b.title.toLowerCase().includes(q) ||
-          b.authors.some(a => a.toLowerCase().includes(q))
+          (b.authors ?? []).some(a => a.toLowerCase().includes(q))
         );
       })
     : shelfByStatus[activeStatus];
@@ -91,7 +91,7 @@ export default function FullShelfPage() {
         </div>
 
         <button type="button" className="full-shelf__filter-btn" disabled aria-label="Filtros">
-          <Filter aria-hidden="true" />
+          <ListFilter aria-hidden="true" />
         </button>
       </div>
 
@@ -123,10 +123,20 @@ export default function FullShelfPage() {
             <BookTile key={book.key} book={book} />
           ))}
           {displayBooks.length === 0 && (
-            <div className="full-shelf__no-results">
-              <h3 className="full-shelf__no-results-title">{t("myLibrary.noResults")}</h3>
-              <img src="/no-results.png" alt="" className="full-shelf__no-results-img" />
-            </div>
+            isSearching ? (
+              <div className="full-shelf__no-results">
+                <h3 className="full-shelf__no-results-title">{t("myLibrary.noResults")}</h3>
+                <img src="/no-results.png" alt="" className="full-shelf__no-results-img" />
+              </div>
+            ) : (
+              <div className="full-shelf__empty-state">
+                <p className="full-shelf__empty-state-text">
+                  <Trans i18nKey="myLibrary.emptyShelfCategory">
+                    Esta categoría está vacía. ¡Añade libros desde <Link to="/explore">Explorar</Link>!
+                  </Trans>
+                </p>
+              </div>
+            )
           )}
         </div>
       )}

@@ -1,0 +1,25 @@
+{
+  "notifications": {
+    "title": "Notifications",
+    "empty": "You have no notifications",
+    "loading": "Loading...",
+    "ariaBell": "Notifications",
+    "ariaUnread": "{{count}} unread notifications",
+    "types": {
+      "follow": "<1>{{name}}</1> started following you",
+      "follow_request": "<1>{{name}}</1> wants to follow you",
+      "follow_request_accepted": "<1>{{name}}</1> accepted your follow request"
+    },
+    "actions": {
+      "acceptAria": "Accept request",
+      "rejectAria": "Decline request",
+      "deleteAria": "Delete notification"
+    },
+    "time": {
+      "secondsAgo": "Just now",
+      "minutesAgo": "{{value}}m ago",
+      "hoursAgo": "{{value}}h ago",
+      "daysAgo": "{{value}}d ago"
+    }
+  }
+}

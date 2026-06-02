@@ -5,15 +5,6 @@ export function genreToI18nKey(genre: string): string {
     .replace(/[^a-z0-9_]/g, "");
 }
 
-// const FANTASY_SUBJECTS = [
-//   "Fantasy fiction",
-//   "Epic fantasy",
-//   "High fantasy",
-//   "Dark fantasy",
-//   "Magic",
-//   "Wizards",
-//   "Fairy tales",
-// ];
 const GENRE_MAP: Record<string, string[]> = {
   "Fantasy":                    ["fantasy", "fantasy fiction", "epic fantasy", "high fantasy", "dark fantasy", "wizards", "fairy tales", "Fiction, fantasy, epic", "magic", "witchcraft", "sorcery"],
   "Science Fiction":            ["science fiction", "sci-fi", "space opera", "cyberpunk"],
@@ -80,22 +71,32 @@ export function genreFieldsFromSubjects(subjects: string[] | undefined): {
   };
 }
 
+const GENRE_COLOR_MAP: Record<string, string> = {
+  "Fiction": "var(--color-genre-fiction)",
+  "Non-Fiction": "var(--color-genre-nonfiction)",
+  "Mystery and detective stories": "var(--color-genre-mystery)",
+  "Romance": "var(--color-genre-romance)",
+  "Science Fiction": "var(--color-genre-scifi)",
+  "Historical Fiction": "var(--color-genre-historical)",
+  "Fantasy": "var(--color-genre-fiction)",
+  "Thriller": "var(--color-genre-mystery)",
+};
 
+export function genreToColorVar(genre: string): string {
+  return GENRE_COLOR_MAP[genre] ?? "var(--color-genre-default)";
+}
 
-// export function handleFantasyGenre(subjects: string[] | undefined): string | undefined {
-//   if (!subjects || subjects.length === 0) return undefined;
+const MORE_GENRE_TITLE_KEYS: Record<string, string> = {
+  "Fiction":                       "explore.sections.moreGenreFiction",
+  "Non-Fiction":                   "explore.sections.moreGenreNonFiction",
+  "Mystery and detective stories": "explore.sections.moreGenreMystery",
+  "Romance":                       "explore.sections.moreGenreRomance",
+  "Science Fiction":               "explore.sections.moreGenreSciFi",
+  "Historical Fiction":            "explore.sections.moreGenreHistoricalFiction",
+  "Fantasy":                       "explore.sections.moreGenreFantasy",
+  "Thriller":                      "explore.sections.moreGenreThriller",
+};
 
-//   const hasFantasy = subjects.some(
-//     (s) => s.toLowerCase() === "fantasy"
-//   );
-
-//   if (hasFantasy) return "Fantasy";
-
-//   const hasFantasyEquivalent = subjects.some(
-//     (s) => FANTASY_SUBJECTS.map(f => f.toLowerCase()).includes(s.toLowerCase())
-//   );
-
-//   if (hasFantasyEquivalent) return "Fantasy";
-
-//   return subjects[0];
-// }
+export function moreGenreTitleKey(genre: string | undefined): string {
+  return (genre && MORE_GENRE_TITLE_KEYS[genre]) ?? "explore.sections.moreGenre";
+}

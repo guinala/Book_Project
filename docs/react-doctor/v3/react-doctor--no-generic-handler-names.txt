@@ -1,0 +1,14 @@
+Rule: react-doctor/no-generic-handler-names
+Severity: warning
+Category: Architecture
+Count: 4
+
+Non-descriptive handler name "handleChange" — name should describe what it does, not when it runs
+
+Suggestion: Rename to describe the action: e.g. `handleSubmit` → `saveUserProfile`, `handleClick` → `toggleSidebar`
+
+Files:
+  src/pages/edit-profile/components/AvatarUploader.tsx:39
+  src/pages/edit-profile/components/BannerUploader.tsx:36
+  src/components/profile/ShareProfileButton.tsx:54
+  src/components/profile/sections/ProfileCard.tsx:23

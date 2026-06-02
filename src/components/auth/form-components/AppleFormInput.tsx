@@ -1,6 +1,6 @@
 import { useState } from "react";
-import SignInAppleButton from "@/components/auth/sign-in-buttons/SignInAppleButton";
 import { useTranslation } from "react-i18next";
+import SocialSignInButton from "../sign-in-buttons/SocialSignInButton";
 
 type AppleFormInputProps = {
   disabled: boolean;
@@ -13,7 +13,7 @@ export default function AppleFormInput({ disabled }: AppleFormInputProps) {
   return (
     <>
       <div className="auth__divider">{t("auth.dividerOr")}</div>
-      <SignInAppleButton disabled={disabled} onError={setAppleError} />
+      <SocialSignInButton provider="apple" disabled={disabled} onError={setAppleError} />
       {appleError && <p className="auth__error">{appleError}</p>}
     </>
   );

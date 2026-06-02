@@ -3,6 +3,8 @@
     "heading": "Estoy leyendo...",
     "noCurrentReading": "No estás leyendo ningún libro",
     "nextBook": "Ver siguiente libro leyendo",
+    "prevBook": "Ver libro anterior",
+    "readingCount": "{{current}}/{{total}} libros leyendo",
     "readingProgress": "Progreso",
     "pages": "{{current}}/{{total}} págs.",
     "shelfTitle": "Estantería",
@@ -14,43 +16,67 @@
     "noResults": "¡Oops! No hemos encontrado el libro que buscas",
     "clearSearch": "Borrar búsqueda",
     "emptyShelf": "Añadir libros",
+    "emptyShelfCategory": "Esta categoría está vacía. ¡Añade libros desde <1>Explorar</1>!",
+    "emptyShelfReadonly": "Sin libros en esta estantería",
     "viewHistory": "Ver historial",
     "updateProgress": "Actualizar progreso",
     "updateProgressModal": {
       "title": "Actualizar progreso",
       "currentPage": "Página actual",
       "of": "de",
-      "finished": "¿Has terminado el libro?",
-      "notes": "Cita",
-      "notesPlaceholder": "Añade una cita del libro...",
-      "abandon": "Marcar como dejado",
-      "abandonConfirm": {
-        "title": "¿Estás seguro que quieres eliminar este libro de tu biblioteca?",
-        "subtitle": "Esta acción no se puede deshacer.",
-        "confirm": "Aceptar",
-        "cancel": "Cancelar"
-      },
-      "save": "Guardar lectura",
+      "note": "Nota",
+      "notePlaceholder": "¿Qué te está pareciendo el libro? Cuéntale a todos qué piensas de la trama.",
+      "save": "Guardar",
       "close": "Cerrar",
       "noteTooLong": "Has superado el máximo de caracteres",
       "characters": "caracteres",
       "rateBook": "Valoración",
       "review": "Reseña",
-      "reviewPlaceholder": "Cuéntanos qué te ha parecido el libro. ¿Lo recomendarías?"
+      "reviewPlaceholder": "¿Qué te ha parecido el libro? ¿Lo recomendarías?",
+      "statusMessage": "Pulsa «Guardar» para mover el libro a esta estantería.",
+      "percentageLabel": "Porcentaje de lectura"
     },
     "createList": "Crear nueva lista",
     "listsTitle": "Listas",
     "listsCount": "{{count}} libros",
-    "lists": {
-      "recommended": "Muy Recomendados",
-      "drama": "Drama",
-      "women": "Escritos por mujeres"
+    "allListsTitle": "Listas",
+    "listEditor": {
+      "createTitle": "Crear lista",
+      "editTitle": "Editar lista",
+      "closeAria": "Cerrar",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Escribe un nombre para tu lista",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Añade una descripción opcional...",
+      "counter": "{{count}}/{{max}} libros",
+      "empty": "Aún no has añadido libros",
+      "addBooksLabel": "Añadir libros",
+      "searchPlaceholder": "Busca por título, autor o ISBN",
+      "searching": "Buscando...",
+      "noResults": "Sin resultados",
+      "removeAria": "Quitar {{title}}",
+      "prevPage": "Anteriores",
+      "nextPage": "Siguientes",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "saveError": "No se pudo guardar la lista"
+    },
+    "listDetail": {
+      "empty": "Esta lista no tiene libros",
+      "notFound": "Lista no disponible",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirmDelete": "¿Eliminar esta lista?",
+      "confirmDeleteSubtitle": "Esta acción no podrá deshacerse.",
+      "confirmDeleteYes": "Eliminar",
+      "confirmDeleteNo": "Cancelar"
     },
     "shelf": {
       "wantToRead": "Quiero leer",
       "reading": "Leyendo",
       "finished": "Acabado",
-      "didNotFinish": "No acabado"
+      "didNotFinish": "Abandonado"
     },
     "progress": {
       "title": "Progresos",
@@ -78,5 +104,30 @@
       "historical": "Histórica",
       "others": "Otros"
     }
+  },
+  "historyModal": {
+    "title": "Historial de actividad",
+    "ariaLabel": "Historial de actividad",
+    "closeAria": "Cerrar",
+    "loading": "Cargando...",
+    "empty": "Sin actividad registrada para este libro.",
+    "pageProgress": "{{current}}/{{total}} pág.",
+    "pageProgressNoTotal": "{{current}} pág.",
+    "pagesAdded": "+{{count}} pág.",
+    "events": {
+      "reading_started": "Empezaste a leer",
+      "book_finished": "Terminaste de leer",
+      "progress": "Actualizaste el progreso",
+      "review": "Escribiste una reseña",
+      "list_created": "Creaste una lista",
+      "watchlist_add": "Añadiste a la lista"
+    },
+    "timeAgo": {
+      "seconds": "hace unos segundos",
+      "minutes": "hace {{n}}m",
+      "hours": "hace {{n}}h",
+      "days": "hace {{n}}d"
+    }
   }
+
 }

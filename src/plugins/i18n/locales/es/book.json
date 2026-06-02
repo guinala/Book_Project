@@ -3,6 +3,18 @@
     "unknownAuthor": "Autor desconocido",
     "coverAlt": "Portada de {{title}}",
     "starRatingLabel": "Valoración: {{rating}} de 5",
+    "meta": {
+      "genre": "Género",
+      "pages": "Páginas",
+      "year": "Año"
+    },
+    "viewPage": "Ver página",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "add": "Añadir",
+    "addToList": "Añadir a lista",
+    "noLists": "No tienes listas creadas",
+    "noRating": "Sin valorar",
     "genres": {
       "fantasy": "Fantasía",
       "fantasy_fiction": "Fantasía",

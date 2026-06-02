@@ -1,14 +1,14 @@
-export interface LoginFormValues {
+export type LoginFormValues = {
   email: string;
   password: string;
 }
 
-export interface RegisterFormValues {
+export type RegisterFormValues = {
   email: string;
   password: string;
   name: string;
   surname: string;
   birthDate: string;
+  username: string;
+  acceptedTerms: boolean;
 }
-
-export type AuthScreen = "loading" | "login" | "register" | "user";

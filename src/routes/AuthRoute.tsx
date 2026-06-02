@@ -1,5 +1,5 @@
 import { Navigate } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/context/auth/useAuth";
 import { useTranslation } from "react-i18next";
 
 type ProtectedRouteProps = {
@@ -11,14 +11,14 @@ export default function AuthRoute({
   children,
   requireAuth = true,
 }: ProtectedRouteProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isGuest, loading } = useAuth();
   const { t } = useTranslation();
 
   if (loading) {
     return <p style={{ textAlign: "center", padding: "60px" }}>{t("auth.loading")}</p>;
   }
 
-  if (requireAuth && !isAuthenticated) {
+  if (requireAuth && !isAuthenticated && !isGuest) {
     return <Navigate to="/auth" replace />;
   }
 

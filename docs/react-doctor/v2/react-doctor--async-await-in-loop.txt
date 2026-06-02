@@ -1,0 +1,11 @@
+Rule: react-doctor/async-await-in-loop
+Severity: warning
+Category: Performance
+Count: 1
+
+await inside a for…of loop runs the calls sequentially — for independent operations, collect them and use `await Promise.all(items.map(...))` to run them concurrently
+
+Suggestion: Collect the items and use `await Promise.all(items.map(...))` to run independent operations concurrently
+
+Files:
+  src/pages/explore/ExplorePage.tsx:54
